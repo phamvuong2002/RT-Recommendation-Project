@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const StarRating = ({ averageRating, numReviews }) => {
+export const StarRating = ({ averageRating, numReviews, shownumReviews = true }) => {
     const stars = []
 
     const totalStars = 5;
@@ -43,9 +43,13 @@ export const StarRating = ({ averageRating, numReviews }) => {
 
 
     return (
-        <div className="flex justify-end gap-2">
+        <div className="flex gap-2">
             <div className="flex">{stars}</div>
-            <span className="mt-1 text-sm text-zinc-400 font-medium">{numReviews} đánh giá</span>
+            {shownumReviews ?
+                <span className="mt-1 text-sm text-zinc-400 font-medium">{numReviews} đánh giá</span>
+                :
+                null
+            }
         </div>
     );
 };

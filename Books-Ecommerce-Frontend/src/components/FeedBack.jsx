@@ -65,9 +65,8 @@ export const FeedBack = () => {
     };
 
     return (
-        <div className="flex flex-col px-2 gap-8 xl:items-center ">
-            {/* sort rating */}
-            <div className="flex flex-col xl:flex-row xl:pl-[18rem]">
+        <div className="xl:flex flex-col px-2 xl:gap-8 xl:items-center ">
+            <div className="flex flex-col xl:gap-14 xl:flex-row xl:pl-[8rem]">
                 {/* total rating */}
                 <div className="flex flex-col mb-2 items-center justify-center gap-2">
                     <div className="w-20 h-11 relative">
@@ -82,35 +81,35 @@ export const FeedBack = () => {
                 {/* sort rating */}
                 <div className="px-8 xl:w-[50rem]">
                     <div className="flex items-center mt-4 ml-4">
-                        <a href="#" className="text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline">5 star</a>
+                        <a href="#" className="text-sm font-medium text-red-600 dark:text-red-500 hover:underline">5 star</a>
                         <div className="w-2/4 h-5 mx-4 bg-gray-200 rounded dark:bg-gray-700">
                             <div className="h-5 bg-yellow-300 rounded w-[70%]"></div>
                         </div>
                         <span className="text-sm font-medium text-gray-500 dark:text-gray-400">70%</span>
                     </div>
                     <div className="flex items-center mt-4 ml-4">
-                        <a href="#" className="text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline">4 star</a>
+                        <a href="#" className="text-sm font-medium text-red-600 dark:text-red-500 hover:underline">4 star</a>
                         <div className="w-2/4 h-5 mx-4 bg-gray-200 rounded dark:bg-gray-700">
                             <div className="h-5 bg-yellow-300 rounded w-[17%]"></div>
                         </div>
                         <span className="text-sm font-medium text-gray-500 dark:text-gray-400">17%</span>
                     </div>
                     <div className="flex items-center mt-4 ml-4">
-                        <a href="#" className="text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline">3 star</a>
+                        <a href="#" className="text-sm font-medium text-red-600 dark:text-red-500 hover:underline">3 star</a>
                         <div className="w-2/4 h-5 mx-4 bg-gray-200 rounded dark:bg-gray-700">
                             <div className="h-5 bg-yellow-300 rounded w-[8%]"></div>
                         </div>
                         <span className="text-sm font-medium text-gray-500 dark:text-gray-400">8%</span>
                     </div>
                     <div className="flex items-center mt-4 ml-4">
-                        <a href="#" className="text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline">2 star</a>
+                        <a href="#" className="text-sm font-medium text-red-600 dark:text-red-500 hover:underline">2 star</a>
                         <div className="w-2/4 h-5 mx-4 bg-gray-200 rounded dark:bg-gray-700">
                             <div className="h-5 bg-yellow-300 rounded w-[4%]"></div>
                         </div>
                         <span className="text-sm font-medium text-gray-500 dark:text-gray-400">4%</span>
                     </div>
                     <div className="flex items-center mt-4 ml-4">
-                        <a href="#" className="text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline">1 star</a>
+                        <a href="#" className="text-sm font-medium text-red-600 dark:text-red-500 hover:underline">1 star</a>
                         <div className="w-2/4 h-5 mx-4 bg-gray-200 rounded dark:bg-gray-700">
                             <div className="h-5 bg-yellow-300 rounded w-[1%]"></div>
                         </div>
@@ -120,7 +119,7 @@ export const FeedBack = () => {
             </div>
 
             {/* comment */}
-            <div className=" flex flex-col gap-4 max-h-[32rem] xl:max-h-[20rem] overflow-y-scroll xl:scrollbar-thin xl:scrollbar-webkit" ref={commentContainerRef}>
+            <div className=" flex flex-col mt-8 gap-4 max-h-[32rem] xl:max-h-[20rem] overflow-y-scroll xl:scrollbar-thin xl:scrollbar-webkit" ref={commentContainerRef}>
                 {/* Hiển thị danh sách các comment */}
                 {/* <div></div> */}
                 {comments.map((comment, index) => (

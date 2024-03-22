@@ -41,7 +41,7 @@ export const DescriptionFeedback = (/*description */) => {
     };
 
     return (
-        <div className="w-full mt-8">
+        <div className="w-full xl:px-28 ">
             {/* Navigation buttons */}
             <div className="flex items-center justify-center gap-8 w-full h-10 bg-gradient-to-r from-rose-100 to-slate-50">
                 <button
@@ -61,7 +61,7 @@ export const DescriptionFeedback = (/*description */) => {
             </div>
 
             {/* Content */}
-            <div className="mt-4 px-8">
+            <div className="mt-4 px-8 bg-gray-50">
 
                 <Swiper
                     onSwiper={(swiper) => {

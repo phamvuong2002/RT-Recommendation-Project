@@ -1,13 +1,17 @@
 
 import { DetailCart } from "./components/DetailCart";
-import { DescriptionFeedback } from "./components/DescriptionFeedback"
+import { DescriptionFeedback } from "./components/DescriptionFeedback";
+import { ShoppingCarts } from "./components/ShoppingCarts";
+import { ShoppingCartsPopup } from "./components/ShoppingCartsPopup";
+
 
 function App() {
   return (
     <>
-      {/* <DetailCart /> */}
+      <DetailCart />
       <DescriptionFeedback />
-
+      <ShoppingCarts />
+      <ShoppingCartsPopup />
     </>
   );
 }

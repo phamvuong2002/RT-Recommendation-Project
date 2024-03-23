@@ -41,7 +41,7 @@ export const DescriptionFeedback = (/*description */) => {
     };
 
     return (
-        <div className="w-full xl:px-28 ">
+        <div className="w-full xl:px-28">
             {/* Navigation buttons */}
             <div className="flex items-center justify-center gap-8 w-full h-10 bg-gradient-to-r from-rose-100 to-slate-50">
                 <button
@@ -61,7 +61,7 @@ export const DescriptionFeedback = (/*description */) => {
             </div>
 
             {/* Content */}
-            <div className="mt-4 px-8 bg-gray-50">
+            <div className="px-8 bg-gray-50">  {/*bg-gray-50 */}
 
                 <Swiper
                     onSwiper={(swiper) => {
@@ -82,7 +82,7 @@ export const DescriptionFeedback = (/*description */) => {
                     }}
                     scrollbar={true}
                     modules={[Keyboard, Scrollbar]}
-                    className="mySwiper h-[52rem] xl:h-[35rem]" /*h-[52rem] xl:h-[32rem]*/
+                    className="mySwiper h-[52rem] xl:h-[80rem]" /*h-[52rem] xl:h-[32rem]*/
                     onSlideChange={handleSlideChange}
                 >
                     <SwiperSlide className="xl:p-14 ">

@@ -38,15 +38,17 @@ export const DetailCart = (/*{ product }*/) => {
 
     return (
         <div className="mt-2 max-w-screen-2xl container mx-auto xl:px-28 font-inter ">
-            <div className="p-3 max-w-7xl m-auto">
+            <div className=" m-auto">
                 {/* Navigate */}
-                <div className="flex gap-2 text-zinc-400 text-sm font-normal capitalize tracking-widest ">
-                    <a href="/" className="hover:text-zinc-600">Home</a>
-                    <a href={`/shop/abc`} className="xl:hover:text-zinc-600">/ Light Novel</a>
-                    <a href={`/shop/abc`} className="text-zinc-500">/ 86 - Eightysix</a>
+                <div className="h-8 flex items-center gap-2 pl-2 text-red-400 text-sm font-normal capitalize tracking-widest bg-gray-100">
+                    <a href="/" className="hover:text-zinc-600">Trang Chủ</a>
+                    <span className="text-zinc-400"> {'>'} </span>
+                    <a href={`/`} className="xl:hover:text-zinc-600"> Tiểu Thuyết</a>
+                    <span className="text-zinc-400"> {'>'} </span>
+                    <a href={`/`} className="text-zinc-500"> 86 - Eightysix</a>
                 </div>
                 <hr />
-                <div className="mt-6 sm:mt-10 bg-gray-50">
+                <div className="xl:mt-1 sm:mt-10 bg-gray-50">
                     <div className="grid grid-cols-1 md:grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 xl:gap-14 gap-2 h-max">
                         {/* Images */}
                         <div className="flex items-center justify-center">

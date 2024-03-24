@@ -4,7 +4,7 @@ import { FaFacebookF, FaInstagram, FaLinkedin } from "react-icons/fa6";
 
 export const Header = () => {
   return (
-    <header className='sm:justify-between  bg-red  text-xs lg:text-base text-white'>
+    <header className='sm:justify-between  bg-red  text-xs font-inter lg:text-base text-white'>
 
       <div className='hidden sm:flex flex-row justify-between  bg-[red]  text-xs lg:text-base'>
         <div id="logo_name" className='flex items-center gap-5 lg:gap-10 px-5'>

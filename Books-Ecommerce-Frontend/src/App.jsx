@@ -12,14 +12,14 @@ import { DetailCart } from "./components/DetailCart";
 
 import { Footer } from "./components/Footer";
 import {Navbar} from "./components/Navbar"
-// import Slider from "./components/Slider";
+import Slider from "./components/Slider";
 function App() {
   return (
     <>
 
       <Header/>
       <Navbar/>
-      {/* <Slider/> */}
+      <Slider/>
       <DetailCart />
       <DescriptionFeedback />
       <Footer/>

@@ -89,7 +89,7 @@ const Search = ({ setResults }) => {
     };
 
     return (
-        <div id="search-bar" className="h-0.8 sm:my-3 bg-defined-gray rounded-[5px] grid">
+        <div id="search-bar" className="h-0.8 sm:my-3 bg-gray-100  rounded-[5px] grid">
             <div className="relative flex items-stretch">
                 <input
                     className="relative m-0 block flex-auto border-neutral-300 bg-transparent bg-clip-padding px-3 py-[0.25rem] text-sm sm:text-base font-normal  text-neutral-700 outline-none transition duration-200 ease-in-out focus:z-[3]  focus:outline-none dark:border-neutral-600 dark:text-neutral-200 "

@@ -35,7 +35,7 @@ const MenuItems = ({ items, depthLevel }) => {
 
   return (
     <li
-      className={`menu-items text-center text-black font-medium min-w-[8rem] hover:text-[red] hover:cursor-pointer`}
+      className={`menu-items text-center text-black font-medium min-w-[8rem] hover:text-red-500 hover:font-semibold hover:cursor-pointer`}
       ref={ref}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}

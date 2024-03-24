@@ -89,7 +89,7 @@ export const Navbar = () => {
                         </button>
                     </div>
 
-                    <div className="search-bar-container relative inline-block w-1/2 sm:w-1/3">
+                    <div className="search-bar-container relative inline-block w-1/2 sm:w-1/3 z-50">
                         <Search setResults={setResults} />
                         
                         {results && results.length > 0 && <SearchResultsList  results={results} />}
@@ -97,7 +97,7 @@ export const Navbar = () => {
                         
                     </div>
 
-                    <div className="text-xl lg:text-lg sm:flex inline-flex sm: gap-4 lg:gap-6 ml-2 text-black ">
+                    <div className="text-xl lg:text-lg sm:flex inline-flex sm: gap-4 lg:gap-6 ml-2 text-black font-inter font-medium">
 
                         <a href="/" className="flex items-center sm:gap-2 ">
                             
@@ -127,7 +127,7 @@ export const Navbar = () => {
             {/* Trang chu/San pham/Ve [name]/Lien he */}    
             <div className="hidden sm:grid place-items-center py-1 lg:text-lg top_third">
 
-                <ul className="menus flex text-lg  gap-10">
+                <ul className="menus flex text-lg  gap-10 z-40 font-inter">
                     {menuData.map((menu, index) => {
                         const depthLevel = 0;
                         return <MenuItems items={menu} key={index} depthLevel={depthLevel} />;
@@ -137,7 +137,7 @@ export const Navbar = () => {
 
             {/* mobile menu */}
             <div className="mobile-menu block w-1/2 sm:hidden place-items-center text-sm lg:text-lg top_third">
-                <ul className={`bg-defined-gray min-h-screen text-black font-medium text-left  ${isMenuOpen ? "" : "hidden"}`}>
+                <ul className={`bg-gray-100 min-h-screen text-black font-inter font-medium text-left  ${isMenuOpen ? "" : "hidden"}`}>
                     {menuData.map((menu, index) => {
                         const depthLevel = 0;
                         return <MenuItems items={menu} key={index} depthLevel={depthLevel} />;

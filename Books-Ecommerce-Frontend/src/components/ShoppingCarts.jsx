@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { SingleShoppingCart } from './SingleShoppingCart'
 import { ShoppingCartLoader } from './loaders/ShoppingCartLoader';
 import { formatNumberToText } from '../utils/formatNumberToText';
 import { calculateTotalPrice } from '../utils/calculateTotalPrice';
 import ShoppingCartsGroupedByPublisherID from './ShoppingCartsGroupedByPublisherID';
+import { fetchData } from '../helpers/fetch';
 
 const sampleUserInfo = {
     userId: '123456',
@@ -11,128 +11,6 @@ const sampleUserInfo = {
     username: 'vuongpham',
     email: 'vuongpham@gmail.com',
 }
-
-const sampleProducts = [
-    {
-        id: 1,
-        name: 'Thám tử lừng danh Conan - Tập 1',
-        href: `/book/${1}`,
-        format: 'Thường',
-        price: 90000,
-        quantity: 1,
-        imageSrc: 'https://picsum.photos/300/300',
-        imageAlt: 'Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt.',
-        currency: 'đ',
-        publisherID: '123451',
-        publisher: 'Nhà xuất bản Trẻ',
-        publisherImgUrl: 'https://i.ibb.co/pRbvxj9/logo-nxb-tre.png'
-    },
-    {
-        id: 2,
-        name: '86 - Eightysix - Tập 8',
-        href: `/book/${2}`,
-        format: 'Thường',
-        price: 32000,
-        quantity: 1,
-        imageSrc: 'https://picsum.photos/300/300',
-        imageAlt: 'Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.',
-        currency: 'đ',
-        publisherID: '123451',
-        publisher: 'Nhà xuất bản Trẻ',
-        publisherImgUrl: 'https://i.ibb.co/pRbvxj9/logo-nxb-tre.png'
-    },
-    {
-        id: 3,
-        name: 'Thám tử lừng danh Conan - Tập 1',
-        href: `/book/${3}`,
-        format: 'Thường',
-        price: 32000,
-        quantity: 1,
-        imageSrc: 'https://picsum.photos/300/300',
-        imageAlt:
-            'Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.',
-        currency: 'đ',
-        publisherID: '123452',
-        publisher: 'Nhà xuất bản Kim Đồng',
-        publisherImgUrl: 'https://i.gyazo.com/7d1bab302c86880f9eb91cd04388edc2.png'
-    },
-    {
-        id: 4,
-        name: '86 - Eightysix - Tập 8',
-        href: `/book/${4}`,
-        format: 'Thường',
-        price: 32000,
-        quantity: 1,
-        imageSrc: 'https://picsum.photos/300/300',
-        imageAlt:
-            'Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.',
-        currency: 'đ',
-        publisherID: '123452',
-        publisher: 'Nhà xuất bản Kim Đồng',
-        publisherImgUrl: 'https://i.gyazo.com/7d1bab302c86880f9eb91cd04388edc2.png'
-    },
-    {
-        id: 5,
-        name: 'Thám tử lừng danh Conan - Tập 1',
-        href: `/book/${5}`,
-        format: 'Thường',
-        price: 32000,
-        quantity: 1,
-        imageSrc: 'https://picsum.photos/300/300',
-        imageAlt:
-            'Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.',
-        currency: 'đ',
-        publisherID: '123451',
-        publisher: 'Nhà xuất bản Trẻ',
-        publisherImgUrl: 'https://i.ibb.co/pRbvxj9/logo-nxb-tre.png'
-    },
-    {
-        id: 6,
-        name: 'Thám tử lừng danh Conan - Tập 1',
-        href: `/book/${5}`,
-        format: 'Thường',
-        price: 32000,
-        quantity: 1,
-        imageSrc: 'https://picsum.photos/300/300',
-        imageAlt:
-            'Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.',
-        currency: 'đ',
-        publisherID: '123453',
-        publisher: 'Nhà xuất bản Tổng hợp thành phố Hồ Chí Minh',
-        publisherImgUrl: 'https://i.ibb.co/Jnt6nzw/logo-nxb-tong-hop-tp-hcm-removebg-preview.png'
-    },
-    {
-        id: 7,
-        name: 'Thám tử lừng danh Conan - Tập 1',
-        href: `/book/${5}`,
-        format: 'Thường',
-        price: 32000,
-        quantity: 1,
-        imageSrc: 'https://picsum.photos/300/300',
-        imageAlt:
-            'Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.',
-        currency: 'đ',
-        publisherID: '123453',
-        publisher: 'Nhà xuất bản Tổng hợp thành phố Hồ Chí Minh',
-        publisherImgUrl: 'https://i.ibb.co/Jnt6nzw/logo-nxb-tong-hop-tp-hcm-removebg-preview.png'
-    },
-    {
-        id: 8,
-        name: 'Thám tử lừng danh Conan - Tập 1',
-        href: `/book/${5}`,
-        format: 'Thường',
-        price: 32000,
-        quantity: 1,
-        imageSrc: 'https://picsum.photos/300/300',
-        imageAlt:
-            'Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.',
-        currency: 'đ',
-        publisherID: '',
-        publisher: '',
-        publisherImgUrl: ''
-    },
-    // More products...
-]
 
 export const ShoppingCarts = (/*items*/) => {
 
@@ -149,12 +27,38 @@ export const ShoppingCarts = (/*items*/) => {
     }
 
     // Xử lý sự kiện khi nhấn nút "Xoá"
-    const handleDeleteProduct = (productId) => {
+    const handleDeleteProduct = async (productId) => {
         //ví dụ gửi yêu cầu xoá sản phẩm xuống backend
         //sau đó update products
-        const updatedProducts = products.filter(product => product.id !== productId);
-        setProducts(updatedProducts);
+        const url = '../data/test/shoppingcarts.json';
+        try {
+            const shoppingCartsData = await fetchData(url);
+            const updatedProducts = [...shoppingCartsData];
+            const filteredProducts = updatedProducts.filter(product => product.id !== productId);
+            setProducts(filteredProducts);
+            return 'success';
+        } catch (error) {
+            console.error('Error:', error);
+            return 'failed';
+        }
     }
+
+
+
+    //Xử lý sự kiện xoá tất cả sản phẩm của một nhà xuất bản
+    const handleDeletePublisherProducts = async (publisherID) => {
+        const url = '../data/test/shoppingcarts.json';
+        try {
+            const shoppingCartsData = await fetchData(url);
+            const updatedProducts = [...shoppingCartsData];
+            const filteredProducts = updatedProducts.filter(product => product.publisherID !== publisherID);
+            setProducts(filteredProducts);
+            return 'success';
+        } catch (error) {
+            console.error('Error:', error);
+            return 'failed';
+        }
+    };
 
     // Xử lý sự kiện khi nhấn nút "Tăng Giảm số lượng"
     const handleQuantityChange = (productId, newQuantity) => {
@@ -177,25 +81,26 @@ export const ShoppingCarts = (/*items*/) => {
         handleQuantityChange(productId, newQuantity);
     };
 
-    //Xử lý sự kiện xoá tất cả sản phẩm của một nhà xuất bản
-    const handleDeletePublisherProducts = (publisherID) => {
-        const updatedProducts = [...products];
-        const filteredProducts = updatedProducts.filter(product => product.publisherID !== publisherID);
-        setProducts(filteredProducts);
-    };
-
     // Xử lý lấy địa chỉ của user
     const getAddresses = async (user) => {
         //Xử lý lấy thông tin địa chỉ
         return "Phường Tân Hưng, Quận 7,Hồ Chí Minh"
     }
 
+    //Fetch Shopping Carts
     useEffect(() => {
+        const url = '../data/test/shoppingcarts.json';
+        const loadShoppingCartsData = async () => {
+            try {
+                const shoppingCartsData = await fetchData(url);
+                setProducts(shoppingCartsData)
+            } catch (error) {
+                // throw error;
+            }
+        }
         //ví dụ tải các sản phẩm trong giỏ hàng của khách
         setTimeout(() => {
-            if (open) {
-                setProducts(sampleProducts);
-            }
+            loadShoppingCartsData()
         }, 1000)
     }, [])
 
@@ -233,7 +138,7 @@ export const ShoppingCarts = (/*items*/) => {
             <div className="bg-gray-50 mt-2">
                 {/* <h1 className="m-2 text-center items-center text-2xl font-semibold text-light font-inter">Giỏ Hàng Của Tôi</h1> */}
                 <div className="mx-auto max-w-5xl justify-center px-6 md:flex md:space-x-6 xl:px-0 xl:mt-6">
-                    <div className="rounded-lg md:w-2/3 xl:max-h-[35rem] xl:pr-2 overflow-y-auto no-scrollbar">
+                    <div className="rounded-lg md:w-2/3 xl:max-h-[50rem] xl:pr-2 overflow-y-auto no-scrollbar">
                         {products.length === 0 ?
                             <ShoppingCartLoader items={NUMLOADER} />
                             :

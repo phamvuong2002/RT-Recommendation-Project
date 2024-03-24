@@ -1,0 +1,120 @@
+[
+    {
+        "id": 1,
+        "name": "Thám tử lừng danh Conan - Tập 1",
+        "href": "/book/${1}",
+        "format": "Thường",
+        "price": 90000,
+        "quantity": 1,
+        "imageSrc": "https://picsum.photos/300/300",
+        "imageAlt": "Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt.",
+        "currency": "đ",
+        "publisherID": "123451",
+        "publisher": "Nhà xuất bản Trẻ",
+        "publisherImgUrl": "https://i.ibb.co/pRbvxj9/logo-nxb-tre.png"
+    },
+    {
+        "id": 2,
+        "name": "86 - Eightysix - Tập 8",
+        "href": "/book/${2}",
+        "format": "Thường",
+        "price": 32000,
+        "quantity": 1,
+        "imageSrc": "https://picsum.photos/300/300",
+        "imageAlt": "Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.",
+        "currency": "đ",
+        "publisherID": "123451",
+        "publisher": "Nhà xuất bản Trẻ",
+        "publisherImgUrl": "https://i.ibb.co/pRbvxj9/logo-nxb-tre.png"
+    },
+    {
+        "id": 3,
+        "name": "Thám tử lừng danh Conan - Tập 1",
+        "href": "/book/${3}",
+        "format": "Thường",
+        "price": 32000,
+        "quantity": 1,
+        "imageSrc": "https://picsum.photos/300/300",
+        "imageAlt":
+            "Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.",
+        "currency": "đ",
+        "publisherID": "123452",
+        "publisher": "Nhà xuất bản Kim Đồng",
+        "publisherImgUrl": "https://i.gyazo.com/7d1bab302c86880f9eb91cd04388edc2.png"
+    },
+    {
+        "id": 4,
+        "name": "86 - Eightysix - Tập 8",
+        "href": "/book/${4}",
+        "format": "Thường",
+        "price": 32000,
+        "quantity": 1,
+        "imageSrc": "https://picsum.photos/300/300",
+        "imageAlt":
+            "Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.",
+        "currency": "đ",
+        "publisherID": "123452",
+        "publisher": "Nhà xuất bản Kim Đồng",
+        "publisherImgUrl": "https://i.gyazo.com/7d1bab302c86880f9eb91cd04388edc2.png"
+    },
+    {
+        "id": 5,
+        "name": "Thám tử lừng danh Conan - Tập 1",
+        "href": "/book/${5}",
+        "format": "Thường",
+        "price": 32000,
+        "quantity": 1,
+        "imageSrc": "https://picsum.photos/300/300",
+        "imageAlt":
+            "Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.",
+        "currency": "đ",
+        "publisherID": "123451",
+        "publisher": "Nhà xuất bản Trẻ",
+        "publisherImgUrl": "https://i.ibb.co/pRbvxj9/logo-nxb-tre.png"
+    },
+    {
+        "id": 6,
+        "name": "Thám tử lừng danh Conan - Tập 1",
+        "href": "/book/${5}",
+        "format": "Thường",
+        "price": 32000,
+        "quantity": 1,
+        "imageSrc": "https://picsum.photos/300/300",
+        "imageAlt":
+            "Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.",
+        "currency": "đ",
+        "publisherID": "123453",
+        "publisher": "Nhà xuất bản Tổng hợp thành phố Hồ Chí Minh",
+        "publisherImgUrl": "https://i.ibb.co/Jnt6nzw/logo-nxb-tong-hop-tp-hcm-removebg-preview.png"
+    },
+    {
+        "id": 7,
+        "name": "Thám tử lừng danh Conan - Tập 1",
+        "href": "/book/${5}",
+        "format": "Thường",
+        "price": 32000,
+        "quantity": 1,
+        "imageSrc": "https://picsum.photos/300/300",
+        "imageAlt":
+            "Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.",
+        "currency": "đ",
+        "publisherID": "123453",
+        "publisher": "Nhà xuất bản Tổng hợp thành phố Hồ Chí Minh",
+        "publisherImgUrl": "https://i.ibb.co/Jnt6nzw/logo-nxb-tong-hop-tp-hcm-removebg-preview.png"
+    },
+    {
+        "id": 8,
+        "name": "Thám tử lừng danh Conan - Tập 1",
+        "href": "/book/${5}",
+        "format": "Thường",
+        "price": 32000,
+        "quantity": 1,
+        "imageSrc": "https://picsum.photos/300/300",
+        "imageAlt":
+            "Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.",
+        "currency": "đ",
+        "publisherID": "",
+        "publisher": "",
+        "publisherImgUrl": ""
+    }
+]

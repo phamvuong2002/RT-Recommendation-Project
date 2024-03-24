@@ -1,8 +1,19 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { StarRating } from './StarRating';
+import { Popup } from './Popup';
+import { DropDownClick } from './DropDownClick';
+
+const SAMPLEVERSION = {
+    default: 'Thường',
+    'special': 'Đặt biệt'
+}
+
 export const DetailCart = (/*{ product }*/) => {
 
     const [numCarts, setNumCarts] = useState(1);
+    const [version, setVersion] = useState(SAMPLEVERSION.default);
+    const [isVersionOpen, setIsVersionOpen] = useState(false);
+
 
     const [showBubble, setShowBubble] = useState(false);
 
@@ -36,11 +47,19 @@ export const DetailCart = (/*{ product }*/) => {
 
     }
 
+    const handleVersionToggle = () => {
+        setIsVersionOpen(!isVersionOpen);
+    };
+
+    // useEffect(() => {
+    //     console.log('handleVersionToggle::', version)
+    // }, [version])
+
     return (
-        <div className="mt-2 max-w-screen-2xl container mx-auto xl:px-28 font-inter ">
-            <div className=" m-auto">
+        <div className="mt-1 container mx-auto font-inter xl:px-28">
+            <div className="m-auto">
                 {/* Navigate */}
-                <div className="h-8 flex items-center gap-2 pl-2 text-red-400 text-sm font-normal capitalize tracking-widest bg-gray-100">
+                <div className="h-8 flex items-center gap-2 pl-2 text-red-400 text-sm font-normal capitalize tracking-widest bg-white">
                     <a href="/" className="hover:text-zinc-600">Trang Chủ</a>
                     <span className="text-zinc-400"> {'>'} </span>
                     <a href={`/`} className="xl:hover:text-zinc-600"> Tiểu Thuyết</a>
@@ -48,7 +67,7 @@ export const DetailCart = (/*{ product }*/) => {
                     <a href={`/`} className="text-zinc-500"> 86 - Eightysix</a>
                 </div>
                 <hr />
-                <div className="xl:mt-1 sm:mt-10 bg-gray-50">
+                <div className="xl:mt-1 sm:mt-10 bg-white">
                     <div className="grid grid-cols-1 md:grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 xl:gap-14 gap-2 h-max">
                         {/* Images */}
                         <div className="flex items-center justify-center">
@@ -59,7 +78,7 @@ export const DetailCart = (/*{ product }*/) => {
                             />
                         </div>
                         {/* Details - Main information*/}
-                        <div>
+                        <div className="px-1">
                             {/* Title */}
                             <h1 className="mt-2 text-2xl font-bold text-[#393280]">{product.title}</h1>
                             <div className="w-[8rem] mt-6 border-t-2 border-[#ED553B]"></div>
@@ -98,12 +117,22 @@ export const DetailCart = (/*{ product }*/) => {
                             </div>
                             {/* Order Space */}
                             <div className="mt-10">
-                                <div className="flex mt-6 justify-start items-center gap-10 text-base ">
+                                <div className="flex mt-6 justify-start items-center gap-4 text-base ">
                                     <div className="font-inter font-medium leading-tight tracking-wide">Phiên bản:</div>
-                                    <select className="w-32 h-9 relative font-inter rounded border border-black border-opacity-50">
-                                        <option className="text-center text-sm leading-tight">Thường</option>
-                                        <option className="text-center text-sm leading-tight">Đặc biệt</option>
-                                    </select>
+                                    <div></div>
+                                    <DropDownClick
+                                        icon={false}
+                                        value={version}
+                                        setValue={setVersion}
+                                        titleOption={''}
+                                        dataOption={SAMPLEVERSION}
+                                        toggleDropdown={handleVersionToggle}
+                                        isOpen={isVersionOpen}
+                                        setIsOpen={setIsVersionOpen}
+                                        className={"w-[7rem] h-[2rem] flex items-center justify-center border border-red-500 xl:hover:bg-red-500  xl:hover:text-white transition-all"}
+                                        customButton={"text-base font-[400] pr-1"}
+                                    />
+
                                 </div>
 
                                 <div className="mt-6 flex gap-6">

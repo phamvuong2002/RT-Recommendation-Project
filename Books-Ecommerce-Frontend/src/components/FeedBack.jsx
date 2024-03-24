@@ -51,7 +51,6 @@ export const FeedBack = () => {
     const loadComments = async (url) => {
         try {
             const response = await fetch(url); // Đường dẫn đến file JSON chứa danh sách comments
-            console.log(response)
             if (!response.ok) {
                 throw new Error('Failed to fetch comments');
             }
@@ -64,12 +63,10 @@ export const FeedBack = () => {
     };
 
     useEffect(() => {
-        console.log('sort::', sort);
         const url = '../data/test/comments.json';
         const loadCommentsData = async () => {
             try {
                 const commentsData = await loadComments(url);
-                console.log('commentsData SORT', filterAndSortComments(filter, sort, commentsData))
                 setComments(filterAndSortComments(filter, sort, commentsData))
             } catch (error) {
                 // throw error;
@@ -159,7 +156,6 @@ export const FeedBack = () => {
             case SAMPLESORT.recent:
                 return [...comments].sort((a, b) => new Date(b.date) - new Date(a.date));
             case SAMPLESORT.a_z:
-                console.log([...comments].sort((a, b) => a.rating - b.rating))
                 return [...comments].sort((a, b) => b.rating - a.rating);
             case SAMPLESORT.z_a:
                 return [...comments].sort((a, b) => a.rating - b.rating);
@@ -183,7 +179,7 @@ export const FeedBack = () => {
         <div className="xl:flex flex-col px-2 xl:gap-6  ">
             <div className="flex flex-col xl:gap-16 xl:flex-row">
                 {/* total rating */}
-                <div className="flex flex-col mb-2 items-center justify-center gap-2">
+                <div className="flex flex-col mb-2 items-center justify-center gap-1">
                     <div className="w-20 h-11 relative">
                         <div className="w-8 h-10 left-0 top-0 absolute text-black text-4xl font-medium font-['Inter'] capitalize">5</div>
                         <div className="w-9 h-px left-[41.98px] top-[11.57px] absolute origin-top-left rotate-[104.04deg] border border-black"></div>
@@ -194,7 +190,7 @@ export const FeedBack = () => {
                 </div>
 
                 {/* sort rating */}
-                <div className="px-8 xl:w-[50rem]">
+                <div className="pl-8 w-full xl:w-[50rem]">
                     <div className="flex items-center mt-4 ml-4">
                         <a href="#" className="text-sm font-medium text-red-600 dark:text-red-500 hover:underline xl:hidden">5 star</a>
                         <div className="hidden xl:inline-block">
@@ -263,9 +259,9 @@ export const FeedBack = () => {
                 {/* Sort và Filter */}
                 <div className="flex">
                     <div className="hidden xl:block">
-                        <DropDownClick icon={sortIcon} value={sort} setValue={setSort} dataOption={SAMPLESORT} toggleDropdown={handleSortToggle} isOpen={isSortOpen} setIsOpen={setIsSortOpen} />
+                        <DropDownClick icon={sortIcon} value={sort} setValue={setSort} titleOption={"Lọc:"} dataOption={SAMPLESORT} toggleDropdown={handleSortToggle} isOpen={isSortOpen} setIsOpen={setIsSortOpen} className={"h-full w-40 flex flex-col xl:gap-2 items-center justify-center border-x border-gray-300"} />
                     </div>
-                    <DropDownClick icon={filterIcon} value={filter} setValue={setFilter} dataOption={SAMPLESTAR} toggleDropdown={handleFilterToggle} isOpen={isFilterOpen} setIsOpen={setIsFilterOpen} />
+                    <DropDownClick icon={filterIcon} value={filter} setValue={setFilter} titleOption={"Lọc:"} dataOption={SAMPLESTAR} toggleDropdown={handleFilterToggle} isOpen={isFilterOpen} setIsOpen={setIsFilterOpen} className={"h-full w-40 flex flex-col xl:gap-2 items-center justify-center border-x border-gray-300"} />
                 </div>
 
 
@@ -274,7 +270,7 @@ export const FeedBack = () => {
 
 
             {/* comments */}
-            <div className=" w-full flex flex-col mt-6 xl:mt-1 gap-12 max-h-[28rem] xl:max-h-[60rem] overflow-y-scroll xl:scrollbar-thin xl:scrollbar-webkit" ref={commentContainerRef}>
+            <div className=" w-full flex flex-col mt-6 xl:mt-1 gap-12 max-h-[24rem] xl:max-h-[50rem] overflow-y-scroll xl:scrollbar-thin xl:scrollbar-webkit" ref={commentContainerRef}>
                 {/* Hiển thị danh sách các comment */}
                 {/* <div></div> */}
                 {comments?.map(comment => (

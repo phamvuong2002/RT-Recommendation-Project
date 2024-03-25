@@ -60,6 +60,15 @@ export const ShoppingCarts = (/*items*/) => {
         }
     };
 
+    //Xử lý sự kiện thêm sản phẩm quan tâm
+    const handleAddInterestingProduct = async (productID) => {
+        const url = ''
+        //Xử lý thêm vào danh sách sản phẩm yêu thích
+        //ví dụ:
+        console.log(`Bạn đã thêm sản phẩm ${productID} vào danh sách yêu thích`)
+        return 'success'
+    }
+
     // Xử lý sự kiện khi nhấn nút "Tăng Giảm số lượng"
     const handleQuantityChange = (productId, newQuantity) => {
         const updatedProducts = products.map(product => {
@@ -127,15 +136,15 @@ export const ShoppingCarts = (/*items*/) => {
     return (
         <div className="flex flex-col xl:px-28">
             {/* Navigate */}
-            <div className="px-8">
+            {/* <div className="px-8">
                 <div className="flex gap-2 text-zinc-400 text-sm font-normal capitalize tracking-widest ">
                     <a href="/" className="hover:text-zinc-600">Trang Chủ</a>
                     <a href={`/home/shoppingcart`} className="text-zinc-500">/ Giỏ Hàng</a>
                 </div>
                 <hr />
-            </div>
+            </div> */}
             {/* Shopping Carts */}
-            <div className="bg-gray-50 mt-2">
+            <div className="bg-gray-50">
                 {/* <h1 className="m-2 text-center items-center text-2xl font-semibold text-light font-inter">Giỏ Hàng Của Tôi</h1> */}
                 <div className="mx-auto max-w-5xl justify-center px-6 md:flex md:space-x-6 xl:px-0 xl:mt-6">
                     <div className="rounded-lg md:w-2/3 xl:max-h-[50rem] xl:pr-2 overflow-y-auto no-scrollbar">
@@ -148,6 +157,7 @@ export const ShoppingCarts = (/*items*/) => {
                                 handleDecreaseQuantity={handleDecreaseQuantity}
                                 handleIncreaseQuantity={handleIncreaseQuantity}
                                 handleDeletePublisherProducts={handleDeletePublisherProducts}
+                                handleAddInterestingProduct={handleAddInterestingProduct}
                             />
                         }
                     </div>

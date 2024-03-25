@@ -1,8 +1,8 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 
-export const Popup = ({ icon, onYesClick, onNoClick, Title, Content, Option, CustomClassName, ErrorHandling, SuccessHandling }) => {
-    const [open, setOpen] = useState(false);
+export const Popup = ({ autoShow = false, icon = null, onYesClick, onNoClick, Title = '', Content, Option, CustomClassName, ErrorHandling, SuccessHandling }) => {
+    const [open, setOpen] = useState(autoShow);
     const [loading, setLoading] = useState(false);
     const [customContent, setCustomContent] = useState('');
     const [reload, setReload] = useState(false);
@@ -11,7 +11,7 @@ export const Popup = ({ icon, onYesClick, onNoClick, Title, Content, Option, Cus
         return (
             <div className={CustomClass || ''}>
                 <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
-                    {Title || "Are you sure?"}
+                    {Title}
                 </Dialog.Title>
                 <div className="mt-2">
                     {Content ? (
@@ -43,7 +43,8 @@ export const Popup = ({ icon, onYesClick, onNoClick, Title, Content, Option, Cus
     };
 
     const handleNoClick = async () => {
-        setReload(!reload)
+        onNoClick();
+        setReload(!reload);
     }
 
     //Error handling
@@ -75,12 +76,12 @@ export const Popup = ({ icon, onYesClick, onNoClick, Title, Content, Option, Cus
             <button
                 type="button"
                 onClick={() => setOpen(!open)}
-                className="text-gray-500 hover:text-gray-900"
+                className={`text-gray-500 hover:text-gray-900 ${icon ? '' : 'hidden'}`}
             >
-                {icon || 'Click'}
+                {icon}
             </button>
             <Transition.Root show={open} as={Fragment} >
-                <Dialog as="div" className="fixed inset-0 overflow-y-auto z-20 " onClose={setOpen}>
+                <Dialog as="div" className="fixed inset-0 overflow-y-auto z-20 " onClose={() => { handleNoClick(); setOpen(false) }}>
                     <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center">
                         <Transition.Child
                             as={Fragment}
@@ -108,7 +109,7 @@ export const Popup = ({ icon, onYesClick, onNoClick, Title, Content, Option, Cus
                             <div className="bg-gray-50 inline-block align-middle px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all max-w-lg w-full">
                                 {customContent}
 
-                                <div className="mt-5 flex justify-between">
+                                <div className={`mt-5 flex justify-between ${Option ? '' : 'hidden'}`}>
                                     <button
                                         type="button"
                                         className="inline-flex justify-center w-1/2 border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700"
@@ -119,7 +120,7 @@ export const Popup = ({ icon, onYesClick, onNoClick, Title, Content, Option, Cus
                                         onClick={handleYesClick}
                                         disabled={loading}
                                     >
-                                        {loading ? "Loading..." : Option?.yes || 'Yes'} {/* Hiển thị "Loading" khi đang fetch, ngược lại hiển thị label của nút */}
+                                        {loading ? "Loading..." : Option?.yes} {/* Hiển thị "Loading" khi đang fetch, ngược lại hiển thị label của nút */}
                                     </button>
                                     <button
                                         type="button"
@@ -129,7 +130,7 @@ export const Popup = ({ icon, onYesClick, onNoClick, Title, Content, Option, Cus
                                             handleNoClick();
                                         }}
                                     >
-                                        {Option?.no || 'No'}
+                                        {Option?.no}
                                     </button>
                                 </div>
                             </div>

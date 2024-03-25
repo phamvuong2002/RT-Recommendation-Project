@@ -42,6 +42,7 @@ const ShoppingCartsPopupGroupedByPublisherID = ({ products, handleDeleteProduct,
                                 onYesClick={() =>
                                     handleDeletePublisherProducts(publisherID)}
                                 onNoClick={() => console.log("End")}
+                                Option={{ yes: "Xoá", no: "Thoát" }}
                                 Title={"Xóa khỏi giỏ hàng"}
                                 Content={popupContent(null, "Bạn có đồng ý loại bỏ tất cả sản phẩm của Nhà Xuất Bản này khỏi giỏ hàng!")}
                                 ErrorHandling={{ title: "Lỗi xoá giỏ hàng", message: "Không thể xoá tất cả sản phẩm của Nhà Xuất Bản này khỏi giỏ hàng!" }}

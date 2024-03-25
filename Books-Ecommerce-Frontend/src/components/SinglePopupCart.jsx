@@ -35,16 +35,10 @@ export const SinglePopupCart = ({ product, handleDeleteProduct }) => {
                     <p className="text-gray-500">Qty {product.quantity}</p>
 
                     <div className="flex">
-                        {/* <button
-                            type="button"
-                            className=" font-medium text-gray-900 xl:hover:text-gray-600"
-                            onClick={() => handleDeleteProduct(product.id)}
-                        >
-                            Xoá
-                        </button> */}
                         <Popup
                             icon={"Xoá"}
                             onYesClick={() => handleDeleteProduct(product.id)}
+                            Option={{ yes: "Xoá", no: "Thoát" }}
                             Title={"Xóa khỏi giỏ hàng"}
                             Content={popupContent(null, "Bạn có đồng ý loại bỏ sản phẩm này khỏi giỏ hàng?")}
                             ErrorHandling={{ title: "Lỗi xoá giỏ hàng", message: "Không thể xoá sản phẩm này khỏi giỏ hàng!" }}

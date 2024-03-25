@@ -58,15 +58,6 @@ export const DetailCart = (/*{ product }*/) => {
     return (
         <div className="mt-1 container mx-auto font-inter xl:px-28">
             <div className="m-auto">
-                {/* Navigate */}
-                <div className="h-8 flex items-center gap-2 pl-2 text-red-400 text-sm font-normal capitalize tracking-widest bg-white">
-                    <a href="/" className="hover:text-zinc-600">Trang Chủ</a>
-                    <span className="text-zinc-400"> {'>'} </span>
-                    <a href={`/`} className="xl:hover:text-zinc-600"> Tiểu Thuyết</a>
-                    <span className="text-zinc-400"> {'>'} </span>
-                    <a href={`/`} className="text-zinc-500"> 86 - Eightysix</a>
-                </div>
-                <hr />
                 <div className="xl:mt-1 sm:mt-10 bg-white">
                     <div className="grid grid-cols-1 md:grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 xl:gap-14 gap-2 h-max">
                         {/* Images */}
@@ -74,7 +65,7 @@ export const DetailCart = (/*{ product }*/) => {
                             <img
                                 src={product.imgUrl}
                                 alt="title"
-                                className="mx-auto w-full xl:hover:scale-105 trasition-all duration-300 aspect-auto xl:h-[34rem]"
+                                className="mx-auto w-full xl:hover:scale-105 trasition-all duration-300 aspect-auto xl:h-[34rem] md:h-[32rem]"
                             />
                         </div>
                         {/* Details - Main information*/}

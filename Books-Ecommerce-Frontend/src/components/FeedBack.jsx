@@ -258,7 +258,7 @@ export const FeedBack = () => {
 
                 {/* Sort và Filter */}
                 <div className="flex">
-                    <div className="hidden xl:block">
+                    <div className="hidden xl:block md:block">
                         <DropDownClick icon={sortIcon} value={sort} setValue={setSort} titleOption={"Lọc:"} dataOption={SAMPLESORT} toggleDropdown={handleSortToggle} isOpen={isSortOpen} setIsOpen={setIsSortOpen} className={"h-full w-40 flex flex-col xl:gap-2 items-center justify-center border-x border-gray-300"} />
                     </div>
                     <DropDownClick icon={filterIcon} value={filter} setValue={setFilter} titleOption={"Lọc:"} dataOption={SAMPLESTAR} toggleDropdown={handleFilterToggle} isOpen={isFilterOpen} setIsOpen={setIsFilterOpen} className={"h-full w-40 flex flex-col xl:gap-2 items-center justify-center border-x border-gray-300"} />

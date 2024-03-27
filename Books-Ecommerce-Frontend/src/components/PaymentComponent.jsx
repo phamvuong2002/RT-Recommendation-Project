@@ -8,6 +8,12 @@ import { calculateTotalPrice } from '../utils/calculateTotalPrice';
 import { hideSensitiveInfo } from '../utils/hideSensitiveInfo';
 import { isMobileDevice } from '../utils/isMobileDevice';
 import { checkCouponCode } from '../utils/checkCouponCode';
+import { Swiper, SwiperSlide } from 'swiper/react';
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/scrollbar';
+
 
 const SAMPLESERVEICES = [
     {
@@ -86,6 +92,7 @@ const SAMPLECOUPONCODE = [
 ]
 
 export const Payment = () => {
+    // const swiperRef = useRef();
     const paymentMethodsContainerRef = useRef(null);
     const shippingMethodsContainerRef = useRef(null);
 
@@ -237,13 +244,16 @@ export const Payment = () => {
     useEffect(() => {
         setTimeout(() => {
             setShippingMethods(SAMPLESERVEICES);
+            setServiceID(SAMPLESERVEICES[0].serviceid);
+            setShippingFee(getFeeByServiceId(SAMPLESERVEICES[0].serviceid));
         }, 1000)
     }, [])
+
 
     return (
         <div className="xl:flex xl:px-28 xl:gap-2">
             {/* Preview*/}
-            <div className="xl:w-2/3 flex flex-col gap-2">
+            <div className="xl:w-2/3 flex flex-col gap-1 xl:gap-2">
                 {/* Address preview*/}
                 <div className="w-full flex flex-col item-center text-sm font-inter border-red-100 bg-white shadow-md shadow-red-200">
                     {/* header */}
@@ -303,7 +313,7 @@ export const Payment = () => {
                         {/* shipping method */}
                         <div className="flex flex-col gap-2">
                             <div className="text-xs xl:p-2 py-1"> Hình thức giao hàng </div>
-                            <div ref={shippingMethodsContainerRef} className="flex gap-1 overflow-x-auto xl:grid xl:grid-cols-3 xl:gap-2 pb-1 scroll-smooth">
+                            <div ref={shippingMethodsContainerRef} className="flex gap-1 overflow-x-auto xl:grid xl:grid-cols-3 xl:gap-2 pb-1 scroll-smooth no-scrollbar">
                                 {
                                     shippingMethods.map(service => (
                                         <div
@@ -339,64 +349,90 @@ export const Payment = () => {
                             products.length === 0 ?
                                 <ShoppingCartLoader items={NUMLOADER} />
                                 :
-                                <div className="flex flex-col gap-4 p-2 mt-1 xl:max-h-[40rem] xl:overflow-y-auto scrollbar-thin">
-                                    {
-                                        products.map((product) => (
-                                            // Single payment product
-                                            <div key={product.id} className="flex gap-2 border-b border-b-gray-200 py-4">
-                                                <div className="flex">
-                                                    <div className="w-[6rem] flex items-start mt-1 ">
-                                                        <img className="rounded-lg" src={product.imageSrc} alt={product.name} />
+
+                                <div className="flex flex-col xl:block gap-4 p-2 mt-1 xl:max-h-[40rem] xl:overflow-y-auto scrollbar-thin">
+                                    {products.map((product) => (
+                                        <Swiper
+                                            // onSwiper={(swiper) => {
+                                            //     swiperRef.current = swiper;
+                                            // }}
+                                            key={product.id}
+                                            slidesPerView={'auto'}
+                                            className="mySwiper"
+                                        >
+                                            <SwiperSlide className="">
+                                                <div key={product.id} className="flex gap-2 border-b border-b-gray-200 py-4">
+                                                    <div className="flex">
+                                                        <div className="w-[6rem] flex items-start mt-1 ">
+                                                            <img className="rounded-lg" src={product.imageSrc} alt={product.name} />
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex flex-col gap-2 md:flex-row md:gap-4 md:w-full xl:flex-row xl:gap-4 xl:w-full">
+                                                        <div className="flex flex-col md:w-2/5 xl:w-2/5 gap-1">
+                                                            <div className="text-base font-semibold">
+                                                                {product.name}
+                                                            </div>
+                                                            <div className="flex flex-col text-gray-500">
+                                                                <div>{`Phiên bản: ${product.format}`}</div>
+                                                                <div>{`Nhà xuất bản: ${product.publisher}`}</div>
+                                                                <div>{`Tác giả: ${product.author}`}</div>
+                                                            </div>
+                                                            <div className="text-xs text-gray-500 font-bold">
+                                                                <div className="w-fit bg-gray-300 px-1">
+                                                                    {`Chỉ còn ${5} sản phẩm`}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex flex-col md:justify-between md:py-2 xl:justify-between xl:py-2">
+                                                            <div className="flex flex-col gap-1 text-[0.6rem] capitalize font-bold">
+                                                                <div className="w-fit px-1 bg-blue-200 text-blue-600">
+                                                                    {`30 ngày trả hàng miễn phí`}
+                                                                </div>
+                                                                <div className="w-fit px-1 bg-blue-200 text-blue-600">
+                                                                    {`12 tháng bằng phiếu bảo hành và hoá đơn`}
+                                                                </div>
+                                                            </div>
+                                                            {/* Remove product Desktop */}
+                                                            {/* <div className="hidden md:flex xl:flex items-center justify-center">
+                                                                <Popup
+                                                                    icon={removeIcon("w-5 h-5 text-gray-500 xl:hover:text-red-500")}
+                                                                    onYesClick={() =>
+                                                                        handleDeleteProduct(product.id)}
+                                                                    onNoClick={() => console.log("End")}
+                                                                    Option={{ yes: "Xoá", no: "Thoát" }}
+                                                                    Title={"Xóa khỏi giỏ hàng"}
+                                                                    Content={popupContent(null, "Bạn có đồng ý loại bỏ sản phẩm này khỏi Hoá Đơn?")}
+                                                                    ErrorHandling={{ title: "Lỗi xoá Hoá Đơn", message: "Không thể xoá tất cả sản phẩm này khỏi Hoá Đơn!" }}
+                                                                />
+                                                            </div> */}
+                                                        </div>
+                                                        <div className="flex font-semibold justify-between xl:flex-col md:flex-col md:ml-4">
+                                                            <div className="flex text-red-500 text-base xl:w-[8rem] xl:justify-end">
+                                                                <div>{formatNumberToText(product.price)}</div>
+                                                                <div className="underline">đ</div>
+                                                            </div>
+                                                            <div className="flex xl:w-[8rem] xl:justify-end">{`Số lượng: ${product.quantity}`}</div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div className="flex flex-col gap-2 md:flex-row md:gap-4 md:w-full xl:flex-row xl:gap-4 xl:w-full">
-                                                    <div className="flex flex-col md:w-2/5 xl:w-2/5 gap-1">
-                                                        <div className="text-base font-semibold">
-                                                            {product.name}
-                                                        </div>
-                                                        <div className="flex flex-col text-gray-500">
-                                                            <div>{`Phiên bản: ${product.format}`}</div>
-                                                            <div>{`Nhà xuất bản: ${product.publisher}`}</div>
-                                                            <div>{`Tác giả: ${product.author}`}</div>
-                                                        </div>
-                                                        <div className="text-xs text-gray-500 font-bold">
-                                                            <div className="w-fit bg-gray-300 px-1">
-                                                                {`Chỉ còn ${5} sản phẩm`}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex flex-col md:justify-between md:py-2 xl:justify-between xl:py-2">
-                                                        <div className="flex flex-col gap-1 text-[0.6rem] capitalize font-bold">
-                                                            <div className="w-fit px-1 bg-blue-200 text-blue-600">
-                                                                {`30 ngày trả hàng miễn phí`}
-                                                            </div>
-                                                            <div className="w-fit px-1 bg-blue-200 text-blue-600">
-                                                                {`12 tháng bằng phiếu bảo hành và hoá đơn`}
-                                                            </div>
-                                                        </div>
-                                                        <div className="hidden md:flex xl:flex items-center justify-center">
-                                                            <Popup
-                                                                icon={removeIcon("w-5 h-5 text-gray-500 xl:hover:text-red-500")}
-                                                                onYesClick={() =>
-                                                                    handleDeleteProduct(product.id)}
-                                                                onNoClick={() => console.log("End")}
-                                                                Option={{ yes: "Xoá", no: "Thoát" }}
-                                                                Title={"Xóa khỏi giỏ hàng"}
-                                                                Content={popupContent(null, "Bạn có đồng ý loại bỏ sản phẩm này khỏi Hoá Đơn?")}
-                                                                ErrorHandling={{ title: "Lỗi xoá Hoá Đơn", message: "Không thể xoá tất cả sản phẩm của Nhà Xuất Bản này khỏi Hoá Đơn!" }}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex font-semibold justify-between xl:flex-col md:flex-col md:ml-4">
-                                                        <div className="flex text-red-500 text-base xl:w-[8rem] xl:justify-end">
-                                                            <div>{formatNumberToText(product.price)}</div>
-                                                            <div className="underline">đ</div>
-                                                        </div>
-                                                        <div className="flex xl:w-[8rem] xl:justify-end">{`Số lượng: ${product.quantity}`}</div>
-                                                    </div>
+                                            </SwiperSlide>
+                                            <SwiperSlide className="w-[20%] flex gap-2 py-4 h-full">
+                                                {/* Remove product Mobile */}
+                                                <div className="flex flex-col items-center w-full h-full">
+                                                    <Popup
+                                                        icon={removeIcon("w-5 h-5 text-gray-500 xl:hover:text-red-500")}
+                                                        onYesClick={() =>
+                                                            handleDeleteProduct(product.id)}
+                                                        onNoClick={() => console.log("End")}
+                                                        Option={{ yes: "Xoá", no: "Thoát" }}
+                                                        Title={"Xóa khỏi giỏ hàng"}
+                                                        Content={popupContent(null, "Bạn có đồng ý loại bỏ sản phẩm này khỏi Hoá Đơn?")}
+                                                        ErrorHandling={{ title: "Lỗi xoá Hoá Đơn", message: "Không thể xoá tất cả sản phẩm này khỏi Hoá Đơn!" }}
+                                                    />
                                                 </div>
-                                            </div>
-                                        ))}
+                                            </SwiperSlide>
+                                        </Swiper>
+                                    ))}
                                 </div>
                         }
                     </div>
@@ -409,13 +445,13 @@ export const Payment = () => {
                         <div className="font-semibold">{`Chọn phương thức thanh toán`}</div>
                     </div>
                     {/* detail */}
-                    <div ref={paymentMethodsContainerRef} className="flex gap-1 overflow-x-auto md:gap-2 pb-1 px-[0.1rem] scroll-smooth">
+                    <div ref={paymentMethodsContainerRef} className="flex gap-1 bg-white overflow-x-auto md:gap-2 pb-1 px-[0.1rem] scroll-smooth no-scrollbar">
                         {
                             paymentMethods.length === 0 ?
                                 <ShoppingCartLoader items={NUMLOADER - 2} />
                                 :
                                 paymentMethods.map(payment => (
-                                    <div key={payment.paymentMethodId} className={`flex-shrink-0 w-[14rem] md:w-[18.5rem] flex gap-2 md:gap-4 border no-scrollbar ${paymentID === payment.paymentMethodId ? 'border-red-500' : 'border-gray-300'} rounded-lg p-2 xl:cursor-pointer`} onClick={() => choicePayment(payment.paymentMethodId, true)} >
+                                    <div key={payment.paymentMethodId} className={`flex-shrink-0 w-[14rem] md:w-[18.5rem] flex gap-2 md:gap-4 border  ${paymentID === payment.paymentMethodId ? 'border-red-500' : 'border-gray-300'} rounded-lg p-2 xl:cursor-pointer`} onClick={() => choicePayment(payment.paymentMethodId, true)} >
                                         <div className="w-8 h-8 flex mb-8">
                                             <img src={payment.paymentMethodImage} alt={payment.paymentMethodName} />
                                         </div>
@@ -450,12 +486,12 @@ export const Payment = () => {
                     </button>
                     <div className={`${couponCodeStatus ? '' : 'hidden'} text-xs text-red-600`}>{couponCodeStatus}</div>
                 </div>
-            </div>
+            </div >
 
 
 
             {/* Preview bill */}
-            <div className="w-full xl:w-1/3">
+            <div className="w-full xl:w-1/3" >
                 <div className={`xl:mt-0 xl:flex xl:flex-col xl:gap-8 h-full w-full font-inter border border-red-100 bg-white p-4 xl:p-2 shadow-md shadow-red-200 ${products.length ? '' : 'animate-pulse'}`}>
                     {/* payment methods desktop */}
                     <div className="hidden xl:flex xl:flex-col">
@@ -589,6 +625,6 @@ export const Payment = () => {
             </div>
 
             {/* Summary Total bill */}
-        </div>
+        </div >
     )
 }

@@ -135,107 +135,113 @@ export const ShoppingCarts = (/*items*/) => {
 
     return (
         <div className="flex flex-col xl:px-28">
-            {/* Navigate */}
-            {/* <div className="px-8">
-                <div className="flex gap-2 text-zinc-400 text-sm font-normal capitalize tracking-widest ">
-                    <a href="/" className="hover:text-zinc-600">Trang Chủ</a>
-                    <a href={`/home/shoppingcart`} className="text-zinc-500">/ Giỏ Hàng</a>
-                </div>
-                <hr />
-            </div> */}
             {/* Shopping Carts */}
-            <div className="bg-gray-50">
+            <div className="flex flex-col items-center bg-gray-50 ">
                 {/* <h1 className="m-2 text-center items-center text-2xl font-semibold text-light font-inter">Giỏ Hàng Của Tôi</h1> */}
-                <div className="mx-auto max-w-5xl justify-center px-6 md:flex md:space-x-6 xl:px-0 xl:mt-6">
-                    <div className="rounded-lg md:w-2/3 xl:max-h-[50rem] xl:pr-2 overflow-y-auto no-scrollbar">
-                        {products.length === 0 ?
-                            <ShoppingCartLoader items={NUMLOADER} />
-                            :
-                            <ShoppingCartsGroupedByPublisherID
-                                products={products}
-                                handleDeleteProduct={handleDeleteProduct}
-                                handleDecreaseQuantity={handleDecreaseQuantity}
-                                handleIncreaseQuantity={handleIncreaseQuantity}
-                                handleDeletePublisherProducts={handleDeletePublisherProducts}
-                                handleAddInterestingProduct={handleAddInterestingProduct}
-                            />
-                        }
-                    </div>
-
-
-                    {/* <!-- Sub total --> */}
-                    <div className={`h-full font-inter rounded-lg xl:mt-2 xl:rounded-none border border-red-200 bg-white p-6 shadow-md shadow-red-200 md:mt-0 md:w-1/3 ${products.length ? '' : 'animate-pulse'}`}>
-                        <div className="mb-2 flex gap-2 flex-col justify-between">
-                            <p className="text-gray-700">Địa Chỉ</p>
-                            <div className="flex gap-2 text-gray-700 text-base font-bold capitalize tracking-wide">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
-                                </svg>
-                                <div className='text-sm font-light'>{address}</div>
-                            </div>
-                            <button className="flex flex-col items-end text-sm text-red-500">Chỉnh Sửa</button>
+                <div className="w-full px-1">
+                    <div className=" xl:mx-0 mb-1 xl:w-full max-w-[80rem] h-[3rem] flex items-center text-red-500 text-lg font-bold bg-red-50 border border-red-100 rounded-tl-lg rounded-tr-lg">
+                        <div className="p-2 xl:p-4  w-full">
+                            {`Giỏ Hàng (${products.length} sản phẩm)`}
                         </div>
-                        <hr className="my-4" />
-                        <div className="mb-2 flex justify-between">
-                            <p className="text-lg font-bold">Thông Tin Đơn Hàng</p>
-                            <div className="text-gray-700 text-base font-bold capitalize tracking-wide">
-                                {/* <span>
+                    </div>
+                </div>
+                <div className="w-full xl:px-1">
+                    <div className="max-w-7xl justify-center px-1 md:flex md:space-x-1 xl:px-0">
+                        <div className="md:w-2/3 xl:max-h-[50rem] xl:pr-2 overflow-y-auto no-scrollbar border border-red-100 ">
+                            {products.length === 0 ?
+                                <ShoppingCartLoader items={NUMLOADER} />
+                                :
+                                <ShoppingCartsGroupedByPublisherID
+                                    products={products}
+                                    handleDeleteProduct={handleDeleteProduct}
+                                    handleDecreaseQuantity={handleDecreaseQuantity}
+                                    handleIncreaseQuantity={handleIncreaseQuantity}
+                                    handleDeletePublisherProducts={handleDeletePublisherProducts}
+                                    handleAddInterestingProduct={handleAddInterestingProduct}
+                                />
+                            }
+                        </div>
+
+
+                        {/* <!-- Sub total --> */}
+                        <div className={`${products.length === 0 ? 'relative' : 'fixed'}  bottom-0 left-0 w-full xl:relative md:relative xl:h-full font-inter rounded-bl-lg rounded-br-lg xl:rounded-none border border-red-100 bg-white xl:p-6 md:p-6 p-3  md:mt-0 md:w-1/3 ${products.length ? '' : 'animate-pulse'}`}>
+                            <div className="mb-2 xl:flex gap-2 flex-col justify-between hidden">
+                                <p className="text-gray-700">Địa Chỉ</p>
+                                <div className="flex gap-2 text-gray-700 text-base font-bold capitalize tracking-wide">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                                    </svg>
+                                    <div className='text-sm font-light'>{address || "Bạn chưa có địa chỉ giao hàng. Vui lòng cập nhật"}</div>
+                                </div>
+                                {
+                                    address ?
+                                        <button className="flex flex-col items-end text-sm text-red-500">Chỉnh Sửa</button>
+                                        :
+                                        <button className="flex flex-col items-end text-sm text-red-500">Cập Nhật Địa Chỉ</button>
+                                }
+                            </div>
+                            <hr className="xl:flex my-4 hidden" />
+                            <div className="mb-2 flex justify-between">
+                                <p className="text-base font-bold">Thông Tin Đơn Hàng</p>
+                                <div className="text-gray-700 text-base font-bold capitalize tracking-wide">
+                                    {/* <span>
                                     {products.length}
                                 </span> */}
+                                </div>
                             </div>
-                        </div>
-                        <div className="mb-2 flex justify-between">
-                            <p className="text-gray-700">Tạm Tính ({products.length} sản phẩm) </p>
-                            <div className="text-gray-700 text-base font-bold capitalize tracking-wide">
-                                <span>
-                                    {formatNumberToText(calculateTotalPrice(products))}
-                                </span>
-                                <span className="underline">
-                                    {products[0]?.currency}
-                                </span>
-                            </div>
-                        </div>
-                        <div className="flex justify-between">
-                            <p className="text-gray-700">Phí Vận Chuyển</p>
-                            <div className="text-gray-700 text-base font-bold capitalize tracking-wide">
-                                <span>
-                                    {formatNumberToText(shippingFee)}
-                                </span>
-                                <span className="underline">
-                                    {products[0]?.currency}
-                                </span>
-                            </div>
-                        </div>
-                        <hr className="my-4" />
-                        <div className="flex gap-8 justify-between text-red-500 text-xl">
-                            <p className="text-md font-bold">Tổng Cộng</p>
-                            <div className="flex flex-col items-end justify-end">
-                                <div className=" font-bold capitalize tracking-wide">
+                            <div className="mb-2 flex justify-between text-sm">
+                                <p className="text-gray-700">Tạm Tính ({products.length} sản phẩm) </p>
+                                <div className="text-gray-700  font-bold capitalize tracking-wide">
                                     <span>
-                                        {formatNumberToText(calculateTotalPrice(products) + shippingFee)}
+                                        {formatNumberToText(calculateTotalPrice(products))}
                                     </span>
                                     <span className="underline">
                                         {products[0]?.currency}
                                     </span>
                                 </div>
-                                <p className="text-sm text-gray-700">Đã bao gồm thuế VAT</p>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                                <p className="text-gray-700">Phí Vận Chuyển</p>
+                                <div className="text-gray-700 font-bold capitalize tracking-wide">
+                                    <span>
+                                        {formatNumberToText(shippingFee)}
+                                    </span>
+                                    <span className="underline">
+                                        {products[0]?.currency}
+                                    </span>
+                                </div>
+                            </div>
+                            <hr className="my-2 xl:my-4 md:my-4" />
+                            <div className="flex justify-between text-red-500 text-xl">
+                                <p className="text-md font-bold">Tổng Cộng</p>
+                                <div className="flex flex-col items-end justify-end">
+                                    <div className=" font-bold capitalize tracking-wide">
+                                        <span>
+                                            {formatNumberToText(calculateTotalPrice(products) + shippingFee)}
+                                        </span>
+                                        <span className="underline">
+                                            {products[0]?.currency}
+                                        </span>
+                                    </div>
+                                    <p className="text-xs text-gray-700">Đã bao gồm thuế VAT</p>
+                                </div>
+                            </div>
+                            <button className={`mt-2 xl:mt-6 md:mt-6 w-full bg-red-500 py-1.5 font-bold text-blue-50 xl:hover:bg-red-600 ${products.length ? '' : 'hidden'}`}>
+                                XÁC NHẬN GIỎ HÀNG ({products.length})
+                            </button>
+                            <div className="flex justify-center mt-4 text-xs font-inter">
+                                <button
+                                    type="button"
+                                    className="flex gap-2 font-medium text-red-600 xl:hover:text-red-500"
+                                >
+                                    <span aria-hidden="true"> &rarr;</span>
+                                    Tiếp Tục Mua Hàng
+                                </button>
                             </div>
                         </div>
-                        <button className={`mt-6 w-full bg-red-500 py-1.5 font-bold text-blue-50 xl:hover:bg-red-600 ${products.length ? '' : 'hidden'}`}>
-                            ĐẶT HÀNG ({products.length})
-                        </button>
-                        <div className="flex justify-center mt-4 text-xs font-inter">
-                            <button
-                                type="button"
-                                className="flex gap-2 font-medium text-red-600 xl:hover:text-red-500"
-                            >
-                                <span aria-hidden="true"> &rarr;</span>
-                                Tiếp Tục Mua Hàng
-                            </button>
-                        </div>
-                    </div>
 
+                    </div>
                 </div>
                 {products.length === 0 ?
                     <div className="flex justify-center mt-2">

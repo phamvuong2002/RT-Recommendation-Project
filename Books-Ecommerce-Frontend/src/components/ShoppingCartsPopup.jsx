@@ -128,7 +128,7 @@ export const ShoppingCartsPopup = (/*products*/) => {
                                                         className="relative -m-2 p-2 text-gray-400 hover:text-gray-500"
                                                         onClick={() => setOpen(false)}
                                                     >
-                                                        <span className="absolute -inset-0.5" />
+                                                        <span className="absolute " />
                                                         <span className="sr-only">Close panel</span>
                                                         {/* <XMarkIcon className="h-6 w-6" aria-hidden="true" /> */}
                                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">

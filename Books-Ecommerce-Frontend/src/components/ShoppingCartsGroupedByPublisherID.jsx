@@ -23,11 +23,11 @@ const ShoppingCartsGroupedByPublisherID = ({ products, handleDeleteProduct, hand
     }
 
     return (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-4 w-full">
             {/* Lặp qua từng nhóm sản phẩm */}
             {
                 Object.entries(groupedProducts).map(([publisherID, products]) => (
-                    <div key={publisherID} className="flex flex-col gap-1">
+                    <div key={publisherID} className="flex flex-col">
                         {/* Nhà xuất bản */}
                         <div className="w-full h-12 max-h-12 flex items-center p-2 bg-red-50 font-inter justify-between"> { }
                             <div className='flex gap-3 w-60 max-w-xs xl:w-full xl:max-w-full'>
@@ -50,7 +50,7 @@ const ShoppingCartsGroupedByPublisherID = ({ products, handleDeleteProduct, hand
                         </div>
 
                         {/* Sản phẩm của nhà xuất bản */}
-                        <div className="bg-white p-1"> {/*border border-red-300 */}
+                        <div className="bg-gray-50"> {/*border border-red-300 */}
                             {/* Lặp qua từng sản phẩm trong nhóm */}
                             {
                                 products.map((product) => (

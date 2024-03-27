@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 
-export const Popup = ({ autoShow = false, icon = null, onYesClick, onNoClick, Title = '', Content, Option, CustomClassName, ErrorHandling, SuccessHandling }) => {
+export const Popup = ({ autoShow = false, autoClose = 0, icon = null, onYesClick, onNoClick, Title = '', Content, Option, CustomClassName, ErrorHandling, SuccessHandling }) => {
     const [open, setOpen] = useState(autoShow);
     const [loading, setLoading] = useState(false);
     const [customContent, setCustomContent] = useState('');
@@ -22,7 +22,8 @@ export const Popup = ({ autoShow = false, icon = null, onYesClick, onNoClick, Ti
                         </p>
                     )}
                 </div>
-            </div>)
+            </div>
+        )
     }
 
 
@@ -34,6 +35,7 @@ export const Popup = ({ autoShow = false, icon = null, onYesClick, onNoClick, Ti
         if (result === 'success') {
             if (SuccessHandling) setCustomContent(handleSuccess);
             setOpen(false)
+            setLoading(false);
         }
         else {
             // Error
@@ -45,9 +47,10 @@ export const Popup = ({ autoShow = false, icon = null, onYesClick, onNoClick, Ti
     const handleNoClick = async () => {
         onNoClick();
         setReload(!reload);
+        setLoading(false);
     }
 
-    //Error handling
+    //Success handling
     const handleSuccess = () => {
         return generateContent(
             CustomClassName,
@@ -56,7 +59,7 @@ export const Popup = ({ autoShow = false, icon = null, onYesClick, onNoClick, Ti
         )
     }
 
-    //Success handling
+    //Error handling
     const handleError = () => {
         return generateContent(
             CustomClassName,
@@ -67,6 +70,14 @@ export const Popup = ({ autoShow = false, icon = null, onYesClick, onNoClick, Ti
 
     // Cài đặt popup cho lần đầu
     useEffect(() => {
+        //Auto Close
+        if (autoClose) {
+            setTimeout(() => {
+                setOpen(false);
+            }, autoClose);
+        }
+
+        //Set Customize Contents
         setCustomContent(generateContent(CustomClassName, Title, Content))
     }, [reload])
 

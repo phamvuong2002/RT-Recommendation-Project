@@ -4,7 +4,7 @@ import React from 'react';
 
 const NavigationPath = ({ components = [{ path: '/', label: 'Trang Chủ' }] }) => {
     return (
-        <div className="px-8">
+        <div className="px-1 xl:px-8">
             <div className="h-8 flex  gap-2 items-center pl-2 text-red-400 text-sm font-normal capitalize tracking-widest bg-white">
                 {components.map((component, index) => (
                     <React.Fragment key={index}>

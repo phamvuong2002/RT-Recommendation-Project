@@ -23,7 +23,7 @@ const ShoppingCartsPopupGroupedByPublisherID = ({ products, handleDeleteProduct,
     }
 
     return (
-        <div className="flex flex-col gap-6 p-2">
+        <div className="flex flex-col gap-6">
             {/* Lặp qua từng nhóm sản phẩm */}
             {
                 Object.entries(groupedProducts).map(([publisherID, products]) => (

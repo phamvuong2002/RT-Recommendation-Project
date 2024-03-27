@@ -6,7 +6,7 @@ import { popupContent } from '../helpers/popupContent';
 export const SingleShoppingCart = ({ product, handleDeleteProduct, handleIncreaseQuantity, handleDecreaseQuantity, handleAddInterestingProduct }) => {
     const [openLovePopup, setOpenLovePopup] = useState(false);
     const [statusLovePopup, setStatusLovePopup] = useState('fail');
-
+    const CLOSE_LOVE_POPUP = 800
 
     //Remove Icon
     const removeIcon = (className) => {
@@ -64,6 +64,13 @@ export const SingleShoppingCart = ({ product, handleDeleteProduct, handleIncreas
     }
 
 
+    useEffect(() => {
+        // Đóng popup quan tâm sau CLOSE_LOVE_POPUP miliseconds
+        setTimeout(() => {
+            setOpenLovePopup(false);
+        }, CLOSE_LOVE_POPUP)
+    }, [openLovePopup])
+
     return (
         <div className="p-2">
             {/* Cart Content*/}
@@ -76,7 +83,7 @@ export const SingleShoppingCart = ({ product, handleDeleteProduct, handleIncreas
                 <div className="sm:ml-4 sm:flex sm:w-full sm:justify-between xl:flex xl:gap-8">
                     {/* base info */}
                     <div className="flex flex-col xl:gap-8 mt-2 sm:mt-0">
-                        <a href={product.href} className="w-full xl:h-20 max-h-20 text-md font-bold text-gray-900 overflow-y-auto no-scrollbar">
+                        <a href={product.href} className="w-full xl:h-20 max-h-20 text-base font-normal text-gray-800 overflow-y-auto no-scrollbar">
                             {product.name}
                         </a>
                         <p className="mt-1 text-xs text-gray-700">Phiên Bản: {product.format}</p>
@@ -85,7 +92,7 @@ export const SingleShoppingCart = ({ product, handleDeleteProduct, handleIncreas
                     {/* Price infor */}
                     <div className="flex justify-between im xl:space-y-4 sm:space-y-6 sm:mt-0 sm:block sm:space-x-6">
                         <div className="flex flex-col gap-4 xl:gap-1">
-                            <div className="flex items-center justify-end border-red-100 pt-7 xl:pt-0">
+                            <div className="flex items-center justify-end border-red-100 pt-7 md:pt-0 xl:pt-0">
                                 <span
                                     className="cursor-pointer rounded-l bg-red-500 py-1 px-3.5 duration-100 xl:hover:bg-red-400 xl:hover:text-red-200"
                                     onClick={() => handleDecreaseQuantity(product.id, product.quantity)}> - </span>
@@ -107,9 +114,9 @@ export const SingleShoppingCart = ({ product, handleDeleteProduct, handleIncreas
                                 </span>
                             </div>
                             {/* Desktop - Love - Remove button */}
-                            <div className="xl:flex xl:gap-2 items-end justify-center hidden">
-                                <div className='flex'>
-                                    <button className="xl:h-8 xl:w-8 p-2" onClick={() => handleClickAddLoveProduct(product.id)}>
+                            <div className="xl:flex md:flex md:gap-4 xl:gap-2 items-end justify-center hidden">
+                                <div className="flex">
+                                    <button className="xl:h-8 xl:w-8 xl:p-2" onClick={() => handleClickAddLoveProduct(product.id)}>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6 text-gray-500 cursor-pointer duration-150 xl:hover:fill-current xl:hover:text-red-500">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                                         </svg>
@@ -155,7 +162,7 @@ export const SingleShoppingCart = ({ product, handleDeleteProduct, handleIncreas
                         </div>
                     </div>
                     {/* Mobile - Love - Remove button */}
-                    <div className="flex gap-6 items-center justify-center mt-4 xl:hidden">
+                    <div className="flex gap-6 items-center justify-center mt-4 xl:hidden md:hidden">
                         <div >
                             <button className="xl:h-8 xl:w-8 p-2" onClick={() => handleClickAddLoveProduct(product.id)}>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6 text-gray-500 cursor-pointer duration-150 xl:hover:fill-current xl:hover:text-red-500">

@@ -1,6 +1,4 @@
-import { React } from 'react'
-import MenuItems from './MenuItems';
-
+import MenuItems from "./MenuItems";
 
 const Dropdown = ({ submenus, dropdown, depthLevel }) => {
   depthLevel = depthLevel + 1;
@@ -8,7 +6,7 @@ const Dropdown = ({ submenus, dropdown, depthLevel }) => {
   const dropdownClass = depthLevel > 1 ? "dropdown-submenu" : "";
   console.log(depthLevel)
   return (
-    <ul className={`hidden bg-red-100 sm:bg-[white] text-[14px] rounded-[4px] sm:shadow-lg sm:border-2 sm:border-solid  sm:shadow-neutral-500 static sm:absolute dropdown  ${dropdownClass} ${dropdown ? "show" : ""}  `}>
+    <ul className={`hidden font-medium text-[14px] w-full sm:absolute  sm:bg-[white] sm:w-[9rem]   dropdown sm:rounded-md sm:shadow-lg sm:ring-1 sm:ring-black sm:ring-opacity-5  ${dropdownClass} ${dropdown ? "show" : ""}  ${depthLevel == 1 ? "px-4 sm:px-0 space-y-2" : depthLevel == 2 ? "px-4 sm:px-0 sm:-mt-10 " : ""}`}>
       {" "}
       {submenus.map((submenu, index) => (
         <MenuItems items={submenu} key={index} depthLevel={depthLevel} />
@@ -16,7 +14,6 @@ const Dropdown = ({ submenus, dropdown, depthLevel }) => {
     </ul>
 
   );
-}
+};
 
 export default Dropdown;
-

@@ -16,3 +16,8 @@
 .dropdown.show {
     display: block;
 }
+
+.dropdown.dropdown-submenu {
+   
+    left: 100%;
+}

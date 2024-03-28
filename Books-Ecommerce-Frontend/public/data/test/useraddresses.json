@@ -1,0 +1,47 @@
+[
+    {
+        "addressid": "1",
+        "userFullName": "Pham Vuong",
+        "userPhone": "0948908485",
+        "addressDetail": "Trần Xuân Soạn 793/55/12G",
+        "proviceid": 1442,
+        "distristid": "1234",
+        "wardid": "123",
+        "proviceName": "Hồ Chí Minh",
+        "distristName": "Quận 7",
+        "wardName": "Phường Tân Hưng",
+        "addressDefault": true,
+        "addressPayment": true,
+        "isHome": true
+    },
+    {
+        "addressid": "2",
+        "userFullName": "Nguyen Thi An",
+        "userPhone": "093748463",
+        "addressDetail": "Nguyễn Văn Linh 123",
+        "proviceid": 1443,
+        "distristid": "1235",
+        "wardid": "124",
+        "proviceName": "Hồ Chí Minh",
+        "distristName": "Quận 8",
+        "wardName": "Phường 1",
+        "addressDefault": false,
+        "addressPayment": false,
+        "isHome": false
+    },
+    {
+        "addressid": "3",
+        "userFullName": "Tran Van B",
+        "userPhone": "0925575426",
+        "addressDetail": "Lê Văn Lương 456",
+        "proviceid": 1444,
+        "distristid": "1236",
+        "wardid": "125",
+        "proviceName": "Hồ Chí Minh",
+        "distristName": "Quận 9",
+        "wardName": "Phường 2",
+        "addressDefault": false,
+        "addressPayment": false,
+        "isHome": true
+    }
+]

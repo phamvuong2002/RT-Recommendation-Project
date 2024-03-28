@@ -1,6 +1,6 @@
 import React from 'react';
 import { SingleShoppingCart } from './SingleShoppingCart';
-import { Popup } from './Popup';
+import { Popup } from './popup/Popup';
 import { popupContent } from '../helpers/popupContent';
 
 const ShoppingCartsGroupedByPublisherID = ({ products, handleDeleteProduct, handleDecreaseQuantity, handleIncreaseQuantity, handleDeletePublisherProducts, handleAddInterestingProduct }) => {

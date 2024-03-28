@@ -1,6 +1,6 @@
 import React from 'react';
 import { SinglePopupCart } from './SinglePopupCart';
-import { Popup } from './Popup';
+import { Popup } from './popup/Popup';
 import { popupContent } from '../helpers/popupContent';
 
 const ShoppingCartsPopupGroupedByPublisherID = ({ products, handleDeleteProduct, handleDeletePublisherProducts }) => {

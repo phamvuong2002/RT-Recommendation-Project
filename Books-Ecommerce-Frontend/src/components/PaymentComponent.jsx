@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { formatNumberToText } from '../utils/formatNumberToText'
 import { fetchData } from '../helpers/fetch';
 import { ShoppingCartLoader } from './loaders/ShoppingCartLoader';
-import { Popup } from './Popup';
+import { Popup } from './popup/Popup';
 import { popupContent } from '../helpers/popupContent';
 import { calculateTotalPrice } from '../utils/calculateTotalPrice';
 import { hideSensitiveInfo } from '../utils/hideSensitiveInfo';
@@ -10,9 +10,11 @@ import { isMobileDevice } from '../utils/isMobileDevice';
 import { checkCouponCode } from '../utils/checkCouponCode';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
+
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/scrollbar';
+import { PopupLeftPanel } from './popup/PopupLeftPanel';
 
 
 const SAMPLESERVEICES = [
@@ -66,6 +68,7 @@ const SAMPLEPAYMENTMETHODS = [
     },
 ]
 
+
 const SAMPLECOUPONCODE = [
     {
         couponCodeId: '1',
@@ -96,6 +99,8 @@ export const Payment = () => {
     const paymentMethodsContainerRef = useRef(null);
     const shippingMethodsContainerRef = useRef(null);
 
+    const [isAddrPopupOpen, setIsAddrPopupOpen] = useState(false)
+
     const NUMLOADER = 4;
     const [paymentID, setPaymentID] = useState('');
     const [paymentMethods, setPaymentMethods] = useState([]);
@@ -109,6 +114,10 @@ export const Payment = () => {
     const [couponCode, setCouponCode] = useState('');
     const [couponCodeStatus, setCouponCodeStatus] = useState('');
     const [couponDiscount, setCouponDiscount] = useState({ final_discount: 0, currency: 'đ' });
+
+    const [userAddresses, setUserAddresses] = useState([]);
+    const [defaultAddress, setDefaultAddress] = useState({ addressid: 0 });
+
 
     //Remove Icon
     const removeIcon = (className) => {
@@ -216,6 +225,36 @@ export const Payment = () => {
         }
     };
 
+    // Xử lý sự kiện click chỉnh sửa địa chỉ
+    //Load địa chỉ khi mở popup
+    const handleAddressChange = async (e) => {
+        e.preventDefault();
+
+        const url = '../data/test/useraddresses.json';
+        try {
+            const addressData = await fetchData(url);
+            setUserAddresses(addressData)
+        } catch (error) {
+            // throw error;
+        }
+    }
+
+    //Cập nhật địa chỉ mới chọn
+    const handleUpdateAddress = async (addressID) => {
+        const url = '../data/test/useraddresses.json';
+        try {
+            setDefaultAddress({ addressid: 0 })
+            setIsAddrPopupOpen(false);
+            setTimeout(async () => {
+                const addressData = await fetchData(url);
+                const newAddress = addressData.find(a => a.addressid === addressID)
+                setDefaultAddress(newAddress)
+            }, 1000) // ví dụ xử lý thời gian cập nhập lại địa chỉ (1s)
+        } catch (error) {
+            // throw error;
+        }
+    }
+
     //Fetch Shopping Carts
     useEffect(() => {
         const url = '../data/test/shoppingcarts.json';
@@ -249,47 +288,151 @@ export const Payment = () => {
         }, 1000)
     }, [])
 
+    //Fetch User Address Default
+    useEffect(() => {
+        const url = '../data/test/useraddresses.json';
+        const loadShoppingAddress = async () => {
+            try {
+                const addressData = await fetchData(url);
+                setDefaultAddress(addressData[0])
+            } catch (error) {
+                // throw error;
+            }
+        }
+        //ví dụ tải các sản phẩm trong giỏ hàng của khách
+        setTimeout(() => {
+            loadShoppingAddress()
+        }, 1000)
+    }, [])
+
 
     return (
         <div className="xl:flex xl:px-28 xl:gap-2">
             {/* Preview*/}
             <div className="xl:w-2/3 flex flex-col gap-1 xl:gap-2">
                 {/* Address preview*/}
-                <div className="w-full flex flex-col item-center text-sm font-inter border-red-100 bg-white shadow-md shadow-red-200">
+                <div className={`w-full flex flex-col item-center text-sm font-inter border-red-100 bg-white shadow-md shadow-red-200 ${defaultAddress.addressid === 0 ? 'animate-pulse' : ''}`}>
                     {/* header */}
                     <div className="flex justify-between items-center px-2 h-10 bg-red-100">
                         <div className="font-semibold">Địa chỉ giao hàng</div>
-                        <button className="text-red-400">
-                            Chỉnh sửa
-                        </button>
+                        <PopupLeftPanel
+                            open={isAddrPopupOpen}
+                            setOpen={setIsAddrPopupOpen}
+                            icon={
+                                <button className="text-red-400 xl:hover:text-red-600" onClick={handleAddressChange}>
+                                    Chỉnh sửa
+                                </button>
+                            }
+                            title={
+                                "Chọn Địa Chỉ Giao Hàng"
+                            }
+                            content={
+                                <div className="px-1">
+                                    <div className="xl:flex justify-end px-4 pb-2  text-red-500 text-sm hidden xl:hover:text-red-700 cursor-pointer">
+                                        Thêm địa chỉ mới
+                                    </div>
+
+                                    <div className="flex flex-col gap-2 xl:gap-4">
+                                        <div className="flex p-2 gap-2 border border-blue-600 rounded-md xl:gap-4 md:gap-4 items-center justify-center h-[4rem] xl:hidden">
+                                            <div className=" text-xs w-25 text-blue-600 font-semibold cursor-pointer">
+                                                + Thêm địa chỉ mới
+                                            </div>
+                                        </div>
+                                        {userAddresses.length === 0 ?
+                                            <ShoppingCartLoader items={NUMLOADER} />
+                                            :
+                                            userAddresses.map((address) => (
+                                                <div key={address.addressid}
+                                                    className={`flex p-2 gap-2 border rounded-lg xl:gap-4 md:gap-4 ${address.addressid === defaultAddress.addressid ? 'border-red-500 ' : 'border-gray-200 '} cursor-pointer xl:hover:border-red-300`}
+                                                    onClick={() => handleUpdateAddress(address.addressid)}>
+                                                    {/* checkbox */}
+                                                    <div className="h-full pt-1 hidden xl:flex md:flex">
+                                                        <input
+                                                            type="checkbox"
+                                                            className="w-5 h-5 accent-red-500 "
+                                                            checked={address.addressid === defaultAddress.addressid}
+                                                            readOnly />
+
+                                                    </div>
+                                                    {/* detail */}
+                                                    <div className="flex flex-col text-xs gap-1 xl:text-sm md:text-sm">
+                                                        <div className="flex gap-2">
+                                                            <div>{address.userFullName}</div>
+                                                            <div>{address.userPhone}</div>
+                                                        </div>
+                                                        <div className="flex gap-2">
+                                                            {address.isHome ?
+                                                                <div className="font-semibold uppercase text-[0.5rem] xl:text-xs xl:text-center xl:px-2 xl:pt-[0.2rem] md:text-xs md:text-center md:px-2 md:pt-[0.2rem] text-white bg-gradient-to-t from-pink-500 to-yellow-500 rounded-lg px-[0.2rem]">
+                                                                    Nhà riêng
+                                                                </div> :
+                                                                <div className="font-semibold uppercase text-[0.5rem] xl:text-xs xl:text-center xl:px-2 xl:pt-[0.2rem] md:text-xs md:text-center md:px-2 md:pt-[0.2rem] text-white bg-gradient-to-t  from-green-400 to-blue-500 rounded-lg px-[0.2rem]">
+                                                                    Văn Phòng
+                                                                </div>
+                                                            }
+                                                            <div>{address.addressDetail}</div>
+                                                        </div>
+                                                        <div className="flex xl:text-xs md:text-xs gap-1 text-gray-400">
+                                                            <div>Mã vùng: </div>
+                                                            <div className="overflow-x-auto">
+                                                                <div>{`${address.proviceName} - ${address.distristName} - ${address.wardName}`}</div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="h-6">
+                                                            <div className="flex gap-1 text-[0.6rem] xl:text-xs xl:gap-2 md:text-xs md:gap-2 text-red-600 py-1 items-center">
+                                                                {address.addressDefault && <div className="border border-red-400 rounded-md px-[0.1rem] xl:px-2 xl:py-[0.1rem] md:px-2 md:py-[0.1rem]">
+                                                                    <div>
+                                                                        Địa chỉ nhận hàng mặc định
+                                                                    </div>
+                                                                </div>}
+                                                                {address.addressPayment && <div className="border border-red-400 rounded-md px-[0.1rem] xl:px-2 xl:py-[0.1rem] md:px-2 md:py-[0.1rem]">
+                                                                    <div>
+                                                                        Địa chỉ thanh toán mặc định
+                                                                    </div>
+                                                                </div>}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))
+
+
+                                        }
+                                    </div>
+
+                                </div>
+                            }
+                        />
+
                     </div>
                     {/* details */}
                     <div className="flex flex-col p-2 bg-white gap-2">
                         <div className="flex items-center">
-                            <div className="w-2/5 xl:w-1/5">
-                                Pham Vuong
+                            <div className={`w-2/5 xl:w-1/5 ${defaultAddress.addressid === 0 ? 'h-2 bg-slate-200 rounded col-span-2' : ''}`}>
+                                {defaultAddress.userFullName}
+
                             </div>
-                            <div className="w-full">
-                                0948908485
+                            <div className={`w-full ${defaultAddress.addressid === 0 ? 'h-2 bg-slate-200 rounded col-span-2' : ''}`}>
+                                {defaultAddress.userPhone}
                             </div>
                         </div>
-                        <div className="flex items-center">
-                            <div className="flex w-2/5 xl:w-1/5 items-center ">
+                        <div className={`flex items-center ${defaultAddress.addressid === 0 ? 'h-2 bg-slate-200 rounded col-span-2' : ''}`}>
+                            <div className={`flex w-2/5 xl:w-1/5 items-center`}>
                                 {
-                                    <div className="px-2 py-1 text-[0.8rem] xl:text-xs text-white uppercase font-semibold bg-gradient-to-r from-pink-500 to-yellow-500 rounded-2xl">
-                                        Nhà riêng
-                                    </div>
-                                    &&
-                                    <div className="px-1 py-1 text-[0.8rem] xl:text-xs text-white uppercase font-semibold bg-gradient-to-r from-green-400 to-blue-500 rounded-2xl">
-                                        Văn phòng
-                                    </div>
+                                    defaultAddress.addressid === 0 ? '' : (defaultAddress.isHome ?
+                                        <div className="px-2 xl:px-3 py-[0.1rem] xl:pt-[0.2rem] text-[0.5rem] xl:text-[0.6rem] xl:text-xs text-white uppercase font-semibold bg-gradient-to-r from-pink-500 to-yellow-500 rounded-2xl">
+                                            Nhà riêng
+                                        </div>
+                                        :
+                                        <div className="px-2 xl:px-3 py-[0.1rem] xl:pt-[0.2rem] text-[0.5rem] xl:text-[0.6rem] xl:text-xs text-white uppercase font-semibold bg-gradient-to-r from-green-400 to-blue-500 rounded-2xl">
+                                            Văn phòng
+                                        </div>)
                                 }
                             </div>
-                            <div className="w-full">
-                                Trần Xuân Soạn 793/55/12G, Phường Tân Hưng, Quận 7, Hồ Chí Minh
+                            <div className={`w-full ${defaultAddress.addressid === 0 ? 'h-2 bg-slate-200 rounded col-span-2 hidden' : ''}`}>
+                                {`${defaultAddress?.addressDetail}, ${defaultAddress?.wardName}, ${defaultAddress?.distristName}, ${defaultAddress?.proviceName}`}
                             </div>
                         </div>
-
                     </div>
                 </div>
 
@@ -352,48 +495,49 @@ export const Payment = () => {
 
                                 <div className="flex flex-col xl:block gap-4 p-2 mt-1 xl:max-h-[40rem] xl:overflow-y-auto scrollbar-thin">
                                     {products.map((product) => (
-                                        <Swiper
-                                            // onSwiper={(swiper) => {
-                                            //     swiperRef.current = swiper;
-                                            // }}
-                                            key={product.id}
-                                            slidesPerView={'auto'}
-                                            className="mySwiper"
-                                        >
-                                            <SwiperSlide className="">
-                                                <div key={product.id} className="flex gap-2 border-b border-b-gray-200 py-4">
-                                                    <div className="flex">
-                                                        <div className="w-[6rem] flex items-start mt-1 ">
-                                                            <img className="rounded-lg" src={product.imageSrc} alt={product.name} />
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex flex-col gap-2 md:flex-row md:gap-4 md:w-full xl:flex-row xl:gap-4 xl:w-full">
-                                                        <div className="flex flex-col md:w-2/5 xl:w-2/5 gap-1">
-                                                            <div className="text-base font-semibold">
-                                                                {product.name}
-                                                            </div>
-                                                            <div className="flex flex-col text-gray-500">
-                                                                <div>{`Phiên bản: ${product.format}`}</div>
-                                                                <div>{`Nhà xuất bản: ${product.publisher}`}</div>
-                                                                <div>{`Tác giả: ${product.author}`}</div>
-                                                            </div>
-                                                            <div className="text-xs text-gray-500 font-bold">
-                                                                <div className="w-fit bg-gray-300 px-1">
-                                                                    {`Chỉ còn ${5} sản phẩm`}
-                                                                </div>
+                                        <div key={product.id}>
+                                            <Swiper
+                                                // onSwiper={(swiper) => {
+                                                //     swiperRef.current = swiper;
+                                                // }}
+                                                key={product.id}
+                                                slidesPerView={'auto'}
+                                                className="mySwiper swiper-backface-hidden"
+                                            >
+                                                <SwiperSlide>
+                                                    <div key={product.id} className="flex gap-2 border-b border-b-gray-200 py-4">
+                                                        <div className="flex">
+                                                            <div className="w-[6rem] flex items-start mt-1 ">
+                                                                <img className="rounded-lg" src={product.imageSrc} alt={product.name} />
                                                             </div>
                                                         </div>
-                                                        <div className="flex flex-col md:justify-between md:py-2 xl:justify-between xl:py-2">
-                                                            <div className="flex flex-col gap-1 text-[0.6rem] capitalize font-bold">
-                                                                <div className="w-fit px-1 bg-blue-200 text-blue-600">
-                                                                    {`30 ngày trả hàng miễn phí`}
+                                                        <div className="flex flex-col w-full gap-2 md:flex-row md:gap-9 md:w-full xl:flex-row xl:gap-4 xl:w-full">
+                                                            <div className="flex flex-col md:w-2/5 xl:w-2/5 gap-1">
+                                                                <div className="text-base font-semibold">
+                                                                    {product.name}
                                                                 </div>
-                                                                <div className="w-fit px-1 bg-blue-200 text-blue-600">
-                                                                    {`12 tháng bằng phiếu bảo hành và hoá đơn`}
+                                                                <div className="flex flex-col text-gray-500">
+                                                                    <div>{`Phiên bản: ${product.format}`}</div>
+                                                                    <div>{`Nhà xuất bản: ${product.publisher}`}</div>
+                                                                    <div>{`Tác giả: ${product.author}`}</div>
+                                                                </div>
+                                                                <div className="text-xs text-gray-500 font-bold">
+                                                                    <div className="w-fit bg-gray-300 px-1">
+                                                                        {`Chỉ còn ${5} sản phẩm`}
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                            {/* Remove product Desktop */}
-                                                            {/* <div className="hidden md:flex xl:flex items-center justify-center">
+                                                            <div className="flex flex-col md:justify-between md:py-2 xl:justify-between xl:py-2">
+                                                                <div className="flex flex-col gap-1 text-[0.6rem] capitalize font-bold">
+                                                                    <div className="w-fit px-1 bg-blue-200 text-blue-600">
+                                                                        {`30 ngày trả hàng miễn phí`}
+                                                                    </div>
+                                                                    <div className="w-fit px-1 bg-blue-200 text-blue-600">
+                                                                        {`12 tháng bằng phiếu bảo hành và hoá đơn`}
+                                                                    </div>
+                                                                </div>
+                                                                {/* Remove product Desktop */}
+                                                                {/* <div className="hidden md:flex xl:flex items-center justify-center">
                                                                 <Popup
                                                                     icon={removeIcon("w-5 h-5 text-gray-500 xl:hover:text-red-500")}
                                                                     onYesClick={() =>
@@ -405,33 +549,35 @@ export const Payment = () => {
                                                                     ErrorHandling={{ title: "Lỗi xoá Hoá Đơn", message: "Không thể xoá tất cả sản phẩm này khỏi Hoá Đơn!" }}
                                                                 />
                                                             </div> */}
-                                                        </div>
-                                                        <div className="flex font-semibold justify-between xl:flex-col md:flex-col md:ml-4">
-                                                            <div className="flex text-red-500 text-base xl:w-[8rem] xl:justify-end">
-                                                                <div>{formatNumberToText(product.price)}</div>
-                                                                <div className="underline">đ</div>
                                                             </div>
-                                                            <div className="flex xl:w-[8rem] xl:justify-end">{`Số lượng: ${product.quantity}`}</div>
+                                                            <div className="flex font-semibold justify-between xl:flex-col md:flex-col md:ml-4">
+                                                                <div className="flex text-red-500 text-base xl:w-[8rem] xl:justify-end">
+                                                                    <div>{formatNumberToText(product.price)}</div>
+                                                                    <div className="underline">đ</div>
+                                                                </div>
+                                                                <div className="flex xl:w-[8rem] xl:justify-end">{`Số lượng: ${product.quantity}`}</div>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </SwiperSlide>
-                                            <SwiperSlide className="w-[20%] flex gap-2 py-4 h-full">
-                                                {/* Remove product Mobile */}
-                                                <div className="flex flex-col items-center w-full h-full">
-                                                    <Popup
-                                                        icon={removeIcon("w-5 h-5 text-gray-500 xl:hover:text-red-500")}
-                                                        onYesClick={() =>
-                                                            handleDeleteProduct(product.id)}
-                                                        onNoClick={() => console.log("End")}
-                                                        Option={{ yes: "Xoá", no: "Thoát" }}
-                                                        Title={"Xóa khỏi giỏ hàng"}
-                                                        Content={popupContent(null, "Bạn có đồng ý loại bỏ sản phẩm này khỏi Hoá Đơn?")}
-                                                        ErrorHandling={{ title: "Lỗi xoá Hoá Đơn", message: "Không thể xoá tất cả sản phẩm này khỏi Hoá Đơn!" }}
-                                                    />
-                                                </div>
-                                            </SwiperSlide>
-                                        </Swiper>
+                                                </SwiperSlide>
+                                                <SwiperSlide className="w-[20%] flex gap-2 py-4 h-full">
+                                                    {/* Remove product Mobile */}
+                                                    <div className="flex flex-col items-center w-full h-full">
+                                                        <Popup
+                                                            icon={removeIcon("w-5 h-5 text-gray-500 xl:hover:text-red-500")}
+                                                            onYesClick={() =>
+                                                                handleDeleteProduct(product.id)}
+                                                            onNoClick={() => console.log("End")}
+                                                            Option={{ yes: "Xoá", no: "Thoát" }}
+                                                            Title={"Xóa khỏi giỏ hàng"}
+                                                            Content={popupContent(null, "Bạn có đồng ý loại bỏ sản phẩm này khỏi Hoá Đơn?")}
+                                                            ErrorHandling={{ title: "Lỗi xoá Hoá Đơn", message: "Không thể xoá tất cả sản phẩm này khỏi Hoá Đơn!" }}
+                                                        />
+                                                    </div>
+                                                </SwiperSlide>
+                                            </Swiper>
+                                        </div>
+
                                     ))}
                                 </div>
                         }

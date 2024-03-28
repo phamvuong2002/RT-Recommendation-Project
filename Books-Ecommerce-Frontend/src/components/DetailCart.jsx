@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { StarRating } from './StarRating';
-import { Popup } from './popup/Popup';
+import { PopupOpen } from './popup/PopupOpen';
 import { DropDownClick } from './DropDownClick';
+import { popupContent } from '../helpers/popupContent'
 
 const SAMPLEVERSION = {
     default: 'Thường',
@@ -13,6 +14,7 @@ export const DetailCart = (/*{ product }*/) => {
     const [numCarts, setNumCarts] = useState(1);
     const [version, setVersion] = useState(SAMPLEVERSION.default);
     const [isVersionOpen, setIsVersionOpen] = useState(false);
+    const [openLovePopup, setOpenLovePopup] = useState(false);
 
 
     const [showBubble, setShowBubble] = useState(false);
@@ -42,9 +44,10 @@ export const DetailCart = (/*{ product }*/) => {
         }, 800);
     };
 
-    const handleAddToInterestList = () => {
-        //Xử lý khách hàng yêu thích sản phẩm
-
+    //Xử lý khách hàng yêu thích sản phẩm
+    const handleAddToInterestList = (e) => {
+        e.preventDefault();
+        setOpenLovePopup(true);
     }
 
     const handleVersionToggle = () => {
@@ -56,12 +59,12 @@ export const DetailCart = (/*{ product }*/) => {
     // }, [version])
 
     return (
-        <div className="mt-1 container mx-auto font-inter xl:px-28">
-            <div className="m-auto">
-                <div className="xl:mt-1 sm:mt-10 bg-white">
+        <div className="font-inter xl:px-28">
+            <div className="">
+                <div className="xl:mt-0 sm:mt-10 bg-white">
                     <div className="grid grid-cols-1 md:grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 xl:gap-14 gap-2 h-max">
                         {/* Images */}
-                        <div className="flex items-center justify-center">
+                        <div className="flex items-center justify-center p-2">
                             <img
                                 src={product.imgUrl}
                                 alt="title"
@@ -75,7 +78,7 @@ export const DetailCart = (/*{ product }*/) => {
                             <div className="w-[8rem] mt-6 border-t-2 border-[#ED553B]"></div>
 
                             {/* Additional Information */}
-                            <div className="flex items-center gap-16">
+                            <div className="flex items-center justify-between">
                                 {/* Author name */}
                                 <div className="text-zinc-600">{product.author}</div>
                                 {/* Rating */}
@@ -144,13 +147,7 @@ export const DetailCart = (/*{ product }*/) => {
                                         <span id="helper-text-explanation" className="mt-1 text-sm text-gray-500 dark:text-gray-400">Chọn số lượng cần mua</span>
                                     </div>
                                     {/* Adding to cart button */}
-                                    <div className="flex gap-8">
-                                        {/* interes button */}
-                                        <button title="Thêm vào giỏ" className="w-9 flex h-9 rounded border border-black border-opacity-50 items-center justify-center cursor-pointer" onClick={handleAddToInterestList}>
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                                            </svg>
-                                        </button>
+                                    <div className="flex gap-8 xl:gap-20">
 
                                         {/* adding to cart button */}
                                         <button title="Thêm vào giỏ" className="w-9 flex h-9 rounded border border-black border-opacity-50 items-center justify-center cursor-pointer" onClick={handleAddToCart}>
@@ -167,6 +164,41 @@ export const DetailCart = (/*{ product }*/) => {
                                                     <></>
                                             }
                                         </button>
+                                        <div className="flex gap-1">
+                                            {/* interes button */}
+                                            <PopupOpen
+                                                open={openLovePopup}
+                                                setOpen={setOpenLovePopup}
+                                                autoClose={1000}
+                                                Content={popupContent('text-gray-800 text-base text-center',
+                                                    <div className="flex flex-col gap-2 justify-center items-center">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="120" height="120" viewBox="0 0 48 48">
+                                                            <path fill="#4caf50" d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z"></path><path fill="#ccff90" d="M34.602,14.602L21,28.199l-5.602-5.598l-2.797,2.797L21,33.801l16.398-16.402L34.602,14.602z"></path>
+                                                        </svg>
+                                                        <div>
+                                                            Bạn đã thêm sản phẩm này vào danh sách yêu thích!
+                                                        </div>
+                                                    </div>
+
+                                                )}
+                                                onNoClick={() => setOpenLovePopup(false)}
+                                            />
+                                            <button
+                                                title="Thêm danh sách yêu thích"
+                                                className="w-9 flex h-9 rounded border border-black border-opacity-50 items-center justify-center cursor-pointer"
+                                                onClick={handleAddToInterestList}>
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                                                </svg>
+                                            </button>
+                                            {/* share button */}
+                                            <button title="Thêm danh sách yêu thích" className="w-9 flex h-9 rounded border border-black border-opacity-50 items-center justify-center cursor-pointer" onClick={handleAddToInterestList}>
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z" />
+                                                </svg>
+                                            </button>
+                                        </div>
+
                                     </div>
                                 </div>
 

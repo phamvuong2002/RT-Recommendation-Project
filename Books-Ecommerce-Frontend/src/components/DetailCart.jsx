@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { StarRating } from './StarRating';
-import { Popup } from './Popup';
+import { Popup } from './popup/Popup';
 import { DropDownClick } from './DropDownClick';
 
 const SAMPLEVERSION = {

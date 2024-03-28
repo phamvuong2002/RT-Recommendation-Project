@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { formatNumberToText } from '../utils/formatNumberToText'
-import { Popup } from './Popup'
+import { Popup } from './popup/Popup'
 import { popupContent } from '../helpers/popupContent';
 
 export const SingleShoppingCart = ({ product, handleDeleteProduct, handleIncreaseQuantity, handleDecreaseQuantity, handleAddInterestingProduct }) => {

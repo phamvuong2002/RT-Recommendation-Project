@@ -1,6 +1,6 @@
 import React from 'react'
 import { formatNumberToText } from '../utils/formatNumberToText'
-import { Popup } from './Popup'
+import { Popup } from './popup/Popup'
 import { popupContent } from '../helpers/popupContent'
 
 export const SinglePopupCart = ({ product, handleDeleteProduct }) => {

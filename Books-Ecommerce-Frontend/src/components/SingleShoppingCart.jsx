@@ -48,7 +48,6 @@ export const SingleShoppingCart = ({ product, handleDeleteProduct, handleIncreas
 
     const PopupLoveProductFail = () => {
         return <Popup
-            autoShow={true}
             Content={popupContent('text-gray-800 text-base text-center',
                 <div className="flex flex-col gap-2 justify-center items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="120" height="120" viewBox="0 0 48 48">

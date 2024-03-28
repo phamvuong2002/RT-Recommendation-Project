@@ -191,52 +191,52 @@ export const FeedBack = () => {
 
                 {/* sort rating */}
                 <div className="pl-8 w-full xl:w-[50rem]">
-                    <div className="flex items-center mt-4 ml-4">
-                        <a href="#" className="text-sm font-medium text-red-600 dark:text-red-500 hover:underline xl:hidden">5 star</a>
+                    <div className="flex items-center xl:mt-2 ml-4">
+                        <a href="#" className="text-sm font-medium text-yellow-500  hover:underline xl:hidden">5 star</a>
                         <div className="hidden xl:inline-block">
                             <StarRating averageRating={5} numReviews={5} shownumReviews={false} />
                         </div>
-                        <div className="w-2/4 h-5 mx-4 bg-gray-200 rounded dark:bg-gray-700">
+                        <div className="w-2/4 h-5 mx-4 bg-gray-200 rounded ">
                             <div className="h-5 bg-yellow-300 rounded w-[70%]"></div>
                         </div>
                         <span className="text-sm font-medium text-gray-500 dark:text-gray-400">70%</span>
                     </div>
-                    <div className="flex items-center mt-4 ml-4">
-                        <a href="#" className="text-sm font-medium text-red-600 dark:text-red-500 hover:underline xl:hidden">4 star</a>
+                    <div className="flex items-center mt-2 xl:mt-4 ml-4">
+                        <a href="#" className="text-sm font-medium text-yellow-500  hover:underline xl:hidden">4 star</a>
                         <div className="hidden xl:inline-block">
                             <StarRating averageRating={4} numReviews={5} shownumReviews={false} />
                         </div>
-                        <div className="w-2/4 h-5 mx-4 bg-gray-200 rounded dark:bg-gray-700">
+                        <div className="w-2/4 h-5 mx-4 bg-gray-200 rounded ">
                             <div className="h-5 bg-yellow-300 rounded w-[17%]"></div>
                         </div>
                         <span className="text-sm font-medium text-gray-500 dark:text-gray-400">17%</span>
                     </div>
-                    <div className="flex items-center mt-4 ml-4">
-                        <a href="#" className="text-sm font-medium text-red-600 dark:text-red-500 hover:underline xl:hidden">3 star</a>
+                    <div className="flex items-center mt-2 xl:mt-4 ml-4">
+                        <a href="#" className="text-sm font-medium text-yellow-500  hover:underline xl:hidden">3 star</a>
                         <div className="hidden xl:inline-block">
                             <StarRating averageRating={3} numReviews={5} shownumReviews={false} />
                         </div>
-                        <div className="w-2/4 h-5 mx-4 bg-gray-200 rounded dark:bg-gray-700">
+                        <div className="w-2/4 h-5 mx-4 bg-gray-200 rounded ">
                             <div className="h-5 bg-yellow-300 rounded w-[8%]"></div>
                         </div>
                         <span className="text-sm font-medium text-gray-500 dark:text-gray-400">8%</span>
                     </div>
-                    <div className="flex items-center mt-4 ml-4">
-                        <a href="#" className="text-sm font-medium text-red-600 dark:text-red-500 hover:underline xl:hidden">2 star</a>
+                    <div className="flex items-center mt-2 xl:mt-4 ml-4">
+                        <a href="#" className="text-sm font-medium text-yellow-500  hover:underline xl:hidden">2 star</a>
                         <div className="hidden xl:inline-block">
                             <StarRating averageRating={2} numReviews={5} shownumReviews={false} />
                         </div>
-                        <div className="w-2/4 h-5 mx-4 bg-gray-200 rounded dark:bg-gray-700">
+                        <div className="w-2/4 h-5 mx-4 bg-gray-200 rounded ">
                             <div className="h-5 bg-yellow-300 rounded w-[4%]"></div>
                         </div>
                         <span className="text-sm font-medium text-gray-500 dark:text-gray-400">4%</span>
                     </div>
-                    <div className="flex items-center mt-4 ml-4">
-                        <a href="#" className="text-sm font-medium text-red-600 dark:text-red-500 hover:underline xl:hidden">1 star</a>
+                    <div className="flex items-center mt-2 xl:mt-4 ml-4">
+                        <a href="#" className="text-sm font-medium text-yellow-500  hover:underline xl:hidden">1 star</a>
                         <div className="hidden xl:inline-block">
                             <StarRating averageRating={1} numReviews={5} shownumReviews={false} />
                         </div>
-                        <div className="w-2/4 h-5 mx-4 bg-gray-200 rounded dark:bg-gray-700">
+                        <div className="w-2/4 h-5 mx-4 bg-gray-200 rounded ">
                             <div className="h-5 bg-yellow-300 rounded w-[1%]"></div>
                         </div>
                         <span className="text-sm font-medium text-gray-500 dark:text-gray-400">1%</span>
@@ -270,7 +270,7 @@ export const FeedBack = () => {
 
 
             {/* comments */}
-            <div className=" w-full flex flex-col mt-6 xl:mt-1 gap-12 max-h-[24rem] xl:max-h-[50rem] overflow-y-scroll xl:scrollbar-thin xl:scrollbar-webkit" ref={commentContainerRef}>
+            <div className=" w-full flex flex-col mt-6 xl:mt-1 gap-12 max-h-[40rem] xl:max-h-[50rem] overflow-y-scroll xl:scrollbar-thin xl:scrollbar-webkit" ref={commentContainerRef}>
                 {/* Hiển thị danh sách các comment */}
                 {/* <div></div> */}
                 {comments?.map(comment => (
@@ -287,8 +287,11 @@ export const FeedBack = () => {
                                     <span className="text-sm font-light ">{comment.date}</span>
                                 </div>
                                 {/* username-certifiedPurchase */}
-                                <div className="flex items-center gap-2">
-                                    <span className="text-sm">{comment.username}</span>
+                                <div className="flex flex-col xl:flex-row xl:items-center xl:gap-2">
+                                    <div>
+
+                                        <span className="text-sm">{comment.username}</span>
+                                    </div>
                                     <div className="flex items-center text-xs text-green-600">
                                         <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 48 48">
                                             <linearGradient id="IMoH7gpu5un5Dx2vID39Ra_pIPl8tqh3igN_gr1" x1="9.858" x2="38.142" y1="9.858" y2="38.142" gradientUnits="userSpaceOnUse"><stop offset="0" stopColor="#9dffce"></stop><stop offset="1" stopColor="#50d18d"></stop></linearGradient><path fill="url(#IMoH7gpu5un5Dx2vID39Ra_pIPl8tqh3igN_gr1)" d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z"></path><linearGradient id="IMoH7gpu5un5Dx2vID39Rb_pIPl8tqh3igN_gr2" x1="13" x2="36" y1="24.793" y2="24.793" gradientUnits="userSpaceOnUse"><stop offset=".824" stopColor="#135d36"></stop><stop offset=".931" stopColor="#125933"></stop><stop offset="1" stopColor="#11522f"></stop></linearGradient><path fill="url(#IMoH7gpu5un5Dx2vID39Rb_pIPl8tqh3igN_gr2)" d="M21.293,32.707l-8-8c-0.391-0.391-0.391-1.024,0-1.414l1.414-1.414	c0.391-0.391,1.024-0.391,1.414,0L22,27.758l10.879-10.879c0.391-0.391,1.024-0.391,1.414,0l1.414,1.414	c0.391,0.391,0.391,1.024,0,1.414l-13,13C22.317,33.098,21.683,33.098,21.293,32.707z"></path>

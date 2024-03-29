@@ -22,25 +22,31 @@ const SAMPLESERVEICES = [
         serviceid: '1',
         fee: 23000,
         type: 'GH tiêu chuẩn',
-        date: '27 thg 3-1 thg 4'
+        date: '27 thg 3-1 thg 4',
+        typeid: 'GHTC'
     },
     {
         serviceid: '2',
         fee: 19000,
         type: 'GH nhanh',
-        date: '27 thg 3-1 thg 4'
+        date: '27 thg 3-1 thg 4',
+        typeid: 'GHN'
+
     },
     {
         serviceid: '3',
         fee: 40000,
         type: 'GH hoả tốc',
-        date: '27 thg 3-1 thg 4'
+        date: '27 thg 3-1 thg 4',
+        typeid: 'GHTC'
+
     },
     {
         serviceid: '4',
         fee: 12000,
         type: 'GH tiết kiệm',
-        date: '27 thg 3-1 thg 4'
+        date: '27 thg 3-1 thg 4',
+        typeid: 'GHTK'
     }
 ]
 

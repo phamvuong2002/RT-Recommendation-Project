@@ -67,17 +67,24 @@ export const PopupOpen = ({ open, setOpen, autoClose = 0, icon = null, onYesClic
         )
     }
 
-    // Cài đặt popup cho lần đầu
+    // Auto Close
     useEffect(() => {
+        let timeoutId;
+
         //Auto Close
         if (autoClose) {
-            setTimeout(() => {
+            timeoutId = setTimeout(() => {
                 setOpen(false);
             }, autoClose);
         }
 
         //Set Customize Contents
-        setCustomContent(generateContent(CustomClassName, Title, Content))
+        setCustomContent(generateContent(CustomClassName, Title, Content));
+
+        // Clear timeout khi component unmounted hoặc khi useEffect chạy lại
+        return () => {
+            clearTimeout(timeoutId);
+        };
     }, [reload, open]);
 
 

@@ -17,5 +17,6 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
+    "no-unused-vars": "off", // Tắt cảnh báo về biến không được sử dụng
   },
 };

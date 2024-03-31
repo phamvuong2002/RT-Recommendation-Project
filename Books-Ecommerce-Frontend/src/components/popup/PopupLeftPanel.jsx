@@ -2,7 +2,7 @@ import { Fragment, useEffect, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 
 
-export const PopupLeftPanel = ({ open, setOpen, icon = '', title = '', content = '' }) => {
+export const PopupLeftPanel = ({ open, setOpen, icon = '', title = '', content = '', titleClassName = 'p-4' }) => {
     // const [open, setOpen] = useState(false);
 
     return (
@@ -44,7 +44,7 @@ export const PopupLeftPanel = ({ open, setOpen, icon = '', title = '', content =
 
                                         <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl ">
                                             {/* Title */}
-                                            <div className="p-4">
+                                            <div className={titleClassName}>
                                                 <div className="flex items-start justify-between">
                                                     <Dialog.Title className="text-lg font-medium text-gray-900">
                                                         {title}

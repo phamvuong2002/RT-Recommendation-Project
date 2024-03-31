@@ -5,14 +5,18 @@ import { DropDownClick } from './DropDownClick';
 import { popupContent } from '../helpers/popupContent'
 import { sharePopupUI } from '../components/childComponents/sharePopupUI';
 import { formatNumberToText } from '../utils/formatNumberToText';
-import { fetchData } from '../helpers/fetch';
+import { fetchData, fetchDataGHN } from '../helpers/fetch';
 import { TextLoader } from '../components/loaders/TextLoader';
 import { SelectAddressPopup } from '../helpers/SelectAddressPopup';
+import { calculateShippingFeeDefault } from '../utils/calculateShippingFeeDefault';
 
 const SAMPLEVERSION = {
     default: 'Thường',
     'special': 'Đặt biệt'
 }
+
+const SHOP_ID = 191502
+const SHOP_DISTRICT = 1444
 
 
 export const DetailCart = (/*{ product }*/) => {
@@ -63,7 +67,6 @@ export const DetailCart = (/*{ product }*/) => {
     //Load địa chỉ khi mở popup
     const handleAddressChange = async (e) => {
         e.preventDefault();
-
         const url = '../data/test/useraddresses.json';
         try {
             const addressData = await fetchData(url);
@@ -72,22 +75,6 @@ export const DetailCart = (/*{ product }*/) => {
             // throw error;
         }
     }
-
-    //Cập nhật địa chỉ và shipping fee mới chọn
-    // const handleUpdateShippingFee = async (addressID) => {
-    //     const url = '../data/test/useraddresses.json';
-    //     try {
-    //         setDefaultAddress({ addressid: 0 })
-    //         setIsAddrPopupOpen(false);
-    //         setTimeout(async () => {
-    //             const addressData = await fetchData(url);
-    //             const newAddress = addressData.find(a => a.addressid === addressID)
-    //             setDefaultAddress(newAddress)
-    //         }, 1000) // ví dụ xử lý thời gian cập nhập lại địa chỉ (1s)
-    //     } catch (error) {
-    //         // throw error;
-    //     }
-    // }
 
     //Cập nhật url share
     useEffect(() => {
@@ -106,7 +93,7 @@ export const DetailCart = (/*{ product }*/) => {
                 // throw error;
             }
         }
-        //ví dụ tải các sản phẩm trong giỏ hàng của khách
+
         setTimeout(() => {
             loadShoppingAddress()
         }, 1000)
@@ -115,24 +102,26 @@ export const DetailCart = (/*{ product }*/) => {
 
     //Fetch service shipping free
     useEffect(() => {
-        const url = '../data/test/services.json';
+        // const url = '../data/test/services.json';
         setShippingService({ serviceid: 0 })
         const loadService = async () => {
             try {
-                const serviceData = await fetchData(url);
-                const service = serviceData.find(s => s.typeid === 'GHTC');
-                setShippingService(service || serviceData[0])
+                const services = await calculateShippingFeeDefault(defaultAddress, product)
+                // const service = serviceData.find(s => s.typeid === 'GHTC');
+
+                const service = services[0]
+                setShippingService(service)
             } catch (error) {
                 // throw error;
             }
         }
-        //ví dụ tải các sản phẩm trong giỏ hàng của khách
-        setTimeout(() => {
+
+        if (defaultAddress.addressid !== 0) {
             loadService()
-        }, 1000)
+        }
     }, [defaultAddress])
 
-    //
+    //Load Sản phẩm
     useEffect(() => {
         const url = '../data/test/singleproduct.json';
         const loadSingleProduct = async () => {
@@ -143,11 +132,11 @@ export const DetailCart = (/*{ product }*/) => {
                 // throw error;
             }
         }
-        //ví dụ tải các sản phẩm trong giỏ hàng của khách
+
         setTimeout(() => {
             loadSingleProduct()
         }, 1000)
-    }, [defaultAddress])
+    }, [])
 
     return (
         <div className="font-inter xl:px-28">
@@ -202,7 +191,7 @@ export const DetailCart = (/*{ product }*/) => {
                                     <div title="price" className=" flex gap-2 mt-8 sm:text-2xl pr-8 ">
                                         <div className="text-red-500 text-3xl font-bold capitalize tracking-wide">
                                             <span>
-                                                {product.salePrice}
+                                                {formatNumberToText(product.salePrice)}
                                             </span>
                                             <span className="underline">
                                                 {product.currency}
@@ -210,7 +199,7 @@ export const DetailCart = (/*{ product }*/) => {
                                         </div>
                                         <div className="flex items-end text-sm line-through text-red-400 font-bold tracking-wide">
                                             <span className="">
-                                                {product.price}
+                                                {formatNumberToText(product.price)}
                                             </span>
                                             <span className="underline">{product.currency}</span>
                                         </div>
@@ -394,6 +383,7 @@ export const DetailCart = (/*{ product }*/) => {
                                                     defaultAddress={defaultAddress}
                                                     userAddresses={userAddresses}
                                                     setDefaultAddress={setDefaultAddress}
+                                                    setUserAddresses={setUserAddresses}
                                                     icon={
                                                         <div
                                                             className="flex items-center text-red-500 cursor-pointer xl:hover:text-red-300 transition-all"

@@ -44,7 +44,9 @@ export const PopupOpen = ({ open, setOpen, autoClose = 0, icon = null, onYesClic
     };
 
     const handleNoClick = async () => {
-        onNoClick();
+        if (onNoClick) {
+            onNoClick();
+        }
         setReload(!reload);
         setLoading(false);
     }
@@ -90,13 +92,13 @@ export const PopupOpen = ({ open, setOpen, autoClose = 0, icon = null, onYesClic
 
     return (
         <>
-            <button
+            <div
                 type="button"
                 onClick={() => setOpen(!open)}
-                className={`text-gray-500 hover:text-gray-900 ${icon ? '' : 'hidden'}`}
+                className={`text-gray-500 hover:text-gray-900 ${icon ? '' : 'hidden'} cursor-pointer`}
             >
                 {icon}
-            </button>
+            </div>
             <Transition.Root show={open} as={Fragment} >
                 <Dialog as="div" className="fixed inset-0 overflow-y-auto z-20 " onClose={() => { handleNoClick(); setOpen(false) }}>
                     <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center">

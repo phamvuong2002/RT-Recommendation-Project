@@ -9,7 +9,11 @@
     "publishDate": "2023",
     "publisher": "Hồng Đức",
     "dimension": "Bìa mềm",
-    "price": "145,000",
-    "salePrice": "145,000",
-    "currency": "đ"
+    "price": 145000,
+    "salePrice": 145000,
+    "currency": "đ",
+    "height_": 50,
+    "length_": 20,
+    "weight_": 200,
+    "width_": 20
 }]

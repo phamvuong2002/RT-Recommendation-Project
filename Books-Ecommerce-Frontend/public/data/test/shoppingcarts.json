@@ -13,7 +13,11 @@
         "currency": "đ",
         "publisherID": "123451",
         "publisher": "Nhà xuất bản Trẻ",
-        "publisherImgUrl": "https://i.ibb.co/pRbvxj9/logo-nxb-tre.png"
+        "publisherImgUrl": "https://i.ibb.co/pRbvxj9/logo-nxb-tre.png",
+        "height_": 50,
+        "length_": 20,
+        "weight_": 200,
+        "width_": 20
     },
     {
         "id": 2,
@@ -29,7 +33,11 @@
         "currency": "đ",
         "publisherID": "123451",
         "publisher": "Nhà xuất bản Trẻ",
-        "publisherImgUrl": "https://i.ibb.co/pRbvxj9/logo-nxb-tre.png"
+        "publisherImgUrl": "https://i.ibb.co/pRbvxj9/logo-nxb-tre.png",
+        "height_": 50,
+        "length_": 20,
+        "weight_": 200,
+        "width_": 20
     },
     {
         "id": 3,
@@ -45,7 +53,11 @@
         "currency": "đ",
          "publisherID": "123453",
         "publisher": "Nhà xuất bản Tổng hợp thành phố Hồ Chí Minh",
-        "publisherImgUrl": "https://i.ibb.co/Jnt6nzw/logo-nxb-tong-hop-tp-hcm-removebg-preview.png"
+        "publisherImgUrl": "https://i.ibb.co/Jnt6nzw/logo-nxb-tong-hop-tp-hcm-removebg-preview.png",
+        "height_": 50,
+        "length_": 20,
+        "weight_": 200,
+        "width_": 20
     },
     {
         "id": 4,
@@ -61,7 +73,11 @@
         "currency": "đ",
         "publisherID": "123452",
         "publisher": "Nhà xuất bản Kim Đồng",
-        "publisherImgUrl": "https://i.gyazo.com/7d1bab302c86880f9eb91cd04388edc2.png"
+        "publisherImgUrl": "https://i.gyazo.com/7d1bab302c86880f9eb91cd04388edc2.png",
+        "height_": 50,
+        "length_": 20,
+        "weight_": 200,
+        "width_": 20
     },
     {
         "id": 5,
@@ -77,7 +93,11 @@
         "currency": "đ",
          "publisherID": "123453",
         "publisher": "Nhà xuất bản Tổng hợp thành phố Hồ Chí Minh",
-        "publisherImgUrl": "https://i.ibb.co/Jnt6nzw/logo-nxb-tong-hop-tp-hcm-removebg-preview.png"
+        "publisherImgUrl": "https://i.ibb.co/Jnt6nzw/logo-nxb-tong-hop-tp-hcm-removebg-preview.png",
+        "height_": 50,
+        "length_": 20,
+        "weight_": 200,
+        "width_": 20
     },
     {
         "id": 6,
@@ -93,7 +113,11 @@
         "currency": "đ",
         "publisherID": "123451",
         "publisher": "Nhà xuất bản Trẻ",
-        "publisherImgUrl": "https://i.ibb.co/pRbvxj9/logo-nxb-tre.png"
+        "publisherImgUrl": "https://i.ibb.co/pRbvxj9/logo-nxb-tre.png",
+        "height_": 50,
+        "length_": 20,
+        "weight_": 200,
+        "width_": 20
     },
     {
         "id": 7,
@@ -109,7 +133,11 @@
         "currency": "đ",
         "publisherID": "123452",
         "publisher": "Nhà xuất bản Kim Đồng",
-        "publisherImgUrl": "https://i.gyazo.com/7d1bab302c86880f9eb91cd04388edc2.png"
+        "publisherImgUrl": "https://i.gyazo.com/7d1bab302c86880f9eb91cd04388edc2.png",
+        "height_": 50,
+        "length_": 20,
+        "weight_": 200,
+        "width_": 20
     },
     {
         "id": 8,
@@ -125,7 +153,11 @@
         "currency": "đ",
         "publisherID": "123453",
         "publisher": "Nhà xuất bản Tổng hợp thành phố Hồ Chí Minh",
-        "publisherImgUrl": "https://i.ibb.co/Jnt6nzw/logo-nxb-tong-hop-tp-hcm-removebg-preview.png"
+        "publisherImgUrl": "https://i.ibb.co/Jnt6nzw/logo-nxb-tong-hop-tp-hcm-removebg-preview.png",
+        "height_": 50,
+        "length_": 20,
+        "weight_": 200,
+        "width_": 20
     },
     {
         "id": 9,
@@ -141,7 +173,11 @@
         "currency": "đ",
         "publisherID": "123452",
         "publisher": "Nhà xuất bản Kim Đồng",
-        "publisherImgUrl": "https://i.gyazo.com/7d1bab302c86880f9eb91cd04388edc2.png"
+        "publisherImgUrl": "https://i.gyazo.com/7d1bab302c86880f9eb91cd04388edc2.png",
+        "height_": 50,
+        "length_": 20,
+        "weight_": 200,
+        "width_": 20
     },
     {
         "id": 10,
@@ -157,7 +193,11 @@
         "currency": "đ",
         "publisherID": "123451",
         "publisher": "Nhà xuất bản Trẻ",
-        "publisherImgUrl": "https://i.ibb.co/pRbvxj9/logo-nxb-tre.png"
+        "publisherImgUrl": "https://i.ibb.co/pRbvxj9/logo-nxb-tre.png",
+        "height_": 50,
+        "length_": 20,
+        "weight_": 200,
+        "width_": 20
     },
     {
         "id": 11,
@@ -173,7 +213,11 @@
         "currency": "đ",
         "publisherID": "123453",
         "publisher": "Nhà xuất bản Tổng hợp thành phố Hồ Chí Minh",
-        "publisherImgUrl": "https://i.ibb.co/Jnt6nzw/logo-nxb-tong-hop-tp-hcm-removebg-preview.png"
+        "publisherImgUrl": "https://i.ibb.co/Jnt6nzw/logo-nxb-tong-hop-tp-hcm-removebg-preview.png",
+        "height_": 50,
+        "length_": 20,
+        "weight_": 200,
+        "width_": 20
     },
     {
         "id": 12,
@@ -189,7 +233,11 @@
         "currency": "đ",
         "publisherID": "123452",
         "publisher": "Nhà xuất bản Kim Đồng",
-        "publisherImgUrl": "https://i.gyazo.com/7d1bab302c86880f9eb91cd04388edc2.png"
+        "publisherImgUrl": "https://i.gyazo.com/7d1bab302c86880f9eb91cd04388edc2.png",
+        "height_": 50,
+        "length_": 20,
+        "weight_": 200,
+        "width_": 20
     },
     {
         "id": 13,
@@ -205,7 +253,11 @@
         "currency": "đ",
         "publisherID": "123453",
         "publisher": "Nhà xuất bản Tổng hợp thành phố Hồ Chí Minh",
-        "publisherImgUrl": "https://i.ibb.co/Jnt6nzw/logo-nxb-tong-hop-tp-hcm-removebg-preview.png"
+        "publisherImgUrl": "https://i.ibb.co/Jnt6nzw/logo-nxb-tong-hop-tp-hcm-removebg-preview.png",
+        "height_": 50,
+        "length_": 20,
+        "weight_": 200,
+        "width_": 20
     },
     {
         "id": 14,
@@ -221,7 +273,11 @@
         "currency": "đ",
         "publisherID": "123451",
         "publisher": "Nhà xuất bản Trẻ",
-        "publisherImgUrl": "https://i.ibb.co/pRbvxj9/logo-nxb-tre.png"
+        "publisherImgUrl": "https://i.ibb.co/pRbvxj9/logo-nxb-tre.png",
+        "height_": 50,
+        "length_": 20,
+        "weight_": 200,
+        "width_": 20
     },
     {
         "id": 15,
@@ -237,7 +293,11 @@
         "currency": "đ",
         "publisherID": "123453",
         "publisher": "Nhà xuất bản Tổng hợp thành phố Hồ Chí Minh",
-        "publisherImgUrl": "https://i.ibb.co/Jnt6nzw/logo-nxb-tong-hop-tp-hcm-removebg-preview.png"
+        "publisherImgUrl": "https://i.ibb.co/Jnt6nzw/logo-nxb-tong-hop-tp-hcm-removebg-preview.png",
+        "height_": 50,
+        "length_": 20,
+        "weight_": 200,
+        "width_": 20
     },
     {
         "id": 16,
@@ -253,7 +313,11 @@
         "currency": "đ",
         "publisherID": "123451",
         "publisher": "Nhà xuất bản Trẻ",
-        "publisherImgUrl": "https://i.ibb.co/pRbvxj9/logo-nxb-tre.png"
+        "publisherImgUrl": "https://i.ibb.co/pRbvxj9/logo-nxb-tre.png",
+        "height_": 50,
+        "length_": 20,
+        "weight_": 200,
+        "width_": 20
     },
     {
         "id": 17,
@@ -270,7 +334,11 @@
         "publisherID": "123451",
         "publisher":
         "Nhà xuất bản Trẻ",
-        "publisherImgUrl": "https://i.ibb.co/pRbvxj9/logo-nxb-tre.png"
+        "publisherImgUrl": "https://i.ibb.co/pRbvxj9/logo-nxb-tre.png",
+        "height_": 50,
+        "length_": 20,
+        "weight_": 200,
+        "width_": 20
     },
     {
         "id": 18,
@@ -286,7 +354,11 @@
         "currency": "đ",
         "publisherID": "123451",
         "publisher": "Nhà xuất bản Trẻ",
-        "publisherImgUrl": "https://i.ibb.co/pRbvxj9/logo-nxb-tre.png"
+        "publisherImgUrl": "https://i.ibb.co/pRbvxj9/logo-nxb-tre.png",
+        "height_": 50,
+        "length_": 20,
+        "weight_": 200,
+        "width_": 20
     },
     {
         "id": 19,
@@ -302,7 +374,11 @@
         "currency": "đ",
         "publisherID": "123452",
         "publisher": "Nhà xuất bản Kim Đồng",
-        "publisherImgUrl": "https://i.gyazo.com/7d1bab302c86880f9eb91cd04388edc2.png"
+        "publisherImgUrl": "https://i.gyazo.com/7d1bab302c86880f9eb91cd04388edc2.png",
+        "height_": 50,
+        "length_": 20,
+        "weight_": 200,
+        "width_": 20
     },
     {
         "id": 20,
@@ -318,6 +394,10 @@
         "currency": "đ",
         "publisherID": "123453",
         "publisher": "Nhà xuất bản Tổng hợp thành phố Hồ Chí Minh",
-        "publisherImgUrl": "https://i.ibb.co/Jnt6nzw/logo-nxb-tong-hop-tp-hcm-removebg-preview.png"
+        "publisherImgUrl": "https://i.ibb.co/Jnt6nzw/logo-nxb-tong-hop-tp-hcm-removebg-preview.png",
+        "height_": 50,
+        "length_": 20,
+        "weight_": 200,
+        "width_": 20
     }
 ]

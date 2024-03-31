@@ -1,9 +1,12 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { PopupLeftPanel } from '../components/popup/PopupLeftPanel'
 import { ShoppingCartLoader } from '../components/loaders/ShoppingCartLoader'
 import { fetchData } from './fetch'
+import { AddNewAddressPopup } from './AddNewAddressPopup';
 
-export const SelectAddressPopup = ({ isAddrPopupOpen = false, setIsAddrPopupOpen, icon = '', defaultAddress = { addressid: 0 }, setDefaultAddress, userAddresses = [] }) => {
+
+export const SelectAddressPopup = ({ isAddrPopupOpen = false, setIsAddrPopupOpen, icon = '', defaultAddress = { addressid: 0 }, setDefaultAddress, userAddresses = [], setUserAddresses }) => {
+    const [openChooseAdd, setOpenChooseAdd] = useState(false);
 
     const handleChooseAddress = async (addressID) => {
         const url = '../data/test/useraddresses.json';
@@ -33,12 +36,24 @@ export const SelectAddressPopup = ({ isAddrPopupOpen = false, setIsAddrPopupOpen
                 }
                 content={
                     <div className="px-1">
-                        <div className="xl:flex justify-end px-4 pb-2  text-red-500 text-sm hidden xl:hover:text-red-700 cursor-pointer">
-                            Thêm địa chỉ mới
-                        </div>
+                        <AddNewAddressPopup
+                            open={openChooseAdd}
+                            setOpen={setOpenChooseAdd}
+                            setUserAddresses={setUserAddresses}
+                            userAddresses={userAddresses}
+                            icon={
+                                <div
+                                    className="xl:flex justify-end px-4 pb-2  text-red-500 text-sm hidden xl:hover:text-red-700 cursor-pointer"
+                                    onClick={() => setOpenChooseAdd(true)}>
+                                    Thêm địa chỉ mới
+                                </div>
+                            } />
+
 
                         <div className="flex flex-col gap-2 xl:gap-4">
-                            <div className="flex p-2 gap-2 border border-blue-600 rounded-md xl:gap-4 md:gap-4 items-center justify-center h-[4rem] xl:hidden">
+                            <div
+                                className="flex p-2 gap-2 border border-blue-600 rounded-md xl:gap-4 md:gap-4 items-center justify-center h-[4rem] xl:hidden"
+                                onClick={() => setOpenChooseAdd(true)}>
                                 <div className=" text-xs w-25 text-blue-600 font-semibold cursor-pointer">
                                     + Thêm địa chỉ mới
                                 </div>

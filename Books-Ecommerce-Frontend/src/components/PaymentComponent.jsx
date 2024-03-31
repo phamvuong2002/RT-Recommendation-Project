@@ -9,46 +9,14 @@ import { hideSensitiveInfo } from '../utils/hideSensitiveInfo';
 import { isMobileDevice } from '../utils/isMobileDevice';
 import { checkCouponCode } from '../utils/checkCouponCode';
 import { Swiper, SwiperSlide } from 'swiper/react';
-
+import { SelectAddressPopup } from '../helpers/SelectAddressPopup';
 
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/scrollbar';
-import { PopupLeftPanel } from './popup/PopupLeftPanel';
+import { TextLoader } from './loaders/TextLoader';
+import { calculateShippingFeeDefault } from '../utils/calculateShippingFeeDefault';
 
-
-const SAMPLESERVEICES = [
-    {
-        serviceid: '1',
-        fee: 23000,
-        type: 'GH tiêu chuẩn',
-        date: '27 thg 3-1 thg 4',
-        typeid: 'GHTC'
-    },
-    {
-        serviceid: '2',
-        fee: 19000,
-        type: 'GH nhanh',
-        date: '27 thg 3-1 thg 4',
-        typeid: 'GHN'
-
-    },
-    {
-        serviceid: '3',
-        fee: 40000,
-        type: 'GH hoả tốc',
-        date: '27 thg 3-1 thg 4',
-        typeid: 'GHTC'
-
-    },
-    {
-        serviceid: '4',
-        fee: 12000,
-        type: 'GH tiết kiệm',
-        date: '27 thg 3-1 thg 4',
-        typeid: 'GHTK'
-    }
-]
 
 const SAMPLEPAYMENTMETHODS = [
     {
@@ -73,7 +41,6 @@ const SAMPLEPAYMENTMETHODS = [
         paymentAccount: "0948908485"
     },
 ]
-
 
 const SAMPLECOUPONCODE = [
     {
@@ -135,7 +102,7 @@ export const Payment = () => {
     }
 
     // Xử lý sự kiện chọn dịch vụ vận chuyển
-    const choiceService = async (serviceID) => {
+    const choiceService = (serviceID) => {
 
         if (isMobileDevice()) {
             const updatedShippingMethods = shippingMethods.map(service => {
@@ -160,7 +127,7 @@ export const Payment = () => {
     }
 
     const getFeeByServiceId = (serviceId) => {
-        const service = SAMPLESERVEICES.find(s => s.serviceid === serviceId);
+        const service = shippingMethods.find(s => s.serviceid === serviceId);
         return service ? service.fee : 0;
     }
 
@@ -245,22 +212,6 @@ export const Payment = () => {
         }
     }
 
-    //Cập nhật địa chỉ mới chọn
-    const handleUpdateAddress = async (addressID) => {
-        const url = '../data/test/useraddresses.json';
-        try {
-            setDefaultAddress({ addressid: 0 })
-            setIsAddrPopupOpen(false);
-            setTimeout(async () => {
-                const addressData = await fetchData(url);
-                const newAddress = addressData.find(a => a.addressid === addressID)
-                setDefaultAddress(newAddress)
-            }, 1000) // ví dụ xử lý thời gian cập nhập lại địa chỉ (1s)
-        } catch (error) {
-            // throw error;
-        }
-    }
-
     //Fetch Shopping Carts
     useEffect(() => {
         const url = '../data/test/shoppingcarts.json';
@@ -287,12 +238,28 @@ export const Payment = () => {
 
     //Fetch Shipping methods
     useEffect(() => {
-        setTimeout(() => {
-            setShippingMethods(SAMPLESERVEICES);
-            setServiceID(SAMPLESERVEICES[0].serviceid);
-            setShippingFee(getFeeByServiceId(SAMPLESERVEICES[0].serviceid));
-        }, 1000)
-    }, [])
+        setShippingMethods([])
+        const loadServices = async () => {
+            try {
+                const services = await calculateShippingFeeDefault(defaultAddress, products[0])
+                setShippingMethods(services);
+            } catch (error) {
+                // throw error;
+            }
+        }
+
+        if (defaultAddress.addressid !== 0) {
+            loadServices()
+        }
+    }, [defaultAddress])
+
+    //Set service default
+    useEffect(() => {
+        if (shippingMethods.length > 0) {
+            setServiceID(shippingMethods[0].serviceid);
+            setShippingFee(getFeeByServiceId(serviceID));
+        }
+    }, [shippingMethods])
 
     //Fetch User Address Default
     useEffect(() => {
@@ -311,6 +278,10 @@ export const Payment = () => {
         }, 1000)
     }, [])
 
+    //Xử lý sau khi thêm Địa chỉ mới
+    useEffect(() => {
+        console.log("userAddresses::", userAddresses)
+    }, [userAddresses])
 
     return (
         <div className="xl:flex xl:px-28 xl:gap-2">
@@ -321,94 +292,20 @@ export const Payment = () => {
                     {/* header */}
                     <div className="flex justify-between items-center px-2 h-10 bg-red-100">
                         <div className="font-semibold">Địa chỉ giao hàng</div>
-                        <PopupLeftPanel
-                            open={isAddrPopupOpen}
-                            setOpen={setIsAddrPopupOpen}
+                        <SelectAddressPopup
+                            isAddrPopupOpen={isAddrPopupOpen}
+                            setIsAddrPopupOpen={setIsAddrPopupOpen}
+                            defaultAddress={defaultAddress}
+                            setDefaultAddress={setDefaultAddress}
+                            userAddresses={userAddresses}
+                            setUserAddresses={setUserAddresses}
                             icon={
                                 <button className="text-red-400 xl:hover:text-red-600" onClick={handleAddressChange}>
                                     Chỉnh sửa
                                 </button>
                             }
-                            title={
-                                "Chọn Địa Chỉ Giao Hàng"
-                            }
-                            content={
-                                <div className="px-1">
-                                    <div className="xl:flex justify-end px-4 pb-2  text-red-500 text-sm hidden xl:hover:text-red-700 cursor-pointer">
-                                        Thêm địa chỉ mới
-                                    </div>
-
-                                    <div className="flex flex-col gap-2 xl:gap-4">
-                                        <div className="flex p-2 gap-2 border border-blue-600 rounded-md xl:gap-4 md:gap-4 items-center justify-center h-[4rem] xl:hidden">
-                                            <div className=" text-xs w-25 text-blue-600 font-semibold cursor-pointer">
-                                                + Thêm địa chỉ mới
-                                            </div>
-                                        </div>
-                                        {userAddresses.length === 0 ?
-                                            <ShoppingCartLoader items={NUMLOADER} />
-                                            :
-                                            userAddresses.map((address) => (
-                                                <div key={address.addressid}
-                                                    className={`flex p-2 gap-2 border rounded-lg xl:gap-4 md:gap-4 ${address.addressid === defaultAddress.addressid ? 'border-red-500 ' : 'border-gray-200 '} cursor-pointer xl:hover:border-red-300`}
-                                                    onClick={() => handleUpdateAddress(address.addressid)}>
-                                                    {/* checkbox */}
-                                                    <div className="h-full pt-1 hidden xl:flex md:flex">
-                                                        <input
-                                                            type="checkbox"
-                                                            className="w-5 h-5 accent-red-500 "
-                                                            checked={address.addressid === defaultAddress.addressid}
-                                                            readOnly />
-
-                                                    </div>
-                                                    {/* detail */}
-                                                    <div className="flex flex-col text-xs gap-1 xl:text-sm md:text-sm">
-                                                        <div className="flex gap-2">
-                                                            <div>{address.userFullName}</div>
-                                                            <div>{address.userPhone}</div>
-                                                        </div>
-                                                        <div className="flex gap-2">
-                                                            {address.isHome ?
-                                                                <div className="font-semibold uppercase text-[0.5rem] xl:text-xs xl:text-center xl:px-2 xl:pt-[0.2rem] md:text-xs md:text-center md:px-2 md:pt-[0.2rem] text-white bg-gradient-to-t from-pink-500 to-yellow-500 rounded-lg px-[0.2rem]">
-                                                                    Nhà riêng
-                                                                </div> :
-                                                                <div className="font-semibold uppercase text-[0.5rem] xl:text-xs xl:text-center xl:px-2 xl:pt-[0.2rem] md:text-xs md:text-center md:px-2 md:pt-[0.2rem] text-white bg-gradient-to-t  from-green-400 to-blue-500 rounded-lg px-[0.2rem]">
-                                                                    Văn Phòng
-                                                                </div>
-                                                            }
-                                                            <div>{address.addressDetail}</div>
-                                                        </div>
-                                                        <div className="flex xl:text-xs md:text-xs gap-1 text-gray-400">
-                                                            <div>Mã vùng: </div>
-                                                            <div className="overflow-x-auto">
-                                                                <div>{`${address.proviceName} - ${address.distristName} - ${address.wardName}`}</div>
-                                                            </div>
-                                                        </div>
-
-                                                        <div className="h-6">
-                                                            <div className="flex gap-1 text-[0.6rem] xl:text-xs xl:gap-2 md:text-xs md:gap-2 text-red-600 py-1 items-center">
-                                                                {address.addressDefault && <div className="border border-red-400 rounded-md px-[0.1rem] xl:px-2 xl:py-[0.1rem] md:px-2 md:py-[0.1rem]">
-                                                                    <div>
-                                                                        Địa chỉ nhận hàng mặc định
-                                                                    </div>
-                                                                </div>}
-                                                                {address.addressPayment && <div className="border border-red-400 rounded-md px-[0.1rem] xl:px-2 xl:py-[0.1rem] md:px-2 md:py-[0.1rem]">
-                                                                    <div>
-                                                                        Địa chỉ thanh toán mặc định
-                                                                    </div>
-                                                                </div>}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            ))
-
-
-                                        }
-                                    </div>
-
-                                </div>
-                            }
                         />
+
 
                     </div>
                     {/* details */}
@@ -462,35 +359,36 @@ export const Payment = () => {
                         {/* shipping method */}
                         <div className="flex flex-col gap-2">
                             <div className="text-xs xl:p-2 py-1"> Hình thức giao hàng </div>
-                            <div ref={shippingMethodsContainerRef} className="flex gap-1 overflow-x-auto xl:grid xl:grid-cols-3 xl:gap-2 pb-1 scroll-smooth no-scrollbar">
-                                {
-                                    shippingMethods.map(service => (
-                                        <div
-                                            key={service.serviceid}
-                                            className={`flex-shrink-0 w-[14rem] xl:w-[17rem] flex gap-2 border rounded-lg p-2 xl:cursor-pointer ${serviceID === service.serviceid ? 'border-red-500' : 'border-gray-300'}`}
-                                            onClick={() => choiceService(service.serviceid)} >
-                                            <div className="w-8 flex mb-12">
-                                                <input
-                                                    type="checkbox"
-                                                    className="w-5 accent-red-500"
-                                                    checked={service.serviceid === serviceID}
-                                                    readOnly />
-                                            </div>
-                                            <div className="w-full">
-                                                <div className="flex flex-col gap-4">
-                                                    <div className="flex font-medium">
-                                                        <div>{formatNumberToText(service.fee)}</div>
-                                                        <span className="underline">đ</span>
-                                                    </div>
-                                                    <div>
-                                                        <div className="text-xs">{service.type}</div>
-                                                    </div>
+                            {shippingMethods.length === 0 ? <TextLoader items={1} /> :
+                                <div ref={shippingMethodsContainerRef} className="flex gap-1 overflow-x-auto xl:grid xl:grid-cols-3 xl:gap-2 pb-1 scroll-smooth no-scrollbar">
+                                    {
+                                        shippingMethods.map(service => (
+                                            <div
+                                                key={service.serviceid}
+                                                className={`flex-shrink-0 w-[14rem] xl:w-[17rem] flex gap-2 border rounded-lg p-2 xl:cursor-pointer ${serviceID === service.serviceid ? 'border-red-500' : 'border-gray-300'}`}
+                                                onClick={() => choiceService(service.serviceid)} >
+                                                <div className="w-8 flex mb-12">
+                                                    <input
+                                                        type="checkbox"
+                                                        className="w-5 accent-red-500"
+                                                        checked={service.serviceid === serviceID}
+                                                        readOnly />
                                                 </div>
-                                                <div className="text-xs">Nhận vào: {service.date}</div>
+                                                <div className="w-full">
+                                                    <div className="flex flex-col gap-4">
+                                                        <div className="flex font-medium">
+                                                            <div>{formatNumberToText(service.fee)}</div>
+                                                            <span className="underline">đ</span>
+                                                        </div>
+                                                        <div>
+                                                            <div className="text-xs whitespace-nowrap overflow-x-auto max-w-[10.5rem] xl:max-w-[12rem] no-scrollbar">{service.type}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-xs">Nhận vào: {service.date}</div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    ))}
-                            </div>
+                                        ))}
+                                </div>}
                         </div>
 
                         {/* product */}

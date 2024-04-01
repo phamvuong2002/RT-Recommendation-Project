@@ -2,11 +2,12 @@ import React from 'react';
 import { Fragment, useState, useEffect, useRef } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { HiMiniSquares2X2, HiPlus, HiMinus, HiChevronDown, HiFunnel, HiMiniXMark } from "react-icons/hi2";
+// import { AllProducts } from './AllProducts';
 
-import ProductList_Temp from './ProductList_Temp';
 
-
-export default function FilterProduct() {
+// Nhận vào Danh sách Product cần Filter (dự định hiển thị bằng cách truyền dữ liệu vào AllProducts)
+// Vẫn cần chỉnh sửa 
+export default function FilterProduct({product_filter}) {
   const [sortOption, setSortOption]=useState({ name: '', value: '' })
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -160,6 +161,316 @@ export default function FilterProduct() {
     // More products...
   ]
 
+  const productData = [
+    {
+        imgUrl: "https://product.hstatic.net/200000287623/product/86-9_bia_1_b43d7264e4ca4e48a5342ba95ce2a036_large.jpg",
+        title: "86 - Eightysix - Tập 9",
+        price: "145,000",
+        salePrice: "125,000",
+        currency: "đ",
+    },
+
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
+        title: "Frieren - Pháp sư tiễn táng - Tập 4",
+        price: "45,000",
+        salePrice: "40,500",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/100_bd275c22338e4df3a7b01a0b8553e338_large.jpg",
+        title: "Conan - Thám tử lừng danh - Tập 100",
+        price: "25,000",
+        salePrice: "23,500",
+        currency: "đ",
+    },
+
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/6.5---lmt_6614aed999634a95b52a584fc76d52ff_large.jpg",
+        title: "Nhân vật hạ cấp Tomozaki - Tập 6.5",
+        price: "99,900",
+        salePrice: "111,000",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
+        title: "Frieren - Pháp sư tiễn táng - Tập 5",
+        price: "45,000",
+        salePrice: "40,500",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
+        title: "Frieren - Pháp sư tiễn táng - Tập 6",
+        price: "45,000",
+        salePrice: "40,500",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
+        title: "Frieren - Pháp sư tiễn táng - Tập 7",
+        price: "45,000",
+        salePrice: "40,500",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000287623/product/86-9_bia_1_b43d7264e4ca4e48a5342ba95ce2a036_large.jpg",
+        title: "86 - Eightysix - Tập 8",
+        price: "145,000",
+        salePrice: "125,000",
+        currency: "đ",
+    },
+
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
+        title: "Frieren - Pháp sư tiễn táng - Tập 9",
+        price: "45,000",
+        salePrice: "40,500",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/100_bd275c22338e4df3a7b01a0b8553e338_large.jpg",
+        title: "Conan - Thám tử lừng danh - Tập 10",
+        price: "25,000",
+        salePrice: "23,500",
+        currency: "đ",
+    },
+
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/6.5---lmt_6614aed999634a95b52a584fc76d52ff_large.jpg",
+        title: "Nhân vật hạ cấp Tomozaki - Tập 11",
+        price: "99,900",
+        salePrice: "111,000",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
+        title: "Frieren - Pháp sư tiễn táng - Tập 12",
+        price: "45,000",
+        salePrice: "40,500",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
+        title: "Frieren - Pháp sư tiễn táng - Tập 13",
+        price: "45,000",
+        salePrice: "40,500",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
+        title: "Frieren - Pháp sư tiễn táng - Tập 14",
+        price: "45,000",
+        salePrice: "40,500",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000287623/product/86-9_bia_1_b43d7264e4ca4e48a5342ba95ce2a036_large.jpg",
+        title: "86 - Eightysix - Tập 15",
+        price: "145,000",
+        salePrice: "125,000",
+        currency: "đ",
+    },
+
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
+        title: "Frieren - Pháp sư tiễn táng - Tập 16",
+        price: "45,000",
+        salePrice: "40,500",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/100_bd275c22338e4df3a7b01a0b8553e338_large.jpg",
+        title: "Conan - Thám tử lừng danh - Tập 17",
+        price: "25,000",
+        salePrice: "23,500",
+        currency: "đ",
+    },
+
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/6.5---lmt_6614aed999634a95b52a584fc76d52ff_large.jpg",
+        title: "Nhân vật hạ cấp Tomozaki - Tập 18",
+        price: "99,900",
+        salePrice: "111,000",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
+        title: "Frieren - Pháp sư tiễn táng - Tập 19",
+        price: "45,000",
+        salePrice: "40,500",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
+        title: "Frieren - Pháp sư tiễn táng - Tập 20",
+        price: "45,000",
+        salePrice: "40,500",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
+        title: "Frieren - Pháp sư tiễn táng - Tập 21",
+        price: "45,000",
+        salePrice: "40,500",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000287623/product/86-9_bia_1_b43d7264e4ca4e48a5342ba95ce2a036_large.jpg",
+        title: "86 - Eightysix - Tập 9",
+        price: "145,000",
+        salePrice: "125,000",
+        currency: "đ",
+    },
+
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
+        title: "Frieren - Pháp sư tiễn táng - Tập 4",
+        price: "45,000",
+        salePrice: "40,500",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/100_bd275c22338e4df3a7b01a0b8553e338_large.jpg",
+        title: "Conan - Thám tử lừng danh - Tập 100",
+        price: "25,000",
+        salePrice: "23,500",
+        currency: "đ",
+    },
+
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/6.5---lmt_6614aed999634a95b52a584fc76d52ff_large.jpg",
+        title: "Nhân vật hạ cấp Tomozaki - Tập 6.5",
+        price: "99,900",
+        salePrice: "111,000",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
+        title: "Frieren - Pháp sư tiễn táng - Tập 5",
+        price: "45,000",
+        salePrice: "40,500",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
+        title: "Frieren - Pháp sư tiễn táng - Tập 6",
+        price: "45,000",
+        salePrice: "40,500",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
+        title: "Frieren - Pháp sư tiễn táng - Tập 7",
+        price: "45,000",
+        salePrice: "40,500",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000287623/product/86-9_bia_1_b43d7264e4ca4e48a5342ba95ce2a036_large.jpg",
+        title: "86 - Eightysix - Tập 8",
+        price: "145,000",
+        salePrice: "125,000",
+        currency: "đ",
+    },
+
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
+        title: "Frieren - Pháp sư tiễn táng - Tập 9",
+        price: "45,000",
+        salePrice: "40,500",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/100_bd275c22338e4df3a7b01a0b8553e338_large.jpg",
+        title: "Conan - Thám tử lừng danh - Tập 10",
+        price: "25,000",
+        salePrice: "23,500",
+        currency: "đ",
+    },
+
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/6.5---lmt_6614aed999634a95b52a584fc76d52ff_large.jpg",
+        title: "Nhân vật hạ cấp Tomozaki - Tập 11",
+        price: "99,900",
+        salePrice: "111,000",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
+        title: "Frieren - Pháp sư tiễn táng - Tập 12",
+        price: "45,000",
+        salePrice: "40,500",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
+        title: "Frieren - Pháp sư tiễn táng - Tập 13",
+        price: "45,000",
+        salePrice: "40,500",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
+        title: "Frieren - Pháp sư tiễn táng - Tập 14",
+        price: "45,000",
+        salePrice: "40,500",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000287623/product/86-9_bia_1_b43d7264e4ca4e48a5342ba95ce2a036_large.jpg",
+        title: "86 - Eightysix - Tập 15",
+        price: "145,000",
+        salePrice: "125,000",
+        currency: "đ",
+    },
+
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
+        title: "Frieren - Pháp sư tiễn táng - Tập 16",
+        price: "45,000",
+        salePrice: "40,500",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/100_bd275c22338e4df3a7b01a0b8553e338_large.jpg",
+        title: "Conan - Thám tử lừng danh - Tập 17",
+        price: "25,000",
+        salePrice: "23,500",
+        currency: "đ",
+    },
+
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/6.5---lmt_6614aed999634a95b52a584fc76d52ff_large.jpg",
+        title: "Nhân vật hạ cấp Tomozaki - Tập 18",
+        price: "99,900",
+        salePrice: "111,000",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
+        title: "Frieren - Pháp sư tiễn táng - Tập 19",
+        price: "45,000",
+        salePrice: "40,500",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
+        title: "Frieren - Pháp sư tiễn táng - Tập 20",
+        price: "45,000",
+        salePrice: "40,500",
+        currency: "đ",
+    },
+    {
+        imgUrl: "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
+        title: "Frieren - Pháp sư tiễn táng - Tập 21",
+        price: "45,000",
+        salePrice: "40,500",
+        currency: "đ",
+    },
+];
+
+
 
   const [filterValue, setFilterValue] = useState({
     price: '',
@@ -170,7 +481,7 @@ export default function FilterProduct() {
 
   const [filterOptions, setFiterOption] = useState(filters);
 
-  const [filteredProductList, setFilteredProductList] = useState(sampleProducts)
+  const [filteredProductList, setFilteredProductList] = useState(productData)
 
 
   const filterCategory = (event) => {
@@ -183,7 +494,7 @@ export default function FilterProduct() {
       filterValue['category'] = filter_target_value
       setCheckBoxChecked_category(filter_target_value)
     }
-    let filteredData = JSON.parse(JSON.stringify(sampleProducts)).filter((item) => (filterValue.category == item.category))
+    let filteredData = JSON.parse(JSON.stringify(productData)).filter((item) => (filterValue.category == item.category))
 
     console.log(filteredData)
     console.log('in')
@@ -505,7 +816,7 @@ export default function FilterProduct() {
             </h2>
 
 
-            <div className=" mt-4 border-t border-gray-200 sm:border-none sm:grid  sm:grid-cols-1 sm:gap-x-8  lg:grid-cols-4">
+            <div className=" mt-4 border-t border-gray-200 sm:border-none sm:grid  sm:grid-cols-1 sm:gap-x-8  lg:grid-cols-5">
               {/* Filters */}
               <form className={`${isMenuOpen ? "" : "hidden"}  lg:block `}>
                 <h3 className="sr-only">Categories</h3>
@@ -565,9 +876,9 @@ export default function FilterProduct() {
               </form>
 
               {/* Product grid */}
-              <div className="lg:col-span-3">
+              <div className="lg:col-span-4">
                 {/* Your content */}
-                <ProductList_Temp filteredProductList={filteredProductList} />
+                {/* <AllProducts all_product={productData} /> */}
 
               </div>
             </div>

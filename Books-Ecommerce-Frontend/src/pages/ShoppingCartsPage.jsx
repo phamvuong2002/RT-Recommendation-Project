@@ -1,6 +1,6 @@
 import React from 'react'
-import { ShoppingCarts } from '../components/ShoppingCarts'
 import NavigationPath from '../components/NavigationPath'
+import { ShoppingCarts } from '../components/ShoppingCarts'
 
 export const ShoppingCartsPage = () => {
     const paths = [

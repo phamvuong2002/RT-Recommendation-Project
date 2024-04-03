@@ -51,7 +51,7 @@ const productAttributes = {
     "Gói Bảo Hành": "Bằng Hóa đơn mua hàng",
     "Thời gian bảo hành": "1 tháng"
 };
-export const DescriptionFeedback = (/*description */) => {
+export const DescriptionFeedback = ({ bookId }) => {
     const NUMBERLOADERS = 4;
     const swiperRef = useRef();
 
@@ -126,7 +126,7 @@ export const DescriptionFeedback = (/*description */) => {
         return attributes;
     };
 
-    //Fetch Shopping Carts
+    //Fetch Shopping Carts for advertising
     useEffect(() => {
         const url = '../data/test/shoppingcarts.json';
         const loadShoppingCartsData = async () => {
@@ -141,7 +141,7 @@ export const DescriptionFeedback = (/*description */) => {
         setTimeout(() => {
             loadShoppingCartsData()
         }, 1000)
-    }, [])
+    }, [bookId])
 
     return (
         <div className="scroll-smooth">
@@ -232,7 +232,7 @@ export const DescriptionFeedback = (/*description */) => {
                             <SwiperSlide className="">
                                 <div className="xl:p-6">
                                     <div className="h-12 text-lg font-semibold m-4">{`Đánh Giá Và Nhận Xét Của Sách ${product.title}`}</div>
-                                    <FeedBack />
+                                    <FeedBack bookId={bookId} />
                                 </div>
                             </SwiperSlide>
                             {!expanded && (

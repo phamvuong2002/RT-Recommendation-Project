@@ -20,7 +20,7 @@ const SAMPLESTAR = {
     'HIGH': 'Đánh giá Cao',
 }
 
-export const FeedBack = () => {
+export const FeedBack = ({ bookId }) => {
     const [totalComments, setTotalComments] = useState(1745);
     const [comments, setComments] = useState([]);
     const [loading, setLoading] = useState(false);

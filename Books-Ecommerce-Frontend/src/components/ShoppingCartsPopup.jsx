@@ -1,3 +1,4 @@
+import { Link, useNavigate } from 'react-router-dom'
 import { Fragment, useEffect, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { ShoppingCartLoader } from './loaders/ShoppingCartLoader'
@@ -7,8 +8,8 @@ import { fetchData } from '../helpers/fetch'
 import ShoppingCartsPopupGroupedByPublisherID from './ShoppingCartsPopupGroupByPushlisherID'
 
 
-export const ShoppingCartsPopup = (/*products*/) => {
-    const [open, setOpen] = useState(true);
+export const ShoppingCartsPopup = ({ open = false, setOpen }) => {
+    const navigate = useNavigate();
     const [products, setProducts] = useState([]);
     const NUMLOADER = 6;
 
@@ -71,6 +72,12 @@ export const ShoppingCartsPopup = (/*products*/) => {
     //     });
     // };
 
+    //Click quay về giỏ hàng
+    const handleReturnShoppingCarts = () => {
+        setOpen(false);
+        navigate('../shoppingcarts');
+    }
+
 
     //Fetch Shopping Carts
     useEffect(() => {
@@ -125,7 +132,7 @@ export const ShoppingCartsPopup = (/*products*/) => {
                                                 <div className="ml-3 flex h-7 items-center">
                                                     <button
                                                         type="button"
-                                                        className="relative -m-2 p-2 text-gray-400 hover:text-gray-500"
+                                                        className="relative -m-2 p-2 text-gray-400 hover:text-gray-500 outline-none focus:outline-none"
                                                         onClick={() => setOpen(false)}
                                                     >
                                                         <span className="absolute " />
@@ -175,12 +182,12 @@ export const ShoppingCartsPopup = (/*products*/) => {
                                             </div>
                                             <p className="mt-0.5 text-sm text-gray-500">Phí ship và thuế bao gồm ở trang thanh toán</p>
                                             <div className="mt-6">
-                                                <a
-                                                    href="#"
+                                                <Link
+                                                    to="../payment"
                                                     className={`flex items-center justify-center rounded-md border border-transparent bg-red-500 px-6 py-3 text-base font-bold text-white shadow-sm xl:hover:bg-red-700 ${products.length ? '' : 'hidden'}`}
                                                 >
                                                     Thanh Toán
-                                                </a>
+                                                </Link>
                                             </div>
                                             <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
                                                 <p>
@@ -198,7 +205,7 @@ export const ShoppingCartsPopup = (/*products*/) => {
                                                             <button
                                                                 type="button"
                                                                 className="font-medium text-red-600 hover:text-red-500"
-                                                                onClick={() => setOpen(false)}
+                                                                onClick={handleReturnShoppingCarts}
                                                             >
                                                                 Giỏ Hàng Của Bạn
                                                                 <span aria-hidden="true"> &rarr;</span>

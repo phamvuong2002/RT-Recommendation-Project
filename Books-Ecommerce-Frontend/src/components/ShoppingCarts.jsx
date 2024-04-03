@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
 import { ShoppingCartLoader } from './loaders/ShoppingCartLoader';
 import { formatNumberToText } from '../utils/formatNumberToText';
@@ -13,6 +14,8 @@ const sampleUserInfo = {
 }
 
 export const ShoppingCarts = (/*items*/) => {
+
+    const navigate = useNavigate();
 
     const [products, setProducts] = useState([]);
     const [shippingFee, setShippingFee] = useState(0);
@@ -94,6 +97,11 @@ export const ShoppingCarts = (/*items*/) => {
     const getAddresses = async (user) => {
         //Xử lý lấy thông tin địa chỉ
         return "Phường Tân Hưng, Quận 7,Hồ Chí Minh"
+    }
+
+    // Xử lý xác nhận giỏ hàng
+    const handleConfirmCarts = () => {
+        navigate('/payment');
     }
 
     //Fetch Shopping Carts
@@ -227,7 +235,10 @@ export const ShoppingCarts = (/*items*/) => {
                                     <p className="text-xs text-gray-700">Đã bao gồm thuế VAT</p>
                                 </div>
                             </div>
-                            <button className={`mt-2 xl:mt-6 md:mt-6 w-full bg-red-500 py-1.5 font-bold text-blue-50 xl:hover:bg-red-600 ${products.length ? '' : 'hidden'}`}>
+                            <button
+                                className={`mt-2 xl:mt-6 md:mt-6 w-full bg-red-500 py-1.5 font-bold text-blue-50 xl:hover:bg-red-600 ${products.length ? '' : 'hidden'}`}
+                                onClick={handleConfirmCarts}
+                            >
                                 XÁC NHẬN GIỎ HÀNG ({products.length})
                             </button>
                             <div className="flex justify-center mt-4 text-xs font-inter">

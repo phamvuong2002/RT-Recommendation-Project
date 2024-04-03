@@ -15,9 +15,6 @@ const SAMPLEVERSION = {
     'special': 'Đặt biệt'
 }
 
-const SHOP_ID = 191502
-const SHOP_DISTRICT = 1444
-
 
 export const DetailCart = (/*{ product }*/) => {
 
@@ -106,7 +103,7 @@ export const DetailCart = (/*{ product }*/) => {
         setShippingService({ serviceid: 0 })
         const loadService = async () => {
             try {
-                const services = await calculateShippingFeeDefault(defaultAddress, product)
+                const services = await calculateShippingFeeDefault(defaultAddress, { name: product.title, id: product.productid, ...product })
                 // const service = serviceData.find(s => s.typeid === 'GHTC');
 
                 const service = services[0]
@@ -337,7 +334,7 @@ export const DetailCart = (/*{ product }*/) => {
                         }
 
                         {/* Details - Sub information*/}
-                        <div className="flex flex-col gap-4 xl:gap-1 px-2 xl:px-0 md:p-2">
+                        <div className="flex flex-col gap-4 pb-4 xl:pb-0 xl:gap-1 px-2 xl:px-0 md:p-2">
                             {/* Sub information */}
                             {
                                 product.productid === 0 ?

@@ -53,7 +53,7 @@ export const calculateShippingFeeDefault = async (toAddress, product) => {
         //     "items": [
         //         {
         //             "name": product.name,
-        //             "code": product.id,
+        //             "code": `"${product.id}"`,
         //             "quantity": 1,
         //             "price": product.price,
         //             "length": product.length_,

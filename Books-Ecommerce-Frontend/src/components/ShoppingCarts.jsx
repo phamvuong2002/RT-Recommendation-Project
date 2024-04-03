@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
 import { ShoppingCartLoader } from './loaders/ShoppingCartLoader';
 import { formatNumberToText } from '../utils/formatNumberToText';
@@ -242,13 +242,13 @@ export const ShoppingCarts = (/*items*/) => {
                                 XÁC NHẬN GIỎ HÀNG ({products.length})
                             </button>
                             <div className="flex justify-center mt-4 text-xs font-inter">
-                                <button
-                                    type="button"
+                                <Link
+                                    to="../"
                                     className="flex gap-2 font-medium text-red-600 xl:hover:text-red-500"
                                 >
                                     <span aria-hidden="true"> &rarr;</span>
                                     Tiếp Tục Mua Hàng
-                                </button>
+                                </Link>
                             </div>
                         </div>
 

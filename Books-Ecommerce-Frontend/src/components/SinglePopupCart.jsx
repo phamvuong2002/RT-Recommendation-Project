@@ -2,10 +2,12 @@ import React from 'react'
 import { formatNumberToText } from '../utils/formatNumberToText'
 import { Popup } from './popup/Popup'
 import { popupContent } from '../helpers/popupContent'
+import { Link } from 'react-router-dom'
 
 export const SinglePopupCart = ({ product, handleDeleteProduct }) => {
+
     return (
-        <div key={product.id} className="flex py-6" href={product.href}>
+        <div key={product.id} className="flex py-6">
             <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                 <img
                     src={product.imageSrc}
@@ -18,7 +20,7 @@ export const SinglePopupCart = ({ product, handleDeleteProduct }) => {
                 <div>
                     <div className="flex justify-between text-base font-medium text-gray-900">
                         <h3>
-                            <a href={product.href}>{product.name}</a>
+                            <Link to={product.href}>{product.name}</Link>
                         </h3>
                         <div className="ml-4 text-red-500 capitalize tracking-wide">
                             <span>

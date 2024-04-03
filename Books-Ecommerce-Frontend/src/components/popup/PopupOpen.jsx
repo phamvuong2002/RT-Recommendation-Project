@@ -125,7 +125,7 @@ export const PopupOpen = ({ open, setOpen, autoClose = 0, icon = null, onYesClic
                             leaveFrom="opacity-100 translate-y-0"
                             leaveTo="opacity-0 translate-y-4"
                         >
-                            <div className="bg-gray-50 inline-block align-middle px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all max-w-lg w-full">
+                            <div tabIndex={0} className="bg-gray-50 inline-block align-middle px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all max-w-lg w-full">
                                 {customContent}
 
                                 <div className={`mt-5 flex justify-between ${Option ? '' : 'hidden'}`}>

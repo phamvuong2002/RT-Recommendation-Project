@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 
 export const Product = ({ productData }) => {
     return (
-        <div className="w-full h-full p-1">
-            <div className="w-full h-full flex flex-col items-center border border-y-red-50 md:hover:shadow-2xl md:rounded-md md:shadow-md px-5 py-2">
+        <div className="w-full md:w-[85%] h-full p-1 ">
+            <div className="md:w-[220px] bg-white flex flex-col items-center border border-y-red-50 md:hover:shadow-2xl md:rounded-md md:shadow-md px-5 py-2">
                 {/* Image */}
                 <div className="relative overflow-hidden group">
                     <img
@@ -19,7 +19,7 @@ export const Product = ({ productData }) => {
 
                 {/* Title */}
                 <h2 className=
-                    "h-9 md:h-12 mt-3 text-[75%] md:text-center md:text-[95%] text-indigo-900  font-semibold font-['Inter'] capitalize line-clamp-2 ">
+                    "h-9 md:h-12 mt-3 text-[13px] text-left md:text-center md:text-[95%] text-indigo-900  font-semibold font-['Inter'] capitalize line-clamp-2 ">
                     {productData.title}
                 </h2>
 
@@ -30,7 +30,7 @@ export const Product = ({ productData }) => {
 
 
                 {/* Sale Price */}
-                <div className="flex justify-center md:mt-2 gap-4 px-2">
+                <div className="flex justify-center md:mt-2 gap-4">
                     <div className="flex items-end text-[70%] md:text-[90%] line-through text-red-400 font-bold font-['Inter'] tracking-wide">
                         <span className="">
                             {productData.price}

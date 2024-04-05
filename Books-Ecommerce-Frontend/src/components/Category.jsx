@@ -1,13 +1,35 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { fetchData } from '../helpers/fetch';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/pagination';
+
+
+// import required modules
+import { Pagination } from 'swiper/modules';
 
 export const Category = () => {
-    const categoriesTop5 = {
-        top1: "Manga - Comic",
-        top2: "Sách nước ngoài",
-        top3: "Văn học Việt Nam",
-        top4: "Sách giáo khoa",
-        top5: "Tiểu thuyết",
-    }
+    const [category, setCategory] = useState([])
+
+    //Fetch Category Data
+    useEffect(() => {
+        const url = '../data/test/topcategory.json';
+        const loadTopCategory = async () => {
+            try {
+                const categoriesTop5 = await fetchData(url);
+                setCategory(categoriesTop5[0])
+
+
+            } catch (error) {
+                // throw error;
+            }
+        }
+        //
+        loadTopCategory()
+
+    }, [])
+
+
     return (
         <div className="m-4 md:grid md:justify-items-stretch">
             <div className="flex items-center md:mb-5">
@@ -20,15 +42,7 @@ export const Category = () => {
             <div className='px-4 py-2 md:justify-self-center md:w-[90%] md:p-0 md:rounded-none md:bg-transparent md:grid md:grid-cols-[1fr,1.5fr,1fr] md:gap-6'>
                 <div className="md:relative md:text-white font-semibold">
                     <span className="hidden md:block md:absolute md:top-[4%] md:left-[8%] md:text-5xl">1</span>
-
-                    {/* If screen is mobile, </svg> will be hidden. Just show </p> and </div> */}
-                    <div className="flex gap-1 rounded-lg bg-[#fda1a194] items-center my-2 p-2 md:block md:my-0 md:p-0">
-                        <p className="text-[18px] font-bold md:absolute md:bottom-12 md:w-full md:text-center md:text-[20px] lg:text-[28px] md:font-bold">{categoriesTop5.top1}</p>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 block text-[#ff0606] md:hidden">
-                            <path fillRule="evenodd" d="M12.963 2.286a.75.75 0 0 0-1.071-.136 9.742 9.742 0 0 0-3.539 6.176 7.547 7.547 0 0 1-1.705-1.715.75.75 0 0 0-1.152-.082A9 9 0 1 0 15.68 4.534a7.46 7.46 0 0 1-2.717-2.248ZM15.75 14.25a3.75 3.75 0 1 1-7.313-1.172c.628.465 1.35.81 2.133 1a5.99 5.99 0 0 1 1.925-3.546 3.75 3.75 0 0 1 3.255 3.718Z" clipRule="evenodd" />
-                        </svg>
-                    </div>
-
+                    <p className="hidden md:block text-[18px] font-bold md:absolute md:bottom-12 md:w-full md:text-center md:text-[20px] lg:text-[28px] md:font-bold">{category.top1}</p>
                     <img className="hidden md:block w-full h-full rounded-md" src="https://i.pinimg.com/564x/9f/11/78/9f11789aeadd48203dd2d3af10d9a57d.jpg"></img>
                 </div>
 
@@ -36,46 +50,49 @@ export const Category = () => {
 
                 <div className="md:relative md:text-white font-semibold">
                     <span className="hidden md:block md:absolute md:top-[4%] md:left-[8%] md:text-5xl">2</span>
-
-                    {/* If screen is mobile, </svg> will be hidden. Just show </p> and </div> */}
-                    <div className="flex gap-1 rounded-lg bg-[#fda1a194] items-center my-2 p-2 md:block md:my-0 md:p-0">
-                        <p className="text-[18px] font-bold md:absolute md:bottom-12 md:w-full md:text-center md:text-[20px] lg:text-[28px] md:font-bold">{categoriesTop5.top2}</p>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 block text-[#ff0606] md:hidden">
-                            <path fillRule="evenodd" d="M12.963 2.286a.75.75 0 0 0-1.071-.136 9.742 9.742 0 0 0-3.539 6.176 7.547 7.547 0 0 1-1.705-1.715.75.75 0 0 0-1.152-.082A9 9 0 1 0 15.68 4.534a7.46 7.46 0 0 1-2.717-2.248ZM15.75 14.25a3.75 3.75 0 1 1-7.313-1.172c.628.465 1.35.81 2.133 1a5.99 5.99 0 0 1 1.925-3.546 3.75 3.75 0 0 1 3.255 3.718Z" clipRule="evenodd" />
-                        </svg>
-                    </div>
-
+                    <p className="hidden md:block text-[18px] font-bold md:absolute md:bottom-12 md:w-full md:text-center md:text-[20px] lg:text-[28px] md:font-bold">{category.top2}</p>
                     <img className="hidden md:block w-full h-full rounded-md" src="https://i.pinimg.com/564x/90/af/2f/90af2f0ffb3dcbee2fbc87b10d2d98f0.jpg"></img>
                 </div>
 
                 <div className="md:relative md:text-white font-semibold">
                     <span className="hidden md:block md:absolute md:top-[4%] md:left-[8%] md:text-5xl">3</span>
-
-                    {/* If screen is mobile, </svg> will be hidden. Just show </p> and </div> */}
-                    <div className="flex gap-1 rounded-lg bg-[#fda1a194] items-center my-2 p-2 md:block md:my-0 md:p-0">
-                        <p className="text-[18px] font-bold md:absolute md:bottom-12 md:w-full md:text-center md:text-[20px] lg:text-[28px] md:font-bold">{categoriesTop5.top3}</p>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 block text-[#ff0606] md:hidden">
-                            <path fillRule="evenodd" d="M12.963 2.286a.75.75 0 0 0-1.071-.136 9.742 9.742 0 0 0-3.539 6.176 7.547 7.547 0 0 1-1.705-1.715.75.75 0 0 0-1.152-.082A9 9 0 1 0 15.68 4.534a7.46 7.46 0 0 1-2.717-2.248ZM15.75 14.25a3.75 3.75 0 1 1-7.313-1.172c.628.465 1.35.81 2.133 1a5.99 5.99 0 0 1 1.925-3.546 3.75 3.75 0 0 1 3.255 3.718Z" clipRule="evenodd" />
-                        </svg>
-                    </div>
-
+                    <p className="hidden md:block text-[18px] font-bold md:absolute md:bottom-12 md:w-full md:text-center md:text-[20px] lg:text-[28px] md:font-bold">{category.top3}</p>
                     <img className="hidden md:block h-full rounded-md" src="https://i.pinimg.com/564x/89/ad/1f/89ad1f413de58358e757b6da8444709f.jpg"></img>
                 </div>
 
                 <div className="md:relative md:text-white font-semibold">
                     <span className="hidden md:block md:absolute md:top-[4%] md:left-[8%] md:text-5xl">4</span>
-                    <p className=" hidden md:block md:absolute md:bottom-12 md:w-full md:text-center md:text-[20px] lg:text-[28px] md:font-bold">{categoriesTop5.top4}</p>
+                    <p className=" hidden md:block md:absolute md:bottom-12 md:w-full md:text-center md:text-[20px] lg:text-[28px] md:font-bold">{category.top4}</p>
                     <img className="hidden md:block w-full h-full rounded-md" src="https://i.pinimg.com/564x/63/24/97/6324977f3f0c1c0f7ecdb1072e7ded00.jpg"></img>
                 </div>
 
                 <div className="md:relative md:text-white font-semibold">
                     <span className="hidden md:block md:absolute md:top-[4%] md:left-[8%] md:text-5xl">5</span>
-                    <p className="hidden md:block md:absolute md:bottom-12 md:w-full md:text-center md:text-[20px] lg:text-[28px] md:font-bold">{categoriesTop5.top5}</p>
+                    <p className="hidden md:block md:absolute md:bottom-12 md:w-full md:text-center md:text-[20px] lg:text-[28px] md:font-bold">{category.top5}</p>
                     <img className="hidden md:block w-full h-full rounded-md" src="https://i.pinimg.com/564x/47/2d/42/472d4278bc724404d8f3ce18f301af0b.jpg"></img>
                 </div>
 
 
             </div>
-        </div>
+
+            <Swiper
+                slidesPerView={3}
+                spaceBetween={10}
+
+                modules={[Pagination]}
+                className="mySwiper block md:hidden"
+            >
+
+                {/* Duyệt qua các thuộc tính của đối tượng category và hiển thị chúng */}
+                {Object.keys(category).map((index) => (
+                    <SwiperSlide key={index}>
+                        {/* If screen is mobile, </svg> will be hidden. Just show </p> and </div> */}
+                        <div className="flex justify-center items-center rounded-lg h-[100px] bg-[#fda1a194] p-2">
+                            <p className="text-[15px] text-center">{category[index]}</p>
+                        </div>
+                    </SwiperSlide>
+                ))}
+            </Swiper >
+        </div >
     );
 }

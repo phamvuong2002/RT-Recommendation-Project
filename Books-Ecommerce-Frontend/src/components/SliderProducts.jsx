@@ -54,5 +54,5 @@ export const SliderProducts = ({ productData }) => {
 
 // Xác định PropTypes cho Product
 SliderProducts.propTypes = {
-    productData: PropTypes.shape().isRequired,
+    productData: PropTypes.arrayOf(PropTypes.object).isRequired,
 };

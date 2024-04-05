@@ -2,6 +2,7 @@
     {
         "imgUrl": "https://product.hstatic.net/200000343865/product/100_bd275c22338e4df3a7b01a0b8553e338_large.jpg",
         "title": "Conan - Thám tử lừng danh - Tập 100",
+        "href": "/books/1",
         "price": 777.111,
         "salePrice": 23.511,
         "currency": "đ"
@@ -9,6 +10,7 @@
     {
         "imgUrl": "https://product.hstatic.net/200000343865/product/6.5---lmt_6614aed999634a95b52a584fc76d52ff_large.jpg",
         "title": "Nhân vật hạ cấp Tomozaki - Tập 6.5",
+        "href": "/books/4",
         "price": 777.111,
         "salePrice": 11.11,
         "currency": "đ"

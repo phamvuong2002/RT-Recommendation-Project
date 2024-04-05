@@ -2,7 +2,7 @@ import ReactPaginate from "react-paginate";
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import PropTypes from 'prop-types';
 
-export const PaginationButtons = ({ setCurrentPage, currentPage, totalPages }) => {
+export const PaginationButtons = ({ setCurrentPage, currentPage, totalPages, handlePageChange }) => {
     const handlePageClick = ({ selected }) => {
         setCurrentPage(selected);
     };
@@ -10,11 +10,9 @@ export const PaginationButtons = ({ setCurrentPage, currentPage, totalPages }) =
     const showNextButton = currentPage !== totalPages - 1;
     const showPrevButton = currentPage !== 0;
     return (
-        <div
-
-        >
-
+        <div>
             <ReactPaginate
+                onClick={handlePageChange}
                 breakLabel={<span className="mr-4">...</span>}
                 nextLabel={
                     showNextButton ? (
@@ -43,8 +41,9 @@ export const PaginationButtons = ({ setCurrentPage, currentPage, totalPages }) =
 };
 
 PaginationButtons.propTypes = {
-    setCurrentPage: PropTypes.isRequired,
-    currentPage: PropTypes.isRequired,
-    totalPages: PropTypes.isRequired,
+    setCurrentPage: PropTypes.func.isRequired,
+    currentPage: PropTypes.number.isRequired,
+    totalPages: PropTypes.number.isRequired,
+    handlePageChange: PropTypes.func.isRequired,
 };
 

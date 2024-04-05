@@ -14,9 +14,7 @@ export const useFectchPaging = () => {
             const page = Math.min(currentPage + 1, totalPages);
             //const result = await axios.get(`${API_URL}&page=${page}`);api for test
             const result = await axios.get(`${url}page=${page}.json`);
-            console.log('a', result);
             setPages(result.data);
-            console.log(result.data);
             setLoading(false);
         };
         fetchData();

@@ -1,10 +1,11 @@
 import React, { useRef, useState } from 'react';
+import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types';
 
 export const ProductForSlider = ({ productData }) => {
     return (
         <div className="w-full h-full ">
-            <div className="w-[160px] md:w-[220px] bg-white flex flex-col items-center border border-y-red-50 md:hover:shadow-2xl md:rounded-md md:shadow-md px-3 py-2">
+            <Link to={productData.href} className="w-[160px] md:w-[220px] bg-white flex flex-col items-center border border-y-red-50 md:hover:shadow-2xl md:rounded-md md:shadow-md px-3 py-2">
                 {/* Image */}
                 <div className="relative overflow-hidden group">
                     <img
@@ -40,7 +41,7 @@ export const ProductForSlider = ({ productData }) => {
                         <span className='text-[13px] md:text-[19px]'>{productData.currency}</span>
                     </h1>
                 </div>
-            </div>
+            </Link>
 
         </div>
     );
@@ -51,8 +52,9 @@ ProductForSlider.propTypes = {
     productData: PropTypes.shape({
         imgUrl: PropTypes.string.isRequired,
         title: PropTypes.string.isRequired,
-        price: PropTypes.string.isRequired,
-        salePrice: PropTypes.string.isRequired,
+        href: PropTypes.string.isRequired,
+        price: PropTypes.number.isRequired,
+        salePrice: PropTypes.number.isRequired,
         currency: PropTypes.string.isRequired,
     }).isRequired,
 };

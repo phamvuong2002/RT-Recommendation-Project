@@ -1,7 +1,29 @@
-import { Fragment } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 
-export const PopupCenterPanel = ({ open, setOpen, icon = '', title = '', content = '', titleClassName = 'p-4' }) => {
+export const PopupCenterPanel = ({ open, setOpen, autoClose = 0, icon = '', title = '', content = '', titleClassName = 'p-4' }) => {
+    const [timeoutId, setTimeoutId] = useState(null);
+    useEffect(() => {
+        // Clear timeout trước đó nếu tồn tại
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+
+        if (autoClose) {
+            const newTimeoutId = setTimeout(() => {
+                setOpen(false);
+            }, autoClose);
+            setTimeoutId(newTimeoutId);
+        }
+
+        // Cleanup khi unmount component hoặc dependency thay đổi
+        return () => {
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
+        };
+    }, [open])
+
     return (
         <>
             <div

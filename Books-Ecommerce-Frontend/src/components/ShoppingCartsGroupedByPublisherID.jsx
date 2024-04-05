@@ -3,7 +3,7 @@ import { SingleShoppingCart } from './SingleShoppingCart';
 import { Popup } from './popup/Popup';
 import { popupContent } from '../helpers/popupContent';
 
-const ShoppingCartsGroupedByPublisherID = ({ products, handleDeleteProduct, handleDecreaseQuantity, handleIncreaseQuantity, handleDeletePublisherProducts, handleAddInterestingProduct }) => {
+const ShoppingCartsGroupedByPublisherID = ({ products, handleDeleteProduct, handleDecreaseQuantity, handleIncreaseQuantity, handleDeletePublisherProducts }) => {
     // Tạo một đối tượng từ điển để nhóm các sản phẩm theo publisherID
     const groupedProducts = products.reduce((acc, product) => {
         if (!acc[product.publisherID]) {
@@ -60,7 +60,6 @@ const ShoppingCartsGroupedByPublisherID = ({ products, handleDeleteProduct, hand
                                         handleDeleteProduct={handleDeleteProduct}
                                         handleDecreaseQuantity={handleDecreaseQuantity}
                                         handleIncreaseQuantity={handleIncreaseQuantity}
-                                        handleAddInterestingProduct={handleAddInterestingProduct}
                                     />
                                 ))
                             }

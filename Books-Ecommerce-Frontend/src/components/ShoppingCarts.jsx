@@ -4,7 +4,11 @@ import { ShoppingCartLoader } from './loaders/ShoppingCartLoader';
 import { formatNumberToText } from '../utils/formatNumberToText';
 import { calculateTotalPrice } from '../utils/calculateTotalPrice';
 import ShoppingCartsGroupedByPublisherID from './ShoppingCartsGroupedByPublisherID';
+import { SelectAddressPopup } from '../helpers/SelectAddressPopup'
+import { calculateShippingFeeDefault } from '../utils/calculateShippingFeeDefault'
 import { fetchData } from '../helpers/fetch';
+
+import { TextLoader } from './loaders/TextLoader';
 
 const sampleUserInfo = {
     userId: '123456',
@@ -21,13 +25,10 @@ export const ShoppingCarts = (/*items*/) => {
     const [shippingFee, setShippingFee] = useState(0);
     const [address, setAddress] = useState('');
     const [user, setUser] = useState(sampleUserInfo);
+    const [isAddrPopupOpen, setIsAddrPopupOpen] = useState(false);
+    const [userAddresses, setUserAddresses] = useState('');
     const NUMLOADER = 2;
 
-    // Xử lý phí shipping
-    const calculateShippingFee = async () => {
-        //Tính phí shipping
-        return 20000
-    }
 
     // Xử lý sự kiện khi nhấn nút "Xoá"
     const handleDeleteProduct = async (productId) => {
@@ -46,6 +47,18 @@ export const ShoppingCarts = (/*items*/) => {
         }
     }
 
+    // Xử lý sự kiện click chỉnh sửa địa chỉ
+    //Load địa chỉ khi mở popup
+    const handleAddressChange = async (e) => {
+        e.preventDefault();
+        const url = '../data/test/useraddresses.json';
+        try {
+            const addressData = await fetchData(url);
+            setUserAddresses(addressData)
+        } catch (error) {
+            // throw error;
+        }
+    }
 
 
     //Xử lý sự kiện xoá tất cả sản phẩm của một nhà xuất bản
@@ -62,15 +75,6 @@ export const ShoppingCarts = (/*items*/) => {
             return 'failed';
         }
     };
-
-    //Xử lý sự kiện thêm sản phẩm quan tâm
-    const handleAddInterestingProduct = async (productID) => {
-        const url = ''
-        //Xử lý thêm vào danh sách sản phẩm yêu thích
-        //ví dụ:
-        console.log(`Bạn đã thêm sản phẩm ${productID} vào danh sách yêu thích`)
-        return 'success'
-    }
 
     // Xử lý sự kiện khi nhấn nút "Tăng Giảm số lượng"
     const handleQuantityChange = (productId, newQuantity) => {
@@ -93,11 +97,6 @@ export const ShoppingCarts = (/*items*/) => {
         handleQuantityChange(productId, newQuantity);
     };
 
-    // Xử lý lấy địa chỉ của user
-    const getAddresses = async (user) => {
-        //Xử lý lấy thông tin địa chỉ
-        return "Phường Tân Hưng, Quận 7,Hồ Chí Minh"
-    }
 
     // Xử lý xác nhận giỏ hàng
     const handleConfirmCarts = () => {
@@ -124,8 +123,8 @@ export const ShoppingCarts = (/*items*/) => {
     //Tính  phí ship
     useEffect(() => {
         const fetchShippingFee = async () => {
-            const fee = await calculateShippingFee();
-            setShippingFee(fee);
+            const dataShipping = await calculateShippingFeeDefault(address);
+            setShippingFee(dataShipping[0].fee);
         };
 
         fetchShippingFee();
@@ -133,13 +132,21 @@ export const ShoppingCarts = (/*items*/) => {
 
     //Lấy thông tin Address
     useEffect(() => {
-        const getUserAddresses = async () => {
-            const fee = await getAddresses(user);
-            setAddress(fee);
-        };
-
-        getUserAddresses();
+        const getAddresses = async () => {
+            const url = '../data/test/useraddresses.json';
+            try {
+                const addressData = await fetchData(url);
+                setAddress(addressData[0])
+            } catch (error) {
+                // throw error;
+            }
+        }
+        getAddresses();
     }, [user])
+
+    useEffect(() => {
+        console.log('address:: ', address)
+    }, [address])
 
     return (
         <div className="flex flex-col xl:px-28">
@@ -165,7 +172,6 @@ export const ShoppingCarts = (/*items*/) => {
                                     handleDecreaseQuantity={handleDecreaseQuantity}
                                     handleIncreaseQuantity={handleIncreaseQuantity}
                                     handleDeletePublisherProducts={handleDeletePublisherProducts}
-                                    handleAddInterestingProduct={handleAddInterestingProduct}
                                 />
                             }
                         </div>
@@ -173,32 +179,59 @@ export const ShoppingCarts = (/*items*/) => {
 
                         {/* <!-- Sub total --> */}
                         <div className={`${products.length === 0 ? 'relative' : 'fixed'}  bottom-0 left-0 w-full xl:relative md:relative xl:h-full font-inter rounded-bl-lg rounded-br-lg xl:rounded-none border border-red-100 bg-white xl:p-6 md:p-6 p-3  md:mt-0 md:w-1/3 ${products.length ? '' : 'animate-pulse'}`}>
-                            <div className="mb-2 xl:flex gap-2 flex-col justify-between hidden">
-                                <p className="text-gray-700">Địa Chỉ</p>
-                                <div className="flex gap-2 text-gray-700 text-base font-bold capitalize tracking-wide">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+                            <div className="xl:mb-2 xl:flex gap-2 flex-col justify-between">
+                                <p className="text-gray-700 hidden xl:block">Địa Chỉ</p>
+                                <div className={`flex gap-1 xl:gap-2 text-gray-700 text-base font-bold capitalize tracking-wide ${address ? '' : 'hidden xl:flex'}`}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4 xl:w-6 xl:h-6">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
                                     </svg>
-                                    <div className='text-sm font-light'>{address || "Bạn chưa có địa chỉ giao hàng. Vui lòng cập nhật"}</div>
+                                    <div className={`flex text-xs xl:text-sm xl:font-light font-normal items-end`}>
+                                        {
+                                            address ?
+                                                !address.addressid ? <div className="h-2 bg-slate-200 rounded w-[15rem]"></div> :
+                                                    `${address?.proviceName} - ${address?.distristName} - ${address?.wardName}`
+                                                :
+                                                <div>
+                                                    Bạn chưa có địa chỉ giao hàng. Vui lòng cập nhật
+                                                </div>
+                                        }
+                                    </div>
                                 </div>
-                                {
-                                    address ?
-                                        <button className="flex flex-col items-end text-sm text-red-500">Chỉnh Sửa</button>
-                                        :
-                                        <button className="flex flex-col items-end text-sm text-red-500">Cập Nhật Địa Chỉ</button>
-                                }
+                                <div className="flex justify-end">
+                                    <SelectAddressPopup
+                                        isAddrPopupOpen={isAddrPopupOpen}
+                                        setIsAddrPopupOpen={setIsAddrPopupOpen}
+                                        defaultAddress={address}
+                                        userAddresses={userAddresses}
+                                        setDefaultAddress={setAddress}
+                                        setUserAddresses={setUserAddresses}
+                                        icon={
+                                            address ?
+                                                <button
+                                                    className="text-xs xl:text-sm text-red-500"
+                                                    onClick={handleAddressChange}
+                                                >Chỉnh Sửa</button>
+
+                                                :
+                                                <button className="text-xs xl:text-sm text-red-500">Cập Nhật Địa Chỉ</button>
+                                        }
+
+                                    />
+
+
+                                </div>
                             </div>
                             <hr className="xl:flex my-4 hidden" />
-                            <div className="mb-2 flex justify-between">
-                                <p className="text-base font-bold">Thông Tin Đơn Hàng</p>
+                            <div className="mb-1 xl:mb-2 flex justify-between">
+                                <p className="text-sm xl:text-base font-bold">Thông Tin Đơn Hàng</p>
                                 <div className="text-gray-700 text-base font-bold capitalize tracking-wide">
                                     {/* <span>
                                     {products.length}
                                 </span> */}
                                 </div>
                             </div>
-                            <div className="mb-2 flex justify-between text-sm">
+                            <div className="xl:mb-2 flex justify-between xl:text-sm text-xs">
                                 <p className="text-gray-700">Tạm Tính ({products.length} sản phẩm) </p>
                                 <div className="text-gray-700  font-bold capitalize tracking-wide">
                                     <span>
@@ -209,7 +242,7 @@ export const ShoppingCarts = (/*items*/) => {
                                     </span>
                                 </div>
                             </div>
-                            <div className="flex justify-between text-sm">
+                            <div className="flex justify-between xl:text-sm text-xs">
                                 <p className="text-gray-700">Phí Vận Chuyển</p>
                                 <div className="text-gray-700 font-bold capitalize tracking-wide">
                                     <span>
@@ -220,8 +253,8 @@ export const ShoppingCarts = (/*items*/) => {
                                     </span>
                                 </div>
                             </div>
-                            <hr className="my-2 xl:my-4 md:my-4" />
-                            <div className="flex justify-between text-red-500 text-xl">
+                            <hr className="my-1 xl:my-4 md:my-4" />
+                            <div className="flex justify-between text-red-500 xl:text-xl">
                                 <p className="text-md font-bold">Tổng Cộng</p>
                                 <div className="flex flex-col items-end justify-end">
                                     <div className=" font-bold capitalize tracking-wide">
@@ -236,7 +269,7 @@ export const ShoppingCarts = (/*items*/) => {
                                 </div>
                             </div>
                             <button
-                                className={`mt-2 xl:mt-6 md:mt-6 w-full bg-red-500 py-1.5 font-bold text-blue-50 xl:hover:bg-red-600 ${products.length ? '' : 'hidden'}`}
+                                className={`mt-2 xl:mt-6 md:mt-6 w-full text-sm xl:text-base bg-red-500 py-1.5 font-bold text-blue-50 xl:hover:bg-red-600 ${products.length ? '' : 'hidden'}`}
                                 onClick={handleConfirmCarts}
                             >
                                 XÁC NHẬN GIỎ HÀNG ({products.length})

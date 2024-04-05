@@ -39,7 +39,7 @@ export const ProductDetailPage = () => {
                                 Sản Phẩm Liên Quan
                             </div>
                         </div>
-                        <SliderProducts />
+                        {/* <SliderProducts /> */}
                     </div>
                 </div>
             </div>

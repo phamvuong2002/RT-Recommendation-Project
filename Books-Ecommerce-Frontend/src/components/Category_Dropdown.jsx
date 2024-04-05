@@ -188,9 +188,9 @@ export default function Category_dropdown() {
     return (
         // Desktop
         <div >
-            <div className="hidden sm:px-0 max-w-screen-xl lg:grid grid-cols-5 rounded-2xl  border-2 shadow-md">
+            <div className="hidden sm:px-0 max-w-screen-xl lg:grid grid-cols-5 rounded-2xl  border-2 shadow-md relative ">
                 <Tab.Group vertical>
-                    <Tab.List className="flex flex-col py-1 border-r-2 "
+                    <Tab.List className="flex flex-col py-1 border-r-2 bg-white"
                     >
                         <h1 className='text-center text-xl py-5 text-gray-500'>DANH MỤC SẢN PHẨM</h1>
                         {all_categories.map((main_category) => (
@@ -264,7 +264,7 @@ export default function Category_dropdown() {
 
             {/* mobile */}
             
-            <div className="sm:px-0 max-w-screen-xl h-svh grid grid-cols-5 lg:hidden rounded-[5px] bg-gray-100 border-2 shadow-sm  overflow-y-scroll">
+            <div className=" sm:px-0 max-w-screen-xl h-svh grid grid-cols-5 lg:hidden rounded-[5px] bg-gray-100 border-2 shadow-sm  overflow-y-scroll">
                 <Tab.Group vertical>
                     <Tab.List className="flex flex-col md:space-x-1  p-2 border-r-2"
                     >

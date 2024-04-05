@@ -14,11 +14,10 @@ import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 
 
 export const SliderProducts = ({ productData }) => {
-    console.log(productData);
     return (
         <div className="w-full">
             <Swiper
-                slidesPerView={1}
+                slidesPerView={2}
                 breakpoints={{
                     680: {
                         slidesPerView: 3,
@@ -30,15 +29,15 @@ export const SliderProducts = ({ productData }) => {
                     },
 
                 }}
-                spaceBetween={0}
+                spaceBetween={30}
                 autoplay={{
-                    delay: 1500,
+                    delay: 2000,
                     disableOnInteraction: false,
                 }}
                 // pagination={{
                 //     dynamicBullets: true,
                 // }}// cho ẩn hoặc hiện mấy chấm tròn ở dưới
-                navigation={true}
+                //navigation={false} mũi tên 2 bên
                 modules={[Autoplay, Pagination, Navigation]}
                 className="mySwiper h-full"
 

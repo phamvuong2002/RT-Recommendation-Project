@@ -4,11 +4,11 @@ import PropTypes from 'prop-types';
 export const ProductForSlider = ({ productData }) => {
     return (
         <div className="w-full h-full ">
-            <div className="w-full h-full bg-white flex flex-col items-center md:hover:shadow-2xl md:rounded-[4px] md:shadow-md md:p-5">
+            <div className="w-[160px] md:w-[220px] bg-white flex flex-col items-center border border-y-red-50 md:hover:shadow-2xl md:rounded-md md:shadow-md px-3 py-2">
                 {/* Image */}
                 <div className="relative overflow-hidden group">
                     <img
-                        className='h-40 md:h-44 object-cover'
+                        className='h-36 md:h-44 object-cover'
                         src={productData.imgUrl}
                     />
                     {/*Image Hover*/}
@@ -19,35 +19,26 @@ export const ProductForSlider = ({ productData }) => {
 
                 {/* Title */}
                 <h2 className=
-                    "h-10 md:h-12 mt-4 text-center md:text-[90%] text-indigo-900  font-semibold font-['Inter'] capitalize line-clamp-2 ">
+                    "w-full h-8 leading-4 md:leading-5 md:h-10 mt-3 text-[13px] text-left md:text-[95%] text-indigo-900  font-semibold font-['Inter'] capitalize line-clamp-2 ">
                     {productData.title}
                 </h2>
 
                 {/*Price
-                <h1 className="text-center text-red-500 text-[130%] font-bold font-['Inter'] capitalize tracking-wide">
+                <h1 className="text-left text-red-500 text-[15px] md:text-[130%] font-bold tracking-wide">
                     {productData.price}
                 </h1>*/}
 
 
                 {/* Sale Price */}
-                <div className="flex justify-between gap-4 mt-2 px-2">
-                    <div className="flex items-end text-[90%] line-through text-red-400 font-bold font-['Inter'] tracking-wide">
-                        <span className="">
-                            {productData.price}
-                        </span>
-                        <span className="underline">
-                            {productData.currency}
-                        </span>
-                    </div>
-
-                    <div className="text-[130%] leading-5 text-red-500 font-bold font-['Inter'] tracking-wide">
-                        <span>
-                            {productData.salePrice}
-                        </span>
-                        <span className="underline">
-                            {productData.currency}
-                        </span>
-                    </div>
+                <div className="flex w-full gap-1 md:gap-0 justify-between">
+                    <h1 className="text-[12px] leading-6 md:leading-8 line-through text-red-400 md:text-[15px] font-bold tracking-wide">
+                        {productData.price}
+                        <span>{productData.currency}</span>
+                    </h1>
+                    <h1 className="text-[15px] text-red-500  md:text-[21px] font-bold tracking-wide">
+                        {productData.salePrice}
+                        <span className='text-[13px] md:text-[19px]'>{productData.currency}</span>
+                    </h1>
                 </div>
             </div>
 

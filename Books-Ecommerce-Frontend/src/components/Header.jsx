@@ -1,12 +1,13 @@
 import React from 'react'
 import { GiSpellBook } from "react-icons/gi";
 import { FaFacebookF, FaInstagram, FaLinkedin } from "react-icons/fa6";
+import { Link } from 'react-router-dom';
 
 export const Header = () => {
   return (
-    <header className='sm:justify-between  bg-red  text-xs font-inter lg:text-base text-white'>
+    <header className='sm:justify-between  bg-red  text-xs lg:text-base text-white font-popi'>
 
-      <div className='hidden sm:flex flex-row justify-between  bg-[red]  text-xs lg:text-base'>
+      <div className='hidden lg:flex flex-row justify-between  bg-[red]  text-xs lg:text-base'>
         <div id="logo_name" className='flex items-center gap-5 lg:gap-10 px-5'>
           <GiSpellBook className="w-5 h-5 lg:w-10 lg:h-10 pb-1" />
           <div className='py-2 text-center sm:block'> BOOK FOR YOU</div>
@@ -19,7 +20,7 @@ export const Header = () => {
         </div>
       </div>
 
-      <a href="/" className='block sm:hidden text-base sm:text-lg lg:text-xl text-center text-black'> [NAME+LOGO] </a>
+      <Link to="/" className='block lg:hidden text-base sm:text-lg lg:text-xl text-center text-white bg-red-500'> [NAME+LOGO] </Link>
 
     </header>
 

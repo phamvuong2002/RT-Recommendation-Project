@@ -284,7 +284,7 @@ export const Payment = () => {
     }, [userAddresses])
 
     return (
-        <div className="xl:flex xl:px-28 xl:gap-2">
+        <div className="xl:flex xl:gap-2">
             {/* Preview*/}
             <div className="xl:w-2/3 flex flex-col gap-1 xl:gap-2">
                 {/* Address preview*/}

@@ -10,6 +10,7 @@ import 'swiper/css/scrollbar';
 
 import { Keyboard, Scrollbar } from 'swiper/modules';
 import { fetchData } from '../helpers/fetch';
+import { Link } from 'react-router-dom';
 
 const product = {
     imgUrl: "https://picsum.photos/300/300",
@@ -267,9 +268,9 @@ export const DescriptionFeedback = ({ bookId }) => {
                                             <div className="flex flex-col">
                                                 <img className="w-48 h-48 rounded-lg" src="https://picsum.photos/300/300" alt="" />
                                                 <div className="flex flex-col justify-between">
-                                                    <div className="text-sm text-gray-600 font-semibold m-1 max-w-[10rem]">
+                                                    <Link to={product.href} className="text-sm text-gray-600 font-semibold m-1 max-w-[10rem]">
                                                         {product.name}
-                                                    </div>
+                                                    </Link>
                                                     <div className="flex flex-col justify-end">
                                                         <div className="flex justify-end items-end text-xs line-through text-red-400 font-bold tracking-wide">
                                                             <span className="">

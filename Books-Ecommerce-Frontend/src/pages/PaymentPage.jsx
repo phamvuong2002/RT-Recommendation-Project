@@ -12,7 +12,7 @@ export const PaymentPage = () => {
     return (
         <div className='flex flex-col'>
             <NavigationPath components={paths} />
-            <div className="bg-gray-100 flex flex-col gap-[0.2rem]">
+            <div className="bg-gray-100 flex flex-col xl:px-28 gap-[0.2rem]">
                 <div className="pb-2">
                     <Payment />
                 </div>

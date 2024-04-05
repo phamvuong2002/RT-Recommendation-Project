@@ -183,6 +183,7 @@ export const ShoppingCartsPopup = ({ open = false, setOpen }) => {
                                             <p className="mt-0.5 text-sm text-gray-500">Phí ship và thuế bao gồm ở trang thanh toán</p>
                                             <div className="mt-6">
                                                 <Link
+                                                    onClick={() => setOpen(false)}
                                                     to="../payment"
                                                     className={`flex items-center justify-center rounded-md border border-transparent bg-red-500 px-6 py-3 text-base font-bold text-white shadow-sm xl:hover:bg-red-700 ${products.length ? '' : 'hidden'}`}
                                                 >

@@ -18,7 +18,7 @@ export const SinglePopupCart = ({ product, handleDeleteProduct }) => {
 
             <div className="ml-4 flex flex-1 flex-col">
                 <div>
-                    <div className="flex justify-between text-base font-medium text-gray-900">
+                    <div className="flex justify-between text-sm font-medium text-gray-900">
                         <h3>
                             <Link to={product.href}>{product.name}</Link>
                         </h3>

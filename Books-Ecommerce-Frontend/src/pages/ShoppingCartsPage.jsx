@@ -10,7 +10,7 @@ export const ShoppingCartsPage = () => {
     return (
         <div>
             <NavigationPath components={paths} />
-            <div className="bg-gray-100 flex flex-col gap-[0.2rem]">
+            <div className="bg-gray-100 xl:px-28 flex flex-col gap-[0.2rem]">
                 <ShoppingCarts />
             </div>
         </div>

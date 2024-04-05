@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 
 export const ProductForSlider = ({ productData }) => {
     return (
-        <div className="w-full h-full p-1">
-            <div className="w-full h-full flex flex-col items-center md:hover:shadow-2xl md:rounded-md md:shadow-md md:p-5">
+        <div className="w-full h-full ">
+            <div className="w-full h-full bg-white flex flex-col items-center md:hover:shadow-2xl md:rounded-[4px] md:shadow-md md:p-5">
                 {/* Image */}
                 <div className="relative overflow-hidden group">
                     <img

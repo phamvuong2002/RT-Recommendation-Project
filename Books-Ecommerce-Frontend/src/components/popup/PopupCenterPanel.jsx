@@ -59,7 +59,7 @@ export const PopupCenterPanel = ({ open, setOpen, autoClose = 0, icon = '', titl
                             leaveFrom="opacity-100 translate-y-0"
                             leaveTo="opacity-0 translate-y-4"
                         >
-                            <div className="bg-gray-50 inline-block align-middle px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all max-w-lg w-full">
+                            <div className="bg-white inline-block align-middle px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all max-w-lg w-full">
                                 <div>
                                     {/* Title */}
                                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">

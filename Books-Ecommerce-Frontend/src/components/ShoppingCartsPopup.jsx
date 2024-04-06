@@ -8,7 +8,7 @@ import { fetchData } from '../helpers/fetch'
 import ShoppingCartsPopupGroupedByPublisherID from './ShoppingCartsPopupGroupByPushlisherID'
 
 
-export const ShoppingCartsPopup = ({ open = false, setOpen }) => {
+export const ShoppingCartsPopup = ({ open, setOpen }) => {
     const navigate = useNavigate();
     const [products, setProducts] = useState([]);
     const NUMLOADER = 6;
@@ -100,7 +100,7 @@ export const ShoppingCartsPopup = ({ open = false, setOpen }) => {
 
     return (
         <Transition.Root show={open} as={Fragment}>
-            <Dialog as="div" className="relative z-10" onClose={setOpen}>
+            <Dialog as="div" className="relative z-10" onClose={() => console.log("Close")}>
                 <Transition.Child
                     as={Fragment}
                     enter="ease-in-out duration-500"

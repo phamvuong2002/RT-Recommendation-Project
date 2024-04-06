@@ -5,7 +5,7 @@ import { ShoppingCartLoader } from './loaders/ShoppingCartLoader';
 import { Popup } from './popup/Popup';
 import { popupContent } from '../helpers/popupContent';
 import { calculateTotalPrice } from '../utils/calculateTotalPrice';
-import { hideSensitiveInfo } from '../utils/hideSensitiveInfo';
+import { maskPhone } from '../utils/hideSensitiveInfo';
 import { isMobileDevice } from '../utils/isMobileDevice';
 import { checkCouponCode } from '../utils/checkCouponCode';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -507,7 +507,7 @@ export const Payment = () => {
                                         </div>
                                         <div className="flex flex-col gap-4">
                                             <div className="">
-                                                {hideSensitiveInfo(payment.paymentAccount)}
+                                                {maskPhone(payment.paymentAccount)}
                                             </div>
                                             <div className="flex flex-col font-medium">
                                                 <div>{payment.paymentMethodName}</div>
@@ -562,7 +562,7 @@ export const Payment = () => {
                                             <div className="flex flex-col gap-4 w-full">
                                                 <div className="flex justify-between">
                                                     <div className="">
-                                                        {hideSensitiveInfo(payment.paymentAccount)}
+                                                        {maskPhone(payment.paymentAccount)}
                                                     </div>
                                                     <div className="w-6 flex">
                                                         <input

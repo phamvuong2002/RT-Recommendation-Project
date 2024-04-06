@@ -26,5 +26,7 @@ export const FlashSale = ({ productData }) => {
 }
 
 FlashSale.propTypes = {
-    productData: PropTypes.shape().isRequired,
+    productData: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
+
+

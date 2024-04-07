@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 
-export const PopupCenterPanel = ({ open, setOpen, autoClose = 0, icon = '', title = '', content = '', titleClassName = 'p-4' }) => {
+export const PopupCenterPanel = ({ open, setOpen, autoClose = 0, icon = '', title = '', content = '', titleClassName = 'p-4', contentClassName = 'mt-2' }) => {
     const [timeoutId, setTimeoutId] = useState(null);
     useEffect(() => {
         // Clear timeout trước đó nếu tồn tại
@@ -64,8 +64,8 @@ export const PopupCenterPanel = ({ open, setOpen, autoClose = 0, icon = '', titl
                                     {/* Title */}
                                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
                                         <div className={titleClassName}>
-                                            <div className="flex items-start justify-between">
-                                                <Dialog.Title className="text-lg font-medium text-gray-900">
+                                            <div className="flex items-center justify-between">
+                                                <Dialog.Title className=""> {/*text-lg font-medium text-gray-900*/}
                                                     {title}
                                                 </Dialog.Title>
                                                 <div className="ml-3 flex h-7 items-center">
@@ -88,7 +88,7 @@ export const PopupCenterPanel = ({ open, setOpen, autoClose = 0, icon = '', titl
                                     </Dialog.Title>
 
                                     {/* Content */}
-                                    <div className="mt-2">
+                                    <div className={contentClassName}>
                                         {content}
                                     </div>
                                 </div>

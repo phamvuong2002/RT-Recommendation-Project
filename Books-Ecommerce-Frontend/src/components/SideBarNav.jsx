@@ -4,23 +4,43 @@ import { HiChevronDown, HiOutlineHome } from "react-icons/hi2";
 import { FaUser } from "react-icons/fa";
 import { LuClipboardList } from "react-icons/lu";
 import { BiSolidBookHeart } from "react-icons/bi";
+import { Link, useParams } from 'react-router-dom';
 
 
-export default function SideBarNav({ setSelectedPage }) {
-    const [currentPage, setCurrentPage] = useState('Tổng quan')
+export default function SideBarNav({ setSelectedPage, setSelectedPageId }) {
+    const [currentPage, setCurrentPage] = useState("general-infomation")
+
+    const { tab } = useParams();
+
+    const TAB = {
+        "general-infomation": "Tổng Quan",
+        "profile-infomation": "Thông Tin Tài Khoản",
+        "orders-infomation": "Thông Tin Đơn Hàng",
+        "following-infomation": "Theo Dõi Sách"
+    }
 
     const menuData = [
-        { id: 1, icon: <HiOutlineHome className='mr-2 my-auto' />, title: "Tổng quan" },
-        { id: 2, icon: <FaUser className='mr-2 my-auto' />, title: "Thông tin tài khoản" },
-        { id: 3, icon: <LuClipboardList className='mr-2 my-auto' />, title: "Thông tin đơn hàng" },
-        { id: 4, icon: <BiSolidBookHeart className='mr-2 my-auto' />, title: "Theo dõi sách" },
+        { id: "general-infomation", icon: <HiOutlineHome className='mr-2 my-auto' />, title: TAB["general-infomation"] },
+        { id: "profile-infomation", icon: <FaUser className='mr-2 my-auto' />, title: TAB["profile-infomation"] },
+        { id: "orders-infomation", icon: <LuClipboardList className='mr-2 my-auto' />, title: TAB["orders-infomation"] },
+        { id: "following-infomation", icon: <BiSolidBookHeart className='mr-2 my-auto' />, title: TAB["following-infomation"] },
     ];
 
     const handleClick = (e) => {
-        console.log(e.target.value)
         setCurrentPage(e.target.value)
-        setSelectedPage(e.target.value)
+        setSelectedPage(TAB[e.target.value])
+        setSelectedPageId(e.target.value)
     }
+
+    useEffect(() => {
+        if (!tab) {
+            return
+        } else {
+            setSelectedPageId(tab)
+            setSelectedPage(TAB[tab])
+            setCurrentPage(tab)
+        }
+    }, [currentPage])
 
 
     return (
@@ -29,10 +49,10 @@ export default function SideBarNav({ setSelectedPage }) {
             <ul className="hidden h-fit w-full sm:block grid-rows-4 text-sm md:text-base font-semibold font-inter gap-10 px-3 md:px-5 py-3">
                 {menuData.map((menu) =>
                     <li key={menu.id} className="text-left py-5">
-                        <button value={menu.title} className={` text-gray-600 hover:cursor-pointer hover:text-red-400 flex flex-row items-center ${currentPage == menu.title ? 'text-red-400' : ''}`} onClick={handleClick} >
+                        <Link to={`../account/${menu.id}`} value={menu.id} className={` text-gray-600 hover:cursor-pointer hover:text-red-400 flex flex-row items-center ${currentPage === menu.id ? 'text-red-400' : ''}`} onClick={handleClick} >
                             {menu.icon}
                             {menu.title}
-                        </button>
+                        </Link>
                     </li>)}
 
             </ul>

@@ -1,4 +1,7 @@
 export const maskPhone = (input) => {
+    if (!input) {
+        return null;
+    }
     // Kiểm tra xem input có đúng định dạng số điện thoại không
     if (/^\d{10}$/.test(input)) {
         // Chia chuỗi thành các phần: phần đầu, phần giữa và phần cuối
@@ -15,6 +18,10 @@ export const maskPhone = (input) => {
 }
 
 export const maskEmail = (email, startIndex = 2) => {
+    if (!email) {
+        return null;
+    }
+
     // Tách phần tên người dùng và tên miền
     const [username, domain] = email.split('@');
 

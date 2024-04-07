@@ -15,7 +15,7 @@
         "publisherID": "123451",
         "publisher": "Nhà xuất bản Trẻ",
         "publisherImgUrl": "https://i.ibb.co/pRbvxj9/logo-nxb-tre.png",
-        "billId" : "1",
+        "billId": "1156451",
         "status": "Pending",
         "date": "2024-20-02"
     },
@@ -35,7 +35,7 @@
         "publisherID": "123451",
         "publisher": "Nhà xuất bản Trẻ",
         "publisherImgUrl": "https://i.ibb.co/pRbvxj9/logo-nxb-tre.png",
-        "billId" : "2",
+        "billId": "1156451",
         "status": "Pending",
         "date": "2024-20-02"
     },
@@ -52,10 +52,10 @@
         "imageSrc": "https://picsum.photos/300/300",
         "imageAlt": "Hình ảnh minh họa",
         "currency": "đ",
-         "publisherID": "123453",
+        "publisherID": "123453",
         "publisher": "Nhà xuất bản Tổng hợp thành phố Hồ Chí Minh",
         "publisherImgUrl": "https://i.ibb.co/Jnt6nzw/logo-nxb-tong-hop-tp-hcm-removebg-preview.png",
-        "billId" : "3",
+        "billId": "3",
         "status": "Pending",
         "date": "2024-20-02"
     },
@@ -75,7 +75,7 @@
         "publisherID": "123452",
         "publisher": "Nhà xuất bản Kim Đồng",
         "publisherImgUrl": "https://i.gyazo.com/7d1bab302c86880f9eb91cd04388edc2.png",
-        "billId" : "4",
+        "billId": "4",
         "status": "Pending",
         "date": "2024-20-02"
     },
@@ -92,10 +92,10 @@
         "imageSrc": "https://picsum.photos/300/300",
         "imageAlt": "Hình ảnh minh họa",
         "currency": "đ",
-         "publisherID": "123453",
+        "publisherID": "123453",
         "publisher": "Nhà xuất bản Tổng hợp thành phố Hồ Chí Minh",
         "publisherImgUrl": "https://i.ibb.co/Jnt6nzw/logo-nxb-tong-hop-tp-hcm-removebg-preview.png",
-        "billId" : "5",
+        "billId": "5",
         "status": "Pending",
         "date": "2024-20-02"
     },
@@ -115,7 +115,7 @@
         "publisherID": "123451",
         "publisher": "Nhà xuất bản Trẻ",
         "publisherImgUrl": "https://i.ibb.co/pRbvxj9/logo-nxb-tre.png",
-        "billId" : "1",
+        "billId": "1",
         "status": "Pending",
         "date": "2024-20-02"
     },
@@ -135,7 +135,7 @@
         "publisherID": "123452",
         "publisher": "Nhà xuất bản Kim Đồng",
         "publisherImgUrl": "https://i.gyazo.com/7d1bab302c86880f9eb91cd04388edc2.png",
-        "billId" : "2",
+        "billId": "2",
         "status": "Pending",
         "date": "2024-20-02"
     },
@@ -155,7 +155,7 @@
         "publisherID": "123453",
         "publisher": "Nhà xuất bản Tổng hợp thành phố Hồ Chí Minh",
         "publisherImgUrl": "https://i.ibb.co/Jnt6nzw/logo-nxb-tong-hop-tp-hcm-removebg-preview.png",
-        "billId" : "1",
+        "billId": "1",
         "status": "Pending",
         "date": "2024-20-02"
     },
@@ -175,7 +175,7 @@
         "publisherID": "123452",
         "publisher": "Nhà xuất bản Kim Đồng",
         "publisherImgUrl": "https://i.gyazo.com/7d1bab302c86880f9eb91cd04388edc2.png",
-        "billId" : "1",
+        "billId": "1",
         "status": "Pending",
         "date": "2024-20-02"
     },
@@ -195,7 +195,7 @@
         "publisherID": "123451",
         "publisher": "Nhà xuất bản Trẻ",
         "publisherImgUrl": "https://i.ibb.co/pRbvxj9/logo-nxb-tre.png",
-        "billId" : "2",
+        "billId": "2",
         "status": "Pending",
         "date": "2024-20-02"
     },
@@ -215,7 +215,7 @@
         "publisherID": "123453",
         "publisher": "Nhà xuất bản Tổng hợp thành phố Hồ Chí Minh",
         "publisherImgUrl": "https://i.ibb.co/Jnt6nzw/logo-nxb-tong-hop-tp-hcm-removebg-preview.png",
-        "billId" : "1",
+        "billId": "1",
         "status": "Pending",
         "date": "2024-20-02"
     },
@@ -235,7 +235,7 @@
         "publisherID": "123452",
         "publisher": "Nhà xuất bản Kim Đồng",
         "publisherImgUrl": "https://i.gyazo.com/7d1bab302c86880f9eb91cd04388edc2.png",
-        "billId" : "1",
+        "billId": "1",
         "status": "Pending",
         "date": "2024-20-02"
     },
@@ -255,7 +255,7 @@
         "publisherID": "123453",
         "publisher": "Nhà xuất bản Tổng hợp thành phố Hồ Chí Minh",
         "publisherImgUrl": "https://i.ibb.co/Jnt6nzw/logo-nxb-tong-hop-tp-hcm-removebg-preview.png",
-        "billId" : "2",
+        "billId": "2",
         "status": "Pending",
         "date": "2024-20-02"
     },
@@ -275,7 +275,7 @@
         "publisherID": "123451",
         "publisher": "Nhà xuất bản Trẻ",
         "publisherImgUrl": "https://i.ibb.co/pRbvxj9/logo-nxb-tre.png",
-        "billId" : "1",
+        "billId": "1",
         "status": "Pending",
         "date": "2024-20-02"
     },
@@ -295,7 +295,7 @@
         "publisherID": "123453",
         "publisher": "Nhà xuất bản Tổng hợp thành phố Hồ Chí Minh",
         "publisherImgUrl": "https://i.ibb.co/Jnt6nzw/logo-nxb-tong-hop-tp-hcm-removebg-preview.png",
-        "billId" : "2",
+        "billId": "2",
         "status": "Pending",
         "date": "2024-20-02"
     },
@@ -315,7 +315,7 @@
         "publisherID": "123451",
         "publisher": "Nhà xuất bản Trẻ",
         "publisherImgUrl": "https://i.ibb.co/pRbvxj9/logo-nxb-tre.png",
-        "billId" : "3",
+        "billId": "3",
         "status": "Pending",
         "date": "2024-20-02"
     },
@@ -333,9 +333,9 @@
         "imageAlt": "Hình ảnh minh họa",
         "currency": "đ",
         "publisherID": "123451",
-        "publisher":"Nhà xuất bản Trẻ",
+        "publisher": "Nhà xuất bản Trẻ",
         "publisherImgUrl": "https://i.ibb.co/pRbvxj9/logo-nxb-tre.png",
-        "billId" : "4",
+        "billId": "4",
         "status": "Pending",
         "date": "2024-20-02"
     },
@@ -355,7 +355,7 @@
         "publisherID": "123451",
         "publisher": "Nhà xuất bản Trẻ",
         "publisherImgUrl": "https://i.ibb.co/pRbvxj9/logo-nxb-tre.png",
-        "billId" : "3",
+        "billId": "3",
         "status": "Pending",
         "date": "2024-20-02"
     },
@@ -375,7 +375,7 @@
         "publisherID": "123452",
         "publisher": "Nhà xuất bản Kim Đồng",
         "publisherImgUrl": "https://i.gyazo.com/7d1bab302c86880f9eb91cd04388edc2.png",
-        "billId" : "4",
+        "billId": "4",
         "status": "Pending",
         "date": "2024-20-02"
     },
@@ -395,7 +395,7 @@
         "publisherID": "123453",
         "publisher": "Nhà xuất bản Tổng hợp thành phố Hồ Chí Minh",
         "publisherImgUrl": "https://i.ibb.co/Jnt6nzw/logo-nxb-tong-hop-tp-hcm-removebg-preview.png",
-        "billId" : "3",
+        "billId": "3",
         "status": "Pending",
         "date": "2024-20-02"
     }

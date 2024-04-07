@@ -5,6 +5,7 @@ import ProductListStatus from '../components/ProductListStatus'
 import { GeneralInfo } from '../components/GeneralInfo'
 import { useParams } from 'react-router-dom'
 
+
 const TAB = {
     "general-infomation": "Tổng Quan",
     "profile-infomation": "Thông Tin Tài Khoản",

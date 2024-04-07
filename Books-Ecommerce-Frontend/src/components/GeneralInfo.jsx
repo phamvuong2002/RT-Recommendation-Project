@@ -76,6 +76,7 @@ export const GeneralInfo = () => {
             setReloadBill(false)
         }, 1000)
 
+
     }, [reloadBill])
 
 

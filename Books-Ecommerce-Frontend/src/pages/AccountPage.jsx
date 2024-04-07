@@ -3,6 +3,7 @@ import NavigationPath from '../components/NavigationPath'
 import SideBarNav from '../components/SideBarNav'
 import ProductListStatus from '../components/ProductListStatus'
 import { GeneralInfo } from '../components/GeneralInfo'
+import { OrderInfo } from '../components/OrderInfo'
 
 
 export const AccountPage = () => {
@@ -19,7 +20,7 @@ export const AccountPage = () => {
                 {
                     selectedPage == 'Tổng quan' ? <GeneralInfo />
                         : selectedPage == 'Thông tin tài khoản' ? ""
-                            : selectedPage == 'Thông tin đơn hàng' ? ""
+                            : selectedPage == 'Thông tin đơn hàng' ? <OrderInfo />
                                 : selectedPage == 'Theo dõi sách' ? <ProductListStatus /> : ""
                 }
 

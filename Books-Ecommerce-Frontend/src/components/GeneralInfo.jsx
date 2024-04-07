@@ -37,7 +37,7 @@ export const GeneralInfo = () => {
         setTimeout(() => {
             BillsData()
             setReload(false)
-        }, 1000)
+        }, 100)
 
     }, [reload])
 

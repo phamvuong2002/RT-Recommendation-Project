@@ -92,7 +92,7 @@ export const Category = () => {
                         </div>
                     </SwiperSlide>
                 ))}
-            </Swiper >
-        </div >
+            </Swiper>
+        </div>
     );
 }

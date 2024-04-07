@@ -32,8 +32,8 @@ const Bills = ({ bills, className = "", setReload }) => {
                     <div className="">
                         {
                             Object.keys(groupedBills).map(billId => (
-                                <div key={billId}>
-                                    <div className="flex items-center justify-between xl:py-2 xl:h-8 xl:rounded-full h-7 w-full text-white px-1 font-semibold bg-red-500">
+                                <div key={billId} className="">
+                                    <div className="flex items-center gap-3 xl:py-2 xl:h-8 xl:rounded-full h-7 w-full text-white px-1 font-semibold bg-red-500">
                                         <div className="xl:pl-1"> Số hoá đơn #{billId}</div>
                                         <div className="xl:pr-1">({groupedBills[billId].length} đơn hàng)</div>
                                     </div>

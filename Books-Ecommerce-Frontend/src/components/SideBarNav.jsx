@@ -69,15 +69,15 @@ export default function SideBarNav({ setSelectedPage }) {
                                             <button
                                                 name={option.id}
                                                 className={(
-                                                  
+
                                                     active ? 'bg-gray-100 py-2 ' : 'py-2'
                                                 )}
                                                 value={`${option.title}`}
                                                 onClick={handleClick}
                                             >
-                                                
-                                                    {option.title}
-                                                
+
+                                                {option.title}
+
                                             </button>
 
                                         )}

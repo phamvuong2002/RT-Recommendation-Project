@@ -10,7 +10,8 @@ const publicRoutes = [
     { path: '/books/:bookid', component: ProductDetailPage },
     { path: '/payment', component: PaymentPage },
     { path: '/shoppingcarts', component: ShoppingCartsPage },
-    { path: '/account', component: AccountPage }
+    { path: '/account', component: AccountPage },
+    { path: '/account/:tab', component: AccountPage }
 
 ];
 

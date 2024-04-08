@@ -1,8 +1,8 @@
-import { useState} from 'react'
-import { Tab,Disclosure } from '@headlessui/react'
+import { useState } from 'react'
+import { Tab, Disclosure } from '@headlessui/react'
 import { BiWorld } from "react-icons/bi";
 import { FaBook } from "react-icons/fa6";
-import {  HiChevronUp } from "react-icons/hi2";
+import { HiChevronUp } from "react-icons/hi2";
 
 import { Link } from 'react-router-dom';
 function classNames(...classes) {
@@ -188,20 +188,20 @@ export default function Category_dropdown() {
     return (
         // Desktop
         <div >
-            <div className="hidden sm:px-0 max-w-screen-xl lg:grid grid-cols-5 rounded-2xl  border-2 shadow-md relative ">
+            <div className="hidden sm:px-0 max-w-screen-xl lg:grid grid-cols-5  rounded-l-[6px] rounded-r-[6px] border-2 shadow-md relative ">
                 <Tab.Group vertical>
-                    <Tab.List className="flex flex-col py-1 border-r-2 bg-white"
+                    <Tab.List className="flex flex-col py-1 border-r-2 bg-red-500 rounded-l-[6px]"
                     >
-                        <h1 className='text-center text-xl py-5 text-gray-500'>DANH MỤC SẢN PHẨM</h1>
+                        <h1 className='text-center text-[17px] py-3 text-slate-100'>DANH MỤC SẢN PHẨM</h1>
                         {all_categories.map((main_category) => (
                             <Tab
                                 key={main_category.id}
                                 className={({ selected }) =>
                                     classNames(
-                                        'w-full py-2.5 text-lg font-semibold uppercase font-inter border-none outline-none',
+                                        'w-full py-4 text-[17px] font-semibold uppercase font-inter border-none outline-none ',
                                         selected
-                                            ? 'bg-red-100 border-none'
-                                            : 'hover:bg-white/[0.12] border-none'
+                                            ? 'bg-rose-50 text-red-500 border-none'
+                                            : 'text-white hover:bg-white/[0.12] border-none'
                                     )
                                 }
                             >
@@ -215,10 +215,10 @@ export default function Category_dropdown() {
                             <Tab.Panel
                                 key={idx}
                                 className={classNames(
-                                    'rounded-xl bg-white p-3 outline-none'
+                                    'rounded-r-[6px] bg-white p-3 outline-none'
                                 )}
                             >
-                                <Link to='/' className='text-xl uppercase py-3 font-semibold flex gap-2 items-center' >
+                                <Link to={`/search/${main_cates.value}`} className='text-xl uppercase py-3 font-semibold flex gap-2 items-center' >
                                     {main_cates.id == 'I' ? <FaBook className='text-red-500' /> : <BiWorld className='text-indigo-500' />}
                                     {main_cates.value}</Link>
                                 {/* Thể loại */}
@@ -228,11 +228,12 @@ export default function Category_dropdown() {
                                         <li
                                             key={main_cate.id}
                                             className="flex flex-col p-3 uppercase "
-                                        >   
-                                        <Link to='/'>
-                                        <h3 className="text-sm font-semibold font-inter truncate">{main_cate.category}</h3>
-                                        </Link>
-                                            
+                                        >
+                                            <Link to={`/search/${main_cates.value}/${main_cate.value}`} >
+                                                <h3 className="text-sm font-semibold font-inter truncate">{main_cate.category}</h3>
+                                            </Link>
+
+
                                             {/* Submenu */}
                                             <ul className="mt-1 flex flex-col  text-xs font-normal leading-4 text-gray-500">
                                                 {main_cate.submenu.map((single_submenu) => (
@@ -241,7 +242,7 @@ export default function Category_dropdown() {
                                                         className="relative py-2 hover:text-red-400 text-sm normal-case truncate   "
                                                     > {single_submenu.name}
                                                         <Link
-                                                            to="/"
+                                                           to={`/search/${main_cates.value}/${main_cate.value}/${single_submenu.value}`} 
                                                             className={classNames(
                                                                 'absolute inset-0 rounded-md',
                                                             )}
@@ -263,7 +264,7 @@ export default function Category_dropdown() {
 
 
             {/* mobile */}
-            
+
             <div className=" sm:px-0 max-w-screen-xl h-svh grid grid-cols-5 lg:hidden rounded-[5px] bg-gray-100 border-2 shadow-sm  overflow-y-scroll">
                 <Tab.Group vertical>
                     <Tab.List className="flex flex-col md:space-x-1  p-2 border-r-2"
@@ -281,7 +282,7 @@ export default function Category_dropdown() {
                                 }
                             >
                                 <h2 className='items-center flex flex-col text-[9px] sm:text-base'>
-                                    {category.id == 'I' ? <FaBook className='text-red-500 text-xs sm:text-base mb-2' /> : <BiWorld className='text-indigo-500 text-xs sm:text-base mb-2' />}   
+                                    {category.id == 'I' ? <FaBook className='text-red-500 text-xs sm:text-base mb-2' /> : <BiWorld className='text-indigo-500 text-xs sm:text-base mb-2' />}
                                     {category.value}
                                 </h2>
 

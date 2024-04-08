@@ -44,6 +44,7 @@ export default ({ mode }) => {
         },
       },
       port: process.env.VITE_PORT,
+      // host: '192.168.1.5',
     },
   });
 };

@@ -5,7 +5,8 @@
         "href": "/books/2",
         "price": 145.888,
         "salePrice": 125.888,
-        "currency": "đ"
+        "currency": "đ",
+        "id": 1
     },
     {
         "imgUrl": "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
@@ -13,7 +14,8 @@
         "href": "/books/3",
         "price": 45.111,
         "salePrice": 40.511,
-        "currency": "đ"
+        "currency": "đ",
+        "id": 4
     },
     {
         "imgUrl": "https://product.hstatic.net/200000343865/product/100_bd275c22338e4df3a7b01a0b8553e338_large.jpg",
@@ -21,7 +23,8 @@
         "href": "/books/1",
         "price": 2555.111,
         "salePrice": 23.511,
-        "currency": "đ"
+        "currency": "đ",
+        "id": 2
     },
     {
         "imgUrl": "https://product.hstatic.net/200000343865/product/6.5---lmt_6614aed999634a95b52a584fc76d52ff_large.jpg",
@@ -29,7 +32,8 @@
         "href": "/books/4",
         "price": 9999.111,
         "salePrice": 11.11,
-        "currency": "đ"
+        "currency": "đ",
+        "id": 3
     },
     {
         "imgUrl": "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
@@ -37,7 +41,8 @@
         "href": "/books/3",
         "price": 45.111,
         "salePrice": 40.511,
-        "currency": "đ"
+        "currency": "đ",
+        "id": 2
     },
     {
         "imgUrl": "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
@@ -45,7 +50,8 @@
         "href": "/books/3",
         "price": 45.111,
         "salePrice": 40.511,
-        "currency": "đ"
+        "currency": "đ",
+        "id": 4
     },
     {
         "imgUrl": "https://product.hstatic.net/200000343865/product/4_450e25becf1d487baaf6d6f07aeb9659_large.jpg",
@@ -53,6 +59,7 @@
         "href": "/books/3",
         "price": 45.111,
         "salePrice": 40.511,
-        "currency": "đ"
+        "currency": "đ",
+        "id": 3
     }
 ]

@@ -7,6 +7,8 @@ export const Popup = ({ autoShow = false, autoClose = 0, icon = null, onYesClick
     const [customContent, setCustomContent] = useState('');
     const [reload, setReload] = useState(false);
 
+    const TIMEOUT = 2000;
+
     const generateContent = (CustomClass, Title, Content) => {
         return (
             <div className={CustomClass || ''}>
@@ -52,6 +54,10 @@ export const Popup = ({ autoShow = false, autoClose = 0, icon = null, onYesClick
 
     //Success handling
     const handleSuccess = () => {
+        setTimeout(() => {
+            setReload(true);
+            setOpen(false);
+        }, TIMEOUT)
         return generateContent(
             CustomClassName,
             SuccessHandling?.title || "Xử lý thành công!",
@@ -61,6 +67,10 @@ export const Popup = ({ autoShow = false, autoClose = 0, icon = null, onYesClick
 
     //Error handling
     const handleError = () => {
+        setTimeout(() => {
+            setReload(true);
+            setOpen(false);
+        }, TIMEOUT)
         return generateContent(
             CustomClassName,
             ErrorHandling?.title || "Lỗi xử lý",

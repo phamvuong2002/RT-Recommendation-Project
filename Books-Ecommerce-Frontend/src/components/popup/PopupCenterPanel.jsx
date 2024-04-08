@@ -1,7 +1,29 @@
-import { Fragment } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 
-export const PopupCenterPanel = ({ open, setOpen, icon = '', title = '', content = '', titleClassName = 'p-4' }) => {
+export const PopupCenterPanel = ({ open, setOpen, autoClose = 0, icon = '', title = '', content = '', titleClassName = 'p-4', contentClassName = 'mt-2' }) => {
+    const [timeoutId, setTimeoutId] = useState(null);
+    useEffect(() => {
+        // Clear timeout trước đó nếu tồn tại
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+
+        if (autoClose) {
+            const newTimeoutId = setTimeout(() => {
+                setOpen(false);
+            }, autoClose);
+            setTimeoutId(newTimeoutId);
+        }
+
+        // Cleanup khi unmount component hoặc dependency thay đổi
+        return () => {
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
+        };
+    }, [open])
+
     return (
         <>
             <div
@@ -12,7 +34,7 @@ export const PopupCenterPanel = ({ open, setOpen, icon = '', title = '', content
                 {icon}
             </div>
             <Transition.Root show={open} as={Fragment} >
-                <Dialog as="div" className="fixed inset-0 overflow-y-auto z-20 " onClose={() => { setOpen(false) }}>
+                <Dialog as="div" tabIndex={0} className="fixed inset-0 overflow-y-auto z-20 " onClose={() => { setOpen(false) }}>
                     <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center">
                         <Transition.Child
                             as={Fragment}
@@ -37,13 +59,13 @@ export const PopupCenterPanel = ({ open, setOpen, icon = '', title = '', content
                             leaveFrom="opacity-100 translate-y-0"
                             leaveTo="opacity-0 translate-y-4"
                         >
-                            <div className="bg-gray-50 inline-block align-middle px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all max-w-lg w-full">
+                            <div className="bg-white inline-block align-middle px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all max-w-lg w-full">
                                 <div>
                                     {/* Title */}
                                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
                                         <div className={titleClassName}>
-                                            <div className="flex items-start justify-between">
-                                                <Dialog.Title className="text-lg font-medium text-gray-900">
+                                            <div className="flex items-center justify-between">
+                                                <Dialog.Title className=""> {/*text-lg font-medium text-gray-900*/}
                                                     {title}
                                                 </Dialog.Title>
                                                 <div className="ml-3 flex h-7 items-center">
@@ -66,7 +88,7 @@ export const PopupCenterPanel = ({ open, setOpen, icon = '', title = '', content
                                     </Dialog.Title>
 
                                     {/* Content */}
-                                    <div className="mt-2">
+                                    <div className={contentClassName}>
                                         {content}
                                     </div>
                                 </div>

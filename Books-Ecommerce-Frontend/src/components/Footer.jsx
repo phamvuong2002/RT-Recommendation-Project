@@ -13,18 +13,18 @@ export const Footer = () => {
         <br />
 
         <div className='ml-3 text-xs sm:text-[0.8rem] address inline-flex pb-2 gap-0.5 items-center'>
-          <FaMapMarkerAlt className='w-6 h-6' />
+          <FaMapMarkerAlt className='w-5 h-5' />
           227 Nguyễn Văn Cừ, Phường 4, Quận 5, TPHCM
 
         </div>
 
         <div className=" ml-3 text-xs sm:text-[0.8rem] email inline-flex pb-2 gap-0.5 items-center">
-          <MdEmail />
+          <MdEmail className='w-5 h-5' />
           <a href="mailto:123@gmail.com">123@gmail.com</a>
         </div>
 
         <div className="ml-3 text-xs sm:text-[0.8rem] phone inline-flex pb-2 gap-0.5 items-center">
-          <FaPhoneAlt />
+          <FaPhoneAlt className='w-5 h-5' />
           <a href="tel:1900 0000">1900 0000</a>
         </div>
       </address>

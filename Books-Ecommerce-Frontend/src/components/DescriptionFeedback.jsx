@@ -10,6 +10,8 @@ import 'swiper/css/scrollbar';
 
 import { Keyboard, Scrollbar } from 'swiper/modules';
 import { fetchData } from '../helpers/fetch';
+import { Link } from 'react-router-dom';
+import { Product } from './Product';
 
 const product = {
     imgUrl: "https://picsum.photos/300/300",
@@ -128,7 +130,7 @@ export const DescriptionFeedback = ({ bookId }) => {
 
     //Fetch Shopping Carts for advertising
     useEffect(() => {
-        const url = '../data/test/shoppingcarts.json';
+        const url = '../data/test/product.json';
         const loadShoppingCartsData = async () => {
             try {
                 const shoppingCartsData = await fetchData(url);
@@ -264,30 +266,7 @@ export const DescriptionFeedback = ({ bookId }) => {
                                     :
                                     adsProducts.map((product) => (
                                         <div key={product.id} className="flex flex-col gap-2 items-center py-2 bg-gradient-to-t from-rose-100 to-white">
-                                            <div className="flex flex-col">
-                                                <img className="w-48 h-48 rounded-lg" src="https://picsum.photos/300/300" alt="" />
-                                                <div className="flex flex-col justify-between">
-                                                    <div className="text-sm text-gray-600 font-semibold m-1 max-w-[10rem]">
-                                                        {product.name}
-                                                    </div>
-                                                    <div className="flex flex-col justify-end">
-                                                        <div className="flex justify-end items-end text-xs line-through text-red-400 font-bold tracking-wide">
-                                                            <span className="">
-                                                                {product.price}
-                                                            </span>
-                                                            <span className="underline">{product.currency}</span>
-                                                        </div>
-                                                        <div className="flex justify-end text-red-500 text-sm font-bold capitalize tracking-wide">
-                                                            <span>
-                                                                {product.price}
-                                                            </span>
-                                                            <span className="underline">
-                                                                {product.currency}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <Product productData={product} />
                                         </div>
                                     ))
                                 }

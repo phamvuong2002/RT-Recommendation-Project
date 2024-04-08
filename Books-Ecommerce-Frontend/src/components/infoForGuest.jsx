@@ -1,9 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { fetchData } from '../helpers/fetch';
 
-
 export const InfoForGuest = () => {
-
     return (
         <div className="mx-10 ">
             <div className="w-full md:h-96 flex bg-gradient-to-r from-slate-50 to-rose-50 rounded-md">

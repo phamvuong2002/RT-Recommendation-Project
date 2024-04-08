@@ -8,7 +8,7 @@ import { fetchData } from '../helpers/fetch'
 import ShoppingCartsPopupGroupedByPublisherID from './ShoppingCartsPopupGroupByPushlisherID'
 
 
-export const ShoppingCartsPopup = ({ open = false, setOpen }) => {
+export const ShoppingCartsPopup = ({ open, setOpen }) => {
     const navigate = useNavigate();
     const [products, setProducts] = useState([]);
     const NUMLOADER = 6;
@@ -100,7 +100,7 @@ export const ShoppingCartsPopup = ({ open = false, setOpen }) => {
 
     return (
         <Transition.Root show={open} as={Fragment}>
-            <Dialog as="div" className="relative z-10" onClose={setOpen}>
+            <Dialog as="div" className="relative z-10" onClose={() => console.log("Close")}>
                 <Transition.Child
                     as={Fragment}
                     enter="ease-in-out duration-500"
@@ -183,6 +183,7 @@ export const ShoppingCartsPopup = ({ open = false, setOpen }) => {
                                             <p className="mt-0.5 text-sm text-gray-500">Phí ship và thuế bao gồm ở trang thanh toán</p>
                                             <div className="mt-6">
                                                 <Link
+                                                    onClick={() => setOpen(false)}
                                                     to="../payment"
                                                     className={`flex items-center justify-center rounded-md border border-transparent bg-red-500 px-6 py-3 text-base font-bold text-white shadow-sm xl:hover:bg-red-700 ${products.length ? '' : 'hidden'}`}
                                                 >

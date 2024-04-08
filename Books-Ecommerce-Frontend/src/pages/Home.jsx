@@ -41,6 +41,7 @@ export const Home = () => {
             <Slider></Slider>
             <FlashSale productData={products}></FlashSale>
             <InfoForGuest></InfoForGuest>
+
             {/*Sản phẩm bán chạy*/}
             <div className="m-4">
                 <div className="flex items-center">

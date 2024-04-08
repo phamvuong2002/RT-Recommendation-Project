@@ -1,0 +1,10 @@
+[
+    {
+        "userid":"1234",
+        "fullname": "Pham Vuong",
+        "phonenumber": "0948908485",
+        "email": "girflerPham@gmail.com",
+        "sex": "male",
+        "birthday": "20/02/2002"
+    }
+]

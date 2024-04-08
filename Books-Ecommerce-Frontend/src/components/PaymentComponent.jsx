@@ -5,7 +5,7 @@ import { ShoppingCartLoader } from './loaders/ShoppingCartLoader';
 import { Popup } from './popup/Popup';
 import { popupContent } from '../helpers/popupContent';
 import { calculateTotalPrice } from '../utils/calculateTotalPrice';
-import { hideSensitiveInfo } from '../utils/hideSensitiveInfo';
+import { maskPhone } from '../utils/hideSensitiveInfo';
 import { isMobileDevice } from '../utils/isMobileDevice';
 import { checkCouponCode } from '../utils/checkCouponCode';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -284,7 +284,7 @@ export const Payment = () => {
     }, [userAddresses])
 
     return (
-        <div className="xl:flex xl:px-28 xl:gap-2">
+        <div className="xl:flex xl:gap-2">
             {/* Preview*/}
             <div className="xl:w-2/3 flex flex-col gap-1 xl:gap-2">
                 {/* Address preview*/}
@@ -501,13 +501,13 @@ export const Payment = () => {
                                 <ShoppingCartLoader items={NUMLOADER - 2} />
                                 :
                                 paymentMethods.map(payment => (
-                                    <div key={payment.paymentMethodId} className={`flex-shrink-0 w-[14rem] md:w-[18.5rem] flex gap-2 md:gap-4 border  ${paymentID === payment.paymentMethodId ? 'border-red-500' : 'border-gray-300'} rounded-lg p-2 xl:cursor-pointer`} onClick={() => choicePayment(payment.paymentMethodId, true)} >
+                                    <div key={payment.paymentMethodId} className={`bg-white flex-shrink-0 w-[14rem] md:w-[18.5rem] flex gap-2 md:gap-4 border  ${paymentID === payment.paymentMethodId ? 'border-red-500' : 'border-gray-300'} rounded-lg p-2 xl:cursor-pointer`} onClick={() => choicePayment(payment.paymentMethodId, true)} >
                                         <div className="w-8 h-8 flex mb-8">
                                             <img src={payment.paymentMethodImage} alt={payment.paymentMethodName} />
                                         </div>
                                         <div className="flex flex-col gap-4">
                                             <div className="">
-                                                {hideSensitiveInfo(payment.paymentAccount)}
+                                                {maskPhone(payment.paymentAccount)}
                                             </div>
                                             <div className="flex flex-col font-medium">
                                                 <div>{payment.paymentMethodName}</div>
@@ -562,7 +562,7 @@ export const Payment = () => {
                                             <div className="flex flex-col gap-4 w-full">
                                                 <div className="flex justify-between">
                                                     <div className="">
-                                                        {hideSensitiveInfo(payment.paymentAccount)}
+                                                        {maskPhone(payment.paymentAccount)}
                                                     </div>
                                                     <div className="w-6 flex">
                                                         <input

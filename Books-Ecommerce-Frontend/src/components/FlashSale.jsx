@@ -21,7 +21,7 @@ export const FlashSale = ({ productData }) => {
             </div>
             <SliderProducts productData={productData} />
 
-        </div >
+        </div>
     );
 }
 

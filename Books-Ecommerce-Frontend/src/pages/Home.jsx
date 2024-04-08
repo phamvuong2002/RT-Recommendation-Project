@@ -4,7 +4,7 @@ import { FlashSale } from '../components/FlashSale'
 import { Category } from '../components/Category'
 import { SliderProducts } from '../components/SliderProducts'
 import { AllProducts } from '../components/AllProducts'
-import { infoForGuest } from '../components/infoForGuest'
+import { InfoForGuest } from '../components/infoForGuest'
 import { fetchData } from '../helpers/fetch';
 
 const sampleUserInfo = {
@@ -40,7 +40,8 @@ export const Home = () => {
         <div >
             <Slider></Slider>
             <FlashSale productData={products}></FlashSale>
-            <infoForGuest></infoForGuest>
+            <InfoForGuest></InfoForGuest>
+
             {/*Sản phẩm bán chạy*/}
             <div className="m-4">
                 <div className="flex items-center">

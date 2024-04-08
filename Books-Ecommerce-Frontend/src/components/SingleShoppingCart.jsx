@@ -43,8 +43,8 @@ export const SingleShoppingCart = ({ product, handleDeleteProduct, handleIncreas
                     {/* base info */}
                     <div className="flex flex-col xl:gap-2 mt-2 sm:mt-0">
                         <div className="flex flex-col">
-                            <Link to={product.href} className="w-full xl:h-12 max-h-20 text-base font-normal text-gray-800 overflow-y-auto no-scrollbar xl:hover:text-red-500">
-                                {product.name} aaaa aasadsad ádasđ dasdassd adsdsad asdasd
+                            <Link to={product.href} className="w-full xl:h-12 max-h-20 text-base font-semibold text-gray-800 overflow-y-auto no-scrollbar xl:hover:text-red-500">
+                                {product.name}
                             </Link>
                             <div className="flex flex-col gap-1 mt-1 text-xs text-gray-600">
                                 <span>Tác giả: {product.author}</span>
@@ -65,7 +65,7 @@ export const SingleShoppingCart = ({ product, handleDeleteProduct, handleIncreas
                                     className="cursor-pointer rounded-l bg-red-500 py-1 px-3.5 duration-100 xl:hover:bg-red-400 xl:hover:text-red-200"
                                     onClick={() => handleDecreaseQuantity(product.id, product.quantity)}> - </span>
                                 <input
-                                    className="h-8 w-12 border border-y-red-500 bg-white text-xs outline-none text-center xl:pl-4"
+                                    className="h-8 w-12 border border-y-red-500 bg-white text-xs outline-none text-center font-semibold"
                                     type="number"
                                     value={product.quantity}
                                     min="1"

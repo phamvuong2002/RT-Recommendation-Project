@@ -101,7 +101,7 @@ export const PopupOpen = ({ open, setOpen, autoClose = 0, icon = null, onYesClic
             </div>
             <Transition.Root show={open} as={Fragment} >
                 <Dialog as="div" className="fixed inset-0 overflow-y-auto z-20 " onClose={() => { handleNoClick(); setOpen(false) }}>
-                    <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center">
+                    <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center outline-none focus:outline-none">
                         <Transition.Child
                             as={Fragment}
                             enter="ease-in-out duration-500"

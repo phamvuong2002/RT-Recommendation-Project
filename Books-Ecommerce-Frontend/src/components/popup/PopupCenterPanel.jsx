@@ -34,7 +34,7 @@ export const PopupCenterPanel = ({ open, setOpen, autoClose = 0, icon = '', titl
                 {icon}
             </div>
             <Transition.Root show={open} as={Fragment} >
-                <Dialog as="div" className="fixed inset-0 overflow-y-auto z-20 " onClose={() => { setOpen(false) }}>
+                <Dialog as="div" tabIndex={0} className="fixed inset-0 overflow-y-auto z-20 " onClose={() => { setOpen(false) }}>
                     <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center">
                         <Transition.Child
                             as={Fragment}

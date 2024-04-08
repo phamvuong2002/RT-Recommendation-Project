@@ -6,6 +6,7 @@ import { GeneralInfo } from '../components/GeneralInfo'
 import { OrderInfo } from '../components/OrderInfo'
 
 import { useParams } from 'react-router-dom'
+import { ProfileAccount } from '../components/ProfileAccount'
 
 
 const TAB = {
@@ -63,7 +64,7 @@ export const AccountPage = () => {
                     selectedPageId === 'general-infomation' && <GeneralInfo />
                 }
                 {
-                    selectedPageId === 'profile-infomation' && <div></div>
+                    selectedPageId === 'profile-infomation' && <ProfileAccount />
                 }
                 {
                     selectedPageId === 'orders-infomation' && <OrderInfo />

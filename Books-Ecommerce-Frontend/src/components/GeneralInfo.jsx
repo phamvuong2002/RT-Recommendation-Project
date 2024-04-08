@@ -4,11 +4,9 @@ import { fetchData } from '../helpers/fetch';
 import Bills from './Bills';
 import { ShoppingCartLoader } from './loaders/ShoppingCartLoader';
 import { SelectAddressPopup } from '../helpers/SelectAddressPopup';
-import { PopupCenterPanel } from './popup/PopupCenterPanel';
 import { ChangeNamePopup } from '../helpers/ChangeNamePopup';
 import { TextLoader } from './loaders/TextLoader';
 import { ChangEmailPhone } from '../helpers/ChangEmailPhone';
-import { AuthenticationPopup } from '../helpers/AuthenticationPopup';
 
 export const GeneralInfo = () => {
     const [bills, setBills] = useState([]);

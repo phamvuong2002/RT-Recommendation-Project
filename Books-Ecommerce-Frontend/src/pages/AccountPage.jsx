@@ -3,6 +3,8 @@ import NavigationPath from '../components/NavigationPath'
 import SideBarNav from '../components/SideBarNav'
 import ProductListStatus from '../components/ProductListStatus'
 import { GeneralInfo } from '../components/GeneralInfo'
+import { OrderInfo } from '../components/OrderInfo'
+
 import { useParams } from 'react-router-dom'
 
 
@@ -64,7 +66,7 @@ export const AccountPage = () => {
                     selectedPageId === 'profile-infomation' && <div></div>
                 }
                 {
-                    selectedPageId === 'orders-infomation' && <div></div>
+                    selectedPageId === 'orders-infomation' && <OrderInfo />
                 }
                 {
                     selectedPageId === 'following-infomation' && <ProductListStatus />

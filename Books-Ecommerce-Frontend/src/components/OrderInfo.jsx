@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { isMobileDevice } from '../utils/isMobileDevice';
 import Bills from './Bills';
+import { ShoppingCartLoader } from './loaders/ShoppingCartLoader';
 
 import { fetchData } from '../helpers/fetch';
 import { Link } from 'react-router-dom';
@@ -11,10 +12,7 @@ export const OrderInfo = () => {
     const containerRef = useRef(null)
 
     const [bills, setBills] = useState([]);
-    const [reload, setReload] = useState(false);
-    const [addressDefault, setAddressDefault] = useState('');
-    const [addresses, setAddresses] = useState([]);
-    const [isAddrPopupOpen, setIsAddrPopupOpen] = useState(false);
+    const [reloadBill, setReloadBill] = useState(false);
 
     //Fetch Shopping Carts
     useEffect(() => {
@@ -30,10 +28,10 @@ export const OrderInfo = () => {
         //ví dụ tải các sản phẩm trong giỏ hàng của khách
         setTimeout(() => {
             BillsData()
-            setReload(false)
-        }, 100)
+            setReloadBill(false)
+        }, 1000)
 
-    }, [reload])
+    }, [reloadBill])
 
     const handleSetActiveTab = (tabID) => {
         setActiveTab(tabID);
@@ -64,7 +62,7 @@ export const OrderInfo = () => {
     };
 
     return (
-        <div className="bg-white xl:w-2/3 overflow-y-auto h-full">
+        <div className="bg-white xl:w-2/3 overflow-y-auto h-full flex flex-col">
             <div className=''>
                 {/*Tabs*/}
                 <ul ref={containerRef} className='overflow-x-auto md:overflow-hidden whitespace-nowrap snap-x snap-mandatory flex gap-4 md:gap-0 list-none text-[15px] md:text-[18px] overflow-hidden mb-3 sticky'>
@@ -76,9 +74,20 @@ export const OrderInfo = () => {
                     <li onClick={() => handleTabClick(6)} className={generateTabClassName(activeTab === 6)}>Hoàn trả</li>
                 </ul>
 
+
                 {/*Content*/}
-                <div className={activeTab === 1 ? "block m-2 overflow-y-auto no-scrollbar" : "hidden"}>
-                    <Bills className='' bills={bills} setReload={setReload} />
+                <div className={activeTab === 1 ? "block m-2 h-full overflow-y-auto no-scrollbar" : "hidden"}>
+                    {
+                        reloadBill ? <ShoppingCartLoader items={5} /> :
+                            !bills.length ?
+                                <div className="flex flex-col gap-1 items-center justify-center text-gray-300">
+                                    <img src="/img/empty-box.png" />
+                                    Bạn chưa có đơn hàng nào gần đây
+                                </div>
+                                :
+                                <Bills className='' bills={bills} setReload={setReloadBill} />
+                    }
+
                 </div>
 
                 <div className={activeTab === 2 ? "block" : "hidden"}>
@@ -108,6 +117,6 @@ export const OrderInfo = () => {
                 </div>
 
             </div>
-        </div >
+        </div>
     );
 }

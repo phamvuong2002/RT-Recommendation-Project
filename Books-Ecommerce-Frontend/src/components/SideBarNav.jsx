@@ -49,7 +49,8 @@ export default function SideBarNav({ setSelectedPage, setSelectedPageId }) {
             <ul className="hidden h-fit w-full sm:block grid-rows-4 text-sm md:text-base font-semibold font-inter gap-10 px-3 md:px-5 py-3">
                 {menuData.map((menu) =>
                     <li key={menu.id} className="text-left py-5">
-                        <Link to={`../account/${menu.id}`} value={menu.id} className={` text-gray-600 hover:cursor-pointer hover:text-red-400 flex flex-row items-center ${currentPage === menu.id ? 'text-red-400' : ''}`} onClick={handleClick} >
+                        <Link to={`../account/${menu.id}`} value={menu.id} className={` text-gray-600 hover:cursor-pointer hover:text-red-400 flex flex-row items-center ${currentPage === menu.id ? 'text-red-400' : ''}`}
+                            onClick={handleClick} >
                             {menu.icon}
                             {menu.title}
                         </Link>
@@ -86,19 +87,26 @@ export default function SideBarNav({ setSelectedPage, setSelectedPageId }) {
                                     <Menu.Item key={option.id}>
 
                                         {({ active }) => (
-                                            <button
-                                                name={TAB[option.id]}
-                                                className={(
-
-                                                    active ? 'bg-gray-100 py-2 ' : 'py-2'
-                                                )}
-                                                value={`${option.id}`}
-                                                onClick={handleClick}
-                                            >
-
+                                            <Link to={`../account/${option.id}`} value={option.id}
+                                                className={`${active ? 'bg-gray-100 py-2 ' : 'py-2'} text-gray-600 hover:cursor-pointer hover:text-red-400 flex flex-row items-center ${currentPage === option.id ? 'text-red-400' : ''}`}
+                                                onClick={handleClick} >
+                                                {option.icon}
                                                 {option.title}
+                                            </Link>
+                                            // <button
+                                            //     to={`../account/${option.id}`}
+                                            //     name={TAB[option.id]}
+                                            //     className={(
 
-                                            </button>
+                                            //         active ? 'bg-gray-100 py-2 ' : 'py-2'
+                                            //     )}
+                                            //     value={`${option.id}`}
+                                            //     onClick={handleClick}
+                                            // >
+
+                                            //     {option.title}
+
+                                            // </button>
 
                                         )}
                                     </Menu.Item>

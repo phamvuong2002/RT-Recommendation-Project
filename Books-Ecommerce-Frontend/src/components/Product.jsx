@@ -1,9 +1,24 @@
 import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom'
-import { formatNumberToText } from '../utils/formatNumberToText'
+import { fetchData } from '../helpers/fetch';
 
 export const Product = ({ productData }) => {
+
+
+    //Hàm xử lý khi thêm sản phẩm vào giỏ hàng
+    // const handleAddProductsToShoppingCart = async (productId) => {
+    //     const url = `localhost.../shoppingcart/:${productId}`;
+    //     try {
+    //         const addshoppingCartsData = await fetchData(url);
+    //         const updatedShoppingCartProducts = [...addshoppingCartsData];
+    //         return 'success';
+    //     } catch (error) {
+    //         console.error('Error:', error);
+    //         return 'failed';
+    //     }
+    // };
+
     return (
         <div className="w-full md:w-[85%] h-full p-1 ">
             <Link to={productData.href} scroll={false} className="w-[160px] md:w-[220px] bg-white flex flex-col items-center border border-y-red-50 md:hover:shadow-2xl md:rounded-md md:shadow-md px-3 py-2">
@@ -15,13 +30,15 @@ export const Product = ({ productData }) => {
                     />
                     {/*Image Hover*/}
                     <div className="flex items-center justify-center absolute w-full h-full bg-black/20 bottom-0 left-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                        <button className="w-full text-[100%] bg-red-500 text-white  hover:bg-red-300 ">Add to Cart</button>
+                        <button
+                            /*onClick={() => handleAddProductsToShoppingCart(productData.id)}*/
+                            className="w-full text-[100%] bg-red-500 text-white  hover:bg-red-300 ">Add to Cart</button>
                     </div>
                 </div>
 
                 {/* Title */}
                 <h2 className=
-                    "w-full h-8 leading-4 md:leading-5 md:h-10 mt-3 text-[13px] text-left md:text-[95%] text-indigo-900  font-semibold font-['Inter'] capitalize line-clamp-2 ">
+                    "w-full h-8 leading-4 md:leading-5 md:h-10 mt-3 text-[13px] text-left md:text-[95%] text-indigo-900  font-semibold font-['Inter'] capitalize line-clamp-2 " >
                     {productData.title}
                 </h2>
 
@@ -45,7 +62,7 @@ export const Product = ({ productData }) => {
 
             </Link>
 
-        </div>
+        </div >
     );
 }
 
@@ -58,5 +75,6 @@ Product.propTypes = {
         price: PropTypes.number.isRequired,
         salePrice: PropTypes.number.isRequired,
         currency: PropTypes.string.isRequired,
+        id: PropTypes.number.isRequired,
     }).isRequired,
 };

@@ -1,8 +1,22 @@
 import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types';
+import { fetchData } from '../helpers/fetch';
 
 export const ProductForSlider = ({ productData }) => {
+
+    //Hàm xử lý khi thêm sản phẩm vào giỏ hàng
+    // const handleAddProductsToShoppingCart = async (productId) => {
+    //     const url = `localhost.../shoppingcart/:${productId}`;
+    //     try {
+    //         const addshoppingCartsData = await fetchData(url);
+    //         const updatedShoppingCartProducts = [...addshoppingCartsData];
+    //         return 'success';
+    //     } catch (error) {
+    //         console.error('Error:', error);
+    //         return 'failed';
+    //     }
+    // };
     return (
         <div className="w-full h-full ">
             <Link to={productData.href} className="w-[160px] md:w-[220px] bg-white flex flex-col items-center border border-y-red-50 md:hover:shadow-2xl md:rounded-md md:shadow-md px-3 py-2">
@@ -14,7 +28,10 @@ export const ProductForSlider = ({ productData }) => {
                     />
                     {/*Image Hover*/}
                     <div className="flex items-center justify-center absolute w-full h-full bg-black/20 bottom-0 left-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                        <button className="w-full text-[100%] bg-red-500 text-white  hover:bg-red-300 ">Add to Cart</button>
+                        <button
+                            /*onClick={() => handleAddProductsToShoppingCart(productData.id)}*/
+                            className="w-full text-[100%] bg-red-500 text-white  hover:bg-red-300 ">Add to Cart
+                        </button>
                     </div>
                 </div>
 

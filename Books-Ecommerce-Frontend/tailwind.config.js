@@ -28,6 +28,7 @@ export default {
             borderRadius: '20px',
             border: '1px solid white',
           },
+
         },
       };
       addUtilities(newUtilities, ['responsive', 'hover']);

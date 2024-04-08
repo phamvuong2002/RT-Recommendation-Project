@@ -13,6 +13,13 @@ import { Link } from 'react-router-dom';
 
 export const SingleBill = ({ bill, setReload }) => {
 
+    const BILLSTATUS = {
+        "PendingConfirmation": { name: "Chờ xác nhận", bgColor: "bg-blue-200", textColor: "text-blue-500" },
+        "PendingDelivery": { name: "Chờ giao hàng", bgColor: "bg-blue-200", textColor: "text-blue-500" },
+        "Delivered": { name: "Đã giao", bgColor: "bg-green-200", textColor: "text-green-500" },
+        "Cancelled": { name: "Đã huỷ", bgColor: "bg-gray-200", textColor: "text-gray-500" },
+        "Refunded": { name: "Hoàn trả", bgColor: "bg-red-200", textColor: "text-red-500" }
+    }
 
     //Remove Icon
     const removeIcon = (className) => {
@@ -62,8 +69,8 @@ export const SingleBill = ({ bill, setReload }) => {
                                     <div className="w-fit px-1 bg-blue-200 text-blue-600">
                                         Ngày đặt {bill.date}
                                     </div>
-                                    <div className="w-fit px-1 bg-blue-200 text-blue-600">
-                                        Trạng thái {bill.status}
+                                    <div className={`${BILLSTATUS[bill.status].bgColor + ' ' + BILLSTATUS[bill.status].textColor} w-fit px-1  text-blue-600`}>
+                                        Trạng thái {BILLSTATUS[bill.status].name}
                                     </div>
                                 </div>
                             </div>
@@ -97,6 +104,6 @@ export const SingleBill = ({ bill, setReload }) => {
                     </div>
                 </SwiperSlide>
             </Swiper>
-        </div>
+        </div >
     )
 }

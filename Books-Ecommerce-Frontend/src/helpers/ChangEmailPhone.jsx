@@ -77,7 +77,7 @@ export const ChangEmailPhone = ({ open, setOpen, icon, email = '', setEmail, pho
                 setOpen={setOpen}
                 setAuthenStatus={setAuthenStatus}
                 authenStatus={authenStatus}
-                nextStep={setIsOpenChange}
+                nextStep={() => setIsOpenChange(true)}
                 icon={icon}
             />
 

@@ -4,7 +4,15 @@ import SideBarNav from '../components/SideBarNav'
 import ProductListStatus from '../components/ProductListStatus'
 import { GeneralInfo } from '../components/GeneralInfo'
 import { OrderInfo } from '../components/OrderInfo'
+import { useParams } from 'react-router-dom'
 
+
+const TAB = {
+    "general-infomation": "Tổng Quan",
+    "profile-infomation": "Thông Tin Tài Khoản",
+    "orders-infomation": "Thông Tin Đơn Hàng",
+    "following-infomation": "Theo Dõi Sách"
+}
 
 export const AccountPage = () => {
     const [selectedPage, setSelectedPage] = useState('Tổng quan')
@@ -18,10 +26,20 @@ export const AccountPage = () => {
             <div className='grid-cols-1 sm:flex sm:align-top h-lvh w-full justify-between lg:justify-evenly overflow-hidden pt-4'>
                 <SideBarNav setSelectedPage={setSelectedPage} />
                 {
-                    selectedPage == 'Tổng quan' ? <GeneralInfo />
-                        : selectedPage == 'Thông tin tài khoản' ? ""
-                            : selectedPage == 'Thông tin đơn hàng' ? <OrderInfo />
-                                : selectedPage == 'Theo dõi sách' ? <ProductListStatus /> : ""
+                    // selectedPage === TAB[selectedPageId] ? <GeneralInfo />
+                    //     : selectedPage === TAB[selectedPageId] ? ""
+                    //         : selectedPage === TAB[selectedPageId] ? ""
+                    //             : selectedPage === TAB[selectedPageId] ? <ProductListStatus /> : ""
+                    selectedPageId === 'general-infomation' && <GeneralInfo />
+                }
+                {
+                    selectedPageId === 'profile-infomation' && <div></div>
+                }
+                {
+                    selectedPageId === 'orders-infomation' && <OrderInfo />
+                }
+                {
+                    selectedPageId === 'following-infomation' && <ProductListStatus />
                 }
 
             </div>

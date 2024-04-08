@@ -15,7 +15,7 @@ import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 
 export const SliderProducts = ({ productData }) => {
     return (
-        <div className="w-full">
+        <div className="md:ml-6">
             <Swiper
                 slidesPerView={2}
                 breakpoints={{
@@ -25,11 +25,11 @@ export const SliderProducts = ({ productData }) => {
                     },
                     1024: {
                         slidesPerView: 5,
-                        spaceBetween: 20
+                        spaceBetween: 10
                     },
 
                 }}
-                spaceBetween={30}
+                spaceBetween={20}
                 autoplay={{
                     delay: 2000,
                     disableOnInteraction: false,
@@ -39,11 +39,11 @@ export const SliderProducts = ({ productData }) => {
                 // }}// cho ẩn hoặc hiện mấy chấm tròn ở dưới
                 //navigation={false} mũi tên 2 bên
                 modules={[Autoplay, Pagination, Navigation]}
-                className="mySwiper h-full"
+                className="mySwiper h-full "
 
             >
                 {productData.map((product, index) => (
-                    <SwiperSlide key={index} className="w-1/5 h-full">
+                    <SwiperSlide key={index} className="w-1/5 h-full grid justify-items-center">
                         <ProductForSlider productData={product} />
                     </SwiperSlide>
                 ))}

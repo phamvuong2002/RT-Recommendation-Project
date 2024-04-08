@@ -96,7 +96,7 @@ export const AuthenticationPopup = ({ open, setOpen, icon, authenStatus, setAuth
 
         if (authenStatus === "success") {
             if (nextStep) {
-                nextStep(true);
+                nextStep();
                 setOpen(false);
             }
         }

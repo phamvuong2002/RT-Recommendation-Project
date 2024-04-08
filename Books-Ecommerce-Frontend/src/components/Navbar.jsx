@@ -1,5 +1,5 @@
 import { React, Fragment, useState, useEffect, useRef } from 'react'
-import { FaUser, FaBars, FaTimes } from "react-icons/fa";
+import { FaUser, FaBars, FaTimes,FaHeart } from "react-icons/fa";
 import { Menu, Transition } from '@headlessui/react'
 import { IoCartOutline } from "react-icons/io5";
 import Search from './Search';
@@ -8,9 +8,13 @@ import { PopupCenterPanel } from './popup/PopupCenterPanel';
 import Login_SignUp from './Login_SignUp';
 import Category_dropdown from './Category_Dropdown';
 import { HiMiniSquares2X2, HiChevronDown } from "react-icons/hi2";
+import { LuClipboardList, LuLogOut } from "react-icons/lu";
 
 import { Link } from 'react-router-dom';
 
+function classNames(...classes) {
+    return classes.filter(Boolean).join(' ')
+}
 // Navbar chính 
 export const Navbar = () => {
     const [isOpenShoppingCarts, setIsOpenShoppingCarts]=useState(false)
@@ -52,10 +56,10 @@ export const Navbar = () => {
 
 
     const accountOption = [
-        { name: 'Tài khoản', path: '/account' },
-        { name: 'Đơn hàng của tôi', path: '/' },
-        { name: 'Mục yêu thích', path: '/' },
-        { name: 'Đăng xuất', path: '/' }
+        { name: 'Tài khoản',icon:<FaUser className='mr-2'/>,path: '/account' },
+        { name: 'Đơn hàng của tôi',icon:<LuClipboardList className='mr-2'/>, path: '/' },
+        { name: 'Mục yêu thích', icon:<FaHeart className='mr-2'/>,path: '/' },
+        { name: 'Đăng xuất',icon:<LuLogOut className='mr-2'/> , path: '/' }
     ]
 
 
@@ -101,17 +105,17 @@ export const Navbar = () => {
 
 
                 {/* ACCOUNT: Guest/User*/}
-                <div className="text-xl lg:text-lg sm:flex inline-flex justify-between gap-1 mr-1 md:absolute  md:right-4 md:mr-0 lg:relative lg:mr-3 sm:my-auto sm:gap-4   text-black lg:col-span-2 lg:justify-self-center lg:gap-10 ">
+                <div className="text-xl lg:text-lg ml-1 sm:flex inline-flex justify-between gap-1 mr-1 md:absolute  md:right-4 md:mr-0 lg:relative lg:mr-3 sm:my-auto sm:gap-4   text-black lg:col-span-2 lg:justify-self-center lg:gap-10 ">
                     <div className="flex items-center">
                         {/* Chưa đăng nhập sẽ hiển thị popup Đăng ký/Đăng nhập */}
                         <div className={`group flex items-center text-lg font-medium text-black  ${user.id.length <= 0 ? 'block' : 'hidden'}`} >
                             <PopupCenterPanel open={open} setOpen={setOpen} 
                             icon={
                             <div className=' flex items-center text-lg font-medium text-black '>
-                                <FaUser  className="h-4 w-4 sm:h-5 sm:w-5 text-red-500 text-xs "  />
+                                <FaUser  className="h-4 w-4 ml-1 sm:h-5 sm:w-5 text-red-500 text-xs "  />
                                 <p className='hidden lg:block ml-2'>Tài khoản  </p>
                             </div>} title={''}
-                                titleClassName='p-2' content={<>
+                                titleClassName='p-2 hidden' content={<>
                                     <Login_SignUp  setUser={setUser} />
                                 </>}
                             />
@@ -150,20 +154,20 @@ export const Navbar = () => {
                                             ref={dropdownRef}
                                             onMouseEnter={onMouseEnterMenu}
                                             onMouseLeave={onMouseLeaveMenu}
-                                            className={'absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none'} >
+                                            className={'absolute right-0 z-10 mt-2 w-[175px] rounded-md bg-white shadow-2xl focus:outline-none'} >
                                             <div className="py-1">
                                                 {accountOption.map((option) => (
                                                     <Menu.Item key={option.name} onClick={() => setOpenDropdown(false)}>
                                                         {(active) => (
                                                             <Link  to={option.path}
                                                                 name={option.name}
-                                                                className={(
-                                                                    option.current ? 'font-medium text-gray-900' : 'text-gray-500',
-                                                                    active ? 'bg-gray-100' : '',
-                                                                    'block px-4 py-2 text-sm hover:text-red-500'
-                                                                )}
+                                                                className={classNames('flex flex-row items-center text-[15px] px-3 py-2  hover:text-red-500',
+                                                                option.current ? 'font-medium text-gray-900' : 'text-gray-500',
+                                                                active ? '' : ''
+                                                            )}
                                                              
                                                             >
+                                                                 {option.icon}
                                                                 {option.name}
                                                             </Link>
 
@@ -181,7 +185,7 @@ export const Navbar = () => {
 
                     <button  className="flex items-center sm:gap-2" onClick={handleClickShoppingCarts}>
                         <div className='flex'>
-                            <IoCartOutline className="text-red-500 h-5 w-5 sm:h-6 sm:w-6 " />
+                            <IoCartOutline className="text-red-500 h-5 w-5 ml-2 sm:h-6 sm:w-6 " />
                             <span className='cart-quantity text-center text-sm min-w-[20px] h-[20px] rounded-[50%] ml-[-10px] mt-[-5px] bg-[red] text-white'> {user.shoppingCart >= 100 ? '99+' : user.shoppingCart}  </span>
                         </div>
                         <p className='hidden lg:block '>Giỏ hàng</p>

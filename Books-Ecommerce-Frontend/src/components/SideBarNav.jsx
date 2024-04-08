@@ -6,6 +6,9 @@ import { LuClipboardList } from "react-icons/lu";
 import { BiSolidBookHeart } from "react-icons/bi";
 import { Link, useParams } from 'react-router-dom';
 
+function classNames(...classes) {
+    return classes.filter(Boolean).join(' ')
+}
 
 export default function SideBarNav({ setSelectedPage, setSelectedPageId }) {
     const [currentPage, setCurrentPage] = useState("general-infomation")
@@ -60,7 +63,7 @@ export default function SideBarNav({ setSelectedPage, setSelectedPageId }) {
 
 
             <div className="z-[5] w-full  flex relative sm:hidden justify-end pr-4">
-                <Menu as="div" className=" text-left w-[200px]">
+                <Menu as="div" className="text-left w-[200px] flex">
                     <Menu.Button className="w-full group flex justify-evenly text-left text-sm font-medium text-gray-700 hover:text-gray-900">
                         <span>
                             {TAB[currentPage]}
@@ -81,14 +84,14 @@ export default function SideBarNav({ setSelectedPage, setSelectedPageId }) {
                         leaveFrom="transform opacity-100 scale-100"
                         leaveTo="transform opacity-0 scale-95"
                     >
-                        <Menu.Items className="absolute mt-2 w-[160px] bg-white ml-5  rounded-md shadow-2xl ">
-                            <div className="py-1 text-sm pl-3">
+                        <Menu.Items className="absolute mt-6 w-[200px] bg-white   rounded-md shadow-2xl ">
+                            <div className="py-1 text-[15px] pl-3">
                                 {menuData.map((option) => (
                                     <Menu.Item key={option.id}>
 
                                         {({ active }) => (
                                             <Link to={`../account/${option.id}`} value={option.id}
-                                                className={`${active ? 'bg-gray-100 py-2 ' : 'py-2'} text-gray-600 hover:cursor-pointer hover:text-red-400 flex flex-row items-center ${currentPage === option.id ? 'text-red-400' : ''}`}
+                                                className={` ${active ? 'bg-gray-100 py-2 ' : 'py-2'} text-gray-600 hover:cursor-pointer hover:text-red-400 flex flex-row items-center  ${currentPage === option.id ? 'text-red-400' : ''}`}
                                                 onClick={handleClick} >
                                                 {option.icon}
                                                 {option.title}

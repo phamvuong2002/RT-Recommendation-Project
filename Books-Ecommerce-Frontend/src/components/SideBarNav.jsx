@@ -62,7 +62,7 @@ export default function SideBarNav({ setSelectedPage, setSelectedPageId }) {
                 <Menu as="div" className=" text-left w-[200px]">
                     <Menu.Button className="w-full group flex justify-evenly text-left text-sm font-medium text-gray-700 hover:text-gray-900">
                         <span>
-                            {currentPage}
+                            {TAB[currentPage]}
                         </span>
                         <HiChevronDown
                             className="h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
@@ -87,12 +87,12 @@ export default function SideBarNav({ setSelectedPage, setSelectedPageId }) {
 
                                         {({ active }) => (
                                             <button
-                                                name={option.id}
+                                                name={TAB[option.id]}
                                                 className={(
 
                                                     active ? 'bg-gray-100 py-2 ' : 'py-2'
                                                 )}
-                                                value={`${option.title}`}
+                                                value={`${option.id}`}
                                                 onClick={handleClick}
                                             >
 

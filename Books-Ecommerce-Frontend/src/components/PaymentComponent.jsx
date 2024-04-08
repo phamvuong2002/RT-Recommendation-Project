@@ -501,7 +501,7 @@ export const Payment = () => {
                                 <ShoppingCartLoader items={NUMLOADER - 2} />
                                 :
                                 paymentMethods.map(payment => (
-                                    <div key={payment.paymentMethodId} className={`flex-shrink-0 w-[14rem] md:w-[18.5rem] flex gap-2 md:gap-4 border  ${paymentID === payment.paymentMethodId ? 'border-red-500' : 'border-gray-300'} rounded-lg p-2 xl:cursor-pointer`} onClick={() => choicePayment(payment.paymentMethodId, true)} >
+                                    <div key={payment.paymentMethodId} className={`bg-white flex-shrink-0 w-[14rem] md:w-[18.5rem] flex gap-2 md:gap-4 border  ${paymentID === payment.paymentMethodId ? 'border-red-500' : 'border-gray-300'} rounded-lg p-2 xl:cursor-pointer`} onClick={() => choicePayment(payment.paymentMethodId, true)} >
                                         <div className="w-8 h-8 flex mb-8">
                                             <img src={payment.paymentMethodImage} alt={payment.paymentMethodName} />
                                         </div>

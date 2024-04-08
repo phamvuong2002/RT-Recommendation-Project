@@ -154,7 +154,7 @@ export const ShoppingCarts = (/*items*/) => {
             <div className="flex flex-col items-center">
                 {/* <h1 className="m-2 text-center items-center text-2xl font-semibold text-light font-inter">Giỏ Hàng Của Tôi</h1> */}
                 <div className="w-full px-1">
-                    <div className=" xl:mx-0 mb-1 xl:w-full max-w-[80rem] h-[3rem] flex items-center text-red-500 text-lg font-bold bg-red-50 border border-red-100 rounded-tl-lg rounded-tr-lg">
+                    <div className=" xl:mx-0 mb-1 xl:w-full max-w-[80rem] h-[3rem] flex items-center text-red-500 text-lg font-bold bg-white border border-red-100 rounded-tl-lg rounded-tr-lg">
                         <div className="p-2 xl:p-4  w-full">
                             {`Giỏ Hàng (${products.length} sản phẩm)`}
                         </div>
@@ -162,7 +162,7 @@ export const ShoppingCarts = (/*items*/) => {
                 </div>
                 <div className="w-full xl:px-1 ">
                     <div className="max-w-7xl justify-center px-1 md:flex md:space-x-1 xl:px-0 ">
-                        <div className="md:w-2/3 xl:max-h-[50rem] xl:pr-2 overflow-y-auto no-scrollbar">
+                        <div className="md:w-2/3 xl:max-h-[49rem] xl:pr-2 overflow-y-auto no-scrollbar">
                             {products.length === 0 ?
                                 <ShoppingCartLoader items={NUMLOADER} />
                                 :
@@ -178,7 +178,7 @@ export const ShoppingCarts = (/*items*/) => {
 
 
                         {/* <!-- Sub total --> */}
-                        <div className={`${products.length === 0 ? 'relative' : 'fixed'}  bottom-0 left-0 w-full xl:relative md:relative xl:h-full font-inter rounded-bl-lg rounded-br-lg xl:rounded-none border border-red-100 bg-white xl:p-6 md:p-6 p-3  md:mt-0 md:w-1/3 ${products.length ? '' : 'animate-pulse'}`}>
+                        <div className={`${products.length === 0 ? 'relative' : 'fixed z-[2] xl:relative xl:z-0'} bottom-0 left-0 w-full xl:relative md:relative xl:h-full font-inter rounded-bl-lg rounded-br-lg xl:rounded-none border border-red-100 bg-white xl:p-6 md:p-6 p-3  md:mt-0 md:w-1/3 ${products.length ? '' : 'animate-pulse'}`}>
                             <div className="xl:mb-2 xl:flex gap-2 flex-col justify-between">
                                 <p className="text-gray-700 hidden xl:block">Địa Chỉ</p>
                                 <div className={`flex gap-1 xl:gap-2 text-gray-700 text-base font-bold capitalize tracking-wide ${address ? '' : 'hidden xl:flex'}`}>

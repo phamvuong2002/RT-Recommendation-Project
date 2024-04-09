@@ -1,11 +1,11 @@
 import React from 'react';
 import { Fragment, useState, useEffect, useRef } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
-import {  HiPlus, HiMinus, HiChevronDown, HiFunnel, HiMiniXMark } from "react-icons/hi2";
+import { HiPlus, HiMinus, HiChevronDown, HiFunnel, HiMiniXMark } from "react-icons/hi2";
 import { useLocation, useNavigate, Link, createSearchParams } from 'react-router-dom';
+import { AllProducts } from '../components/AllProducts'
 
-
-export default function FilterProduct({ selectCategory }) {
+export default function FilterProduct({ selectCategory, pages, totalPages, currentPage, setCurrentPage }) {
   const navigate = useNavigate();
   const location = useLocation()
 
@@ -975,8 +975,8 @@ export default function FilterProduct({ selectCategory }) {
                       <>
                         <div
                           className={`flex flex-col w-full text-left bg-white py-1 text-gray-400 hover:text-gray-500 text-[18px]                        
-                        ${selectCategory.category == 'all-category' ? "":
-                               selectCategory.category == section.value ? "" : "hidden"} `}
+                        ${selectCategory.category == 'all-category' ? "" :
+                              selectCategory.category == section.value ? "" : "hidden"} `}
                         >
                           {/* <Disclosure.Button className={`flex  w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500 ${selectedCategory.category == section.value ? "" : "hidden"} `}> */}
                           <Link to={`/search/${section.value}`} className="font-medium text-gray-900 pb-2 " >
@@ -1080,7 +1080,12 @@ export default function FilterProduct({ selectCategory }) {
               {/* Product grid */}
               <div className="lg:col-span-4">
                 {/* Your content */}
-                {/* <AllProducts all_product={productData} /> */}
+                <AllProducts
+                  pages={pages}
+                  totalPages={totalPages}
+                  currentPage={currentPage}
+                  setCurrentPage={setCurrentPage}>
+                </AllProducts>
 
               </div>
             </div>

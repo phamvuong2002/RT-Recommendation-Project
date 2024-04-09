@@ -62,7 +62,7 @@ export const Product = ({ productData }) => {
 
             </Link>
 
-        </div >
+        </div>
     );
 }
 
@@ -75,6 +75,5 @@ Product.propTypes = {
         price: PropTypes.number.isRequired,
         salePrice: PropTypes.number.isRequired,
         currency: PropTypes.string.isRequired,
-        id: PropTypes.number.isRequired,
     }).isRequired,
 };

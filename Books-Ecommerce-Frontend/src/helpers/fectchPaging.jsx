@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from "axios";
 
 
-export const useFectchPaging = () => {
+export const FectchPaging = ({ url }) => {
     //const API_URL = "https://api.github.com/users/fabpot/followers?per_page=6"; 
-    const url = "../data/test/product"
+    //const url = "../data/test/product"
     const totalPages = 5;
     const [loading, setLoading] = useState(true);
     const [pages, setPages] = useState([]);
@@ -18,7 +18,7 @@ export const useFectchPaging = () => {
             setLoading(false);
         };
         fetchData();
-    }, [currentPage]);
+    }, [url, currentPage]);
     return {
         loading,
         pages,

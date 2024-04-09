@@ -6,6 +6,7 @@ import { SliderProducts } from '../components/SliderProducts'
 import { AllProducts } from '../components/AllProducts'
 import { InfoForGuest } from '../components/infoForGuest'
 import { fetchData } from '../helpers/fetch';
+import { FectchPaging } from '../helpers/fectchPaging';
 
 const sampleUserInfo = {
     userId: '123456',
@@ -18,6 +19,10 @@ export const Home = () => {
 
     const [user, setUser] = useState(sampleUserInfo)
     const [products, setProducts] = useState([])
+
+    //This call for AllProduct
+    const url = "../data/test/product"
+    const { pages, totalPages, currentPage, setCurrentPage } = FectchPaging({ url })
 
     //Fetch Product Data
     useEffect(() => {
@@ -50,7 +55,12 @@ export const Home = () => {
                     </svg>
                     <div className="text-[90%] md:text-[150%] font-semibold font-['Inter'] tracking-wider">Sản phẩm bán chạy</div>
                 </div>
-                <AllProducts></AllProducts>
+                <AllProducts
+                    pages={pages}
+                    totalPages={totalPages}
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage}>
+                </AllProducts>
             </div>
             <Category></Category>
             <div className="m-4">
@@ -62,6 +72,6 @@ export const Home = () => {
                 </div>
                 <SliderProducts productData={products}></SliderProducts>
             </div>
-        </div>
+        </div >
     )
 }

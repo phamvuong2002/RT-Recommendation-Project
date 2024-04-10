@@ -1,25 +1,34 @@
 import React from 'react'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
 import { useNavigate, useLocation, useParams } from 'react-router-dom'
 
 // Thanh Tìm Kiếm được đặt trong Navbar
-const Search = ({ setResults }) => {
-   
+const Search = () => {
+    const location = useLocation();
     const navigate = useNavigate();
-    const [input, setInput] = useState();
+    const [input, setInput] = useState('');
+    
     const searchFunction = (event) => {
+        let path=''
         event.preventDefault();
-        let path='/search/?q='+input
+        path='/search?q='+input
         navigate(path)
      
     };
 
     const handleChange = (value) => {
         setInput(value);
-
         // searchFunction(value)
     };
+
+    useEffect(()=>{
+        if(location.pathname!=='/search/'+input){
+            setInput('')
+            console.log('in change')
+        }
+      
+    },[location])
 
     return (
         <div id="search-bar" className="h-0.8 sm:my-3 bg-gray-200 rounded-[5px] grid">

@@ -6,6 +6,7 @@ import { SliderProducts } from '../components/SliderProducts'
 import { useParams } from 'react-router-dom';
 import { AllProducts } from '../components/AllProducts'
 import { fetchData } from '../helpers/fetch'
+import { FectchPaging } from '../helpers/fectchPaging'
 
 export const ProductDetailPage = () => {
     const { bookid } = useParams();
@@ -13,6 +14,9 @@ export const ProductDetailPage = () => {
     const [paths, setPaths] = useState([]);
     const [products, setProducts] = useState([]);
 
+    //This call for AllProduct
+    const url = "../data/test/product"
+    const { pages, totalPages, currentPage, setCurrentPage } = FectchPaging({ url })
 
     //Get bookid from url
     useEffect(() => {
@@ -63,7 +67,7 @@ export const ProductDetailPage = () => {
                         <div className="flex px-4 text-sm items-center">
                             <div className="text-sm md:text-[150%] font-bold text-red-500  font-['Inter'] tracking-wider">Dành Cho Bạn</div>
                         </div>
-                        {/* <SliderProducts productData={products}></SliderProducts> */}
+
                     </div>
                     <div className="bg-white border-x border-b xl:border border-red-100">
                         <SliderProducts productData={products}></SliderProducts>
@@ -79,10 +83,15 @@ export const ProductDetailPage = () => {
                         <div className="flex px-4 text-sm items-center ">
                             <div className="text-sm md:text-[150%] font-bold text-red-500 font-['Inter'] tracking-wider">Sản phẩm bán chạy</div>
                         </div>
-                        {/* <SliderProducts productData={products}></SliderProducts> */}
+
                     </div>
                     <div className="bg-white border-x border-b xl:border border-red-100">
-                        <AllProducts />
+                        <AllProducts
+                            pages={pages}
+                            totalPages={totalPages}
+                            currentPage={currentPage}
+                            setCurrentPage={setCurrentPage}>
+                        </AllProducts>
                     </div>
                 </div>
             </div>

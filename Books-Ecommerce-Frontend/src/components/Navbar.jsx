@@ -100,7 +100,7 @@ export const Navbar = () => {
 
                 {/* Vị trí thanh Search - Còn chỉnh sửa */}
                 <div className="search-bar-container relative inline-block w-3/5 md:w-[55%] lg:col-span-2 lg:w-full ">
-                    <Search setResults={''} />
+                    <Search/>
                 </div>
 
 

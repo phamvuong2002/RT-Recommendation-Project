@@ -84,8 +84,17 @@ export const OrderInfo = () => {
         setActiveTab(tabID);
     };
 
+    const convertToNumber = {
+        "All": 0,
+        "PendingConfirmation": 1,
+        "PendingDelivery": 2,
+        "Delivered": 3,
+        "Cancelled": 4,
+        "Refunded": 5,
+    }
+
     const handleSetScrollTab = (tabID) => {
-        const element = containerRef.current.children[tabID];
+        const element = containerRef.current.children[convertToNumber[tabID]]
         element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
     };
 

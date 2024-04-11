@@ -2,19 +2,21 @@ import React, { useEffect, useRef, useState } from 'react'
 import { isMobileDevice } from '../utils/isMobileDevice';
 import Bills from './Bills';
 import { ShoppingCartLoader } from './loaders/ShoppingCartLoader';
+import { SingleBill } from './SingleBill';
+import { determineBillStatus } from '../helpers/detemindBillsStatus';
 
 import { fetchData } from '../helpers/fetch';
 import { Link } from 'react-router-dom';
 
 export const OrderInfo = () => {
 
-    const [activeTab, setActiveTab] = useState(1)
+    const [activeTab, setActiveTab] = useState('All')
     const containerRef = useRef(null)
 
     const [bills, setBills] = useState([]);
     const [reloadBill, setReloadBill] = useState(false);
 
-    //Fetch Shopping Carts
+    //Fetch Bills Data
     useEffect(() => {
         const url = '../data/test/bills.json';
         const BillsData = async () => {
@@ -33,6 +35,51 @@ export const OrderInfo = () => {
 
     }, [reloadBill])
 
+    // Return Grouped Bills (check by Status) To Show At Correct Tab
+    const checkGroupedBillsStaus = (bills, activeTab) => {
+        const groupBillByStatusAndID = bills.reduce((accumulator, bill) => {
+            if (bill.status === activeTab) {
+                const billId = bill.billId; //tại rảnh nên thích gán như vậy, 
+                //mà nếu gán như vậy thì nó sẽ gọi 1 cái bill 1 lần thôi rồi chọn id ra, tối ưu hơn
+                if (!accumulator[billId]) {
+                    accumulator[billId] = []; // Tạo một mảng mới nếu chưa có số hóa đơn
+                }
+                accumulator[billId].push(bill); // Thêm đơn hàng vào mảng tương ứng với số hóa đơn
+            }
+            console.log('aaa', accumulator)
+            return accumulator;
+        }, {});
+
+        const renderedBills = Object.keys(groupBillByStatusAndID).map(billId => {
+            return (
+                <div className="" key={billId}>
+                    <div className="flex items-center text-xs justify-between xl:text-base gap-3 xl:py-2 xl:h-8 xl:rounded-full h-7 w-full text-white px-1 font-semibold bg-red-500">
+                        <div className="flex gap-1">
+                            <div className="xl:pl-1"> Số hoá đơn #{billId}</div>
+                            <div className="xl:pr-1">({groupBillByStatusAndID[billId].length} đơn hàng)</div>
+                        </div>
+                    </div>
+                    {/* Render Swiper here for each group of bills */}
+                    {groupBillByStatusAndID[billId].map(bill => (
+                        <SingleBill key={bill.detailBillId} bill={bill} setReload={setReloadBill} />
+                    ))}
+                </div>
+            );
+        });
+
+        if (groupBillByStatusAndID.length === 0) {
+            return (
+                <div className="flex flex-col gap-1 items-center justify-center text-gray-300">
+                    <img src="/img/empty-box.png" />
+                    Chưa có đơn hàng
+                </div>
+            );
+        } else {
+            return renderedBills;
+        }
+    };
+
+
     const handleSetActiveTab = (tabID) => {
         setActiveTab(tabID);
     };
@@ -49,13 +96,13 @@ export const OrderInfo = () => {
     const handleSetScrollTab = (tabID) => {
         const element = containerRef.current.children[convertToNumber[tabID]]
         element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
-        console.log('a', element.getBoundingClientRect())
     };
 
     const handleTabClick = (tabID) => {
         handleSetActiveTab(tabID);
-        if (isMobileDevice())
+        if (isMobileDevice) {
             handleSetScrollTab(tabID);
+        }
     };
 
 
@@ -71,58 +118,70 @@ export const OrderInfo = () => {
     };
 
     return (
-        <div className="bg-white xl:w-2/3 overflow-y-auto h-full flex flex-col">
+        <div className="bg-white xl:w-2/3 overflow-y-auto no-scrollbar h-full flex flex-col">
             <div className=''>
                 {/*Tabs*/}
-                <ul ref={containerRef} className='overflow-x-auto md:overflow-hidden whitespace-nowrap snap-x snap-mandatory flex gap-4 md:gap-0 list-none text-[15px] md:text-[18px] overflow-hidden mb-3 sticky'>
-                    <li onClick={() => handleTabClick(1)} className={generateTabClassName(activeTab === 1)}>Tất cả</li>
-                    <li onClick={() => handleTabClick(2)} className={generateTabClassName(activeTab === 2)}>Chờ xác nhận</li>
-                    <li onClick={() => handleTabClick(3)} className={generateTabClassName(activeTab === 3)}>Chờ giao hàng</li>
-                    <li onClick={() => handleTabClick(4)} className={generateTabClassName(activeTab === 4)}>Đã giao</li>
-                    <li onClick={() => handleTabClick(5)} className={generateTabClassName(activeTab === 5)}>Đã hủy</li>
-                    <li onClick={() => handleTabClick(6)} className={generateTabClassName(activeTab === 6)}>Hoàn trả</li>
+                <ul ref={containerRef} className='overflow-x-auto md:overflow-hidden whitespace-nowrap snap-x snap-mandatory flex gap-4 md:gap-0 list-none text-[15px] md:text-[18px] overflow-hidden m-2'>
+                    <li onClick={() => handleTabClick('All')} className={generateTabClassName(activeTab === 'All')}>Tất cả</li>
+                    <li onClick={() => handleTabClick('PendingConfirmation')} className={generateTabClassName(activeTab === 'PendingConfirmation')}>Chờ xác nhận</li>
+                    <li onClick={() => handleTabClick('PendingDelivery')} className={generateTabClassName(activeTab === 'PendingDelivery')}>Chờ giao hàng</li>
+                    <li onClick={() => handleTabClick('Delivered')} className={generateTabClassName(activeTab === 'Delivered')}>Đã giao</li>
+                    <li onClick={() => handleTabClick('Cancelled')} className={generateTabClassName(activeTab === 'Cancelled')}>Đã hủy</li>
+                    <li onClick={() => handleTabClick('Refunded')} className={generateTabClassName(activeTab === 'Refunded')}>Hoàn trả</li>
                 </ul>
 
 
                 {/*Content*/}
-                <div className={activeTab === 1 ? "block m-2 h-full overflow-y-auto no-scrollbar" : "hidden"}>
-                    {
-                        reloadBill ? <ShoppingCartLoader items={5} /> :
-                            !bills.length ?
-                                <div className="flex flex-col gap-1 items-center justify-center text-gray-300">
-                                    <img src="/img/empty-box.png" />
-                                    Bạn chưa có đơn hàng nào gần đây
-                                </div>
-                                :
-                                <Bills className='' bills={bills} setReload={setReloadBill} />
-                    }
+                <div className="m-2">
+                    {/*Tất cả đơn hàng*/}
+                    <div className={activeTab === 'All' ? "block h-full overflow-y-auto" : "hidden"}>
+                        {
+                            reloadBill ? <ShoppingCartLoader items={5} /> :
+                                !bills.length ?
+                                    <div className="flex flex-col gap-1 items-center justify-center text-gray-300">
+                                        <img src="/img/empty-box.png" />
+                                        Bạn chưa có đơn hàng nào gần đây
+                                    </div>
+                                    :
+                                    <Bills className='' bills={bills} setReload={setReloadBill} />
+                        }
 
-                </div>
+                    </div>
 
-                <div className={activeTab === 2 ? "block" : "hidden"}>
+                    {/*Đơn hàng chờ xác nhận*/}
+                    <div className={activeTab === 'PendingConfirmation' ? "block" : "hidden"}>
+                        {
+                            checkGroupedBillsStaus(bills, activeTab)
+                        }
+                    </div>
 
-                    <h1>22</h1>
-                </div>
+                    {/*Đơn hàng chờ giao*/}
+                    <div className={activeTab === 'PendingDelivery' ? "block" : "hidden"}>
+                        {
+                            checkGroupedBillsStaus(bills, activeTab)
+                        }
+                    </div>
 
-                <div className={activeTab === 3 ? "block" : "hidden"}>
+                    {/*Đã giao*/}
+                    <div className={activeTab === 'Delivered' ? "block" : "hidden"}>
+                        {
+                            checkGroupedBillsStaus(bills, activeTab)
+                        }
+                    </div>
 
-                    <h1>3333</h1>
-                </div>
+                    {/*Đã hủy*/}
+                    <div className={activeTab === 'Cancelled' ? "block" : "hidden"}>
+                        {
+                            checkGroupedBillsStaus(bills, activeTab)
+                        }
+                    </div>
 
-                <div className={activeTab === 4 ? "block" : "hidden"}>
-
-                    <h1>444</h1>
-                </div>
-
-                <div className={activeTab === 5 ? "block" : "hidden"}>
-
-                    <h1>55</h1>
-                </div>
-
-
-                <div className={activeTab === 6 ? "block" : "hidden"}>
-
-                    <h1>666</h1>
+                    {/*Hoàn trả*/}
+                    <div className={activeTab === 'Refunded' ? "block" : "hidden"}>
+                        {
+                            checkGroupedBillsStaus(bills, activeTab)
+                        }
+                    </div>
                 </div>
 
             </div>

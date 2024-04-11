@@ -6,6 +6,7 @@ import { SliderProducts } from '../components/SliderProducts'
 import { AllProducts } from '../components/AllProducts'
 import { InfoForGuest } from '../components/infoForGuest'
 import { fetchData } from '../helpers/fetch';
+import { FectchPaging } from '../helpers/fectchPaging';
 
 const sampleUserInfo = {
     userId: '123456',
@@ -18,6 +19,10 @@ export const Home = () => {
 
     const [user, setUser] = useState(sampleUserInfo)
     const [products, setProducts] = useState([])
+
+    //This call for AllProduct
+    const url = "../data/test/product"
+    const { pages, totalPages, currentPage, setCurrentPage } = FectchPaging({ url })
 
     //Fetch Product Data
     useEffect(() => {
@@ -43,41 +48,28 @@ export const Home = () => {
             <InfoForGuest></InfoForGuest>
 
             {/*Sản phẩm bán chạy*/}
+            <div className="m-4 h-full">
+
+                <AllProducts
+                    pages={pages}
+                    totalPages={totalPages}
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage}
+                    isShowHeader={true}
+                    numOfProductsInRow={5}
+                >
+                </AllProducts>
+            </div>
+            <Category></Category>
             <div className="m-4">
                 <div className="flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="text-[#ffbe98] w-[5%] md:w-[2%]">
                         <path fillRule="evenodd" d="M4.5 7.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9Z" clipRule="evenodd" />
                     </svg>
-                    <div className="text-[90%] md:text-[150%] font-semibold font-['Inter'] tracking-wider">Sản phẩm bán chạy</div>
+                    <div className="text-[90%] md:text-[150%] font-semibold font-['Inter'] tracking-wider">Xu hướng mua sắm</div>
                 </div>
-                <AllProducts
-                    pages={pages}
-                    totalPages={totalPages}
-                    currentPage={currentPage}
-                    setCurrentPage={setCurrentPage}>
-                </AllProducts>
-                <div className="m-4 h-full">
-
-                    <AllProducts
-                        pages={pages}
-                        totalPages={totalPages}
-                        currentPage={currentPage}
-                        setCurrentPage={setCurrentPage}
-                        isShowHeader={true}
-                        numOfProductsInRow={5}
-                    >
-                    </AllProducts>
-                </div>
-                <Category></Category>
-                <div className="m-4">
-                    <div className="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="text-[#ffbe98] w-[5%] md:w-[2%]">
-                            <path fillRule="evenodd" d="M4.5 7.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9Z" clipRule="evenodd" />
-                        </svg>
-                        <div className="text-[90%] md:text-[150%] font-semibold font-['Inter'] tracking-wider">Xu hướng mua sắm</div>
-                    </div>
-                    <SliderProducts productData={products}></SliderProducts>
-                </div>
+                <SliderProducts productData={products}></SliderProducts>
             </div>
-            )
+        </div>
+    )
 }

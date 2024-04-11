@@ -1,11 +1,8 @@
+
 import React, { useState, useRef, useMemo } from 'react';
 import { Product } from "./Product";
-import { useFectchPaging } from '../helpers/fectchPaging';
 import { PaginationButtons } from "./PaginationButtons";
-
-
-
-
+import PropTypes from 'prop-types';
 
 export const AllProducts = ({ pages, totalPages, currentPage, setCurrentPage, isShowHeader, numOfProductsInRow }) => {
 

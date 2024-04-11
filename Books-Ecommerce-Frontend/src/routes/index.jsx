@@ -13,7 +13,7 @@ const publicRoutes = [
     { path: '/shoppingcarts', component: ShoppingCartsPage },
     { path: '/account', component: AccountPage },
     { path: '/account/:tab', component: AccountPage },
-    { path: '/search/:category?/:subcategory?/:subsubcategory?', component: SearchPage }
+    { path: '/search/:category?/:subcategory?/:subsubcategory?/:subsubsubcategory?', component: SearchPage }
 
 ];
 

@@ -15,7 +15,7 @@ import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 
 export const SliderProducts = ({ productData }) => {
     return (
-        <div className="md:ml-6">
+        <div className="">
             <Swiper
                 slidesPerView={2}
                 breakpoints={{
@@ -25,7 +25,7 @@ export const SliderProducts = ({ productData }) => {
                     },
                     1024: {
                         slidesPerView: 5,
-                        spaceBetween: 10
+                        spaceBetween: 20
                     },
 
                 }}

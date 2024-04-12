@@ -18,7 +18,7 @@ export const ProductForSlider = ({ productData }) => {
     //     }
     // };
     return (
-        <div className="block bg-white min-h-full md:hover:shadow-2xl md:rounded-md md:shadow-md overflow-hidden">
+        <div className="block p-2 sm:p-0 bg-white min-h-full md:hover:shadow-2xl md:rounded-md md:shadow-md overflow-hidden">
             <Link to={productData.href} scroll={false} className="h-full block">
                 <div className=''>
                     {/**Product Image */}
@@ -49,7 +49,7 @@ export const ProductForSlider = ({ productData }) => {
                         </h3>
 
                         <div className="text-left mt-[0.1rem] md:mt-1 flex gap-2 md:justify-between md:flex-row flex-row-reverse justify-end">
-                            <p className="line-through leading-[1.6rem] sm:leading-7 text-[0.6rem] text-gray-400 sm:text-sm font-bold tracking-wide font-['Inter']">
+                            <p className="line-through leading-[1.6rem] sm:leading-8 text-[0.6rem] text-gray-400 sm:text-xs tracking-wide font-['Inter']">
                                 {productData.price}
                                 <span>{productData.currency}</span>
                             </p>

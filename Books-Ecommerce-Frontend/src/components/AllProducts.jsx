@@ -72,11 +72,10 @@ export const AllProducts = ({ isShowHeader, limitProduct, numOfProductsInRow }) 
     }, [filters])
 
     return (
-        <div ref={topRef} className="w-full p-5 sm:p-0">
+        <div ref={topRef} className="w-full">
             {showHeader}
-            {/**flex flex-wrap gap-y-3 gap-x-5 */}
-            <div className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-${numOfProductsInRow} lg:gap-x-6 lg:gap-y-4`}>
-                {/* Hiển thị các sản phẩm của trang hiện tại w-[45%] sm:w-1/3 lg:w-1/6*/}
+            <div className={`grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-${numOfProductsInRow} lg:gap-x-6 lg:gap-y-4`}>
+                {/* Hiển thị các sản phẩm của trang hiện tại*/}
                 {products.map((product, index) => (
                     <div key={index} className="">
                         <Product productData={product} />

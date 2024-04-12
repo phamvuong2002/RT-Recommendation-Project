@@ -43,32 +43,38 @@ export const Home = () => {
     return (
         <div>
             <Slider></Slider>
-            <FlashSale productData={products}></FlashSale>
-            <InfoForGuest></InfoForGuest>
+            <div className="mx-2 md:mx-16">
+                <FlashSale productData={products}></FlashSale>
+                <InfoForGuest></InfoForGuest>
 
-            {/*Sản phẩm bán chạy*/}
-            <div className="m-4 h-full">
+                {/*Sản phẩm bán chạy*/}
+                <div className="h-full">
 
-                <AllProducts
-                    //pages={pages}
-                    //totalPages={totalPages}
-                    //currentPage={currentPage}
-                    //setCurrentPage={setCurrentPage}
-                    limitProduct={48}
-                    isShowHeader={true}
-                    numOfProductsInRow={5}
-                >
-                </AllProducts>
-            </div>
-            <Category></Category>
-            <div className="m-4">
-                <div className="flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="text-[#ffbe98] w-[5%] md:w-[2%]">
-                        <path fillRule="evenodd" d="M4.5 7.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9Z" clipRule="evenodd" />
-                    </svg>
-                    <div className="text-[90%] md:text-[150%] font-semibold font-['Inter'] tracking-wider">Xu hướng mua sắm</div>
+                    <AllProducts
+                        //pages={pages}
+                        //totalPages={totalPages}
+                        //currentPage={currentPage}
+                        //setCurrentPage={setCurrentPage}
+                        limitProduct={48}
+                        isShowHeader={true}
+                        numOfProductsInRow={5}
+                    >
+                    </AllProducts>
                 </div>
-                <SliderProducts productData={products}></SliderProducts>
+
+                {/* Top 5 thể loại ưa chuộng */}
+                <Category></Category>
+
+                {/* Xu hướng mua sắm */}
+                <div className="my-5">
+                    <div className="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="text-[#ffbe98] w-[5%] md:w-[2%]">
+                            <path fillRule="evenodd" d="M4.5 7.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9Z" clipRule="evenodd" />
+                        </svg>
+                        <div className="text-[90%] md:text-[150%] font-semibold font-['Inter'] tracking-wider">Xu hướng mua sắm</div>
+                    </div>
+                    <SliderProducts productData={products}></SliderProducts>
+                </div>
             </div>
         </div>
     )

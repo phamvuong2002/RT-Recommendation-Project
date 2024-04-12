@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 export const FlashSale = ({ productData }) => {
     const flashSaleDay = new Date("May 5, 2024").getTime()
     return (
-        <div className="m-4 h-full">
+        <div className="mt-4 h-full">
             <div className="relative md:mb-2">
                 <div className="flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="text-[#ffbe98] w-[5%] md:w-[2%]">

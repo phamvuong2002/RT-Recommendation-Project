@@ -21,7 +21,7 @@ export const Product = ({ productData }) => {
     //min-w-[40%] overflow-hidden md:w-52 bg-white flex flex-col items-center border border-y-red-50 md:hover:shadow-2xl md:rounded-md md:shadow-md px-3 py-2
 
     return (
-        <div className="block bg-white min-h-full md:hover:shadow-2xl md:rounded-md md:shadow-md overflow-hidden">
+        <div className="block border p-2 bg-white min-h-full md:hover:shadow-2xl md:rounded-md md:shadow-md overflow-hidden">
             <Link to={productData.href} scroll={false} className="h-full block">
                 <div className=''>
                     {/**Product Image */}

@@ -9,13 +9,16 @@ export const FectchPaging = ({ url }) => {
     const [loading, setLoading] = useState(true);
     const [pages, setPages] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
+
     useEffect(() => {
         const fetchData = async () => {
             const page = Math.min(currentPage + 1, totalPages);
+            console.log('url1', `${url}page=${page}.json`)
             //const result = await axios.get(`${API_URL}&page=${page}`);api for test
             const result = await axios.get(`${url}page=${page}.json`);
             setPages(result.data);
             setLoading(false);
+            console.log('url2', `${url}page=${page}.json`)
         };
         fetchData();
     }, [url, currentPage]);

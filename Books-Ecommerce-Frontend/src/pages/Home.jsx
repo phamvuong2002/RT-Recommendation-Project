@@ -6,7 +6,6 @@ import { SliderProducts } from '../components/SliderProducts'
 import { AllProducts } from '../components/AllProducts'
 import { InfoForGuest } from '../components/infoForGuest'
 import { fetchData } from '../helpers/fetch';
-import { FectchPaging } from '../helpers/fectchPaging';
 
 const sampleUserInfo = {
     userId: '123456',
@@ -20,9 +19,9 @@ export const Home = () => {
     const [user, setUser] = useState(sampleUserInfo)
     const [products, setProducts] = useState([])
 
-    //This call for AllProduct
-    const url = "../data/test/product"
-    const { pages, totalPages, currentPage, setCurrentPage } = FectchPaging({ url })
+    // //This call for AllProduct
+    // const url = "../data/test/product"
+    // //const { pages, totalPages, currentPage, setCurrentPage, setURL } = FectchPaging({ url })
 
     //Fetch Product Data
     useEffect(() => {
@@ -42,7 +41,7 @@ export const Home = () => {
     }, [])
 
     return (
-        <div >
+        <div>
             <Slider></Slider>
             <FlashSale productData={products}></FlashSale>
             <InfoForGuest></InfoForGuest>
@@ -51,10 +50,11 @@ export const Home = () => {
             <div className="m-4 h-full">
 
                 <AllProducts
-                    pages={pages}
-                    totalPages={totalPages}
-                    currentPage={currentPage}
-                    setCurrentPage={setCurrentPage}
+                    //pages={pages}
+                    //totalPages={totalPages}
+                    //currentPage={currentPage}
+                    //setCurrentPage={setCurrentPage}
+                    limitProduct={48}
                     isShowHeader={true}
                     numOfProductsInRow={5}
                 >

@@ -43,7 +43,7 @@ export const SliderProducts = ({ productData }) => {
 
             >
                 {productData.map((product, index) => (
-                    <SwiperSlide key={index} className="w-1/5 h-full grid justify-items-center">
+                    <SwiperSlide key={index} className="w-1/5 h-full ">
                         <ProductForSlider productData={product} />
                     </SwiperSlide>
                 ))}

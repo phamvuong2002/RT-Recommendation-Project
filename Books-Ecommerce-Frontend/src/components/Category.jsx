@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { fetchData } from '../helpers/fetch';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { Link } from 'react-router-dom'
 import 'swiper/css';
 import 'swiper/css/pagination';
 
@@ -31,7 +32,7 @@ export const Category = () => {
 
 
     return (
-        <div className="m-4 md:grid md:justify-items-stretch">
+        <div className="md:grid md:justify-items-stretch">
             <div className="flex items-center md:mb-5">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="text-[#ffbe98] w-[5%] md:w-[2%]">
                     <path fillRule="evenodd" d="M4.5 7.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9Z" clipRule="evenodd" />
@@ -39,14 +40,21 @@ export const Category = () => {
                 <div className="text-[90%] md:text-[150%] font-semibold font-['Inter'] tracking-wider">Thể loại ưa chuộng</div>
             </div>
 
-            <div className='px-4 py-2 md:justify-self-center md:w-[90%] md:p-0 md:rounded-none md:bg-transparent md:grid md:grid-cols-[1fr,1.5fr,1fr] md:gap-6'>
-                <div className="md:relative md:text-white font-semibold">
+            <div className='w-full px-4 py-2 md:justify-self-center md:p-0 md:rounded-none md:bg-transparent md:grid md:grid-cols-[1fr,1.5fr,1fr] md:gap-6'>
+                <Link className="md:relative md:text-white font-semibold">
                     <span className="hidden md:block md:absolute md:top-[4%] md:left-[8%] md:text-5xl">1</span>
                     <p className="hidden md:block text-[18px] font-bold md:absolute md:bottom-12 md:w-full md:text-center md:text-[20px] lg:text-[28px] md:font-bold">{category.top1}</p>
                     <img className="hidden md:block w-full h-full rounded-md" src="https://i.pinimg.com/564x/9f/11/78/9f11789aeadd48203dd2d3af10d9a57d.jpg"></img>
-                </div>
+                </Link>
 
-                <div className='hidden md:block w-full border-2 bg-white rounded-md shadow-lg md:px-[12%] lg:px-[20%] md:py-[20%] lg:py-[25%] md:text-2xl lg:text-3xl text-center font-semibold text-indigo-900 capitalize'>Top 5 thể loại được ưa chuộng</div>
+                <div className='hidden md:block w-full border-2 bg-white rounded-md shadow-lg md:px-[12%] lg:px-[20%] md:py-[20%] lg:py-[25%] '>
+                    <h1 className="md:text-2xl lg:text-3xl text-center font-semibold text-indigo-900 capitalize">
+                        Top 5 thể loại được ưa chuộng
+                    </h1>
+                    <button>
+                        Xem thêm
+                    </button>
+                </div>
 
                 <div className="md:relative md:text-white font-semibold">
                     <span className="hidden md:block md:absolute md:top-[4%] md:left-[8%] md:text-5xl">2</span>

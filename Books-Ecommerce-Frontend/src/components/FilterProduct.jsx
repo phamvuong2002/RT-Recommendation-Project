@@ -809,7 +809,7 @@ export default function FilterProduct({ selectCategory }) {
             {/* Filters */}
 
             {/* Product grid */}
-            <div className="lg:col-span-4">
+            <div className="lg:col-span-4 bg-gray-100">
               {/* Your content */}
               <AllProducts
                 limitProduct={48}

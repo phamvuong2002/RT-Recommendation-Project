@@ -3,7 +3,7 @@ import { fetchData } from '../helpers/fetch';
 
 export const InfoForGuest = () => {
     return (
-        <div className="mx-10 ">
+        <div className="m-4">
             <div className="w-full md:h-96 flex bg-gradient-to-r from-slate-50 to-rose-50 rounded-md">
                 <div className="w-full block">
                     <img className="h-full object-cover" src='https://i.pinimg.com/564x/25/b1/d7/25b1d7db376464566b5189a7ca7271da.jpg'></img>

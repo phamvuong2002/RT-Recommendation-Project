@@ -92,7 +92,7 @@ export const Navbar = () => {
                 <div className="block lg:hidden w-4 h-4 ml-2 mb-1 md:absolute md:left-0  ">
                     <button onClick={toggleMenu} >
                         {
-                            isMenuOpen ? "" : <FaBars className="w-4 h-4 sm:w-5 sm:h-5 text-red-500 " />
+                            isMenuOpen ? "" : <FaBars className="w-5 h-5 sm:w-5 sm:h-5 text-red-500 " />
                         }
                     </button>
                 </div>
@@ -109,13 +109,13 @@ export const Navbar = () => {
                 </div>
 
                 {/* Vị trí thanh Search - Còn chỉnh sửa */}
-                <div className="search-bar-container relative inline-block w-3/5 md:w-[55%] lg:col-span-2 lg:w-full ">
-                    <Search/>
+                <div className="search-bar-container relative inline-block w-[75%] mx-auto md:w-[55%] lg:col-span-2 lg:w-full rounded-[5px] my-3 ">
+                    <Search />
                 </div>
 
 
                 {/* ACCOUNT: Guest/User*/}
-                <div className="text-xl lg:text-lg ml-1 sm:flex inline-flex justify-between gap-1 mr-1 md:absolute  md:right-4 md:mr-0 lg:relative lg:mr-3 sm:my-auto sm:gap-4   text-black lg:col-span-2 lg:justify-self-center lg:gap-10 ">
+                <div className="hidden text-xl lg:text-lg ml-1  sm:inline-flex justify-between gap-1 mr-1 md:absolute  md:right-4 md:mr-0 lg:relative lg:mr-3 sm:my-auto sm:gap-4   text-black lg:col-span-2 lg:justify-self-center lg:gap-10 ">
                     <div className="flex items-center">
                         {/* Chưa đăng nhập sẽ hiển thị popup Đăng ký/Đăng nhập */}
                         <div className={`group flex items-center text-lg font-medium text-black  ${user.id.length <= 0 ? 'block' : 'hidden'}`} >

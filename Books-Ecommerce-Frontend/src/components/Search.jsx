@@ -8,13 +8,13 @@ const Search = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const [input, setInput] = useState('');
-    
+
     const searchFunction = (event) => {
-        let path=''
+        let path = ''
         event.preventDefault();
-        path='/search?q='+input
+        path = '/search?q=' + input
         navigate(path)
-     
+
     };
 
     const handleChange = (value) => {
@@ -22,30 +22,32 @@ const Search = () => {
         // searchFunction(value)
     };
 
-    useEffect(()=>{
-        if(location.pathname!=='/search/'+input){
+    useEffect(() => {
+        if (location.pathname !== '/search/' + input) {
             setInput('')
             console.log('in change')
         }
-      
-    },[location])
+
+    }, [location])
 
     return (
-        <div id="search-bar" className="h-0.8 sm:my-3 bg-gray-200 rounded-[5px] grid">
+        <div id="search-bar" className="min-h-[38px] sm:h-0.8  bg-gray-200 rounded-[5px] grid">
             <div className="relative flex items-stretch">
                 <input
-                    className="w-full relative m-0 block flex-auto border-neutral-300 bg-gray-200 bg-clip-padding px-3 py-[0.1rem] text-[15px] sm:text-base lg:text-lg font-normal  text-neutral-700 outline-none transition duration-200 ease-in-out focus:z-[3]  focus:outline-none "
+                    type="search"
+                    className={`w-full relative m-0 block flex-auto border-neutral-300 bg-gray-200 bg-clip-padding x px-3 py-[0.1rem] text-[15px] sm:text-base lg:text-lg font-normal  text-neutral-700 outline-none transition duration-200 ease-in-out focus:z-[3] 
+                        focus:outline-none search-cancel:w-4 search-cancel:h-4  search-cancel:grayscale `}
                     placeholder="Tìm kiếm"
                     value={input}
-                    onChange={(e) => handleChange(e.target.value)} 
+                    onChange={(e) => handleChange(e.target.value)}
                     onKeyDown={(e) => e.code == "Enter" ? searchFunction(e) : ""} />
 
-              
+
 
                 <button
-                    className="hidden  lg:flex input-group-text  items-center white space-nowrap rounded sm:px-3 text-center text-sm lg:text-base font-normal text-neutral-700 dark:text-neutral-200"
+                    className="flex input-group-text  items-center white space-nowrap rounded-r px-3 text-center text-sm lg:text-base font-normal text-white  bg-red-500"
                     id="basic-addon2">
-                  <FaSearch className="text-black w-5 h-5  block cursor-pointer" onClick={
+                    <FaSearch className=" w-4 h-4 block cursor-pointer text-white" onClick={
                         (e) => searchFunction(e)}
                     />
                 </button>

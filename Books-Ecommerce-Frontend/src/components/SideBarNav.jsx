@@ -43,7 +43,7 @@ export default function SideBarNav({ setSelectedPage, setSelectedPageId }) {
             setSelectedPage(TAB[tab])
             setCurrentPage(tab)
         }
-    }, [currentPage])
+    }, [tab])
 
 
     return (

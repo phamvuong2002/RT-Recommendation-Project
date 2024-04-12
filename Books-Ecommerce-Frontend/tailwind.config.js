@@ -33,5 +33,8 @@ export default {
       };
       addUtilities(newUtilities, ['responsive', 'hover']);
     },
+    require('tailwindcss/plugin')(({ addVariant }) => {
+      addVariant('search-cancel', '&::-webkit-search-cancel-button');
+    }),
   ],
 };

@@ -1,6 +1,6 @@
 import React from 'react'
 // import data from '../../public/data/test/singleproduct.json';
-
+import { AllProducts } from './AllProducts'
 
 const sampleProducts = [
     {
@@ -168,24 +168,11 @@ const ProductListStatus = () => {
     return (
         <div className="w-full sm:w-[60%] h-[85%] mr-10 bg-white px-5  shadow-xl rounded-[5px]  flex flex-col items-center ">
             <div className="w-full sticky top-0 text-lg font-semibold text-red-500 font-inter py-5">Theo dõi sách</div>
-            <div className="w-full max-w-full h-full grid grid-cols-1 md:grid-cols-2 sm:gap-10 gap-y-5 overflow-y-auto">
-                { sampleProducts.map((product) => (
-                        <div key={product.id} className='w-full h-fit my-3 flex  rounded-xl mx-2  border border-gray-200  '>
-                            <img
-                                src={product.imgUrl}
-                                alt='product'
-                                className='w-1/3 md:h-28 lg:h-36 object-cover px-2 py-2  '
-                            />
-                            <div className="w-1/2 mt-2 mb-1 px-2">
-                                <div className="font-semibold text-sm lg:text-base ">
-                                    {/* {(product.title.length > 20) ? product.name.substring(0, 15) + '...' : product.name} */}
-                                    {product.title}
-                                </div>
-                               
-                            </div>
-                        </div>
-                    ))
-                }
+            <div className="w-full max-w-full h-full  gap-y-5 overflow-y-auto">
+                 <AllProducts
+                limitProduct={48}
+                numOfProductsInRow={3}>
+              </AllProducts>
             </div>
         </div>
     )

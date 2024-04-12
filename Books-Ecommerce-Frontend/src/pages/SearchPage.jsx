@@ -47,8 +47,9 @@ export const SearchPage = () => {
             } else if (category && subcategory) {
                 setCategory({
                     category: category,
-                    sub_category: ' ',
-                    sub_sub_category: ''
+                    sub_category:subcategory,
+                    sub_sub_category: '',
+                    sub_sub_sub_category:''
                 })
             } else if (category) {
                 setCategory({
@@ -68,7 +69,7 @@ export const SearchPage = () => {
 
         }
 
-    }, [query, category, subcategory, subsubcategory])
+    }, [query, category, subcategory, subsubcategory,subsubsubcategory])
 
 
     //Updated by NganVo - handle search- --9/4/2024--

@@ -1,6 +1,6 @@
 "use strict";
 
-const dev = {
+const development = {
   app: {
     port: process.env.DEV_APP_PORT || 3055,
     session_key: process.env.DEV_SESSION_KEY_SECRET,
@@ -26,7 +26,7 @@ const dev = {
   },
 };
 
-const pro = {
+const production = {
   app: {
     port: process.env.PRO_APP_PORT || 3055,
     session_key: process.env.PRO_SESSION_KEY_SECRET,
@@ -52,7 +52,7 @@ const pro = {
   },
 };
 
-const config = { dev, pro };
+const config = { development, production };
 const env = process.env.NODE_ENV || "dev";
 
 console.log(`Running on Environment::${env} \n`, config[env]);

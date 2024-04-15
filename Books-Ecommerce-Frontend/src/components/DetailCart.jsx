@@ -141,24 +141,27 @@ export const DetailCart = (/*{ product }*/) => {
                 <div className=" bg-white">
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 xl:gap-14 md:gap-1 gap-2 h-max">
                         {/* Images */}
-                        {
-                            product.productid === 0 ?
-                                <div className="flex items-center justify-center">
-                                    <img
-                                        src={"/img/detail_book_pattern.JPG"}
-                                        alt={"product image"}
-                                        className="mx-auto w-full xl:hover:scale-105 trasition-all duration-300 aspect-auto xl:h-[25rem] md:h-[32rem] animate-pulse"
-                                    />
-                                </div>
-                                :
-                                <div className="flex items-center justify-center">
-                                    <img
-                                        src={product.imgUrl}
-                                        alt={product.title || "product image"}
-                                        className="mx-auto w-full xl:hover:scale-105 trasition-all duration-300 aspect-auto xl:h-[34rem] md:h-[32rem]"
-                                    />
-                                </div>
-                        }
+                        <div className="rounded bg-white p-1 xl:p-4">
+                            {
+                                product.productid === 0 ?
+                                    <div className="flex items-center justify-center">
+                                        <img
+                                            src={"/img/detail_book_pattern.JPG"}
+                                            alt={"product image"}
+                                            className="mx-auto w-full xl:hover:scale-105 trasition-all duration-300 aspect-auto xl:h-[25rem] md:h-[32rem] animate-pulse"
+                                        />
+                                    </div>
+                                    :
+                                    <div className="flex items-center justify-center">
+                                        <img
+                                            src={product.imgUrl}
+                                            alt={product.title || "product image"}
+                                            className="mx-auto w-full xl:hover:scale-105 trasition-all duration-300 aspect-auto xl:h-[34rem] md:h-[32rem]"
+                                        />
+                                    </div>
+                            }
+                        </div>
+
                         {/* Details - Main information*/}
                         {
                             product.productid === 0 ?
@@ -320,7 +323,7 @@ export const DetailCart = (/*{ product }*/) => {
                                         </div>
 
 
-                                        {/* Order Button */}
+                                        {/* Order button */}
                                         <div className="w-full text-left my-4">
                                             <button className="flex justify-center items-center gap-2 w-full py-3 px-4 bg-red-500
                                     text-white font-bold border border-red-500 ease-in-out duration-150

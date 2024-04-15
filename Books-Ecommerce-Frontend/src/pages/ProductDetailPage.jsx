@@ -85,12 +85,9 @@ export const ProductDetailPage = () => {
                         </div>
 
                     </div>
-                    <div className="bg-white border-x border-b xl:border border-red-100">
+                    <div className="bg-white border-x border-b xl:border border-red-50">
                         <AllProducts
-                            pages={pages}
-                            totalPages={totalPages}
-                            currentPage={currentPage}
-                            setCurrentPage={setCurrentPage}>
+                            numOfProductsInRow={6}>
                         </AllProducts>
                     </div>
                 </div>

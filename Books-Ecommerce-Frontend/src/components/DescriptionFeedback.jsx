@@ -150,7 +150,7 @@ export const DescriptionFeedback = ({ bookId }) => {
             <div className={`w-full xl:px-28 ${expanded ? 'h-auto' : 'h-[22rem] xl:h-[36rem] overflow-hidden'} scroll-smooth`} >
                 {/* Navigation buttons */}
                 <div className="flex gap-[0.1rem] scroll-smooth">
-                    <div className="flex items-center justify-center gap-8 w-full xl:w-[79.75%] h-10 bg-gradient-to-r from-rose-100 to-slate-50">
+                    <div className="flex items-center justify-center gap-8 w-full  h-10 bg-gradient-to-r from-rose-100 to-slate-50"> {/*xl:w-[79.75%] */}
                         <button
                             className={`text-red-500 text-base font-bold font-inter capitalize tracking-widest ${activeTab === 'description' ? 'border-b-2 border-red-500' : ''
                                 }`}
@@ -167,18 +167,18 @@ export const DescriptionFeedback = ({ bookId }) => {
                         </button>
                     </div>
 
-                    <div className="w-[20.25%] hidden xl:block">
+                    {/* <div className="w-[20.25%] hidden xl:block">
                         <div className="flex items-center justify-center gap-8 w-full h-10 bg-gradient-to-r from-slate-50 to-rose-100">
                             <div className={`text-red-500 text-base font-bold font-inter capitalize tracking-widest`}>
                                 {`Quảng Cáo Sản Phẩm (${adsProducts.length})`}
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* Content */}
-                <div className="xl:flex xl:gap-[0.1rem]">
-                    <div className="xl:w-[79.75%] bg-white">
+                <div className="xl:gap-[0.1rem]"> {/*xl:flex */}
+                    <div className=" bg-white"> {/*xl:w-[79.75%] */}
                         <Swiper
                             onSwiper={(swiper) => {
                                 swiperRef.current = swiper;
@@ -258,7 +258,7 @@ export const DescriptionFeedback = ({ bookId }) => {
                         )}
                     </div> {/*bg-gray-50 */}
 
-                    <div className="w-[20.25%]">
+                    {/* <div className="w-[20.25%]">
                         <div className={`xl:flex xl:flex-col items-center shadow-lg hidden ${expanded ? 'max-h-[82rem]' : 'max-h-[80rem]'} max-h-[80rem] overflow-y-auto bg-red-100 font-inter no-scrollbar`}>
                             <div className="w-full h-full bg-white">
                                 {adsProducts.length === 0 ?
@@ -272,7 +272,7 @@ export const DescriptionFeedback = ({ bookId }) => {
                                 }
                             </div>
                         </div>
-                    </div>
+                    </div> */}
 
                 </div>
 

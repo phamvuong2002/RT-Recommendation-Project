@@ -3,10 +3,10 @@
         "id": "I",
         "name": "Trong nước",
         "value": "trong-nuoc",
-        "menu": [
+        "submenu": [
             {
                 "id": 1,
-                "category": "Văn học",
+                "name": "Văn học",
                 "value": "van-hoc",
                 "submenu": [
                     {
@@ -33,7 +33,7 @@
             },
             {
                 "id": 2,
-                "category": "Kinh tế",
+                "name": "Kinh tế",
                 "value": "kinh-te",
                 "submenu": [
                     {
@@ -60,7 +60,7 @@
             },
             {
                 "id": 3,
-                "category": "Tâm lý - Kỹ năng sống",
+                "name": "Tâm lý - Kỹ năng sống",
                 "value": "tam-ly-ky-nang-song",
                 "submenu": [
                     {
@@ -87,7 +87,7 @@
             },
             {
                 "id": 4,
-                "category": "Nuôi dạy con",
+                "name": "Nuôi dạy con",
                 "value": "nuoi-day-con",
                 "submenu": [
                     {
@@ -114,7 +114,7 @@
             },
             {
                 "id": 5,
-                "category": "Sách thiếu nhi",
+                "name": "Sách thiếu nhi",
                 "value": "sach-thieu-nhi",
                 "submenu": [
                     {
@@ -141,7 +141,7 @@
             },
             {
                 "id": 6,
-                "category": "Tiểu sử - Hồi ký",
+                "name": "Tiểu sử - Hồi ký",
                 "value": "tieu-su-hoi-ky",
                 "submenu": [
                     {
@@ -168,7 +168,7 @@
             },
             {
                 "id": 7,
-                "category": "Giáo khoa - Tham khảo",
+                "name": "Giáo khoa - Tham khảo",
                 "value": "giao-khoa-tham-khao",
                 "submenu": [
                     {
@@ -195,7 +195,7 @@
             },
             {
                 "id": 8,
-                "category": "Sách học ngoại ngữ",
+                "name": "Sách học ngoại ngữ",
                 "value": "sach-hoc-ngoai-ngu",
                 "submenu": [
                     {
@@ -226,10 +226,10 @@
         "id": "II",
         "name": "Foreign books",
         "value": "foreign-books",
-        "menu": [
+        "submenu": [
             {
                 "id": 1,
-                "category": "Fiction",
+                "name": "Fiction",
                 "value": "fiction",
                 "submenu": [
                     {
@@ -256,7 +256,7 @@
             },
             {
                 "id": 2,
-                "category": "Business & Managment",
+                "name": "Business & Managment",
                 "value": "business-managment",
                 "submenu": [
                     {
@@ -278,7 +278,7 @@
             },
             {
                 "id": 3,
-                "category": "Personal development",
+                "name": "Personal development",
                 "value": "personal-development",
                 "submenu": [
                     {
@@ -300,7 +300,7 @@
             },
             {
                 "id": 4,
-                "category": "Dictionaries & Languages",
+                "name": "Dictionaries & Languages",
                 "value": "dictionaries-languages",
                 "submenu": [
                     {
@@ -322,7 +322,7 @@
             },
             {
                 "id": 5,
-                "category": "Other languages",
+                "name": "Other languages",
                 "value": "other-languages",
                 "submenu": [
                     {
@@ -344,7 +344,7 @@
             },
             {
                 "id": 6,
-                "category": "Other categories",
+                "name": "Other categories",
                 "value": "other-categories",
                 "submenu": [
                     {

@@ -3,6 +3,7 @@ import { Tab, Disclosure } from '@headlessui/react'
 import { BiWorld } from "react-icons/bi";
 import { FaBook } from "react-icons/fa6";
 import { HiChevronUp } from "react-icons/hi2";
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import { Link } from 'react-router-dom';
 import { fetchData } from '../helpers/fetch';
@@ -12,26 +13,42 @@ function classNames(...classes) {
 
 
 export default function Category_dropdown() {
-    const [all_categories, setCategoriess] = useState([])
+    const navigate = useNavigate()
 
+    const [all_categories, setCategoriess] = useState([])
     useEffect(() => {
-      const url = '../data/test/allCategories.json';
-      const loadCategoriesData = async () => {
-        try {
-          const categoriesData = await fetchData(url);
-          setCategoriess(categoriesData)
-          console.log(categoriesData)
-        } catch (error) {
-          console.log('error')
-          // throw error;
+        const url = '../data/test/allCategories.json';
+        const loadCategoriesData = async () => {
+            try {
+                const categoriesData = await fetchData(url);
+                setCategoriess(categoriesData)
+                console.log(categoriesData)
+            } catch (error) {
+                console.log('error')
+                // throw error;
+            }
         }
-      }
-      //
-      setTimeout(() => {
-        loadCategoriesData()
-      }, 1000)
+        //
+        setTimeout(() => {
+            loadCategoriesData()
+        }, 1000)
     }, [])
- 
+
+   
+    const handleOnClick = ((value) => {
+        // console.log(value)
+   
+        let params = new URLSearchParams({'genre': value})
+        // console.log(params)
+        params.append("sort", 'num_order_desc')
+        params.append("limit", '24')
+        params.append("page", '1')
+        // console.log(params)
+        // params.append('genre', selectedCate)
+        navigate('/search?' + params)
+    })
+
+
     return (
         // Desktop
         <div >
@@ -65,20 +82,22 @@ export default function Category_dropdown() {
                                     'rounded-r-[6px] bg-white p-3 outline-none'
                                 )}
                             >
-                                <Link to={`/search/${main_cates.value}`} className='text-xl uppercase py-3 font-semibold flex gap-2 items-center' >
+                                <div value={main_cates.value} className='text-xl uppercase py-3 font-semibold flex gap-2 items-center'
+                                    onClick={()=>handleOnClick(main_cates.value)}>
                                     {main_cates.id == 'I' ? <FaBook className='text-red-500' /> : <BiWorld className='text-indigo-500' />}
-                                    {main_cates.name}</Link>
+                                    {main_cates.name}
+                                </div>
                                 {/* Thể loại */}
 
                                 <ul className='grid grid-cols-4  font-bold font-inter'  >
-                                    {main_cates.menu.map((main_cate) => (
+                                    {main_cates.submenu.map((main_cate) => (
                                         <li
                                             key={main_cate.id}
                                             className="flex flex-col p-3 uppercase "
                                         >
-                                            <Link to={`/search/${main_cates.value}/${main_cate.value}`} >
+                                            <div value={`${main_cates.value},${main_cate.value}`}  onClick={()=>handleOnClick(`${main_cates.value},${main_cate.value}`)}>
                                                 <h3 className="text-sm font-semibold font-inter truncate">{main_cate.category}</h3>
-                                            </Link>
+                                            </div>
 
 
                                             {/* Submenu */}
@@ -88,8 +107,8 @@ export default function Category_dropdown() {
                                                         key={single_submenu.id}
                                                         className="relative py-2 hover:text-red-400 text-sm normal-case truncate   "
                                                     > {single_submenu.name}
-                                                        <Link
-                                                           to={`/search/${main_cates.value}/${main_cate.value}/${single_submenu.value}`} 
+                                                        <div value={`${main_cates.value},${main_cate.value},${single_submenu.value}`}
+                                                             onClick={()=>handleOnClick(`${main_cates.value},${main_cate.value},${single_submenu.value}`)}
                                                             className={classNames(
                                                                 'absolute inset-0 rounded-md',
                                                             )}
@@ -149,12 +168,12 @@ export default function Category_dropdown() {
 
                                 <ul className='flex flex-col  font-bold font-inter'  >
 
-                                    {main_cates.menu.map((main_cate) => (
+                                    {main_cates.submenu.map((main_cate) => (
                                         <Disclosure as="div" key={main_cate.id} >
                                             {({ open }) => (
                                                 <>
                                                     <Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-lg font-inter font-semibold  focus:outline-none items-center border-2 mt-2">
-                                                        <span className='text-xs sm:text-base'>{main_cate.category}</span>
+                                                        <span className='text-xs sm:text-base'>{main_cate.name}</span>
                                                         <HiChevronUp
                                                             className={`${open ? 'rotate-180 transform' : ''
                                                                 } h-5 w-5 text-black`}
@@ -167,8 +186,7 @@ export default function Category_dropdown() {
                                                                 key={single_submenu.id}
                                                                 className={`relative py-2 hover:text-red-400 text-xs sm:text-base normal-case truncate `}
                                                             > {single_submenu.name}
-                                                                <Link
-                                                                   to={`/search/${main_cates.value}/${main_cate.value}/${single_submenu.value}`} 
+                                                                <div value={`${main_cates.value},${main_cate.value},${single_submenu.value}`}  onClick={()=>handleOnClick(`${main_cates.value},${main_cate.value},${single_submenu.value}`)}
                                                                     className={classNames(
                                                                         'absolute inset-0 rounded-md',
 

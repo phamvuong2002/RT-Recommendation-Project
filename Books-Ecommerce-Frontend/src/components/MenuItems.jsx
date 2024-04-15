@@ -1,92 +1,111 @@
 import { useState, useEffect, useRef } from "react";
 import Dropdown from "./DropDown";
+import { useLocation, useNavigate } from "react-router-dom";
 
-import { HiChevronRight, HiChevronDown, HiChevronUp } from "react-icons/hi2";
+
+// 1. Lấy Genre param 
+// 1.1 Có --> Set lại giá trị
+// 1.2 Không --> Set usestate
+// 2. Tạo search param với giá trị mới
+// 2.1 Xem chỉnh lại giá trị checked của checkbox
+// 3. Navigate
+
 const MenuItems = ({ items, depthLevel }) => {
-
+  const navigate = useNavigate()
+  
+  let params = new URLSearchParams(document.location.search);
+  console.log(params)
+  let hasGenre = params.has('genre')
   const [dropdown, setDropdown] = useState(false);
 
-  let ref = useRef();
+  let genreParam = ['']
+  if (!hasGenre) {
+    // console.log('no genre')
+    genreParam = ['']
+  } else {
+    genreParam = params.get('genre').split(',')
+    // depthLevel=(genreParam.length-1)
+    // console.log(genreParam)
+  } 
 
   useEffect(() => {
     const handler = (event) => {
       if (dropdown && ref.current && !ref.current.contains(event.target)) {
+        console.log(ref.current)
         setDropdown(false);
       }
     };
-    document.addEventListener("mousedown", handler);
-    document.addEventListener("touchstart", handler);
-    return () => {
-      // Cleanup the event listener
-      document.removeEventListener("mousedown", handler);
-      document.removeEventListener("touchstart", handler);
-    };
+
   }, [dropdown]);
 
-  const onMouseEnter = () => {
-    window.innerWidth > 960 && setDropdown(true);
-  };
 
-
-  const onMouseLeave = () => {
-    window.innerWidth > 960 && setDropdown(false);
-  };
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const toggleSubMenu = () => {
-    setDropdown((prev) => !prev)
-    setIsMenuOpen(!isMenuOpen)
+
+
+  const handleSelectCategory = () => {
+    console.log(depthLevel)
+    let currentLength = genreParam.length
+    console.log('current length & depth: ' + currentLength + ' ' + depthLevel)
+    // reset lại - set = Level trên cùng
+    if (currentLength < depthLevel + 1) {
+      console.log(depthLevel + ' ' + currentLength)
+      genreParam.push(items.value)
+    }
+    else if (depthLevel + 1 < currentLength) {
+      genreParam[depthLevel] = items.value
+      genreParam.splice(depthLevel + 1)
+    }
+    else if (currentLength == depthLevel + 1) {
+      console.log('in update')
+      genreParam[depthLevel] = items.value
+    }
+    
+    console.log(`include ${genreParam.includes(items.value)}`)
+    console.log('genre param')
+    console.log(genreParam)
+    console.log(genreParam.length)
+  
+
+    if (genreParam.length > 0) {
+      // const searchParams = new URLSearchParams({ 'genre': genreParam });
+      params.set('genre',genreParam)
+      console.log('search params to navigate: ' + params)
+      navigate(`/search?${params}`)
+    } else {
+      navigate(`/search`)
+    }
   }
+
 
   return (
     <li
-      className={`menu-items font-inter text-white text-left sm:text-center sm:text-black min-w-[8rem] sm:hover:text-[red] hover:cursor-pointer `}
-      ref={ref}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-
+      className={`menu-items  font-inter text-black text-left pl-1 pb-2 sm:text-black hover:cursor-pointer  sm:hover:text-[red] $`}
     >
-      <a href={items.path} className={`hidden sm:block hover:bg-red-300 sm:hover:bg-white text-white font-inter px-[15px] sm:px-0 sm:hover:text-[red] sm:text-black py-[0.7rem] `}>
-        <div>{items.title}
-          <HiChevronRight className={`${depthLevel > 0 && items.submenu ? "hidden sm:inline-block " : "hidden"}`} />
-         
-        </div>
-      </a>
-
-      <div className="flex sm:hidden a_and_button place-items-center  hover:bg-red-300 py-3 text-base">
-        <a href={items.path} className={`block text-white font-inter px-[15px]  `}>
-          <div>{items.title}
-          </div>
-        </a>  
-        <button aria-haspopup="menu" aria-expanded={dropdown ? "true" : "false"} onClick={toggleSubMenu} className={`
-          ${depthLevel >=0 && items.submenu ? "block items-center sm:hidden static w-4 h-4 " : "hidden"}`}>
-          {
-            isMenuOpen ? <HiChevronUp className="w-4 h-4 text-white " /> : <HiChevronDown className="w-4 h-4 text-white " />
-          }
-
-        </button>
+      <div key={items.value} className="flex items-center ">
+        <input
+          id={`filter-${items.id}`}
+          name={`${items.id}`}
+          defaultValue={items.value}
+          type="checkbox"
+          aria-checked={true}
+          onChange={handleSelectCategory}
+          checked={genreParam.includes(items.value)}
+          className="min-w-[15px] h-[15px] w-[15px] rounded-sm border-gray-300  accent-red-300"
+        />
+        <label
+          htmlFor={`filter-${items.id}`}
+          className="ml-3 text-gray-500 text-[14px] sm:text-gray-600"
+        >
+          {items.name}
+        </label>
       </div>
-      {items.submenu ? (
+      {items.submenu  ? (
         <>
-
           <Dropdown
             depthLevel={depthLevel}
             submenus={items.submenu}
-            dropdown={dropdown}
+            dropdown={genreParam.includes(items.value)}
           />
-
-
-          <div
-            className="hidden sm:block text-center  "
-            aria-haspopup="menu"
-            aria-expanded={dropdown ? "true" : "false"}
-            onClick={() => setDropdown((prev) => !prev)}
-          >
-            <Dropdown
-              depthLevel={depthLevel}
-              submenus={items.submenu}
-              dropdown={dropdown}
-            />
-          </div>
         </>
       ) : ""}
 

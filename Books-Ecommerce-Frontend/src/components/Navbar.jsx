@@ -10,13 +10,15 @@ import Category_dropdown from './Category_Dropdown';
 import { HiMiniSquares2X2, HiChevronDown } from "react-icons/hi2";
 import { LuClipboardList, LuLogOut } from "react-icons/lu";
 
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 // Navbar chính 
 export const Navbar = () => {
+    const location=useLocation()
+    const path=location.search
     const [isOpenShoppingCarts, setIsOpenShoppingCarts] = useState(false)
     const [user, setUser] = useState({
         id: '',
@@ -82,6 +84,11 @@ export const Navbar = () => {
             setReloadLoginSignup(false);
         }
     }, [reloadLoginSignup])
+
+    useEffect(()=>{
+        console.log('in set false   ')
+        setIsMenuOpen(false)
+    },[path])
 
     return (
 

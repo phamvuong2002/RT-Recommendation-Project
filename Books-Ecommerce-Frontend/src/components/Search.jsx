@@ -10,10 +10,17 @@ const Search = () => {
     const [input, setInput] = useState('');
 
     const searchFunction = (event) => {
-        let path = ''
         event.preventDefault();
-        path = '/search?q=' + input
-        navigate(path)
+        let path = ''
+        let params = new URLSearchParams({'q': input})
+        // console.log(params)
+        params.append("sort", 'num_order_desc')
+        params.append("limit", '24')
+        params.append("page", '1')
+        // console.log(params)
+      
+        // path = '/search?q=' + input
+        navigate('/search?'+params)
 
     };
 
@@ -23,7 +30,7 @@ const Search = () => {
     };
 
     useEffect(() => {
-        if (location.pathname !== '/search/' + input) {
+        if (!location.pathname.includes('/search')) {
             setInput('')
             console.log('in change')
         }
@@ -40,15 +47,12 @@ const Search = () => {
                     placeholder="Tìm kiếm"
                     value={input}
                     onChange={(e) => handleChange(e.target.value)}
-                    onKeyDown={(e) => e.code == "Enter" ? searchFunction(e) : ""} />
-
-
-
+                    onKeyDown={(e) => e.code == "Enter" ? searchFunction(e) : ""} />    
                 <button
                     className="flex input-group-text  items-center white space-nowrap rounded-r px-3 text-center text-sm lg:text-base font-normal text-white  bg-red-500"
-                    id="basic-addon2">
-                    <FaSearch className=" w-4 h-4 block cursor-pointer text-white" onClick={
-                        (e) => searchFunction(e)}
+                    id="basic-addon2" onClick={
+                        (e) => searchFunction(e)}>
+                    <FaSearch className=" w-4 h-4 block cursor-pointer text-white" 
                     />
                 </button>
             </div>

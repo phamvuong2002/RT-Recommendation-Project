@@ -35,7 +35,10 @@ class CartService {
             attributes: ['cb_book_id', 'cb_book_num']
           });
 
-        return listCarts
+        return {
+            cart_count_products: userCart.dataValues.cart_count_products,
+            cart_data: listCarts
+        }
     }
 
     static async deleteCartsByPublisherId({userId, publisherId}) {
@@ -54,7 +57,9 @@ class CartService {
         if(deletedCount === 0) throw new NotFoundError('No books were found');
 
         await userCart.set({ cart_count_products: userCart.dataValues.cart_count_products -  deletedCount});
-        return await userCart.save();
+        await userCart.save();
+        return await CartService.getListCarts({userId})
+
     }
 
     static async createUserCart(userId){
@@ -96,10 +101,7 @@ class CartService {
             if(newCartBook){
                 await userCart.set({ cart_count_products: userCart.dataValues.cart_count_products + 1 });
                 await userCart.save();
-                return { 
-                    cart_count_products: userCart.dataValues.cart_count_products,
-                    cart_data: await CartService.getListCarts({userId})
-                }
+                return await CartService.getListCarts({userId})
             }
             else{
                 throw new BadRequestError('Add To Cart Failed!')
@@ -119,10 +121,7 @@ class CartService {
                 }
                 await userCart.set({ cart_count_products: userCart.dataValues.cart_count_products - 1 });
                 await userCart.save();
-                return { 
-                    cart_count_products: userCart.dataValues.cart_count_products,
-                    cart_data: await CartService.getListCarts({userId})
-                }
+                return await CartService.getListCarts({userId})
             }
 
             //add book to cart

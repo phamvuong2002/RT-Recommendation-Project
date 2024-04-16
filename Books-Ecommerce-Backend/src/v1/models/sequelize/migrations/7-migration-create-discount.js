@@ -38,8 +38,8 @@ module.exports = {
       },
       discount_value: {
         allowNull:false,
-        type: Sequelize.DECIMAL(8,3),
-        defaultValue: '0',//10.000, 10
+        type: Sequelize.DECIMAL(11,2),
+        defaultValue: 0,//10.000, 10
         comment: 'values: 10.000vnd or 10%'
       },
       discount_code: {
@@ -65,18 +65,19 @@ module.exports = {
       discount_count_used: {
         allowNull:false,
         type: Sequelize.INTEGER,
+        defaultValue: 0,
         comment: 'quantity used'
       },
       discount_max_uses_per_user: {
         allowNull:false,
         type: Sequelize.INTEGER,
-        defaultValue:'1',
+        defaultValue: 1,
         comment: 'max discount code used per user'
       },
       discount_min_order_value: {
         allowNull:false,
-        type: Sequelize.DECIMAL(8,3),
-        defaultValue:'0',
+        type: Sequelize.DECIMAL(11,2),
+        defaultValue: 0,
         comment: 'min order value'
       },
       discount_is_active: {

@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       discount_value: {
         allowNull: false,
-        type: DataTypes.DECIMAL(8,3),
+        type: DataTypes.DECIMAL(11,2),
         defaultValue: '0',//10.000, 10
         comment: 'values: 10.000vnd or 10%'
       },
@@ -67,6 +67,7 @@ module.exports = (sequelize, DataTypes) => {
       discount_count_used: {
         allowNull: false,
         type: DataTypes.INTEGER,
+        defaultValue: '0',
         comment: 'quantity used'
       },
       discount_max_uses_per_user: {
@@ -77,7 +78,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       discount_min_order_value: {
         allowNull: false,
-        type: DataTypes.DECIMAL(8,3),
+        type: DataTypes.DECIMAL(11,2),
         defaultValue: '0',
         comment: 'min order value'
       },

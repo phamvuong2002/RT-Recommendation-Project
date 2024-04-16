@@ -26,6 +26,14 @@ module.exports = {
         sup_slug: 'minh-long',
         create_time: new Date(),
         update_time: new Date(),
+      },
+      {
+        sup_sid: 'alpha-books',
+        sup_name: 'Alpha Books',
+        sup_img: '',
+        sup_slug: 'alpha-books',
+        create_time: new Date(),
+        update_time: new Date(),
       }
     ]);
   },

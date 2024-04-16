@@ -6,18 +6,21 @@ module.exports = {
       {
         cb_cart_id: 1,
         cb_book_id: 1,
+        cb_book_num: 4,
         create_time: new Date(),
         update_time: new Date()
       },
       {
         cb_cart_id: 1,
         cb_book_id: 2,
+        cb_book_num: 10,
         create_time: new Date(),
         update_time: new Date()
       },
       {
         cb_cart_id: 2,
         cb_book_id: 3,
+        cb_book_num: 1,
         create_time: new Date(),
         update_time: new Date()
       },

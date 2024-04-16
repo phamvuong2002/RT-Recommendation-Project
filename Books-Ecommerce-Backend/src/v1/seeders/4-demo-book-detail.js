@@ -52,7 +52,23 @@ module.exports = {
         book_des:'Con bạn sắp vào lớp 1? Không chỉ bé hồi hộp mà chính bạn – những bậc làm cha mẹ cũng có tâm trạng đó. Làm sao để chuẩn bị cho bé thật tốt? Làm thế nào để bé không bỡ ngỡ khi bước vào một giai đoạn hoàn toàn mới này? Bộ sách Chuẩn bị cho bé vào lớp 1 sẽ giúp cha mẹ giải tỏa những lo lắng, băn khoăn đó. Nội dung sách gần gũi với chương trình sách giáo khoa chuẩn, bao gồm:  giúp bé luyện tay theo các nét cơ bản đầu tiên; như móc, sổ, ngang, sọc, xước, vòng, giúp bé làm quen với bảng chữ cái gồm 29 chữ theo cách viết thường và viết hoa;  ngoài ra, bé còn được làm quen với các con số và những phép tính đơn giản v.v…',
         create_time: new Date(),
         update_time: new Date()
-      }
+      },
+      {
+        book_id: 4,
+        book_categories_name: 'Sách tiếng Việt, Giáo khoa - Tham khảo,	Sách Tham Khảo,	Tham Khảo Lớp 1',
+        book_pulisherName: 'NXB Dân Trí',
+        book_supplier: 'Alpha Books',
+        book_authors_name: 'Hannah Braun',
+        book_publish_year: '2021',
+        book_layout: 'Bìa Mềm',
+        book_avg_rating: 0,
+        book_num_ratings: 0,
+        book_num_pages: 144,
+        book_size: '24 x 17.5 cm',
+        book_des:'Tự rèn kỹ năng đọc hiểu cho học sinh tiểu học 1-2-3 là bộ 3 cuốn sách tập hợp những bài đọc tiếng Anh đi kèm với các hoạt động tương tác giúp trẻ hiểu nội dung bài đọc, đồng thời xây dựng và phát triển các kỹ năng đọc hiểu với nhiều thể loại văn bản khác nhau.',
+        create_time: new Date(),
+        update_time: new Date()
+      },
       // Thêm các bản ghi sách khác nếu cần
     ], {});
   },

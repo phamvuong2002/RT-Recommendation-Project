@@ -10,6 +10,12 @@ module.exports = {
         type: Sequelize.BIGINT.UNSIGNED,
         comment: 'id'
       },
+      cart_count_products: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue:0,
+        comment: 'num of products in cart'
+      },
       cart_status: {
         type: Sequelize.ENUM('active', 'completed', 'failed', 'pending'),
         allowNull: false,

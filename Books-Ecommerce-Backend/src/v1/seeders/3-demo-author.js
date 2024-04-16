@@ -39,6 +39,15 @@ module.exports = {
         create_time: new Date(),
         update_time: null
       },
+      {
+        author_sid: 'hannah-braun',
+        author_name: 'Hannah Braun',
+        author_img: '', // Thêm đường dẫn đến hình ảnh của tác giả nếu có
+        author_des: '',
+        author_slug: 'hannah-braun',
+        create_time: new Date(),
+        update_time: null
+      },
       // Thêm các bản ghi mới khác nếu cần
     ], {});
 

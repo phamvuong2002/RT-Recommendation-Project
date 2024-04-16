@@ -18,6 +18,12 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BIGINT.UNSIGNED,
         comment: 'id'
       },
+      cart_count_products: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+        comment: 'num of products in cart'
+      },
       cart_status: {
         type: DataTypes.ENUM('active', 'completed', 'failed', 'pending'),
         allowNull: false,

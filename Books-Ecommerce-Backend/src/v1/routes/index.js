@@ -11,6 +11,8 @@ router.use(permission('0000'));
 
 router.use('/v1/api/access', require('./access'));
 router.use('/v1/api/book', require('./book'));
+router.use('/v1/api/cart', require('./cart'));
+
 
 
 module.exports = router

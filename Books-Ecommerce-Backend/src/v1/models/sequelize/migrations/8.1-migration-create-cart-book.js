@@ -11,7 +11,8 @@ module.exports = {
           key: 'cart_id'
         },
         onDelete: 'CASCADE',
-        onUpdate: 'CASCADE'
+        onUpdate: 'CASCADE',
+        primaryKey: true,
       },
       cb_book_id: {
         type: Sequelize.BIGINT.UNSIGNED,
@@ -21,7 +22,12 @@ module.exports = {
           key: 'book_id'
         },
         onDelete: 'CASCADE',
-        onUpdate: 'CASCADE'
+        onUpdate: 'CASCADE',
+        primaryKey: true,
+      },
+      cb_book_num:{
+        type: Sequelize.INTEGER,
+        comment: 'number of books'
       },
       create_time: {
         allowNull: false,

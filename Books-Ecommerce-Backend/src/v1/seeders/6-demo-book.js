@@ -51,6 +51,22 @@ module.exports = {
         is_deleted: 0,
         sort: 0
       },
+      {
+        book_title: "Tự Rèn Kỹ Năng Đọc Hiểu Cho Học Sinh Tiểu Học - Tập 1",
+        book_categories: JSON.stringify([1, 2, 3, 3]),
+        book_authors: JSON.stringify([5]),
+        book_publisherId: 2,
+        book_supplierId: 3,
+        book_layoutId: 1,
+        book_img: "https://cdn0.fahasa.com/media/catalog/product/i/m/image_237615.jpg",
+        book_avg_rating: 0,
+        book_num_rating: 0,
+        book_spe_price: 100620,
+        book_old_price: 129000,
+        book_status: 1,
+        is_deleted: 0,
+        sort: 0
+      },
       // Add more books as needed
     ], {});
   },

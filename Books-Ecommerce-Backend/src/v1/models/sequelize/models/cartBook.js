@@ -6,21 +6,26 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // Define associations here
       // Example:
-      // this.belongsTo(models.Cart, { foreignKey: 'cb_cart_id' });
-      // this.belongsTo(models.Book, { foreignKey: 'cb_book_id' });
+      this.belongsTo(models.cart, { foreignKey: 'cb_cart_id' });
+      this.belongsTo(models.book, { foreignKey: 'cb_book_id' });
+      this.belongsTo(models.book_detail, { foreignKey: 'cb_book_id' });
     }
   }
   CartBook.init(
     {
       cb_cart_id: {
         type: DataTypes.BIGINT.UNSIGNED,
-        comment: 'id cart'
-        // Add foreign key association if needed
+        comment: 'id cart',
+        primaryKey: true,
       },
       cb_book_id: {
         type: DataTypes.BIGINT.UNSIGNED,
-        comment: 'id book'
-        // Add foreign key association if needed
+        comment: 'id book',
+        primaryKey: true,
+      },
+      cb_book_num: {
+        type: DataTypes.INTEGER,
+        comment: 'number of books'
       },
       create_time: {
         type: DataTypes.DATE,

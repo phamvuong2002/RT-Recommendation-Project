@@ -68,12 +68,12 @@ module.exports = {
         comment: 'number ratings'
       },
       book_spe_price: {
-        type: Sequelize.DECIMAL(8,2),
+        type: Sequelize.DECIMAL(11,2),
         allowNull: false,
         comment: 'special price'
       },
       book_old_price: {
-        type: Sequelize.DECIMAL(8,2),
+        type: Sequelize.DECIMAL(11,2),
         allowNull: false,
         comment: 'old price'
       },

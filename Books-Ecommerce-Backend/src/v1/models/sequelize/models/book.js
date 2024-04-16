@@ -57,12 +57,12 @@ module.exports = (sequelize, DataTypes) => {
       comment: 'number ratings'
     },
     book_spe_price: {
-      type: DataTypes.DECIMAL(8,2),
+      type: DataTypes.DECIMAL(11,2),
       allowNull: false,
       comment: 'special price'
     },
     book_old_price: {
-      type: DataTypes.DECIMAL(8,2),
+      type: DataTypes.DECIMAL(11,2),
       allowNull: false,
       comment: 'old price'
     },

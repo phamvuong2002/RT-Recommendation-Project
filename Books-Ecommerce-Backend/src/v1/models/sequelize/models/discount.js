@@ -46,6 +46,10 @@ module.exports = (sequelize, DataTypes) => {
       },
       discount_code: {
         allowNull: false,
+        unique: true,
+        validate: {
+          len: [6, Infinity] // Kiểm tra độ dài từ 6 trở lên
+        },
         type: DataTypes.STRING,
         comment: 'code'
       },

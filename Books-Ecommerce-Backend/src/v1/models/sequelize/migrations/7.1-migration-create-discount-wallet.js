@@ -27,16 +27,22 @@ module.exports = {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE'
       },
-      dw_user_status: {
+      dw_discount_status: {
         type: Sequelize.ENUM('active', 'inactive', 'outdate'),
         allowNull: false,
         defaultValue:'active',
         comment: 'status: active, inactive, outdate'
       },
-      dw_user_quatity: {
+      dw_discount_quatity: {
         type: Sequelize.INTEGER,
         allowNull: false,
         comment: 'number of discount codes'
+      },
+      dw_discount_used: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+        comment: 'number of discount codes were used'
       },
       create_time: {
         allowNull: false,

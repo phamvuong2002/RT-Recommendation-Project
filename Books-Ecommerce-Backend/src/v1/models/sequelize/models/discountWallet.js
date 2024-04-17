@@ -24,16 +24,22 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         comment: 'user id'
       },
-      dw_user_status: {
+      dw_discount_status: {
         type: DataTypes.ENUM('active', 'inactive', 'outdate'),
         allowNull: false,
         defaultValue: 'active',
         comment: 'status: active, inactive, outdate'
       },
-      dw_user_quatity: {
+      dw_discount_quatity: {
         type: DataTypes.INTEGER,
         allowNull: false,
         comment: 'number of discount codes'
+      },
+      dw_discount_used: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+        comment: 'number of discount codes were used'
       },
       create_time: {
         allowNull: false,

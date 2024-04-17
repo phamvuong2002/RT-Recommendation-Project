@@ -7,24 +7,27 @@ module.exports = {
       {
         dw_discount_id: 1,
         dw_user_id: 1,
-        dw_user_status: 'active',
-        dw_user_quatity: 2,
+        dw_discount_status: 'active',
+        dw_discount_quatity: 2,
+        dw_discount_used: 0,
         create_time: new Date(),
         update_time: new Date()
       },
       {
         dw_discount_id: 2,
         dw_user_id: 2,
-        dw_user_status: 'active',
-        dw_user_quatity: 3,
+        dw_discount_status: 'active',
+        dw_discount_quatity: 3,
+        dw_discount_used: 1,
         create_time: new Date(),
         update_time: new Date()
       },
       {
         dw_discount_id: 3,
         dw_user_id: 1,
-        dw_user_status: 'active',
-        dw_user_quatity: 1,
+        dw_discount_status: 'active',
+        dw_discount_quatity: 1,
+        dw_discount_used: 0,
         create_time: new Date(),
         update_time: new Date()
       }

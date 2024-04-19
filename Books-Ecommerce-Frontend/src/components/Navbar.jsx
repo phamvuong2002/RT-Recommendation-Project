@@ -17,8 +17,8 @@ function classNames(...classes) {
 }
 // Navbar chính 
 export const Navbar = () => {
-    const location=useLocation()
-    const path=location.search
+    const location = useLocation()
+    const path = location.search
     const [isOpenShoppingCarts, setIsOpenShoppingCarts] = useState(false)
     const [user, setUser] = useState({
         id: '',
@@ -85,10 +85,10 @@ export const Navbar = () => {
         }
     }, [reloadLoginSignup])
 
-    useEffect(()=>{
-        console.log('in set false   ')
+    useEffect(() => {
+        //console.log('in set false   ')
         setIsMenuOpen(false)
-    },[path])
+    }, [path])
 
     return (
 

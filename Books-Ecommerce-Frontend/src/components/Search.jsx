@@ -8,18 +8,25 @@ const Search = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const [input, setInput] = useState('');
-    
+
     const searchFunction = (event) => {
         event.preventDefault();
-        let page=1
-        let params = new URLSearchParams({'search': input})
+        let path = ''
+        //event.preventDefault();
+        let page = 1
+        let params = new URLSearchParams({ 'search': input })
         // console.log(params)
-       
-        params.append("limit", '24')
-        params.append("page", page)
+
+        //params.append("limit", '24')
+        //params.append("page", page)
         params.append("sort", 'num_order_desc')
-        console.log(params)
-        navigate('/search?'+params)
+        params.append("page", '1')
+        params.append("limit", '1')
+
+        // path = '/search?q=' + input
+        //navigate('/search?' + params)
+        //console.log(params)
+        navigate('/search?' + params)
 
     };
 
@@ -33,8 +40,7 @@ const Search = () => {
             setInput('')
             // console.log('in change')
         }
-
-    }, [location])
+    }, [location]);
 
     return (
         <div id="search-bar" className="min-h-[38px] sm:h-0.8  bg-gray-200 rounded-[5px] grid">
@@ -46,12 +52,12 @@ const Search = () => {
                     placeholder="Tìm kiếm"
                     value={input}
                     onChange={(e) => handleChange(e.target.value)}
-                    onKeyDown={(e) => e.code == "Enter" ? searchFunction(e) : ""} />    
+                    onKeyDown={(e) => e.code == "Enter" ? searchFunction(e) : ""} />
                 <button
                     className="flex input-group-text  items-center white space-nowrap rounded-r px-3 text-center text-sm lg:text-base font-normal text-white  bg-red-500"
                     id="basic-addon2" onClick={
                         (e) => searchFunction(e)}>
-                    <FaSearch className=" w-4 h-4 block cursor-pointer text-white" 
+                    <FaSearch className=" w-4 h-4 block cursor-pointer text-white"
                     />
                 </button>
             </div>

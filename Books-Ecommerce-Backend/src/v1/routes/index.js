@@ -9,9 +9,10 @@ const router = express.Router();
 router.use('/v1/api/category', require('./category'));
 
 // check apiKey
-router.use(apiKey);
+//router.use(apiKey);
 //check permissions
-router.use(permission('0000'));
+//router.use(permission('0000'));
+router.use('/v1/api/book', require('./book'));
 
 
 router.use('/v1/api/access', require('./access'));

@@ -19,22 +19,25 @@ export const Home = () => {
     const [user, setUser] = useState(sampleUserInfo)
     const [products, setProducts] = useState([])
 
-    // //This call for AllProduct
-    // const url = "../data/test/product"
-    // //const { pages, totalPages, currentPage, setCurrentPage, setURL } = FectchPaging({ url })
-
-    //Fetch Product Data
     useEffect(() => {
-        const url = '../data/test/product.json';
         const loadProductData = async () => {
+            const url = 'http://localhost:3050/v1/api/book/all';
             try {
-                const productData = await fetchData(url);
-                setProducts(productData)
+                const res = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+                if (!res.ok) return
+                const productData = await res.json()
+                // console.log('productData', productData.metadata)
+                setProducts(productData.metadata)
             } catch (error) {
-                // throw error;
+                console.log('There was an error to fetch', error.message)
+                return
             }
         }
-        //
         setTimeout(() => {
             loadProductData()
         }, 1000)

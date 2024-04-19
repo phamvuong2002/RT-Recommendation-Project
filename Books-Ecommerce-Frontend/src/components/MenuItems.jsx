@@ -13,6 +13,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 const MenuItems = ({ items, depthLevel }) => {
   const navigate = useNavigate()
 
+
   let params = new URLSearchParams(document.location.search);
 
   let hasCate = params.has('categories')
@@ -42,7 +43,7 @@ const MenuItems = ({ items, depthLevel }) => {
 
 
   const handleSelectCategory = () => {
- 
+
     let currentLength = cateParam.length
     // console.log('current length & depth: ' + currentLength + ' ' + depthLevel)
     // reset lại - set = Level trên cùng

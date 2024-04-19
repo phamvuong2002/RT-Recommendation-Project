@@ -10,9 +10,14 @@ import { PopupCenterPanel } from './popup/PopupCenterPanel';
 import { useInsertionEffect } from 'react';
 import axios from "axios";
 import { mergeObject } from '../utils/mergeObject';
+import PropTypes from 'prop-types';
 
 
-export default function FilterProduct() {
+
+
+
+
+export default function FilterProduct({ _sort, _limit, _query }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [all_categories, setCategoriess] = useState([])
   const [cate, setCate] = useState()
@@ -20,6 +25,8 @@ export default function FilterProduct() {
 
   const navigate = useNavigate();
   const location = useLocation()
+  //console.log('newest search ' + (window.location.search))
+  //console.log(location.search)
   const params = new URLSearchParams(location.search);
   let hasPublisher = params.has('publisher')
 
@@ -33,6 +40,8 @@ export default function FilterProduct() {
 
   let price_filter = ''
   if (!params.has('price')) {
+    // console.log('no price')
+    // console.log(params.get('price'))
   } else {
     price_filter = params.get('price')
   }
@@ -50,11 +59,11 @@ export default function FilterProduct() {
         console.log(c)
         setCate(c)
         setIsLoading(false)
-     
+
       })
-      .catch(err => {
-        console.log(err)
-     });
+        .catch(err => {
+          console.log(err)
+        });
     }
     //
     setTimeout(() => {
@@ -65,7 +74,7 @@ export default function FilterProduct() {
 
 
 
- 
+
 
   // useEffect(() => {
   //   const url = '../data/test/allCategories.json';
@@ -156,6 +165,7 @@ export default function FilterProduct() {
       if (event.target.checked) {
         // console.log('in price')
         price_filter = filter_target_value
+
 
 
         if (params.has('price')) {
@@ -352,7 +362,11 @@ export default function FilterProduct() {
                 {/* Your content */}
                 <AllProducts
                   limitProduct={48}
-                  numOfProductsInRow={4}>
+                  numOfProductsInRow={4}
+                  _sort={sortOption}
+                  _limit={parseInt(_limit)}
+                  _query={_query}
+                >
                 </AllProducts>
 
               </div>
@@ -378,6 +392,7 @@ export default function FilterProduct() {
                   />
                 </Menu.Button>
                 <span>
+                  {sortOptions_dict[sortOption]}
                   {sortOptions_dict[sortOption]}
                 </span>
               </div>
@@ -498,11 +513,11 @@ export default function FilterProduct() {
 
             {/* Product grid */}
             <div className="lg:col-span-4 bg-gray-100">
-              {/* Your content */}
+              {/* Your content 
               <AllProducts
                 limitProduct={48}
                 numOfProductsInRow={4}>
-              </AllProducts>
+              </AllProducts>*/}
 
             </div>
           </div>
@@ -511,3 +526,9 @@ export default function FilterProduct() {
     </div>
   )
 }
+
+FilterProduct.propTypes = {
+  _sort: PropTypes.string,
+  _limit: PropTypes.number,
+  _query: PropTypes.string,
+};

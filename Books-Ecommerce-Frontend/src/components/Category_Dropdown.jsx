@@ -66,6 +66,7 @@ export default function Category_dropdown() {
     // }, [])
 
 
+
     const handleOnClick = ((value) => {
         // console.log(value)
 
@@ -165,7 +166,7 @@ export default function Category_dropdown() {
             <div className=" sm:px-0 max-w-screen-xl h-svh grid grid-cols-5 lg:hidden rounded-[5px] bg-gray-100 border-2 shadow-sm  overflow-y-scroll">
                 {isLoading && <p>Loading...</p>}
                 {!isLoading &&
-                <Tab.Group vertical>
+                    <Tab.Group vertical>
                         <Tab.List className="flex flex-col md:space-x-1  p-2 border-r-2"
                         >
                             {cate.map((category) => (
@@ -237,7 +238,7 @@ export default function Category_dropdown() {
                                 </Tab.Panel>
                             ))}
                         </Tab.Panels>
-                </Tab.Group>}
+                    </Tab.Group>}
             </div>
 
 

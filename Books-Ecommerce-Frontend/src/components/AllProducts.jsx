@@ -3,35 +3,71 @@ import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { Product } from "./Product";
 import { PaginationButtons } from "./PaginationButtons";
 import PropTypes from 'prop-types';
-import { fetchData } from '../helpers/fetch';
 import queryString from 'query-string';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
+
 
 
 //{/* pages, totalPages, currentPage, setCurrentPage, isShowHeader, numOfProductsInRow */}
-export const AllProducts = ({ isShowHeader, limitProduct, numOfProductsInRow }) => {
+export const AllProducts = ({ isShowHeader, limitProduct, numOfProductsInRow, _sort, _limit, _query }) => {
+    const location = useLocation()
+    const navigate = useNavigate();
+    const searchParams = new URLSearchParams(location.search);
+
+    let pageUpdated = searchParams.get('page');
 
     const topRef = useRef(null);
-
+    const prevQueryRef = useRef(null);
+    const prevSortRef = useRef(null);
 
     const [products, setProducts] = useState([])
     const [pagination, setPagination] = useState({
-        _page: 1,
-        _limit: limitProduct,
-        _totalRows: 120,
+        page: 1,
+        limit: _limit,
+        _totalRows: 10,
     })
 
     const [filters, setFilters] = useState({
-        _limit: 48,
-        _page: 1
+        search: "",
+        page: 1,
+        limit: _limit,
+        sort: _sort,
     })
 
     const handlePageChange = (newPage) => {
+        // Kiểm tra xem query có thay đổi hay không
+        // if (_query === prevQueryRef.current && _sort === prevSortRef.current) {
+
+        // }
         setFilters({
             ...filters,
-            _page: newPage
-        })
-        topRef.current.scrollIntoView({ behavior: 'smooth' })
+            page: newPage
+        });
+        pageUpdated = newPage
+        searchParams.set('page', pageUpdated);
+        navigate(`?${searchParams.toString()}`);
+        topRef.current.scrollIntoView({ behavior: 'smooth', scroll: 'auto' });
     };
+
+    useEffect(() => {
+        // Check if _query is updated
+        if (_query !== prevQueryRef.current) {
+            setFilters(prevFilters => ({
+                ...prevFilters,
+                search: _query,
+                page: 1,
+            }));
+            prevQueryRef.current = _query;
+        } else if (_sort !== prevSortRef.current) {
+            setFilters(prevFilters => ({
+                ...prevFilters,
+                sort: _sort,
+                page: 1,
+            }));
+            prevSortRef.current = _sort;
+        }
+    }, [_query, _sort]);
+
 
     const showHeader = useMemo(() => {
         if (isShowHeader) {
@@ -49,13 +85,19 @@ export const AllProducts = ({ isShowHeader, limitProduct, numOfProductsInRow }) 
 
     useEffect(() => {
         const loadProductData = async () => {
+            const paramsString = queryString.stringify(filters);//limit=1&page=1&search=ho
+            // console.log('filters', filters)
+            const requestUrl = `http://localhost:3050/v1/api/book/search?${paramsString}`;
+            console.log('requestUrl', requestUrl)
+
             try {
-                const paramsString = queryString.stringify(filters);//_limit=48&_page=1
-
-                const requestUrl = `../data/test/product&${paramsString}.json`;
-                //requestUrl = ../data/test/product&_limit=48&_page=1.json //mốt api bỏ .json ra
-
-                const response = await fetch(requestUrl);
+                const response = await fetch(requestUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+                if (!response.ok) return
                 const responseJSON = await response.json();
                 const { productData, pagination } = responseJSON;
 
@@ -68,8 +110,10 @@ export const AllProducts = ({ isShowHeader, limitProduct, numOfProductsInRow }) 
         //
         setTimeout(() => {
             loadProductData()
-        }, 500)
+        }, 100)
     }, [filters])
+
+
 
     return (
         <div ref={topRef} className="w-full">
@@ -93,6 +137,8 @@ export const AllProducts = ({ isShowHeader, limitProduct, numOfProductsInRow }) 
             <PaginationButtons
                 pagination={pagination}
                 onPageChange={handlePageChange}
+                query={_query}
+                sort={_sort}
             />
 
         </div>
@@ -107,4 +153,7 @@ AllProducts.propTypes = {
     isShowHeader: PropTypes.bool,
     limitProduct: PropTypes.number.isRequired,
     numOfProductsInRow: PropTypes.number.isRequired,
+    _sort: PropTypes.string,
+    _limit: PropTypes.number,
+    _query: PropTypes.string,
 };

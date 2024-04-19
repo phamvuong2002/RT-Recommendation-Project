@@ -1,5 +1,7 @@
 import ReactPaginate from "react-paginate";
 import PropTypes from 'prop-types';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useMemo } from 'react';
 
 // export const PaginationButtons = ({ setCurrentPage, currentPage, totalPages, handlePageChange }) => {
 //     const handlePageClick = ({ selected, url }) => {
@@ -47,14 +49,23 @@ import PropTypes from 'prop-types';
 //     handlePageChange: PropTypes.func.isRequired,
 // };
 
-export const PaginationButtons = ({ pagination, onPageChange }) => {
+export const PaginationButtons = ({ pagination, onPageChange, query, sort }) => {
+    //console.log("pagination", pagination)
 
     const { _page, _limit, _totalRows } = pagination;
+    const [currentPage, setCurrentPage] = useState(_page);
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [query, sort]);
+
     const totalPages = Math.ceil(_totalRows / _limit);
+    // console.log('totalPages', typeof (totalPages))
 
     const handlePageChange = ({ selected }) => {
-        onPageChange(selected + 1); //+1 là do thư viện ReactPaginate mặc định page đầu tiên là 0
-    };
+        onPageChange(selected + 1);
+        setCurrentPage(selected + 1)
+    }
+
 
     const showPrevButton = _page <= 1
     const showNextButton = _page >= totalPages
@@ -70,6 +81,7 @@ export const PaginationButtons = ({ pagination, onPageChange }) => {
                         </svg>
                     )
                 }
+                forcePage={currentPage - 1}
                 onPageChange={handlePageChange}
                 pageRangeDisplayed={2}
                 pageCount={totalPages}
@@ -83,15 +95,20 @@ export const PaginationButtons = ({ pagination, onPageChange }) => {
                 containerClassName="flex items-center justify-center mt-8 mb-4"
                 pageClassName="w-8 h-8 flex items-center justify-center mr-4"
                 activeClassName="rounded-[50%] w-8 h-8 leading-8 text-center font-bold cursor-pointer bg-red-500 text-white"
+
+
             />
         </div>
 
     );
+
 }
 
 
 PaginationButtons.propTypes = {
     pagination: PropTypes.object.isRequired,
     onPageChange: PropTypes.func.isRequired,
+    query: PropTypes.string,
+    sort: PropTypes.string,
 };
 

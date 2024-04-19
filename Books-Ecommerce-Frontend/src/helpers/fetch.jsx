@@ -12,6 +12,10 @@ export const fetchData = async (url) => {
     }
 };
 
+
+
+
+
 export const fetchDataGHN = async (url, requestData = '') => {
     try {
         const response = await fetch(url, {

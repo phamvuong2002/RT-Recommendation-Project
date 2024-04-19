@@ -28,13 +28,23 @@ export default {
             borderRadius: '20px',
             border: '1px solid white',
           },
+          '.no-scrollbar::-webkit-scrollbar': {
+            display: 'none',
+          },
 
-        },
-      };
-      addUtilities(newUtilities, ['responsive', 'hover']);
+
+          /* Hide scrollbar for IE, Edge and Firefox */
+          '.no-scrollbar': {
+            '-ms-overflow-style': 'none',  /* IE and Edge */
+          'scrollbar - width': 'none',/* Firefox */
+      }
+
     },
-    require('tailwindcss/plugin')(({ addVariant }) => {
-      addVariant('search-cancel', '&::-webkit-search-cancel-button');
-    }),
+      };
+addUtilities(newUtilities, ['responsive', 'hover']);
+    },
+require('tailwindcss/plugin')(({ addVariant }) => {
+  addVariant('search-cancel', '&::-webkit-search-cancel-button');
+}),
   ],
 };

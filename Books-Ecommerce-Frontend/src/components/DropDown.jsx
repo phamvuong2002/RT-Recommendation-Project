@@ -4,19 +4,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 // Sẽ tiền hành gọi MenuItems để render submenu
 const Dropdown = ({ submenus, dropdown, depthLevel }) => {
   depthLevel = depthLevel + 1;
-  let params = new URLSearchParams(document.location.search);
-  let hasGenre = params.has('genre')
-
-
-  let genreParam = ['']
-  if (!hasGenre) {
-    // console.log('no genre')
-    genreParam = ['']
-  } else {
-    genreParam = params.get('genre').split(',')
-    // console.log(genreParam)
-    // console.log(submenus)
-  }
 
   const dropdownClass = depthLevel > 1 ? "dropdown-submenu" : "";
  

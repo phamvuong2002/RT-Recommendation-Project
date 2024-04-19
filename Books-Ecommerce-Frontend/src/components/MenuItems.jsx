@@ -12,26 +12,25 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 const MenuItems = ({ items, depthLevel }) => {
   const navigate = useNavigate()
-  
+
   let params = new URLSearchParams(document.location.search);
-  console.log(params)
-  let hasGenre = params.has('genre')
+
+  let hasCate = params.has('categories')
   const [dropdown, setDropdown] = useState(false);
 
-  let genreParam = ['']
-  if (!hasGenre) {
-    // console.log('no genre')
-    genreParam = ['']
+  let cateParam = []
+  if (!hasCate) {
+
+    cateParam = []
   } else {
-    genreParam = params.get('genre').split(',')
-    // depthLevel=(genreParam.length-1)
-    // console.log(genreParam)
-  } 
+    cateParam = params.get('categories').split(',')
+
+  }
 
   useEffect(() => {
     const handler = (event) => {
       if (dropdown && ref.current && !ref.current.contains(event.target)) {
-        console.log(ref.current)
+        // console.log(ref.current)
         setDropdown(false);
       }
     };
@@ -43,53 +42,43 @@ const MenuItems = ({ items, depthLevel }) => {
 
 
   const handleSelectCategory = () => {
-    console.log(depthLevel)
-    let currentLength = genreParam.length
-    console.log('current length & depth: ' + currentLength + ' ' + depthLevel)
+ 
+    let currentLength = cateParam.length
+    // console.log('current length & depth: ' + currentLength + ' ' + depthLevel)
     // reset lại - set = Level trên cùng
     if (currentLength < depthLevel + 1) {
-      console.log(depthLevel + ' ' + currentLength)
-      genreParam.push(items.value)
+      cateParam.push(items.id)
     }
     else if (depthLevel + 1 < currentLength) {
-      genreParam[depthLevel] = items.value
-      genreParam.splice(depthLevel + 1)
+      cateParam[depthLevel] = items.id
+      cateParam.splice(depthLevel + 1)
     }
-    else if (currentLength == depthLevel + 1) {
-      console.log('in update')
-      genreParam[depthLevel] = items.value
+    else if (currentLength === depthLevel + 1) {
+      cateParam[depthLevel] = items.id
     }
-    
-    console.log(`include ${genreParam.includes(items.value)}`)
-    console.log('genre param')
-    console.log(genreParam)
-    console.log(genreParam.length)
-  
+    console.log(cateParam)
+    if (cateParam.length > 0) {
+      // const searchParams = new URLSearchParams({ 'genre': cateParam });
+      params.set('categories', cateParam)
 
-    if (genreParam.length > 0) {
-      // const searchParams = new URLSearchParams({ 'genre': genreParam });
-      params.set('genre',genreParam)
-      console.log('search params to navigate: ' + params)
       navigate(`/search?${params}`)
     } else {
       navigate(`/search`)
     }
   }
 
-
   return (
     <li
-      className={`menu-items  font-inter text-black text-left pl-1 pb-2 sm:text-black hover:cursor-pointer  sm:hover:text-[red] $`}
-    >
-      <div key={items.value} className="flex items-center ">
+      className={`menu-items  font-inter text-black text-left pl-1 pb-2 sm:text-black hover:cursor-pointer  hover:text-[red]`}>
+      <div key={items.id} className={`flex items-center `}>
         <input
           id={`filter-${items.id}`}
           name={`${items.id}`}
-          defaultValue={items.value}
+          defaultValue={items.id}
           type="checkbox"
           aria-checked={true}
           onChange={handleSelectCategory}
-          checked={genreParam.includes(items.value)}
+          checked={cateParam[depthLevel] == items.id}
           className="min-w-[15px] h-[15px] w-[15px] rounded-sm border-gray-300  accent-red-300"
         />
         <label
@@ -99,12 +88,13 @@ const MenuItems = ({ items, depthLevel }) => {
           {items.name}
         </label>
       </div>
-      {items.submenu  ? (
+
+      {items.submenu ? (
         <>
           <Dropdown
             depthLevel={depthLevel}
             submenus={items.submenu}
-            dropdown={genreParam.includes(items.value)}
+            dropdown={cateParam[depthLevel] == items.id}
           />
         </>
       ) : ""}

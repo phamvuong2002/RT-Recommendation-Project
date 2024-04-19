@@ -8,18 +8,17 @@ const Search = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const [input, setInput] = useState('');
-
+    
     const searchFunction = (event) => {
         event.preventDefault();
-        let path = ''
-        let params = new URLSearchParams({'q': input})
+        let page=1
+        let params = new URLSearchParams({'search': input})
         // console.log(params)
-        params.append("sort", 'num_order_desc')
+       
         params.append("limit", '24')
-        params.append("page", '1')
-        // console.log(params)
-      
-        // path = '/search?q=' + input
+        params.append("page", page)
+        params.append("sort", 'num_order_desc')
+        console.log(params)
         navigate('/search?'+params)
 
     };
@@ -30,9 +29,9 @@ const Search = () => {
     };
 
     useEffect(() => {
-        if (!location.pathname.includes('/search')) {
+        if (!location.pathname.includes('/search') && input) {
             setInput('')
-            console.log('in change')
+            // console.log('in change')
         }
 
     }, [location])

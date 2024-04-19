@@ -6,6 +6,8 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class Category3 extends Model {
     static associate(models) {
+      this.belongsTo(models.category_2,{foreignKey: 'cate2_id'})
+      this.hasMany(models.category_4, {as:'submenu',foreignKey: 'cate3_id'})
       // Define associations here if needed
     }
   }

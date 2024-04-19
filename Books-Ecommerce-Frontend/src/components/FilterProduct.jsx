@@ -8,33 +8,31 @@ import { fetchData } from '../helpers/fetch';
 import MenuItems from './MenuItems';
 import { PopupCenterPanel } from './popup/PopupCenterPanel';
 import { useInsertionEffect } from 'react';
-
+import axios from "axios";
+import { mergeObject } from '../utils/mergeObject';
 
 
 export default function FilterProduct() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [all_categories, setCategoriess] = useState([])
+  const [cate, setCate] = useState()
+  const [isLoading, setIsLoading] = useState(true)
+
   const navigate = useNavigate();
   const location = useLocation()
-  console.log('newest search ' + (window.location.search))
-  console.log(location.search)
   const params = new URLSearchParams(location.search);
-
-
   let hasPublisher = params.has('publisher')
 
   let publisher_filter = ['']
   if (!hasPublisher) {
-    // console.log('no genre')
+
     // publisher_filter = ['']
   } else {
     publisher_filter = params.get('publisher').split(',')
-    // console.log('has pub')
-    // console.log(publisher_filter)
   }
 
   let price_filter = ''
   if (!params.has('price')) {
-    // console.log('no price')
-    // console.log(params.get('price'))
   } else {
     price_filter = params.get('price')
   }
@@ -42,28 +40,48 @@ export default function FilterProduct() {
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
   }
-
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const [all_categories, setCategoriess] = useState([])
-
-
-
   useEffect(() => {
-    const url = '../data/test/allCategories.json';
+    const baseURL = "http://localhost:3050/v1/api/category";
     const loadCategoriesData = async () => {
-      try {
-        const categoriesData = await fetchData(url);
-        setCategoriess(categoriesData)
-      } catch (error) {
-        // throw error;
-      }
+      axios.get(baseURL).then((response) => {
+        const a = response.data.metadata[0]
+        const b = response.data.metadata[1]
+        const c = mergeObject(a, b)
+        console.log(c)
+        setCate(c)
+        setIsLoading(false)
+     
+      })
+      .catch(err => {
+        console.log(err)
+     });
     }
     //
     setTimeout(() => {
       loadCategoriesData()
     }, 1000)
-  }, [])
+
+  }, []);
+
+
+
+ 
+
+  // useEffect(() => {
+  //   const url = '../data/test/allCategories.json';
+  //   const loadCategoriesData = async () => {
+  //     try {
+  //       const categoriesData = await fetchData(url);
+  //       setCategoriess(categoriesData)
+  //     } catch (error) {
+  //       // throw error;
+  //     }
+  //   }
+  //   //
+  //   setTimeout(() => {
+  //     loadCategoriesData()
+  //   }, 1000)
+  // }, [])
 
   const sortOptions_dict = {
     name_asc: "Tên: A-Z",
@@ -138,7 +156,7 @@ export default function FilterProduct() {
       if (event.target.checked) {
         // console.log('in price')
         price_filter = filter_target_value
-      
+
 
         if (params.has('price')) {
           // console.log('in price navigate set '+price_filter)
@@ -262,16 +280,19 @@ export default function FilterProduct() {
 
             <div className=" mt-1 border-t border-gray-200 sm:border-none sm:grid  sm:grid-cols-1 sm:gap-x-8  lg:grid-cols-5">
               {/* Filters */}
+
               <form className={` ${isMenuOpen ? "" : "hidden"}  lg:block `}>
                 {/* name */}
                 {/* TRUYỀN Ở ĐÂY */}
-
-                <ul className={``}>
-                  {all_categories.map((menu, index) => {
-                    const depthLevel = 0;
-                    return <MenuItems items={menu} key={index} depthLevel={depthLevel} />;
-                  })}
-                </ul>
+                {isLoading && <p>Loading...</p>}
+                {!isLoading &&
+                  <ul className={`max-h-screen h-fit overflow-y-scroll no-scrollbar`}>
+                    {cate.map((menu, index) => {
+                      const depthLevel = 0;
+                      return <MenuItems items={menu} key={index} depthLevel={depthLevel} />;
+                    })}
+                  </ul>
+                }
 
                 {filterOptions.map((section) => (
                   <Disclosure as="div" key={section.id} className="sm:z-10 border-b border-gray-200 py-6">
@@ -292,20 +313,19 @@ export default function FilterProduct() {
 
                         <Disclosure.Panel className="pt-6">
                           <div className="space-y-6 sm:space-y-6">
-
                             {section.options.map((option, optionIdx) => (
-                              <div key={option.value} className="flex items-center ">
+                              <div key={option.id} className="flex items-center ">
                                 <input
                                   id={`filter-${section.id}-${optionIdx}`}
                                   name={`${section.id}`}
-                                  defaultValue={option.value}
+                                  defaultValue={option.id}
                                   type="checkbox"
                                   aria-checked={true}
                                   onChange={handleClickFilter}
 
 
                                   checked={(section.id === 'price' ? price_filter === option.value
-                                    : publisher_filter.includes(option.value))}
+                                    : publisher_filter.includes(option.id))}
 
                                   className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 accent-red-300"
                                 />
@@ -323,6 +343,7 @@ export default function FilterProduct() {
                     )}
                   </Disclosure>
                 ))}
+
               </form>
 
 
@@ -357,7 +378,7 @@ export default function FilterProduct() {
                   />
                 </Menu.Button>
                 <span>
-                {sortOptions_dict[sortOption]}
+                  {sortOptions_dict[sortOption]}
                 </span>
               </div>
 

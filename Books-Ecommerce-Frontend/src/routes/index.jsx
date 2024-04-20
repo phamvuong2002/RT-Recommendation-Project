@@ -4,6 +4,7 @@ import { ShoppingCartsPage } from "../pages/ShoppingCartsPage";
 import { AccountPage } from "../pages/AccountPage";
 import { SearchPage } from "../pages/SearchPage";
 import { Home } from "../pages/Home";
+import { OrderDetailPage } from "../pages/OrderDetailPage";
 
 // Publishes Route user foll all users
 const publicRoutes = [
@@ -13,8 +14,8 @@ const publicRoutes = [
     { path: '/shoppingcarts', component: ShoppingCartsPage },
     { path: '/account', component: AccountPage },
     { path: '/account/:tab', component: AccountPage },
-    { path: '/search/:category?/:subcategory?/:subsubcategory?/:subsubsubcategory?', component: SearchPage }
-
+    { path: '/search/:category?/:subcategory?/:subsubcategory?/:subsubsubcategory?', component: SearchPage },
+    { path: '/order-detail/:order?', component: OrderDetailPage },
 ];
 
 // Private Route user for registration user

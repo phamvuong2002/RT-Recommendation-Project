@@ -117,6 +117,22 @@ class DiscountService {
     }
 
     static async applyDiscount({userId, discountId, product={} ,order={}}) {
+        /*
+            discountId
+            discountCode
+            userId
+            product{
+                productId,
+                quantity,
+                price
+            }
+            order{
+                orderId,
+                price,
+                feeShip,
+                feeService
+            }
+        */
         const discountWallet = await db.discount_wallet.findOne({
             where: {
                 dw_discount_id: discountId,
@@ -215,9 +231,6 @@ class DiscountService {
                 }
             });
 
-            //check discount
-            checkDiscountCode(discount);
-
             //collect discount
             discountWallet = await DiscountService.collectDiscount({
                 userId: userId,
@@ -236,13 +249,19 @@ class DiscountService {
             if(!discountWallet) throw new NotFoundError('Discount not found in wallet');
 
             discount = await db.discount.findByPk(discountId);
-            checkDiscountCode(discount);
         }
+
+        //check discount
+        checkDiscountCode(discount);
 
         //check max uses per user
         if(discountWallet.dataValues.dw_discount_used >= discount.dataValues.discount_max_uses_per_user){
             throw new BadRequestError('Discount usage limit has been reached');
         }
+
+        //check discount wallet
+        if(discountWallet.dataValues.dw_discount_status === DISCOUNT_WALLET_STATUS.INACTIVE)
+            throw new BadRequestError('Discount is not available')
 
         if(discount.dataValues.discount_apply_to === DISCOUNT_APPLY_TO.SPECIFIC){
             //check min order value
@@ -263,7 +282,7 @@ class DiscountService {
                     productId: product.productId,
                     quantity: product.quantity,
                     oldPrice: product.price * product.quantity,
-                    discountedPrice: product.price * product.quantity - amount,
+                    discountedPrice: Math.max(product.price * product.quantity - amount, 0),
                     amount,
                     discountType: discount.dataValues.discount_type,
                     discountValue: discount.dataValues.discount_value
@@ -276,16 +295,25 @@ class DiscountService {
                 throw new BadRequestError(`Min price must be greater than ${discount.dataValues.discount_min_order_value}`)
 
             //return value
+            let oldPrice = order.price
+            if(order.feeShip) {
+                oldPrice += order.feeShip
+            }
+            if(order.feeService){
+                oldPrice += order.feeService
+            }
             const amount = discount.dataValues.discount_type === DISCOUNT_TYPE.FIXED_AMOUNT ? 
-                discount.dataValues.discount_value : order.price * (discount.dataValues.discount_value / 100);
+                discount.dataValues.discount_value : oldPrice * (discount.dataValues.discount_value / 100);
                 
                 return {
                     discountId: discount.dataValues.discount_id,
-                    oldPrice: order.price,
-                    discountedPrice: order.price - amount,
+                    oldPrice: oldPrice,
+                    discountedPrice: Math.max(oldPrice - amount, 0),
                     amount,
                     discountType: discount.dataValues.discount_type,
-                    discountValue: discount.dataValues.discount_value
+                    discountValue: discount.dataValues.discount_value,
+                    feeShip: order.feeShip || 0,
+                    feeService: order.feeService || 0,
                 }
         }
         else{

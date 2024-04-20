@@ -11,14 +11,19 @@ const SHOP_PROVINCE_NAME = "Hồ Chí Minh"
 const SHOP_PHONE_NUMBER = "0948908485"
 
 export const calculateShippingFeeDefault = async (toAddress, product) => {
-    const url_service = 'https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services'
-    const url_cal_fee = 'https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/preview'
+    // const url_service = 'https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services'
+    const url_service = 'https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services'
+    // const url_cal_fee = 'https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/preview'
+    const url_cal_fee = 'https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/preview'
+
 
     const serviceDataResponse = await fetchDataGHN(url_service, {
         "shop_id": SHOP_ID,
         "from_district": SHOP_DISTRICT_ID,
         "to_district": toAddress.distristid
     })
+
+    console.log("serviceDataResponse::", serviceDataResponse);
 
     if (serviceDataResponse.code !== 200) {
         return null
@@ -28,41 +33,41 @@ export const calculateShippingFeeDefault = async (toAddress, product) => {
     const service_fee_data = []
     for (const service of serviceData) {
 
-        // console.log(toAddress.distristid, {
-        //     "payment_type_id": 2,
-        //     "required_note": "KHONGCHOXEMHANG",
-        //     "from_ward_name": SHOP_WARD_NAME,
-        //     "from_district_name": SHOP_DISTRICT_NAME,
-        //     "from_province_name": SHOP_PROVINCE_NAME,
-        //     "return_phone": SHOP_PHONE_NUMBER,
-        //     "return_address": "",
-        //     "return_district_id": SHOP_DISTRICT_ID,
-        //     "return_ward_code": SHOP_WARD_CODE,
-        //     "to_name": toAddress.userFullName,
-        //     "to_phone": toAddress.userPhone,
-        //     "to_address": "Ký tự bất kỳ",
-        //     "to_ward_code": toAddress.wardid,
-        //     "to_district_id": toAddress.distristid,
-        //     "weight": 200,
-        //     "length": 1,
-        //     "width": 19,
-        //     "height": 10,
-        //     "pick_station_id": SHOP_DISTRICT_ID,
-        //     "service_id": service.service_id,
-        //     "service_type_id": service.service_type_id,
-        //     "items": [
-        //         {
-        //             "name": product.name,
-        //             "code": `"${product.id}"`,
-        //             "quantity": 1,
-        //             "price": product.price,
-        //             "length": product.length_,
-        //             "width": product.width_,
-        //             "height": product.height_,
-        //             "weight": product.weight_
-        //         }
-        //     ]
-        // });
+        console.log(toAddress.distristid, {
+            "payment_type_id": 2,
+            "required_note": "KHONGCHOXEMHANG",
+            "from_ward_name": SHOP_WARD_NAME,
+            "from_district_name": SHOP_DISTRICT_NAME,
+            "from_province_name": SHOP_PROVINCE_NAME,
+            "return_phone": SHOP_PHONE_NUMBER,
+            "return_address": "",
+            "return_district_id": SHOP_DISTRICT_ID,
+            "return_ward_code": SHOP_WARD_CODE,
+            "to_name": toAddress.userFullName,
+            "to_phone": toAddress.userPhone,
+            "to_address": "Ký tự bất kỳ",
+            "to_ward_code": toAddress.wardid,
+            "to_district_id": toAddress.distristid,
+            "weight": 200,
+            "length": 1,
+            "width": 19,
+            "height": 10,
+            "pick_station_id": SHOP_DISTRICT_ID,
+            "service_id": service.service_id,
+            "service_type_id": service.service_type_id,
+            "items": [
+                {
+                    "name": product.name,
+                    "code": `"${product.id}"`,
+                    "quantity": 1,
+                    "price": product.price,
+                    "length": product.length_,
+                    "width": product.width_,
+                    "height": product.height_,
+                    "weight": product.weight_
+                }
+            ]
+        });
 
 
         const service_fee = await fetchDataGHN(url_cal_fee, {

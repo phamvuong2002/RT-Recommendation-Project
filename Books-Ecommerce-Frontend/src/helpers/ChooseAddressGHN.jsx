@@ -60,7 +60,9 @@ export const ChooseAddressGHN = ({ open, setOpen, icon, setGeneralAddress }) => 
     useEffect(() => {
         const loadDataAddress = async () => {
             if (province.ProvinceID === 0) {
-                const provinceUrl = 'https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province'
+                // const provinceUrl = 'https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province'
+                const provinceUrl = 'https://online-gateway.ghn.vn/shiip/public-api/master-data/province'
+
                 try {
                     const loadProvinceData = await fetchDataGHN(provinceUrl)
                     if (loadProvinceData.code === 200) {
@@ -71,7 +73,8 @@ export const ChooseAddressGHN = ({ open, setOpen, icon, setGeneralAddress }) => 
                 }
             }
             else if (province.ProvinceID !== 0 && district.DistrictID === 0) {
-                const districtUrl = 'https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district'
+                // const districtUrl = 'https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district'
+                const districtUrl = 'https://online-gateway.ghn.vn/shiip/public-api/master-data/district'
                 try {
                     const loadDistrictData = await fetchDataGHN(districtUrl, { "province_id": province.ProvinceID })
                     if (loadDistrictData.code === 200) {
@@ -81,7 +84,9 @@ export const ChooseAddressGHN = ({ open, setOpen, icon, setGeneralAddress }) => 
                     //Throw an error
                 }
             } else if (district.DistrictID !== 0 && ward.WardCode === 0) {
-                const wardUrl = 'https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward'
+                // const wardUrl = 'https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward'
+                const wardUrl = 'https://online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id'
+
                 try {
                     const loadWardData = await fetchDataGHN(wardUrl, { "district_id": district.DistrictID })
                     if (loadWardData.code) {

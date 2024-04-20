@@ -6,7 +6,8 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // Define associations here
       // Example:
-      // this.belongsTo(models.Supplier, { foreignKey: 'inven_supplierId' });
+      this.belongsTo(models.book, { foreignKey: 'inven_book_id' });
+      this.belongsTo(models.supplier, { foreignKey: 'inven_supplierId' });
     }
   }
   Inventory.init(

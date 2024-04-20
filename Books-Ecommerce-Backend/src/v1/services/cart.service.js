@@ -67,7 +67,17 @@ class CartService {
     }
 
     static async addToCart({userId, book={}}){
-    
+        /*
+            "book": {
+                "book_id": 5,
+                "quantity": 1,
+                "old_quantity": 0
+            }
+        */
+        //check book exists
+        const foundBook = await db.book.findByPk(book.book_id);
+            if(!foundBook) throw new NotFoundError('Book not found');
+
         //check cart existed
         let userCart = await db.cart.findOne({ where: { cart_userid: userId } });
         if(!userCart) {
@@ -125,7 +135,7 @@ class CartService {
             }
 
             //add book to cart
-            await existBook.set({cb_book_num: book.quantity});
+            await existBook.set({cb_book_num: existBook.dataValues.cb_book_num + (book.quantity - book.old_quantity)});
             return  await existBook.save();
         }
     }

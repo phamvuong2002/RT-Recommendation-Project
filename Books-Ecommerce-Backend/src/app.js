@@ -71,7 +71,6 @@ app.use(
 
 //init db
 require("./v1/dbs/init.mongo");
-
 //init routes
 app.use("/", require("./v1/routes"));
 
@@ -87,6 +86,7 @@ app.use((err, req, res, next) => {
   return res.status(statusCode).json({
     status: "error",
     code: statusCode,
+    stack: err.stack,
     message: err.message || "Internal Server Error",
   });
 });

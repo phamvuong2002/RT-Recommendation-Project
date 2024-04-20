@@ -15,10 +15,11 @@ router.use('/v1/api/category', require('./category'));
 router.use('/v1/api/book', require('./book'));
 router.use('/v1/api/user', require('./user'));
 
-router.use('/v1/api/access', require('./access'));
 router.use('/v1/api/book', require('./book'));
 router.use('/v1/api/cart', require('./cart'));
 router.use('/v1/api/discount', require('./discount'));
+router.use('/v1/api/checkout', require('./checkout'));
+router.use('/v1/api/access', require('./access'));
 
 
 

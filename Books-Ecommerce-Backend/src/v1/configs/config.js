@@ -24,6 +24,17 @@ const development = {
       multipleStatements: true,
     },
   },
+  payment: {
+    paypal_data: {
+      clientId: process.env.DEV_PAYMENT_PAYPAL_CLIENT_ID,
+      clientSecret: process.env.DEV_PAYMENT_PAYPAL_CLIENT_SECRET,
+    },
+    vnpay_data: {
+      clientId: process.env.DEV_PAYMENT_VNPAY_CLIENT_ID,
+      clientSecret: process.env.DEV_PAYMENT_VNPAY_CLIENT_SECRET,
+      apiHost: process.env.DEV_PAYMENT_VNPAY_API_HOST,
+    },
+  },
 };
 
 const production = {
@@ -48,6 +59,17 @@ const production = {
       password: process.env.MYSQL_DB_PASSWORD_MASTER || "vuong",
       connectionLimit: 10,
       multipleStatements: true,
+    },
+  },
+  payment: {
+    paypal: {
+      clientId: process.env.PRO_PAYMENT_PAYPAL_CLIENT_ID,
+      clientSecret: process.env.PRO_PAYMENT_PAYPAL_CLIENT_SECRET,
+    },
+    vnpay: {
+      clientId: process.env.PRO_PAYMENT_VNPAY_CLIENT_ID,
+      clientSecret: process.env.PRO_PAYMENT_VNPAY_CLIENT_SECRET,
+      apiHost: process.env.PRO_PAYMENT_VNPAY_API_HOST,
     },
   },
 };

@@ -18,6 +18,7 @@ import PropTypes from 'prop-types';
 
 
 export default function FilterProduct({ _sort, _limit, _query }) {
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [all_categories, setCategoriess] = useState([])
   const [cate, setCate] = useState()
@@ -32,7 +33,7 @@ export default function FilterProduct({ _sort, _limit, _query }) {
 
   let publisher_filter = ['']
   if (!hasPublisher) {
-
+    //
   } else {
     publisher_filter = params.get('publisher').split(',')
   }
@@ -55,7 +56,7 @@ export default function FilterProduct({ _sort, _limit, _query }) {
         const a = response.data.metadata[0]
         const b = response.data.metadata[1]
         const c = mergeObject(a, b)
-        console.log(c)
+        //console.log(c)
         setCate(c)
         setIsLoading(false)
 
@@ -71,25 +72,6 @@ export default function FilterProduct({ _sort, _limit, _query }) {
 
   }, []);
 
-
-
-
-
-  // useEffect(() => {
-  //   const url = '../data/test/allCategories.json';
-  //   const loadCategoriesData = async () => {
-  //     try {
-  //       const categoriesData = await fetchData(url);
-  //       setCategoriess(categoriesData)
-  //     } catch (error) {
-  //       // throw error;
-  //     }
-  //   }
-  //   //
-  //   setTimeout(() => {
-  //     loadCategoriesData()
-  //   }, 1000)
-  // }, [])
 
   const sortOptions_dict = {
     name_asc: "Tên: A-Z",
@@ -164,9 +146,6 @@ export default function FilterProduct({ _sort, _limit, _query }) {
       if (event.target.checked) {
         // console.log('in price')
         price_filter = filter_target_value
-
-
-
         if (params.has('price')) {
           // console.log('in price navigate set '+price_filter)
           params.set('price', price_filter)
@@ -507,17 +486,21 @@ export default function FilterProduct({ _sort, _limit, _query }) {
           </div>
         </div>
 
-        <section aria-labelledby="products-heading" className="pb-[80px] ">
+        <section aria-labelledby="products-heading" className="">
           <div className=" mt-1 border-t border-gray-200 sm:border-none sm:grid  sm:grid-cols-1 sm:gap-x-8  lg:grid-cols-5">
             {/* Filters */}
 
             {/* Product grid */}
             <div className="lg:col-span-4 bg-gray-100">
-              {/* Your content 
+              {/* Your content */}
               <AllProducts
                 limitProduct={48}
-                numOfProductsInRow={4}>
-              </AllProducts>*/}
+                numOfProductsInRow={4}
+                _sort={sortOption}
+                _limit={parseInt(_limit)}
+                _query={_query}
+              >
+              </AllProducts>
 
             </div>
           </div>

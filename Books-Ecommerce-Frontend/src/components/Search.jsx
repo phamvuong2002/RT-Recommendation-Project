@@ -21,7 +21,7 @@ const Search = () => {
         //params.append("page", page)
         params.append("sort", 'num_order_desc')
         params.append("page", '1')
-        params.append("limit", '1')
+        params.append("limit", '24')
 
         // path = '/search?q=' + input
         //navigate('/search?' + params)

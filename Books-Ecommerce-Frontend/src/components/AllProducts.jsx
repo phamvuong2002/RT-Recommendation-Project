@@ -10,6 +10,7 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 
 //{/* pages, totalPages, currentPage, setCurrentPage, isShowHeader, numOfProductsInRow */}
 export const AllProducts = ({ isShowHeader, limitProduct, numOfProductsInRow, _sort, _limit, _query }) => {
+
     const location = useLocation()
     const navigate = useNavigate();
     const searchParams = new URLSearchParams(location.search);

@@ -104,7 +104,7 @@ export const Footer = () => {
                 >
                   {menu.icon}
 
-                </ span>
+                </span>
                 {menu.name == 'ShoppingCart' ?
                   <span className={`cart-quantity text-center text-sm min-w-[20px] h-[20px] rounded-[50%] mr-[-30px] mt-[-38px] bg-red-100 text-red-500 font-semibold ${menu.name === active ? "mt-[-44px]" : ""}`}> {user.shoppingCart >= 100 ? '99+' : user.shoppingCart}  </span> :
                   ""}

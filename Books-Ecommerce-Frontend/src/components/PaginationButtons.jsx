@@ -92,11 +92,9 @@ export const PaginationButtons = ({ pagination, onPageChange, query, sort }) => 
                         </svg>
                     )
                 }
-                containerClassName="flex items-center justify-center mt-8 mb-4"
-                pageClassName="w-8 h-8 flex items-center justify-center mr-4"
+                containerClassName="flex items-center justify-center mt-2 pb-9 sm:mt-8 sm:mb-4"
+                pageClassName="w-8 h-8 flex items-center justify-center sm:mr-4"
                 activeClassName="rounded-[50%] w-8 h-8 leading-8 text-center font-bold cursor-pointer bg-red-500 text-white"
-
-
             />
         </div>
 

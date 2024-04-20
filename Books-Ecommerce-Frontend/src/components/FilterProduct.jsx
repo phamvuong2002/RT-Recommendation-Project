@@ -33,7 +33,6 @@ export default function FilterProduct({ _sort, _limit, _query }) {
   let publisher_filter = ['']
   if (!hasPublisher) {
 
-    // publisher_filter = ['']
   } else {
     publisher_filter = params.get('publisher').split(',')
   }
@@ -224,7 +223,7 @@ export default function FilterProduct({ _sort, _limit, _query }) {
     <div className="bg-white">
       {/* desktop */}
       <div>
-        <main className="hidden md:block mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <main className="hidden lg:block mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-24">
             <Link to='/search/all-category' className="text-[17px] font-bold tracking-tight text-gray-900">TẤT CẢ NHÓM SẢN PHẨM</Link>
 
@@ -378,7 +377,7 @@ export default function FilterProduct({ _sort, _limit, _query }) {
 
       {/* mobile */}
 
-      <main className=" flex md:hidden   flex-col w-full">
+      <main className=" flex lg:hidden   flex-col w-full">
         <div className="flex w-full justify-between  border-b border-gray-200  ">
 
           <div className="flex items-center pl-3">
@@ -393,7 +392,7 @@ export default function FilterProduct({ _sort, _limit, _query }) {
                 </Menu.Button>
                 <span>
                   {sortOptions_dict[sortOption]}
-                  {sortOptions_dict[sortOption]}
+                  {/* {sortOptions_dict[sortOption]} */}
                 </span>
               </div>
 
@@ -441,13 +440,14 @@ export default function FilterProduct({ _sort, _limit, _query }) {
                 <form className={` ${isMenuOpen ? "" : "hidden"}  lg:block `}>
                   {/* name */}
                   {/* TRUYỀN Ở ĐÂY */}
-
-                  <ul className={``}>
-                    {all_categories.map((menu, index) => {
-                      const depthLevel = 0;
-                      return <MenuItems items={menu} key={index} depthLevel={depthLevel} />;
-                    })}
-                  </ul>
+                  {isLoading && <p>Loading...</p>}
+                  {!isLoading &&
+                    <ul className={``}>
+                      {cate.map((menu, index) => {
+                        const depthLevel = 0;
+                        return <MenuItems items={menu} key={index} depthLevel={depthLevel} />;
+                      })}
+                    </ul>}
 
                   {filterOptions.map((section) => (
                     <Disclosure as="div" key={section.id} className="sm:z-10 border-b border-gray-200 py-6">

@@ -4,15 +4,15 @@ import { HiChevronDown, HiOutlineHome } from "react-icons/hi2";
 import { FaUser } from "react-icons/fa";
 import { LuClipboardList } from "react-icons/lu";
 import { BiSolidBookHeart } from "react-icons/bi";
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams , useNavigate} from 'react-router-dom';
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
 export default function SideBarNav({ setSelectedPage, setSelectedPageId }) {
+    const navigate = useNavigate()
     const [currentPage, setCurrentPage] = useState("general-infomation")
-
     const { tab } = useParams();
 
     const TAB = {
@@ -30,15 +30,19 @@ export default function SideBarNav({ setSelectedPage, setSelectedPageId }) {
     ];
 
     const handleClick = (e) => {
+        console.log('click')
         setCurrentPage(e.target.value)
         setSelectedPage(TAB[e.target.value])
         setSelectedPageId(e.target.value)
+        navigate(`../account/${e.target.value}`)
     }
 
     useEffect(() => {
+        
         if (!tab) {
             return
         } else {
+            console.log(tab)
             setSelectedPageId(tab)
             setSelectedPage(TAB[tab])
             setCurrentPage(tab)
@@ -52,11 +56,11 @@ export default function SideBarNav({ setSelectedPage, setSelectedPageId }) {
             <ul className="hidden h-fit w-full sm:block grid-rows-4 text-sm md:text-base font-semibold font-inter gap-10 px-3 md:px-5 py-3">
                 {menuData.map((menu) =>
                     <li key={menu.id} className="text-left py-5">
-                        <Link to={`../account/${menu.id}`} value={menu.id} className={` text-gray-600 hover:cursor-pointer hover:text-red-400 flex flex-row items-center ${currentPage === menu.id ? 'text-red-400' : ''}`}
+                        <button  value={menu.id} className={` text-gray-600 hover:cursor-pointer hover:text-red-400 flex flex-row items-center ${currentPage === menu.id ? 'text-red-400' : ''}`}
                             onClick={handleClick} >
                             {menu.icon}
                             {menu.title}
-                        </Link>
+                        </button>
                     </li>)}
 
             </ul>

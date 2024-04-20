@@ -36,9 +36,9 @@ export const Footer = () => {
 
   return (
     <div>
-      <div id='footer' className=" w-full grid grid-cols-2 lg:grid-cols-4 place-content-start sm:jusitfy-items-center 
+      <div id='footer' className=" w-full hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 place-content-start sm:jusitfy-items-center 
      bg-[red] text-white  text-left font-inter pb-4 ">
-        <div className='hidden sm:block'>
+        <div className=''>
           <address className=" lg:mx-auto pt-4 flex flex-col">
 
             <h2 className='ml-3 text-sm md:text-base  font-bold '>[NAME+LOGO], Inc.</h2>
@@ -82,15 +82,13 @@ export const Footer = () => {
             <Link to="/" className="hover:opacity-90"> Thay đổi địa chỉ</Link>
             <Link to="/" className="hover:opacity-90"> Trang cá nhân</Link>
             <Link to="/" className="hover:opacity-90"> Lịch sử mua hàng</Link>
-
           </nav>
         </div>
-
-
       </div>
 
-      <nav className="mobile h-[50px] fixed rounded-t-[20px]   bottom-0 left-0 z-[2] w-full  bg-white  shadow-2xl   sm:hidden">
-        {/* mobile */}
+       {/* mobile */}
+      <nav className="mobile h-[50px] fixed rounded-t-[20px] pb-4  bottom-0 left-0 z-[2] w-full  bg-white  shadow-2xl   sm:hidden">
+
         <ul className="grid grid-cols-4 relative ">
           {mobileNavOption.map((menu) => (
             <li key={menu.name} >
@@ -134,7 +132,7 @@ export const Footer = () => {
                 :
                 <div onClick={() => setActive(menu.name)}
                   className={`flex flex-col text-center pt-3 items-center duration-500  px-auto py-2 ${user.id.length <= 0 ? 'block' : 'hidden'}`} >
-                  <span onClick={()=>setOpen(true)}
+                  <span onClick={() => setOpen(true)}
                     className={`items-center  text-gray-700 duration-500  ${menu.name === active ? "-mt-4 bg-gradient-to-r from-pink-500 to-red-500 d px-2 py-2 rounded-full text-white" : "text-gray-400"
                       }`}
                   >

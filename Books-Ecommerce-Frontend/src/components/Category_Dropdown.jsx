@@ -43,9 +43,7 @@ export default function Category_dropdown() {
             loadCategoriesData()
         }, 1000)
 
-    }, [setCate]);
-
-
+    }, []);
 
     // useEffect(() => {
     //     const url = '../data/test/allCategories.json';
@@ -64,7 +62,6 @@ export default function Category_dropdown() {
     //         loadCategoriesData()
     //     }, 1000)
     // }, [])
-
 
 
     const handleOnClick = ((value) => {
@@ -122,20 +119,18 @@ export default function Category_dropdown() {
                                     </div>
                                     {/* Thể loại */}
 
-                                    <ul className='grid grid-cols-4  font-bold font-inter'  >
-                                        {main_cates.submenu.map((main_cate) => (
+                                    <ul className='grid grid-cols-4  font-bold font-inter '  >
+                                        {main_cates.submenu.filter((single_submenu, idx) => idx < 8).map((main_cate) => (
                                             <li
                                                 key={main_cate.id}
-                                                className="flex flex-col p-3 uppercase "
+                                                className="flex flex-col p-3 uppercase hover:cursor-pointer hover:text-red-500 "
                                             >
                                                 <div value={`${main_cates.id},${main_cate.id}`} onClick={() => handleOnClick(`${main_cates.id},${main_cate.id}`)}>
                                                     <h3 className="text-sm font-semibold font-inter truncate">{main_cate.name}</h3>
                                                 </div>
-
-
                                                 {/* Submenu */}
-                                                <ul className="mt-1 flex flex-col  text-xs font-normal leading-4 text-gray-500">
-                                                    {main_cate.submenu.map((single_submenu) => (
+                                                <ul className="mt-1 flex flex-col   text-xs font-normal leading-4 text-gray-500">
+                                                    {main_cate.submenu.filter((single_submenu, idx) => idx < 5).map((single_submenu, idx) => (
                                                         <li
                                                             key={single_submenu.id}
                                                             className="relative py-2 hover:text-red-400 text-sm normal-case truncate hover:cursor-pointer  "
@@ -147,12 +142,15 @@ export default function Category_dropdown() {
                                                                 )}
                                                             />
                                                         </li>
+
                                                     ))}
+                                                    <button className={`${main_cate.submenu.length >= 5 ? "" : "hidden"} text-[15px] font-normal leading-4 text-left text-blue-400`} onClick={() => handleOnClick(`${main_cates.id},${main_cate.id}`)}> Xem tất cả</button>
                                                 </ul>
 
-
                                             </li>
+
                                         ))}
+
                                     </ul>
                                 </Tab.Panel>
                             ))}
@@ -201,7 +199,7 @@ export default function Category_dropdown() {
                                     {/* Thể loại */}
 
                                     <ul className='flex flex-col  font-bold font-inter'  >
-                                        {main_cates.submenu.map((main_cate) => (
+                                        {main_cates.submenu.filter((single_submenu, idx) => idx < 5).map((main_cate) => (
                                             <Disclosure as="div" key={main_cate.id} >
                                                 {({ open }) => (
                                                     <>
@@ -214,7 +212,7 @@ export default function Category_dropdown() {
                                                         </Disclosure.Button>
 
                                                         <Disclosure.Panel className="px-4 pb-2 text-xs md:text-sm text-black font-normal">
-                                                            {main_cate.submenu.map((single_submenu) => (
+                                                            {main_cate.submenu.filter((single_submenu, idx) => idx < 5).map((single_submenu) => (
                                                                 <li
                                                                     key={single_submenu.id}
                                                                     className={`relative py-2 hover:text-red-400 text-xs sm:text-base normal-case truncate `}
@@ -225,8 +223,12 @@ export default function Category_dropdown() {
 
                                                                         )}
                                                                     />
+
                                                                 </li>
-                                                            ))}
+
+                                                            ))
+                                                            }
+                                                            <button className={`${main_cate.submenu.length >= 5 ? "" : "hidden"} text-[15px] font-normal leading-4 text-left text-blue-400`} onClick={() => handleOnClick(`${main_cates.id},${main_cate.id}`)}> Xem tất cả</button>
                                                         </Disclosure.Panel>
 
                                                     </>

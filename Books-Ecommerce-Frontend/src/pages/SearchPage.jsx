@@ -15,8 +15,7 @@ export const SearchPage = () => {
     const page = searchParams.get('page')
     const limit = searchParams.get('limit')
     const sortBy = searchParams.get('sort')
-    console.log("sort", sortBy)
-    const curUrl = window.location.href
+
 
     return (
         <div>

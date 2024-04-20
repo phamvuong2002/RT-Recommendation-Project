@@ -9,7 +9,7 @@ const DefaultLayout = ({ children }) => {
         <div>
             <Header />
             <Navbar />
-            <div className=" mb-10">
+            <div className="">
                 <div className="bg-[#efefef] flex flex-col gap-[0.1rem]">
                     {/* Pages */}
                     {children}

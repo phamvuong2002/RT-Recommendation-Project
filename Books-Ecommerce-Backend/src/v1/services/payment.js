@@ -41,6 +41,7 @@ class PaymentService {
           reject(error);
         } else {
           resolve({
+            method: "paypal",
             paymentUrl: payment.links[1].href,
           });
         }
@@ -70,7 +71,7 @@ class PaymentService {
     // res.redirect(urlString);
 
     // Or return payment url to front-end client if you use a back-end server
-    return { paymentUrl: urlString };
+    return { method: "vnpay", paymentUrl: urlString };
   };
 }
 

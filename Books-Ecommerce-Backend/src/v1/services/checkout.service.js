@@ -168,7 +168,7 @@ class CheckoutService {
         description: `Khach hang ${userId} thanh toan hoa don ${order.dataValues.order_id} bang hinh thuc ${payment.method}`,
       });
     } else if (payment.method === "cod") {
-      paymentResult = payment.method;
+      paymentResult = { method: payment.method };
     } else {
       throw new NotFoundError("Payment method not found");
     }

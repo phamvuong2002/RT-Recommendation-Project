@@ -1,5 +1,6 @@
 "use strict";
 
+const { DISCOUNT_APPLY_TO } = require("../const/discount");
 const { BadRequestError, NotFoundError } = require("../core/error.response");
 const db = require("../models/sequelize/models");
 const { calTotalPriceCart } = require("../utils/calculateTotalPrice");
@@ -15,6 +16,20 @@ const { acquireLock, releaselock } = require("./redis.service");
 */
 
 class CheckoutService {
+  /*
+    "book": {
+      "bookId": 2,
+      "quantity": 1,
+      "price": 129600
+    },
+    "discount": {
+      "discountId": 2,
+      "discountCode": ""
+    },
+    "payment": {
+      "method": "cod"
+    },
+  */
   static async placeOrder({
     book = {},
     userId,
@@ -92,7 +107,7 @@ class CheckoutService {
         ? [reviewOrder?.data_amount?.discountId]
         : [],
       order_payment: payment.method,
-      order_num_books: reviewOrder.cart_count_products || 0,
+      order_num_books: reviewOrder.data_review.cart_count_products || 1,
       order_old_total: reviewOrder.data_review.oldTotal,
       order_spe_total: reviewOrder.data_review.reviewTotal,
       order_fee_service: reviewOrder.data_review.feeService,
@@ -116,7 +131,28 @@ class CheckoutService {
       await releaselock(acquireBooks[i].key);
     }
 
-    let paymentResult = payment.method;
+    //apply discount
+    if (Object.keys(discount).length > 0) {
+      const applyDiscount = await DiscountService.applyDiscount({
+        userId,
+        discountId: reviewOrder?.data_amount?.discountId,
+        product: {
+          productId: reviewOrder?.book?.bookId,
+          quantity: reviewOrder?.book?.bookQuantity,
+          price: reviewOrder?.book?.bookPrice,
+        },
+        order: {
+          orderId: order.dataValues.order_id,
+          price: order.dataValues.order_spe_total,
+          feeShip: order.dataValues.order_fee_shiping,
+          feeService: order.dataValues.order_fee_service,
+        },
+      });
+      if (!applyDiscount) throw new BadRequestError("Discount was not applied");
+    }
+
+    //create payment method
+    let paymentResult = null;
     if (payment.method === "vnpay") {
       paymentResult = await PaymentService.vnpay({
         orderId: order.dataValues.order_id,
@@ -124,7 +160,19 @@ class CheckoutService {
         totalPrice: order.dataValues.order_spe_total,
         description: `Khach hang ${userId} thanh toan hoa don ${order.dataValues.order_id} bang hinh thuc ${payment.method}`,
       });
+    } else if (payment.method === "paypal") {
+      paymentResult = await PaymentService.paypal({
+        urlReturn: `${process.env.FRONTEND_BASE_URL}/order-detail/${order.dataValues.order_id}&statusCode=00&price=${order.dataValues.order_spe_total}`,
+        urlCancel: `${process.env.FRONTEND_BASE_URL}/order-detail/${order.dataValues.order_id}&statusCode=404&price=${order.dataValues.order_spe_total}`,
+        totalPrice: order.dataValues.order_spe_total,
+        description: `Khach hang ${userId} thanh toan hoa don ${order.dataValues.order_id} bang hinh thuc ${payment.method}`,
+      });
+    } else if (payment.method === "cod") {
+      paymentResult = payment.method;
+    } else {
+      throw new NotFoundError("Payment method not found");
     }
+    if (!paymentResult) throw new BadRequestError("Can not pay for this order");
 
     return {
       order_data: order,
@@ -186,9 +234,7 @@ class CheckoutService {
         feeShip,
         feeService,
         reviewTotal: amount?.discountedPrice
-          ? amount?.discountedPrice +
-            orderReview.feeShip +
-            orderReview.feeService
+          ? amount?.discountedPrice
           : orderReview.price + orderReview.feeShip + orderReview.feeService,
       },
     };
@@ -266,9 +312,11 @@ class CheckoutService {
         feeShip,
         feeService,
         reviewTotal: amount?.discountedPrice
-          ? amount?.discountedPrice +
-            orderReview.feeShip +
-            orderReview.feeService
+          ? amount.discountApplyTo === DISCOUNT_APPLY_TO.ALL
+            ? amount?.discountedPrice
+            : amount?.discountedPrice +
+              orderReview.feeShip +
+              orderReview.feeService
           : orderReview.price + orderReview.feeShip + orderReview.feeService,
       },
     };

@@ -17,6 +17,7 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
-    "no-unused-vars": "off", // Tắt cảnh báo về biến không được sử dụng
+    'react/prop-types': 'off',
+    'no-unused-vars': 'off', // Tắt cảnh báo về biến không được sử dụng
   },
 };

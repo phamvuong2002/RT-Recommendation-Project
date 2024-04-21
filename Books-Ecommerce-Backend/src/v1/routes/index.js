@@ -7,6 +7,8 @@ const router = express.Router();
 
 // category
 router.use('/v1/api/category', require('./category'));
+router.use('/v1/api/otp', require('./otp'));
+router.use('/v1/api/emailVerification', require('./emailVerification'));
 
 // check apiKey
 //router.use(apiKey);

@@ -28,7 +28,7 @@ class PaymentService {
         {
           amount: {
             currency: "USD",
-            total: totalPrice / EXCHANGE_CURRENCY,
+            total: (totalPrice / EXCHANGE_CURRENCY).toFixed(2),
           },
           description,
         },
@@ -40,7 +40,9 @@ class PaymentService {
         if (error) {
           reject(error);
         } else {
-          resolve(payment);
+          resolve({
+            paymentUrl: payment.links[1].href,
+          });
         }
       });
     });
@@ -57,7 +59,7 @@ class PaymentService {
     });
 
     const urlString = vnpay.buildPaymentUrl({
-      vnp_Amount: totalPrice,
+      vnp_Amount: totalPrice.toFixed(2),
       vnp_IpAddr: "1.1.1.1",
       vnp_TxnRef: orderId,
       vnp_OrderInfo: description,

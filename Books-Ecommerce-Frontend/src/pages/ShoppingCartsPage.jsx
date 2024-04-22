@@ -10,7 +10,12 @@ import { AppContext } from '../contexts/main';
 
 export const ShoppingCartsPage = () => {
   const [products, setProducts] = useState([]);
-  const { userId } = useContext(AppContext);
+  const { userId, setActivePage } = useContext(AppContext);
+
+  //set active page
+  useEffect(() => {
+    setActivePage('ShoppingCart');
+  }, []);
 
   const paths = [
     { path: '/', label: 'Trang Chủ' },

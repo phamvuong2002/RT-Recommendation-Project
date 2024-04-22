@@ -2,19 +2,19 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable('favorite_book', {
-            favbook_userid: {
+        await queryInterface.createTable('favorite_book_detail', {
+            fb_fav_id: {
                 type: Sequelize.BIGINT.UNSIGNED,
-                comment: 'id user',
+                comment: 'id favorite_book_detail',
                 references: {
-                    model: 'user',
-                    key: 'user_id'
+                    model: 'favorite_book',
+                    key: 'fav_id'
                 },
                 onDelete: 'CASCADE',
                 onUpdate: 'CASCADE',
                 primaryKey: true,
             },
-            favbook_bookid: {
+            fb_book_id: {
                 type: Sequelize.BIGINT.UNSIGNED,
                 comment: 'id book',
                 references: {
@@ -39,12 +39,12 @@ module.exports = {
                 comment: 'update_time'
             }
         });
-        await queryInterface.addIndex('favorite_book', ['favbook_userid', 'favbook_bookid'], {
+        await queryInterface.addIndex('favorite_book_detail', ['fb_fav_id', 'fb_book_id'], {
             unique: true,
-            name: 'uk_favorite_book_id'
+            name: 'uk_favorite_book_detail_id'
         });
     },
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable('favorite_book');
+        await queryInterface.dropTable('favorite_book_detail');
     }
 };

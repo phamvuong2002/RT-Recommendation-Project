@@ -8,6 +8,7 @@ export const AppProvider = ({ children }) => {
   const [refreshToken, setRefreshToken] = useState('');
   const [session, setSession] = useState('');
   const [isloading, setIsLoading] = useState(false);
+  const [activePage, setActivePage] = useState('');
 
   return (
     <AppContext.Provider
@@ -15,9 +16,11 @@ export const AppProvider = ({ children }) => {
         userId,
         session,
         isloading,
+        activePage,
         setUserId,
         setSession,
         setIsLoading,
+        setActivePage,
       }}
     >
       {children}

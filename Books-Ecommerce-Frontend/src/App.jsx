@@ -8,6 +8,7 @@ import { AppContext } from './contexts/main';
 
 function App() {
   const { userId, setUserId, session, setSession } = useContext(AppContext);
+
   useEffect(() => {
     const fetchUserAuth = async () => {
       try {

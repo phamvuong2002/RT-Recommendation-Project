@@ -48,7 +48,7 @@ export const Footer = () => {
   const [reloadLoginSignup, setReloadLoginSignup] = useState(false);
   const [open, setOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { activePage, setActivePage } = useContext(AppContext);
+  const { activePage, setActivePage, numCart } = useContext(AppContext);
 
   return (
     <div>
@@ -173,7 +173,7 @@ export const Footer = () => {
                     className={`cart-quantity text-center text-sm min-w-[20px] h-[20px] rounded-[50%] mr-[-30px] mt-[-38px] bg-red-100 text-red-500 font-semibold ${menu.name === activePage ? 'mt-[-44px]' : ''}`}
                   >
                     {' '}
-                    {user.shoppingCart >= 100 ? '99+' : user.shoppingCart}{' '}
+                    {numCart >= 100 ? '99+' : numCart}{' '}
                   </span>
                 ) : (
                   ''

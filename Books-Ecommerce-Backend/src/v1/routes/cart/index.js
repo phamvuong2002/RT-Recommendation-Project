@@ -6,10 +6,13 @@ const cartController = require("../../controllers/cart.controller");
 const { asyncHandler } = require("../../auth/checkAuth");
 const { authentication } = require("../../auth/authUtils");
 
-
+router.post("/getnumcart", asyncHandler(cartController.getNumCart));
 router.post("/addtocart", asyncHandler(cartController.addToCart));
 router.post("/getcarts", asyncHandler(cartController.getListCarts));
-router.post("/deletecartsbypub", asyncHandler(cartController.deleteCartsByPublisherId));
+router.post(
+  "/deletecartsbypub",
+  asyncHandler(cartController.deleteCartsByPublisherId)
+);
 
 ///authentication////
 router.use(authentication);

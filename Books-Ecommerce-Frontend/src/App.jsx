@@ -5,37 +5,42 @@ import { NotFound } from './pages/NotFound';
 import ScrollToTop from './helpers/ScrollToTop';
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from './contexts/main';
+import { fetchAPI } from './helpers/fetch';
+import { getnumcart } from './apis/cart';
+import { getsession } from './apis/access';
 
 function App() {
-  const { userId, setUserId, session, setSession } = useContext(AppContext);
+  const { userId, setUserId, session, setSession, setNumCart } =
+    useContext(AppContext);
 
+  // Update Local Variables
+  //Session
   useEffect(() => {
     const fetchUserAuth = async () => {
-      try {
-        const url = '/api/v1/api/access/get-session';
-        const res = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-          // body: JSON.stringify(data),
-        });
-        if (!res.ok) return;
-
-        const data = await res.json();
-        console.log(data);
-        if (data.status === 200) {
-          setSession(data.metadata.sessionid);
-          setUserId(1);
-        }
-      } catch (error) {
-        console.log('There was an error fetch auth', error.message);
-        return;
+      const data = await fetchAPI(getsession, 'POST');
+      if (data.status === 200) {
+        setSession(data.metadata.sessionid);
+        setUserId(1);
       }
     };
     fetchUserAuth();
   }, []);
+
+  //Num Cart
+  useEffect(() => {
+    const getNumCart = async () => {
+      if (!userId) return;
+      const data = await fetchAPI(getnumcart, 'POST', {
+        userId,
+      });
+      if (data.status === 'error') {
+        setNumCart(0);
+      } else {
+        setNumCart(data.metadata.numCart);
+      }
+    };
+    getNumCart();
+  }, [userId]);
 
   return (
     <>

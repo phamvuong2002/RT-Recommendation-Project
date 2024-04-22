@@ -4,27 +4,33 @@ const { SuccessResponse } = require("../core/success.response");
 const CartService = require("../services/cart.service");
 
 class CartController {
-  
-  addToCart = async (req, res, next) =>{
+  getNumCart = async (req, res, next) => {
+    const data = await CartService.getNumCart(req.body);
+    new SuccessResponse({
+      metadata: data,
+    }).send(res);
+  };
+
+  addToCart = async (req, res, next) => {
     const data = await CartService.addToCart(req.body);
     new SuccessResponse({
-        metadata: data,
-      }).send(res);
-  }
+      metadata: data,
+    }).send(res);
+  };
 
-  deleteCartsByPublisherId = async (req, res, next) =>{
+  deleteCartsByPublisherId = async (req, res, next) => {
     const data = await CartService.deleteCartsByPublisherId(req.body);
     new SuccessResponse({
-        metadata: data,
-      }).send(res);
-  }
+      metadata: data,
+    }).send(res);
+  };
 
-  getListCarts = async (req, res, next) =>{
+  getListCarts = async (req, res, next) => {
     const data = await CartService.getListCarts(req.body);
     new SuccessResponse({
-        metadata: data,
-      }).send(res);
-  }
+      metadata: data,
+    }).send(res);
+  };
 }
 
 module.exports = new CartController();

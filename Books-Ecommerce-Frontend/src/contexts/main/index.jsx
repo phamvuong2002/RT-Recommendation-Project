@@ -9,16 +9,19 @@ export const AppProvider = ({ children }) => {
   const [session, setSession] = useState('');
   const [isloading, setIsLoading] = useState(false);
   const [activePage, setActivePage] = useState('');
+  const [numCart, setNumCart] = useState(0);
 
   return (
     <AppContext.Provider
       value={{
         userId,
         session,
+        numCart,
         isloading,
         activePage,
         setUserId,
         setSession,
+        setNumCart,
         setIsLoading,
         setActivePage,
       }}

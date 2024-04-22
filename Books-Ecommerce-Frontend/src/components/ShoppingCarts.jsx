@@ -16,7 +16,7 @@ export const ShoppingCarts = (/*items*/) => {
   const navigate = useNavigate();
   const [pageLoading, setPageLoading] = useState(true);
 
-  const { userId, session, setIsLoading } = useContext(AppContext);
+  const { userId, session, setIsLoading, setNumCart } = useContext(AppContext);
 
   const [products, setProducts] = useState([]);
   const [shippingFee, setShippingFee] = useState(0);
@@ -38,8 +38,10 @@ export const ShoppingCarts = (/*items*/) => {
         old_quantity: 1,
       },
     });
+    if (update.status !== 200) return;
     const updatedProducts = update.metadata.cart_data;
     setProducts(updatedProducts);
+    setNumCart(update.metadata.cart_count_products);
     setIsLoading(false);
   };
 
@@ -63,8 +65,11 @@ export const ShoppingCarts = (/*items*/) => {
       userId,
       publisherId: publisherID,
     });
+    if (update.status !== 200) return;
     const updatedProducts = update.metadata.cart_data;
     setProducts(updatedProducts);
+    setNumCart(update.metadata.cart_count_products);
+
     setIsLoading(false);
   };
 
@@ -83,6 +88,7 @@ export const ShoppingCarts = (/*items*/) => {
         old_quantity: currentQuantity,
       },
     });
+    if (update.status !== 200) return;
     if (newQuantity === 0) {
       await handleDeleteProduct(productId);
     }
@@ -120,7 +126,13 @@ export const ShoppingCarts = (/*items*/) => {
       const shoppingCartsData = await fetchAPI(`../${getcarts}`, 'POST', {
         userId: userId,
       });
-      setProducts(shoppingCartsData.metadata.cart_data);
+      if (shoppingCartsData.status === 200) {
+        setProducts(shoppingCartsData.metadata.cart_data);
+        setNumCart(shoppingCartsData.metadata.cart_count_products);
+      } else {
+        setProducts([]);
+        setNumCart(0);
+      }
       setPageLoading(false);
     };
     //ví dụ tải các sản phẩm trong giỏ hàng của khách
@@ -128,9 +140,9 @@ export const ShoppingCarts = (/*items*/) => {
   }, [userId]);
 
   //test cart data
-  useEffect(() => {
-    console.log('SHOPPINGCARRTTTTTTTT::', products);
-  }, [products]);
+  // useEffect(() => {
+  //   console.log('SHOPPINGCARRTTTTTTTT::', products);
+  // }, [products]);
 
   //Tính  phí ship
   useEffect(() => {

@@ -53,7 +53,7 @@ const ShoppingCartsGroupedByPublisherID = ({
               <img
                 className="w-8 h-8 rounded-lg bg-white border"
                 src={products[0].publisherImgUrl}
-                alt={products[0].publisher}
+                alt={products[0].book_detail.book_pulisherName}
               />
               <button className="font-inter font-semibold text-sm text-red-500 xl:hover:text-red-800">
                 {products[0].book_detail.book_pulisherName || 'Nobrand'}

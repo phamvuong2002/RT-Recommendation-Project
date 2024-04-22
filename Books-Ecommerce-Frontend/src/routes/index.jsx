@@ -14,7 +14,7 @@ const publicRoutes = [
     { path: '/shoppingcarts', component: ShoppingCartsPage },
     { path: '/account', component: AccountPage },
     { path: '/account/:tab', component: AccountPage },
-    { path: '/search/:category?/:subcategory?/:subsubcategory?/:subsubsubcategory?', component: SearchPage },
+    { path: '/search', component: SearchPage },
     { path: '/order-detail/:order?', component: OrderDetailPage },
 ];
 

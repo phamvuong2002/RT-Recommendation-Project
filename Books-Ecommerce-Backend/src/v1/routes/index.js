@@ -17,7 +17,6 @@ router.use('/v1/api/emailVerification', require('./emailVerification'));
 router.use('/v1/api/book', require('./book'));
 router.use('/v1/api/user', require('./user'));
 
-router.use('/v1/api/book', require('./book'));
 router.use('/v1/api/cart', require('./cart'));
 router.use('/v1/api/discount', require('./discount'));
 router.use('/v1/api/checkout', require('./checkout'));

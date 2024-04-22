@@ -1,11 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Slider } from '../components/Slider';
-import { FlashSale } from '../components/FlashSale';
-import { Category } from '../components/Category';
-import { SliderProducts } from '../components/SliderProducts';
-import { AllProducts } from '../components/AllProducts';
-import { InfoForGuest } from '../components/infoForGuest';
-import { fetchData } from '../helpers/fetch';
+import React, { useEffect, useState, useContext } from 'react'
+import { Slider } from '../components/Slider'
+import { FlashSale } from '../components/FlashSale'
+import { Category } from '../components/Category'
+import { SliderProducts } from '../components/SliderProducts'
+import { AllProducts } from '../components/AllProducts'
+import { InfoForGuest } from '../components/infoForGuest'
+import { fetchAPI } from '../helpers/fetch';
+import { getAllBook } from '../apis/book';
 import { AppContext } from '../contexts/main';
 
 const sampleUserInfo = {
@@ -25,29 +26,16 @@ export const Home = () => {
     setActivePage('Home');
   }, []);
 
+
   useEffect(() => {
     const loadProductData = async () => {
-      const url = 'http://localhost:3050/v1/api/book/all';
-      try {
-        const res = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        if (!res.ok) return;
-        const productData = await res.json();
-        // console.log('productData', productData.metadata)
-        setProducts(productData.metadata);
-      } catch (error) {
-        console.log('There was an error to fetch', error.message);
-        return;
-      }
-    };
+      const productData = await fetchAPI(`../${getAllBook}`, 'POST')
+      setProducts(productData.metadata)
+    }
     setTimeout(() => {
-      loadProductData();
-    }, 1000);
-  }, []);
+      loadProductData()
+    }, 1000)
+  }, [])
 
   return (
     <div>
@@ -58,15 +46,13 @@ export const Home = () => {
 
         {/*Sản phẩm bán chạy*/}
         <div className="h-full">
+
           <AllProducts
-            //pages={pages}
-            //totalPages={totalPages}
-            //currentPage={currentPage}
-            //setCurrentPage={setCurrentPage}
             limitProduct={48}
             isShowHeader={true}
             numOfProductsInRow={5}
-          ></AllProducts>
+          >
+          </AllProducts>
         </div>
 
         {/* Top 5 thể loại ưa chuộng */}

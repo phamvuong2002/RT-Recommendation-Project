@@ -8,7 +8,8 @@ const { authentication } = require("../../auth/authUtils");
 
 
 router.post("/all", asyncHandler(bookController.getAllBook));
-router.post("/search", asyncHandler(bookController.searchBooks));
+router.post("/item", asyncHandler(bookController.getBookBySearchFilterSort));
+router.post("/:id", asyncHandler(bookController.getBookById));
 
 
 ///authentication////

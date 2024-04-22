@@ -1,10 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom'
-import { fetchData } from '../helpers/fetch';
+import { getBookById } from '../apis/book';
+
 
 export const Product = ({ productData }) => {
-
 
     //Hàm xử lý khi thêm sản phẩm vào giỏ hàng
     // const handleAddProductsToShoppingCart = async (productId) => {
@@ -18,11 +18,11 @@ export const Product = ({ productData }) => {
     //         return 'failed';
     //     }
     // };
-    //min-w-[40%] overflow-hidden md:w-52 bg-white flex flex-col items-center border border-y-red-50 md:hover:shadow-2xl md:rounded-md md:shadow-md px-3 py-2
+
 
     return (
         <div className="block border rounded-md p-2 sm:p-0 bg-white min-h-full md:hover:shadow-2xl md:rounded-md md:shadow-md overflow-hidden">
-            <Link scroll={false} className="h-full block">
+            <Link to={`../books/${productData.book_id}`} className="h-full block">
                 {/* to={productData.href} */}
                 <div className=''>
                     {/**Product Image */}
@@ -74,9 +74,7 @@ Product.propTypes = {
     productData: PropTypes.shape({
         book_img: PropTypes.string.isRequired,
         book_title: PropTypes.string.isRequired,
-        href: PropTypes.string.isRequired,
-        book_old_price: PropTypes.number.isRequired,
-        book_spe_price: PropTypes.number.isRequired,
-        currency: PropTypes.string.isRequired,
+        book_old_price: PropTypes.string.isRequired,
+        book_spe_price: PropTypes.string.isRequired,
     }).isRequired,
 };

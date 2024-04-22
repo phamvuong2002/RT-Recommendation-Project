@@ -4,7 +4,9 @@ import { Product } from "./Product";
 import { PaginationButtons } from "./PaginationButtons";
 import PropTypes from 'prop-types';
 import queryString from 'query-string';
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { fetchAPI } from '../helpers/fetch';
+import { getSearchFilterSort } from '../apis/book';
 
 
 
@@ -36,10 +38,6 @@ export const AllProducts = ({ isShowHeader, limitProduct, numOfProductsInRow, _s
     })
 
     const handlePageChange = (newPage) => {
-        // Kiểm tra xem query có thay đổi hay không
-        // if (_query === prevQueryRef.current && _sort === prevSortRef.current) {
-
-        // }
         setFilters({
             ...filters,
             page: newPage
@@ -88,25 +86,11 @@ export const AllProducts = ({ isShowHeader, limitProduct, numOfProductsInRow, _s
         const loadProductData = async () => {
             const paramsString = queryString.stringify(filters);//limit=1&page=1&search=ho
             // console.log('filters', filters)
-            const requestUrl = `http://localhost:3050/v1/api/book/search?${paramsString}`;
-            console.log('requestUrl', requestUrl)
+            const res = await fetchAPI(`../${getSearchFilterSort}?${paramsString}`, 'POST')
+            console.log("productData", res.metadata)
+            setProducts(res.metadata.productData);
+            setPagination(res.metadata.pagination);
 
-            try {
-                const response = await fetch(requestUrl, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                });
-                if (!response.ok) return
-                const responseJSON = await response.json();
-                const { productData, pagination } = responseJSON;
-
-                setProducts(productData);
-                setPagination(pagination);
-            } catch (error) {
-                console.log('Fail to fetch productData', error.message)
-            }
         }
         //
         setTimeout(() => {

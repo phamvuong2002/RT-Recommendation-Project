@@ -5,10 +5,25 @@ const { BadRequestError } = require('../core/error.response');
 
 class BookService {
     static getAllBook = async () => {
-        return await db.book.findAll();
+        return await db.book.findAll({
+            where: {
+                book_status: 1
+            }
+        });
     }
 
-    static getBookFilter = async (search, categories, sortBy, page, limit) => {
+    static getBookById = async (bookId) => {
+        let bookData = await db.book.findOne({
+            where: {
+                book_id: bookId
+            }
+        });
+        return bookData
+    }
+
+
+
+    static getBookSearchFilterSort = async (search, categories, sortBy, page, limit) => {
         let whereClause = {};
         if (search) {
             whereClause.book_title = { [Op.like]: `%${search}%` };

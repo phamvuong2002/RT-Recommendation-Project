@@ -122,7 +122,7 @@ export const ShoppingCarts = (/*items*/) => {
   useEffect(() => {
     setPageLoading(true);
     const loadShoppingCartsData = async () => {
-      if (!userId) return;
+      if (!userId || userId === '') return;
       const shoppingCartsData = await fetchAPI(`../${getcarts}`, 'POST', {
         userId: userId,
       });

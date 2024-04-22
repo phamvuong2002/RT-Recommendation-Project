@@ -5,8 +5,7 @@ import PropTypes from 'prop-types';
 export const ProductForSlider = ({ productData }) => {
     return (
         <div className="block p-2 sm:p-0 bg-white min-h-full md:hover:shadow-2xl md:rounded-md md:shadow-md overflow-hidden">
-            <Link scroll={false} className="h-full block">
-                {/* to={productData.href} */}
+            <Link to={`../books/${productData.book_id}`} className="h-full block">
                 <div className=''>
                     {/**Product Image */}
                     <div className="relative group object-cover flex justify-center items-center ">
@@ -57,9 +56,7 @@ ProductForSlider.propTypes = {
     productData: PropTypes.shape({
         book_img: PropTypes.string.isRequired,
         book_title: PropTypes.string.isRequired,
-        href: PropTypes.string.isRequired,
-        book_old_price: PropTypes.number.isRequired,
-        book_spe_price: PropTypes.number.isRequired,
-        currency: PropTypes.string.isRequired,
+        book_old_price: PropTypes.string.isRequired,
+        book_spe_price: PropTypes.string.isRequired,
     }).isRequired,
 };

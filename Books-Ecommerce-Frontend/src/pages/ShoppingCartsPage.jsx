@@ -22,12 +22,6 @@ export const ShoppingCartsPage = () => {
     { path: `/${'shoppingcarts'}`, label: `${'Giỏ hàng'}` },
   ];
 
-  //This call for AllProduct
-  const url = '../data/test/product';
-  const { pages, totalPages, currentPage, setCurrentPage } = FectchPaging({
-    url,
-  });
-
   //Fetch Product Data
   useEffect(() => {
     const url = 'api/v1/api/book/all';
@@ -96,11 +90,7 @@ export const ShoppingCartsPage = () => {
             </div>
           </div>
           <div className="bg-white border-x p-1 border-b xl:border border-red-50">
-            <AllProducts
-              limitProduct={48}
-              isShowHeader={true}
-              numOfProductsInRow={5}
-            ></AllProducts>
+            <SliderProducts productData={products} />
           </div>
         </div>
       </div>

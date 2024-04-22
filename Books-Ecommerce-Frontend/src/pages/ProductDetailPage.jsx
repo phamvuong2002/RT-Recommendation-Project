@@ -4,19 +4,14 @@ import { DescriptionFeedback } from '../components/DescriptionFeedback'
 import NavigationPath from '../components/NavigationPath'
 import { SliderProducts } from '../components/SliderProducts'
 import { useParams } from 'react-router-dom';
-import { AllProducts } from '../components/AllProducts'
-import { fetchData } from '../helpers/fetch'
-import { FectchPaging } from '../helpers/fectchPaging'
+import { fetchAPI } from '../helpers/fetch';
+import { getAllBook } from '../apis/book';
 
 export const ProductDetailPage = () => {
     const { bookid } = useParams();
     const [id, setId] = useState('');
     const [paths, setPaths] = useState([]);
     const [products, setProducts] = useState([]);
-
-    //This call for AllProduct
-    const url = "../data/test/product"
-    const { pages, totalPages, currentPage, setCurrentPage } = FectchPaging({ url })
 
     //Get bookid from url
     useEffect(() => {
@@ -36,20 +31,16 @@ export const ProductDetailPage = () => {
 
     //Fetch Product Data
     useEffect(() => {
-        const url = '../data/test/product.json';
         const loadProductData = async () => {
-            try {
-                const productData = await fetchData(url);
-                setProducts(productData)
-            } catch (error) {
-                // throw error;
-            }
+            const productData = await fetchAPI(`../${getAllBook}`, 'POST')
+            console.log("url", `../${getAllBook}`)
+            setProducts(productData.metadata)
         }
-        //
         setTimeout(() => {
             loadProductData()
         }, 1000)
     }, [])
+
 
     return (
         <div className='flex flex-col'>
@@ -86,9 +77,7 @@ export const ProductDetailPage = () => {
 
                     </div>
                     <div className="bg-white border-x border-b xl:border border-red-50">
-                        <AllProducts
-                            numOfProductsInRow={6}>
-                        </AllProducts>
+                        <SliderProducts productData={products}></SliderProducts>
                     </div>
                 </div>
             </div>

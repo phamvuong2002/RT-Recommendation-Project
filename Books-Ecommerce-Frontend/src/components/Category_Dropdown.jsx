@@ -4,11 +4,13 @@ import { BiWorld } from "react-icons/bi";
 import { FaBook } from "react-icons/fa6";
 import { HiChevronUp } from "react-icons/hi2";
 import { useNavigate, useLocation } from 'react-router-dom';
-
+import { fetchAPI } from '../helpers/fetch';
 import { Link } from 'react-router-dom';
-import { fetchData } from '../helpers/fetch';
+
 import axios from "axios";
 import { mergeObject } from "../utils/mergeObject";
+
+import { gettop3cate } from "../apis/category"
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
@@ -22,27 +24,16 @@ export default function Category_dropdown() {
     const [all_categories, setCategoriess] = useState([])
 
     useEffect(() => {
-        const baseURL = "http://localhost:3050/v1/api/category/top";
+        setIsLoading(true);
         const loadCategoriesData = async () => {
-            axios.get(baseURL).then((response) => {
-                const a = response.data.metadata[0]
-                const b = response.data.metadata[1]
-                const c = mergeObject(a, b)
-                console.log(c)
-                setCate(c)
-                setIsLoading(false)
-                // setAccount(response.data.metadata)
-                // console.log(cate)
-            })
-                .catch(err => {
-                    console.log(err)
-                });
-        }
-        //
-        setTimeout(() => {
-            loadCategoriesData()
-        }, 1000)
-
+            console.log('in get all cate')
+            const categoriesData = await fetchAPI(`../${gettop3cate}`, 'POST');
+            console.log(categoriesData)
+            setCate(categoriesData.metadata.categoryData);
+            setIsLoading(false);
+        };
+        //ví dụ tải các sản phẩm trong giỏ hàng của khách
+        loadCategoriesData();
     }, []);
 
     // useEffect(() => {
@@ -161,7 +152,7 @@ export default function Category_dropdown() {
 
             {/* mobile */}
 
-            <div className=" sm:px-0 max-w-screen-xl h-svh grid grid-cols-5 lg:hidden rounded-[5px] bg-gray-100 border-2 shadow-sm  overflow-y-scroll">
+            <div className=" sm:px-0 max-w-screen-xl h-dvh grid grid-cols-5 lg:hidden rounded-[5px] bg-gray-100 border-2 shadow-sm  overflow-y-scroll">
                 {isLoading && <p>Loading...</p>}
                 {!isLoading &&
                     <Tab.Group vertical>
@@ -199,7 +190,7 @@ export default function Category_dropdown() {
                                     {/* Thể loại */}
 
                                     <ul className='flex flex-col  font-bold font-inter'  >
-                                        {main_cates.submenu.filter((single_submenu, idx) => idx < 5).map((main_cate) => (
+                                        {main_cates.submenu.map((main_cate) => (
                                             <Disclosure as="div" key={main_cate.id} >
                                                 {({ open }) => (
                                                     <>

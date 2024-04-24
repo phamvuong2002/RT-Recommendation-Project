@@ -2,14 +2,17 @@
 
 const userModel = require("../models/user.model");
 const bcrypt = require("bcrypt");
-const { BadRequestError, NotFoundError,ErrorResponse } = require('../core/error.response');
+const { BadRequestError, NotFoundError, ErrorResponse } = require('../core/error.response');
 const OTP = require("../models/opt.model")
 const generateOTP = require("../utils/generateOTP");
 const sendEmail = require("../utils/sendEmail");
 const { AUTH_EMAIL } = process.env;
 
-class OTPService {
+const fs = require('fs')
+const handlebars = require('handlebars');
+const path = require('path');
 
+class OTPService {
     static sendOTP = async ({ email, subject, message, duration = 1 }) => {
         try {
             if (!(email && subject && message)) {
@@ -22,18 +25,30 @@ class OTPService {
             //generate pin
             const generatedOTP = await generateOTP();
 
+            //get template  
+
+            let objectDate = new Date();
+            console.log(objectDate)
+            let date_ = objectDate.getDate() + '/' + (objectDate.getMonth() + 1) + '/' + objectDate.getFullYear();
+
+            const src = fs.readFileSync(path.resolve(__dirname, '../templates/email_template.html')).toString();
+            const template = handlebars.compile(src);
+            const replacement = {
+
+                otp_duration: duration,
+                date: date_,
+                otp: generatedOTP,
+
+            }
+            const htmlToSend = template(replacement)
+
             //send email
             const mailOptions = {
                 from: AUTH_EMAIL,
                 to: email,
                 subject,
-                html: `<p>${message}</p>
-                <p 
-                style="color:tomato; 
-                font-szie:25px; 
-                letter-spacing:2px;"> 
-                <b> ${generatedOTP}</b> </p> 
-                <p>This code <b>expires in ${duration} hour(s)</b>. </p>`,
+                html: htmlToSend,
+
             };
             await sendEmail(mailOptions);
 
@@ -42,8 +57,8 @@ class OTPService {
             const newOTP = await new OTP({
                 email,
                 otp: hashedOTP,
-                createAt: Date.now(),
-                expiresAt: Date.now() + 3600000 * +duration,
+                createdAt: Date.now(),
+                expiresAt: Date.now() + 6000* duration,
             });
             const createdOTPRecord = await newOTP.save();
             return createdOTPRecord;
@@ -64,7 +79,7 @@ class OTPService {
                 email,
             })
             if (!matchedOTPRecord) {
-                throw  new BadRequestError("No otp records found.");
+                throw new BadRequestError("No otp records found.");
             }
 
             //check Expire date
@@ -90,6 +105,10 @@ class OTPService {
         } catch (err) {
             throw err;
         }
+    }
+
+    static listOTP = async () => {
+        return OTP.find();
     }
 
 

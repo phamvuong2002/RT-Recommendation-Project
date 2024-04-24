@@ -6,8 +6,8 @@ const CategoryController = require("../../controllers/category.controller");
 const { asyncHandler } = require("../../auth/checkAuth");
 const { authentication } = require("../../auth/authUtils");
 
-router.get("/",asyncHandler(CategoryController.getAllCategory))
-router.get("/top",asyncHandler(CategoryController.getTop3Category))
+router.post("/all",asyncHandler(CategoryController.getAllCategory))
+router.post("/top",asyncHandler(CategoryController.getTop3Category))
 
 
 

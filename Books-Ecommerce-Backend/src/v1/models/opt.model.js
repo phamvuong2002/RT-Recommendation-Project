@@ -6,7 +6,7 @@ const OTPSchema = new Schema({
     email: { type: String, unique: true },
     otp: String,
     createdAt: Date,
-    expireAt: Date
+    expiresAt: Date
 });
 
 const OTP = mongoose.model("OTP", OTPSchema);

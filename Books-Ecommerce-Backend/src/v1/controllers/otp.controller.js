@@ -21,6 +21,15 @@ class OTPController {
       }).send(res);
   }
 
+  // Xem list OTP (test xong xóa)
+  listOTP = async (req, res, next) =>{
+ 
+    const data = await OTPService.listOTP();
+    new SuccessResponse({
+        metadata: data,
+      }).send(res);
+  }
+
  
 }
 

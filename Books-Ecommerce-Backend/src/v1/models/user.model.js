@@ -20,7 +20,13 @@ var userSchema = new Schema({
     },
     email:{
         type:String,
-        required:true,
+        required:false,
+        unique:true,
+        trim:true,
+    },
+    phone:{
+        type:String,
+        required:false,
         unique:true,
         trim:true,
     },

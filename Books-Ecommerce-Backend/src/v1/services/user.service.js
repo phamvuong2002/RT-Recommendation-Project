@@ -4,35 +4,10 @@ const userModel = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const { BadRequestError, NotFoundError } = require('../core/error.response');
 const db = require("../models/sequelize/models")
-
+const sequelize = require("sequelize")
+const { slugConverter } = require('../utils/convertToSlug')
 // function to get slug version of user name
-function slug(title) {
-  //Đổi chữ hoa thành chữ thường
-  slug = title.toLowerCase();
 
-  //Đổi ký tự có dấu thành không dấu
-  slug = slug.replace(/á|à|ả|ạ|ã|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ/gi, 'a');
-  slug = slug.replace(/é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ/gi, 'e');
-  slug = slug.replace(/i|í|ì|ỉ|ĩ|ị/gi, 'i');
-  slug = slug.replace(/ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ/gi, 'o');
-  slug = slug.replace(/ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự/gi, 'u');
-  slug = slug.replace(/ý|ỳ|ỷ|ỹ|ỵ/gi, 'y');
-  slug = slug.replace(/đ/gi, 'd');
-  //Xóa các ký tự đặt biệt
-  slug = slug.replace(/\`|\~|\!|\@|\#|\||\$|\%|\^|\&|\*|\(|\)|\+|\=|\,|\.|\/|\?|\>|\<|\'|\"|\:|\;|_/gi, '');
-  //Đổi khoảng trắng thành ký tự gạch ngang
-  slug = slug.replace(/ /gi, "-");
-  //Đổi nhiều ký tự gạch ngang liên tiếp thành 1 ký tự gạch ngang
-  //Phòng trường hợp người nhập vào quá nhiều ký tự trắng
-  slug = slug.replace(/\-\-\-\-\-/gi, '-');
-  slug = slug.replace(/\-\-\-\-/gi, '-');
-  slug = slug.replace(/\-\-\-/gi, '-');
-  slug = slug.replace(/\-\-/gi, '-');
-  //Xóa các ký tự gạch ngang ở đầu và cuối
-  slug = '@' + slug + '@';
-  slug = slug.replace(/\@\-|\-\@|\@/gi, '');
-  return slug;
-}
 
 class UserService {
 
@@ -52,22 +27,24 @@ class UserService {
 
 
   // Get: User information
-  static getUserInfo = async ({ id }) => {
-    const user = await db.user.findOne({ where: { user_id: id } });
+  static getUserInfo = async ({ userId }) => {
+    const user = await db.user.findOne({ where: { user_id: userId } });
     console.log(user)
     if (!user) {
       throw new NotFoundError('User not found');
     }
     let userInfo = await db.user.findOne({
       attributes: [
-        ['user_username', 'name'],
+        ['user_username', 'fullname'],
         ['user_email', 'email'],
-        ['user_phone', 'phone'],
+        ['user_phone', 'phonenumber'],
         ['user_sex', 'sex'],
-        ['user_day_of_birth', 'dob']
+        ['user_slug', 'slug'],
+
+        [sequelize.fn('DATE', sequelize.col('user_day_of_birth')), 'birthday']
       ],
       where: {
-        user_id: id,
+        user_id: userId,
       },
     });;
 
@@ -77,13 +54,13 @@ class UserService {
   }
 
   // Update: Update user profile: including Name, Sex, Date of birth
-  static updateProfile = async ({ updatedField, updatedValue, id }) => {
+  static updateProfile = async ({ updatedField, updatedValue, userId }) => {
     // Khởi tạo mảng giá trị Giới tính
-    let genderList = ['Nam', 'Nữ']
-    console.log(updatedField, updatedValue, id)
+    let genderList = ['male', 'female', 'unknown']
+    console.log(updatedField, updatedValue, userId)
     // Tìm user 
     let userInfo = await db.user.findOne({
-      where: { user_id: id }
+      where: { user_id: userId }
     });
 
     //Không tìm thấy --> Lỗi
@@ -97,9 +74,13 @@ class UserService {
     }
 
     let field = ''
+    let updated_slug = ''
+
     switch (updatedField) {
       case 'name':
         field = 'user_username'
+        updated_slug = slugConverter(updatedValue)
+        console.log(updated_slug)
         break;
       case 'sex':
         if (!genderList.includes(updatedValue)) {
@@ -110,28 +91,47 @@ class UserService {
       case 'dob':
         field = 'user_day_of_birth'
         break;
+
+      case 'email':
+        field = 'user_email'
+        break
+      case 'pw':
+        field = 'user_password'
+      case 'phonenumber':
+        field = 'user_phone'
       default:
         throw new BadRequestError('Request data is not valid');
     }
-
+    let result = false;
     // Update
     try {
-      console.log('in update querry ' + id)
-      console.log(userInfo)
-      await userInfo.update(
-        {
-          [field]: updatedValue,
-          where: {
-            user_id: { id },
+      //update tên
+      if (updated_slug.length > 0) {
+        await userInfo.set(
+          {
+            [field]: updatedValue,
+            user_slug: updated_slug
           },
-        },
-      );
+        );
+      }
+      else {
+        await userInfo.set(
+          {
+            [field]: updatedValue,
+          },
+        );
+      }
+      result = true
+      userInfo.save()
     } catch (err) {
-      console.log('er here')
+      // console.log('er here')
       throw new BadRequestError(err.message);
     }
 
-    return await UserService.getUserInfo({ id });
+    return {
+      user_data: await UserService.getUserInfo({ userId }),
+      update_result: result
+    };
   }
 
 
@@ -140,15 +140,17 @@ class UserService {
     if (name == null || name == '') {
       throw new BadRequestError('Name cannot be null');
     }
-    
+    const slug_name = slugConverter(name)
     const passwordHash = await bcrypt.hash(pw, 10);
+
+
     console.log("passwordHash::", passwordHash);
     let new_user = await db.user.create({
       // them thuoc tinh mac dinh
       user_username: name,
       user_password: passwordHash,
       user_salf: '',
-      user_slug: slug(name),
+      user_slug: slug_name,
       user_email: email,
       user_phone: '',
       user_sex: '',
@@ -160,6 +162,11 @@ class UserService {
     }
   }
 
+
+  // Để xem người dùng có trong DB (test xong sẽ xóa)
+  static getUserMongoDB = async () => {
+    return await userModel.find({}).lean();
+  };
 
 
 }

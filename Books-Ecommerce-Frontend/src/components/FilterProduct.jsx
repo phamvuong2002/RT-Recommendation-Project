@@ -4,15 +4,13 @@ import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { HiPlus, HiMinus, HiChevronDown, HiFunnel, HiMiniXMark } from "react-icons/hi2";
 import { useLocation, useNavigate, Link, createSearchParams } from 'react-router-dom';
 import { AllProducts } from '../components/AllProducts'
-import { fetchData } from '../helpers/fetch';
+import { fetchAPI } from '../helpers/fetch';
 import MenuItems from './MenuItems';
 import { PopupCenterPanel } from './popup/PopupCenterPanel';
 import { useInsertionEffect } from 'react';
-import axios from "axios";
-import { mergeObject } from '../utils/mergeObject';
 import PropTypes from 'prop-types';
 
-
+import { getallcategories } from "../apis/category"
 
 
 
@@ -31,6 +29,7 @@ export default function FilterProduct({ _sort, _limit, _query }) {
   const params = new URLSearchParams(location.search);
   let hasPublisher = params.has('publisher')
 
+  console.log('re render filter')
   let publisher_filter = ['']
   if (!hasPublisher) {
     //
@@ -40,8 +39,7 @@ export default function FilterProduct({ _sort, _limit, _query }) {
 
   let price_filter = ''
   if (!params.has('price')) {
-    // console.log('no price')
-    // console.log(params.get('price'))
+    //
   } else {
     price_filter = params.get('price')
   }
@@ -50,26 +48,14 @@ export default function FilterProduct({ _sort, _limit, _query }) {
     setIsMenuOpen(!isMenuOpen)
   }
   useEffect(() => {
-    const baseURL = "http://localhost:3050/v1/api/category";
+    setIsLoading(true);
     const loadCategoriesData = async () => {
-      axios.get(baseURL).then((response) => {
-        const a = response.data.metadata[0]
-        const b = response.data.metadata[1]
-        const c = mergeObject(a, b)
-        //console.log(c)
-        setCate(c)
-        setIsLoading(false)
-
-      })
-        .catch(err => {
-          console.log(err)
-        });
-    }
-    //
-    setTimeout(() => {
-      loadCategoriesData()
-    }, 1000)
-
+      const categoriesData = await fetchAPI(`../${getallcategories}`, 'POST');
+      setCate(categoriesData.metadata.categoryData);
+      setIsLoading(false);
+    };
+    //ví dụ tải các sản phẩm trong giỏ hàng của khách
+    loadCategoriesData();
   }, []);
 
 
@@ -138,19 +124,21 @@ export default function FilterProduct({ _sort, _limit, _query }) {
 
   const handleClickFilter = (event) => {
     const filter_target = event.target.name;
-    const filter_target_value = event.target.value
+    const filter_target_value = event.target.id
     //Price
+    console.log(event)
+    // console.log(filter_target_value)
     if (event.target.name == 'price') {
 
-      console.log(params)
+      // console.log(params)
       if (event.target.checked) {
         // console.log('in price')
         price_filter = filter_target_value
         if (params.has('price')) {
-          // console.log('in price navigate set '+price_filter)
+          console.log('in price navigate set '+price_filter)
           params.set('price', price_filter)
         } else {
-          // console.log('in price navigate append'+ price_filter)
+          console.log('in price navigate append'+ price_filter)
           params.append('price', price_filter)
         }
       }
@@ -185,6 +173,11 @@ export default function FilterProduct({ _sort, _limit, _query }) {
     }
     navigate(location.pathname + '?' + params)
   }
+  
+  const handlClickAllCategory=()=>{
+    params.set('categories','all');
+    navigate(location.pathname + '?' + params)
+  }
 
   // Sort
   useEffect(() => {
@@ -204,7 +197,7 @@ export default function FilterProduct({ _sort, _limit, _query }) {
       <div>
         <main className="hidden lg:block mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-24">
-            <Link to='/search/all-category' className="text-[17px] font-bold tracking-tight text-gray-900">TẤT CẢ NHÓM SẢN PHẨM</Link>
+            <button  className="text-[17px] font-bold tracking-tight text-gray-900" onClick={handlClickAllCategory}>TẤT CẢ NHÓM SẢN PHẨM</button>
 
             <div className="flex items-center">
               <Menu as="div" className="relative inline-block text-left">
@@ -282,7 +275,7 @@ export default function FilterProduct({ _sort, _limit, _query }) {
                   </ul>
                 }
 
-                {filterOptions.map((section) => (
+                {filters.map((section) => (
                   <Disclosure as="div" key={section.id} className="sm:z-10 border-b border-gray-200 py-6">
                     {({ open }) => (
                       <>
@@ -302,23 +295,24 @@ export default function FilterProduct({ _sort, _limit, _query }) {
                         <Disclosure.Panel className="pt-6">
                           <div className="space-y-6 sm:space-y-6">
                             {section.options.map((option, optionIdx) => (
-                              <div key={option.id} className="flex items-center ">
+                              <div key={`${option.id}-${optionIdx}`} className="flex items-center ">
                                 <input
-                                  id={`filter-${section.id}-${optionIdx}`}
+                                  id={option.value}
                                   name={`${section.id}`}
-                                  defaultValue={option.id}
+                                  // value={option.id}
+                                  // defaultValue={option.id}
                                   type="checkbox"
                                   aria-checked={true}
                                   onChange={handleClickFilter}
 
 
                                   checked={(section.id === 'price' ? price_filter === option.value
-                                    : publisher_filter.includes(option.id))}
+                                    : publisher_filter.includes(option.value))}
 
                                   className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 accent-red-300"
                                 />
                                 <label
-                                  htmlFor={`filter-${section.id}-${optionIdx}`}
+                                  htmlFor={option.value} 
                                   className="ml-3 min-w-0 flex-1 text-gray-500 sm:text-sm sm:text-gray-600 hover:cursor-pointer"
                                 >
                                   {option.label}
@@ -428,7 +422,7 @@ export default function FilterProduct({ _sort, _limit, _query }) {
                       })}
                     </ul>}
 
-                  {filterOptions.map((section) => (
+                  {filters.map((section) => (
                     <Disclosure as="div" key={section.id} className="sm:z-10 border-b border-gray-200 py-6">
                       {({ open }) => (
                         <>
@@ -451,21 +445,22 @@ export default function FilterProduct({ _sort, _limit, _query }) {
                               {section.options.map((option, optionIdx) => (
                                 <div key={option.value} className="flex items-center ">
                                   <input
-                                    id={`filter-${section.id}-${optionIdx}`}
+                                    id={option.value}
                                     name={`${section.id}`}
                                     defaultValue={option.value}
+                                    value={option.value}
                                     type="checkbox"
                                     aria-checked={true}
                                     onChange={handleClickFilter}
 
 
-                                    checked={(section.id === 'price' ? price_filter === option.value
+                                    checked={(section.id === 'price' ? price_filter == option.value
                                       : publisher_filter.includes(option.value))}
 
                                     className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 accent-red-300"
                                   />
                                   <label
-                                    htmlFor={`filter-${section.id}-${optionIdx}`}
+                                    htmlFor={option.value}
                                     className="ml-3 min-w-0 flex-1 text-gray-500 sm:text-sm sm:text-gray-600 hover:cursor-pointer"
                                   >
                                     {option.label}

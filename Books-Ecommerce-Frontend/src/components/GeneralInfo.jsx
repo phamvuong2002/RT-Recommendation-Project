@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { maskPhone, maskEmail } from '../utils/hideSensitiveInfo'
 import { fetchData } from '../helpers/fetch';
 import Bills from './Bills';
@@ -8,6 +8,11 @@ import { ChangeNamePopup } from '../helpers/ChangeNamePopup';
 import { TextLoader } from './loaders/TextLoader';
 import { ChangEmailPhone } from '../helpers/ChangEmailPhone';
 
+//USER SERVICE
+import { getUserInfo, updateUserInfo } from '../apis/user'
+import { AppContext } from '../contexts/main';
+import { fetchAPI } from '../helpers/fetch';
+
 export const GeneralInfo = () => {
     const [bills, setBills] = useState([]);
     const [reloadBill, setReloadBill] = useState(false);
@@ -15,13 +20,17 @@ export const GeneralInfo = () => {
     const [addresses, setAddresses] = useState([]);
     const [isAddrPopupOpen, setIsAddrPopupOpen] = useState(false);
     const [isChangeNameOpen, setIsChangeNameOpen] = useState(false);
-    const [userData, setUserData] = useState('');
+    const [userData, setUserData] = useState({});
     const [reloadUserData, setReloadUserData] = useState(false);
     const [openChangeEPPopup, setOpenChangeEPPopup] = useState(false);
     const [emailChange, setEmailChange] = useState('');
     const [phoneChange, setPhoneChange] = useState('');
 
     const NUMLOADERS = 1
+
+    //user-service
+    const [pageLoading, setPageLoading] = useState(true);
+    const { userId, session, setIsLoading } = useContext(AppContext);
 
     //Xử lý mở popup thay đổi địa chỉ
     const handleChangeAddress = async () => {
@@ -42,9 +51,11 @@ export const GeneralInfo = () => {
 
     //xử lý mở popup thay đổi email và số điện thoại
     const handleChangeEmailPhone = async (type) => {
+        console.log('email change ' + userData.email)
         if (type === 'email') {
             if (!userData.email) return
             if (!phoneChange) {
+                console.log('in set email change')
                 setEmailChange(userData.email)
             }
         }
@@ -95,24 +106,53 @@ export const GeneralInfo = () => {
     }, [])
 
     //fetch user Profile
+    // useEffect(() => {
+    //     const url = '../data/test/userprofile.json';
+    //     const getUserProfile = async () => {
+    //         try {
+    //             const userData = await fetchData(url);
+    //             setUserData(userData[0])
+    //         } catch (error) {
+    //             // throw error;
+    //         }
+    //     }
+    //     setTimeout(() => {
+    //         getUserProfile()
+    //         setEmailChange('');
+    //         setPhoneChange('');
+    //         setReloadUserData(false)
+    //         setIsChangeNameOpen(false)
+    //     }, 1000)
+    // }, [reloadUserData])
+
+    //USER SERVICE
     useEffect(() => {
-        const url = '../data/test/userprofile.json';
-        const getUserProfile = async () => {
-            try {
-                const userData = await fetchData(url);
-                setUserData(userData[0])
-            } catch (error) {
-                // throw error;
-            }
-        }
+        setPageLoading(true);
+        console.log('reload')
+        const loadUserData = async () => {
+            console.log('in load')
+            if(!userId) return;
+            const user_data = await fetchAPI(`../${getUserInfo}`, 'POST', {
+                userId: 1,
+            });
+            setUserData(user_data.metadata.user_data);
+            setPageLoading(false);
+         
+            setReloadUserData(false)
+        };
+
+        loadUserData();
         setTimeout(() => {
-            getUserProfile()
             setEmailChange('');
             setPhoneChange('');
             setReloadUserData(false)
             setIsChangeNameOpen(false)
-        }, 1000)
-    }, [reloadUserData])
+
+        }, 50)
+    }, [reloadUserData]);
+
+  
+
 
     return (
         <div className="flex flex-col xl:w-2/3 overflow-y-auto h-full">

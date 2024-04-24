@@ -1,7 +1,9 @@
 import { fetchDataGHN } from '../helpers/fetch';
 import { formatDate } from './formatDate';
 
-const SHOP_ID = 191502;
+// const SHOP_ID = 191502; FOR DEV
+const SHOP_ID = 4975420;
+
 const SHOP_PRIVINCE_ID = 202;
 const SHOP_DISTRICT_ID = 1444; //Quận 3
 const SHOP_WARD_CODE = '90795'; //Võ Thị Sáu
@@ -11,22 +13,28 @@ const SHOP_PROVINCE_NAME = 'Hồ Chí Minh';
 const SHOP_PHONE_NUMBER = '0948908485';
 
 export const calculateShippingFeeDefault = async (toAddress, product) => {
-  // const url_service = 'https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services'
+  //DEV
+  // const url_service =
+  //   'https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services';
+  // const url_cal_fee =
+  //   'https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/preview';
+
+  //PRO
   const url_service =
     'https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services';
-  // const url_cal_fee = 'https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/preview'
   const url_cal_fee =
     'https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/preview';
 
   const serviceDataResponse = await fetchDataGHN(url_service, {
     shop_id: SHOP_ID,
     from_district: SHOP_DISTRICT_ID,
-    to_district: toAddress.distristid,
+    to_district: parseInt(toAddress.address_district_id),
   });
 
-  if (serviceDataResponse.code !== 200) {
+  if (serviceDataResponse === undefined || serviceDataResponse?.code !== 200) {
     return null;
   }
+
   const serviceData = serviceDataResponse.data;
 
   const service_fee_data = [];
@@ -77,11 +85,11 @@ export const calculateShippingFeeDefault = async (toAddress, product) => {
       return_address: '',
       return_district_id: SHOP_DISTRICT_ID,
       return_ward_code: SHOP_WARD_CODE,
-      to_name: toAddress.userFullName,
-      to_phone: toAddress.userPhone,
+      to_name: toAddress.address_user_name,
+      to_phone: toAddress.address_user_phone,
       to_address: 'Ký tự bất kỳ',
-      to_ward_code: toAddress.wardid,
-      to_district_id: toAddress.distristid,
+      to_ward_code: toAddress.address_ward_id,
+      to_district_id: parseInt(toAddress.address_district_id),
       weight: 200,
       length: 1,
       width: 19,

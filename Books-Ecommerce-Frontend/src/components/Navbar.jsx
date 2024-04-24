@@ -1,4 +1,11 @@
-import { React, Fragment, useState, useEffect, useRef } from 'react';
+import {
+  React,
+  Fragment,
+  useState,
+  useEffect,
+  useRef,
+  useContext,
+} from 'react';
 import { FaUser, FaBars, FaTimes, FaHeart } from 'react-icons/fa';
 import { Menu, Transition } from '@headlessui/react';
 import { IoCartOutline } from 'react-icons/io5';
@@ -11,12 +18,14 @@ import { HiMiniSquares2X2, HiChevronDown } from 'react-icons/hi2';
 import { LuClipboardList, LuLogOut } from 'react-icons/lu';
 
 import { Link, useLocation } from 'react-router-dom';
+import { AppContext } from '../contexts/main';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 // Navbar chính
 export const Navbar = () => {
+  const { numCart } = useContext(AppContext);
   const location = useLocation();
   const path = location.search;
   const [isOpenShoppingCarts, setIsOpenShoppingCarts] = useState(false);
@@ -249,7 +258,7 @@ export const Navbar = () => {
               <IoCartOutline className="text-red-500 h-5 w-5 ml-2 sm:h-6 sm:w-6 " />
               <span className="cart-quantity text-center text-sm min-w-[20px] h-[20px] rounded-[50%] ml-[-10px] mt-[-5px] bg-[red] text-white">
                 {' '}
-                {user.shoppingCart >= 100 ? '99+' : user.shoppingCart}{' '}
+                {numCart >= 100 ? '99+' : numCart}{' '}
               </span>
             </div>
             <p className="hidden lg:block ">Giỏ hàng</p>

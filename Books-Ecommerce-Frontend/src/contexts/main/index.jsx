@@ -10,6 +10,7 @@ export const AppProvider = ({ children }) => {
   const [isloading, setIsLoading] = useState(false);
   const [activePage, setActivePage] = useState('');
   const [numCart, setNumCart] = useState(0);
+  const [addressDefault, setAddressDefault] = useState('');
 
   return (
     <AppContext.Provider
@@ -19,11 +20,13 @@ export const AppProvider = ({ children }) => {
         numCart,
         isloading,
         activePage,
+        addressDefault,
         setUserId,
         setSession,
         setNumCart,
         setIsLoading,
         setActivePage,
+        setAddressDefault,
       }}
     >
       {children}

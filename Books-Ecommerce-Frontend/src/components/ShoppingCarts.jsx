@@ -11,12 +11,17 @@ import { fetchAPI, fetchData } from '../helpers/fetch';
 import { TextLoader } from './loaders/TextLoader';
 import { AppContext } from '../contexts/main';
 import { addtocart, deletecartsbypub, getcarts } from '../apis/cart';
+import { getaddresses } from '../apis/address';
+import { CircleLoader } from './loaders/CircleLoader';
 
 export const ShoppingCarts = (/*items*/) => {
   const navigate = useNavigate();
   const [pageLoading, setPageLoading] = useState(true);
+  const [isAddLoading, setIsAddLoading] = useState(false);
+  const [isCalFeeShipLoading, setIsCalFeeShipLoading] = useState(false);
 
-  const { userId, session, setIsLoading, setNumCart } = useContext(AppContext);
+  const { userId, session, setIsLoading, setNumCart, numCart } =
+    useContext(AppContext);
 
   const [products, setProducts] = useState([]);
   const [shippingFee, setShippingFee] = useState(0);
@@ -49,12 +54,13 @@ export const ShoppingCarts = (/*items*/) => {
   //Load địa chỉ khi mở popup
   const handleAddressChange = async (e) => {
     e.preventDefault();
-    const url = '../data/test/useraddresses.json';
-    try {
-      const addressData = await fetchData(url);
-      setUserAddresses(addressData);
-    } catch (error) {
-      // throw error;
+    const address = await fetchAPI(`../${getaddresses}`, 'POST', {
+      userId,
+    });
+    if (address.status !== 200) {
+      setUserAddresses([]);
+    } else {
+      setUserAddresses(address.metadata);
     }
   };
 
@@ -137,33 +143,38 @@ export const ShoppingCarts = (/*items*/) => {
     };
     //ví dụ tải các sản phẩm trong giỏ hàng của khách
     loadShoppingCartsData();
-  }, [userId]);
-
-  //test cart data
-  // useEffect(() => {
-  //   console.log('SHOPPINGCARRTTTTTTTT::', products);
-  // }, [products]);
+  }, [userId, numCart]);
 
   //Tính  phí ship
   useEffect(() => {
     const fetchShippingFee = async () => {
+      setIsCalFeeShipLoading(true);
       const dataShipping = await calculateShippingFeeDefault(address);
-      setShippingFee(dataShipping[0].fee);
+      if (!dataShipping) {
+        setShippingFee(0);
+      } else {
+        setShippingFee(dataShipping[0].fee);
+      }
+      setIsCalFeeShipLoading(false);
     };
 
-    fetchShippingFee();
+    if (!address) {
+      setShippingFee(0);
+    } else {
+      fetchShippingFee();
+    }
   }, [address]);
 
   //Lấy thông tin Address
   useEffect(() => {
     const getAddresses = async () => {
-      const url = '../data/test/useraddresses.json';
-      try {
-        const addressData = await fetchData(url);
-        setAddress(addressData[0]);
-      } catch (error) {
-        return;
-        // throw error;
+      const address = await fetchAPI(`../${getaddresses}`, 'POST', {
+        userId,
+      });
+      if (address.status !== 200) {
+        setAddress('');
+      } else {
+        setAddress(address.metadata?.[0]);
       }
     };
     getAddresses();
@@ -243,10 +254,10 @@ export const ShoppingCarts = (/*items*/) => {
                     className={`flex text-xs xl:text-sm xl:font-light font-normal items-end`}
                   >
                     {address ? (
-                      !address.addressid ? (
+                      !address.address_id ? (
                         <div className="h-2 bg-slate-200 rounded w-[15rem]"></div>
                       ) : (
-                        `${address?.proviceName} - ${address?.distristName} - ${address?.wardName}`
+                        `${address?.address_province_name} - ${address?.address_district_name} - ${address?.address_ward_name}`
                       )
                     ) : (
                       <div>
@@ -263,6 +274,8 @@ export const ShoppingCarts = (/*items*/) => {
                     userAddresses={userAddresses}
                     setDefaultAddress={setAddress}
                     setUserAddresses={setUserAddresses}
+                    isLoading={isAddLoading}
+                    setIsLoading={setIsAddLoading}
                     icon={
                       address ? (
                         <button
@@ -300,8 +313,18 @@ export const ShoppingCarts = (/*items*/) => {
               <div className="flex justify-between xl:text-sm text-xs">
                 <p className="text-gray-700">Phí Vận Chuyển</p>
                 <div className="text-gray-700 font-bold capitalize tracking-wide">
-                  <span>{formatNumberToText(shippingFee)}</span>
-                  <span className="underline">{'đ'}</span>
+                  {isCalFeeShipLoading ? (
+                    <CircleLoader
+                      height={'h-4'}
+                      width={'w-4'}
+                      color={'fill-red-500'}
+                    />
+                  ) : (
+                    <div>
+                      <span>{formatNumberToText(shippingFee)}</span>
+                      <span className="underline">{'đ'}</span>
+                    </div>
+                  )}
                 </div>
               </div>
               <hr className="my-1 xl:my-4 md:my-4" />

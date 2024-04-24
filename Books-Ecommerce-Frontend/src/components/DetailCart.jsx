@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { StarRating } from './StarRating';
 import { PopupOpen } from './popup/PopupOpen';
 import { DropDownClick } from './DropDownClick';
 import { popupContent } from '../helpers/popupContent'
 import { sharePopupUI } from '../components/childComponents/sharePopupUI';
 import { formatNumberToText } from '../utils/formatNumberToText';
-import { fetchData, fetchDataGHN } from '../helpers/fetch';
+import { fetchData, fetchDataGHN, fetchAPI } from '../helpers/fetch';
 import { TextLoader } from '../components/loaders/TextLoader';
 import { SelectAddressPopup } from '../helpers/SelectAddressPopup';
 import { calculateShippingFeeDefault } from '../utils/calculateShippingFeeDefault';
+import { handleFavoriteBook } from '../apis/book';
+import { AppContext } from '../contexts/main';
 
 const SAMPLEVERSION = {
     default: 'Thường',
@@ -17,6 +19,8 @@ const SAMPLEVERSION = {
 
 
 export const DetailCart = (/*{ product }*/) => {
+
+    const { userId, session, setIsLoading, setNumCart } = useContext(AppContext);
 
     const [product, setProduct] = useState({ productid: 0 })
     const [numCarts, setNumCarts] = useState(1);
@@ -32,7 +36,24 @@ export const DetailCart = (/*{ product }*/) => {
     const [isAddrPopupOpen, setIsAddrPopupOpen] = useState(false);
     const [shippingService, setShippingService] = useState({ serviceid: 0 });
 
+    const [isClicked, setIsClicked] = useState(null);//nganvo add to control when this product is added to favorite book or not
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const productData = await fetchAPI(`../${handleFavoriteBook}`, 'POST', {
+                    "userId": userId, /// Chỗ này mốt truyền userID dô sao????
+                    "book": {
+                        "book_id": 4
+                    }
+                });
+                setIsClicked(productData.metadata.favoriteBookStatus); // Cập nhật isClicked dựa trên dữ liệu fetch
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
 
+        fetchData();
+    }, [userId]);
 
     //Xử lý chọn version
     const handleVersionToggle = async () => {
@@ -52,6 +73,15 @@ export const DetailCart = (/*{ product }*/) => {
     const handleAddToInterestList = async (e) => {
         e.preventDefault();
         setOpenLovePopup(true);
+
+        const productData = await fetchAPI(`../${handleFavoriteBook}`, 'POST', {
+            "userId": userId,
+            "book": {
+                "book_id": 4
+            }
+        })
+        setIsClicked(productData.metadata.favoriteBookStatus)
+
     }
 
     //Xử lý nút chia sẻ
@@ -282,19 +312,21 @@ export const DetailCart = (/*{ product }*/) => {
                                                                     <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="120" height="120" viewBox="0 0 48 48">
                                                                         <path fill="#4caf50" d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z"></path><path fill="#ccff90" d="M34.602,14.602L21,28.199l-5.602-5.598l-2.797,2.797L21,33.801l16.398-16.402L34.602,14.602z"></path>
                                                                     </svg>
-                                                                    <div>
-                                                                        Bạn đã thêm sản phẩm này vào danh sách yêu thích!
-                                                                    </div>
+                                                                    {isClicked ? (
+                                                                        <div>XÓA!</div>
+                                                                    ) : (
+                                                                        <div>Bạn đã thêm sản phẩm này vào danh sách yêu thích!</div>
+                                                                    )}
                                                                 </div>
 
                                                             )}
-                                                            onNoClick={() => setOpenLovePopup(false)}
+                                                        //onNoClick={() => setOpenLovePopup(false)}
                                                         />
                                                         <button
                                                             title="Thêm danh sách yêu thích"
-                                                            className="w-9 flex h-9 rounded border border-black border-opacity-50 items-center justify-center cursor-pointer"
+                                                            className="w-9 flex h-9  rounded border border-black border-opacity-50 items-center justify-center cursor-pointer"
                                                             onClick={handleAddToInterestList}>
-                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" fill={`${isClicked ? 'red' : 'none'}`} viewBox="0 0 24 24" strokeWidth="1.5" stroke={`${isClicked ? 'red' : 'black'}`} className="w-6 h-6 ">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                                                             </svg>
                                                         </button>
@@ -506,6 +538,6 @@ export const DetailCart = (/*{ product }*/) => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     )
 }

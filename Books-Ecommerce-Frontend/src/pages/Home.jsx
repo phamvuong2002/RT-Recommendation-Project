@@ -9,15 +9,10 @@ import { fetchAPI } from '../helpers/fetch';
 import { getAllBook } from '../apis/book';
 import { AppContext } from '../contexts/main';
 
-const sampleUserInfo = {
-  userId: '123456',
-  fullName: 'Vuong Pham',
-  username: 'vuongpham',
-  email: 'vuongpham@gmail.com',
-};
 
 export const Home = () => {
-  const [user, setUser] = useState(sampleUserInfo);
+  const { userId, session, setIsLoading, setNumCart } = useContext(AppContext);
+  const [user, setUser] = useState(userId);
   const [products, setProducts] = useState([]);
   const { setActivePage } = useContext(AppContext);
 
@@ -26,7 +21,7 @@ export const Home = () => {
     setActivePage('Home');
   }, []);
 
-
+  console.log("userIdaaaaa", userId)
   useEffect(() => {
     const loadProductData = async () => {
       const productData = await fetchAPI(`../${getAllBook}`, 'POST')
@@ -35,6 +30,7 @@ export const Home = () => {
     setTimeout(() => {
       loadProductData()
     }, 1000)
+
   }, [])
 
   return (

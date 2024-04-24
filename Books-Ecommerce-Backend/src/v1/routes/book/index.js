@@ -9,7 +9,9 @@ const { authentication } = require("../../auth/authUtils");
 
 router.post("/all", asyncHandler(bookController.getAllBook));
 router.post("/item", asyncHandler(bookController.getBookBySearchFilterSort));
+router.post("/create", asyncHandler(bookController.createBook));
 router.post("/:id", asyncHandler(bookController.getBookById));
+
 
 
 ///authentication////

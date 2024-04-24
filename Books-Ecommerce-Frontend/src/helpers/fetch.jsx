@@ -57,13 +57,15 @@ export const fetchDataGHN = async (url, requestData = '') => {
       body: JSON.stringify(requestData), // Chuyển đổi dữ liệu request thành JSON
     });
     if (!response.ok) {
-      throw new Error('Failed to fetch comments');
+      // throw new Error('Failed to fetch GHN');
+      return;
     }
     const data = await response.json();
     return data;
   } catch (error) {
-    console.log('Error fetching comments:', error);
-    throw error;
+    // console.log('Error fetching GHN:', error);
+    // throw error;
+    return;
   }
 };
 

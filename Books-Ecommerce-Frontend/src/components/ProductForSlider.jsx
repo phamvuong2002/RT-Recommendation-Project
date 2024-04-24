@@ -34,10 +34,15 @@ export const ProductForSlider = ({ productData }) => {
                             {productData.book_title}
                         </h3>
 
-                        <div className="text-left mt-[0.1rem] md:mt-1 flex gap-2 md:justify-between md:flex-row flex-row-reverse justify-end">
-                            <p className="line-through leading-[1.6rem] sm:leading-8 text-[0.6rem] text-gray-400 sm:text-xs tracking-wide font-['Inter']">
-                                {productData.book_old_price}đ {/*Giá bỏ/ giá cũ */}
-                            </p>
+                        <div className="pr-[0.3rem] sm:pr-0 text-left mt-[0.3rem] md:mt-1 flex gap-2 md:justify-between md:flex-row flex-row-reverse justify-end">
+                            {
+                                productData.book_old_price === "0.00" ?
+                                    (<p className='hidden'> </p>)
+                                    :
+                                    (<p className="line-through leading-[1.6rem] sm:leading-8 text-[0.6rem] text-gray-400 sm:text-xs tracking-wide font-['Inter']">
+                                        {productData.book_old_price}đ {/*Giá bỏ/ giá cũ */}
+                                    </p>)
+                            }
                             <p className="text-[0.9rem] text-red-500 sm:text-[1.15rem] font-semibold tracking-wide font-['Inter']">
                                 {productData.book_spe_price}đ {/*giá mới*/}
                                 {/* <span className="text-[0.8rem] md:text-[1rem]">đ</span> */}

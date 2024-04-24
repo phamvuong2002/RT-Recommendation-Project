@@ -261,7 +261,7 @@ export default function FilterProduct({ _sort, _limit, _query }) {
             </div>
           </div>
 
-          <section aria-labelledby="products-heading" className="pb-[80px] ">
+          <section aria-labelledby="products-heading" className="">
             <h2 id="products-heading" className="sr-only">
               Sản phẩm
             </h2>

@@ -5,8 +5,8 @@ const { BadRequestError, NotFoundError } = require('../core/error.response');
 
 const OTPService = require("./otp.service")
 
-class emailVerificationService {
-    static sendVerificationOTPEmail = async ({email}) => {
+class emailOTPService {
+    static sendOTPEmail = async ({email}) => {
         if(!email){
             throw new BadRequestError("An email is required")
         }
@@ -19,9 +19,9 @@ class emailVerificationService {
 
             const otpDetails = {
                 email,
-                subject: " Email Verification",
+                subject: "MÃ XÁC THỰC OTP",
                 message: "Verify your email with the code below",
-                duration: 1,
+                duration: 60,
             };
             const createdOTP = await OTPService.sendOTP(otpDetails);
             console.log('here')
@@ -47,7 +47,7 @@ class emailVerificationService {
             console.log('in ')
             const validOTP = await OTPService.verifyOTP(otpDetails)
             if(!validOTP){
-               throw new BadRequestError("Invalid code passed. Check your inbox ")
+               throw new BadRequestError("Invalid code passed. Check your inbox")
             }
             console.log('in 2')
             //delete otp
@@ -60,5 +60,5 @@ class emailVerificationService {
         }
     }
 }
-module.exports = emailVerificationService;
+module.exports = emailOTPService;
 

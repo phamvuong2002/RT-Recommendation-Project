@@ -2,14 +2,14 @@
 
 const express = require("express");
 const router = express.Router();
-const emailVerificationController = require("../../controllers/emailVerification.controller");
+const emailOTPController = require("../../controllers/emailotp.controller");
 
 const { asyncHandler } = require("../../auth/checkAuth");
 const { authentication } = require("../../auth/authUtils");
 
 
-router.post("/send", asyncHandler(emailVerificationController.sendEmailVerification))  ;
-router.post("/verify", asyncHandler(emailVerificationController.verifyEmail))  ;
+router.post("/send", asyncHandler(emailOTPController.sendOTPEmail))  ;
+router.post("/verify", asyncHandler(emailOTPController.verifyOTPEmail))  ;
 
 
 ///authentication////

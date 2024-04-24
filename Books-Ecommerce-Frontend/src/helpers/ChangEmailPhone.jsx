@@ -4,17 +4,35 @@ import { PopupCenterPanel } from '../components/popup/PopupCenterPanel';
 import { validateEmail } from '../utils/validateEmail';
 import { isValidPhoneNumber } from '../utils/isValidPhoneNumber';
 
+import { updateUserInfo } from '../apis/user';
+import { fetchAPI } from './fetch';
+import { AppContext } from '../contexts/main';
+import { useContext } from 'react';
+
 export const ChangEmailPhone = ({ open, setOpen, icon, email = '', setEmail, phone = '', setPhone, setReload }) => {
     const [authenStatus, setAuthenStatus] = useState('pending');
     const [isOpenChange, setIsOpenChange] = useState(false);
     const [value, setValue] = useState('');
-    const [message, setMessage] = useState('');
+    const [message, setMessage] = useState(''); 
+
+    // USER SERVICE 
+    const { userId, session, setIsLoading } = useContext(AppContext);
 
     const handleUpdateEmail = async () => {
         const check = validateEmail(value);
         if (check.status) {
             //xử lý update email
-            const statusUpdate = 'ok'
+            const updateEmail = await fetchAPI(`../${updateUserInfo}`, 'POST', {
+                updatedField: 'email',
+                updatedValue: value,
+                userId: userId
+            });
+            
+            let statusUpdate = ''
+            if (updateEmail.metadata.update_result) {
+                statusUpdate = 'ok'
+            }
+
             if (statusUpdate === 'ok') { //update thành công
                 setOpen(false);
                 setReload(true);
@@ -75,6 +93,8 @@ export const ChangEmailPhone = ({ open, setOpen, icon, email = '', setEmail, pho
             <AuthenticationPopup
                 open={open}
                 setOpen={setOpen}
+                emailInput={email}
+                phoneInput={phone}
                 setAuthenStatus={setAuthenStatus}
                 authenStatus={authenStatus}
                 nextStep={() => setIsOpenChange(true)}

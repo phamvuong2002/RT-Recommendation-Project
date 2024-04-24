@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { ChangeNamePopup } from '../helpers/ChangeNamePopup';
 import { fetchData } from '../helpers/fetch';
 import { PopupCenterPanel } from './popup/PopupCenterPanel';
@@ -10,7 +10,13 @@ import { maskEmail, maskPhone } from '../utils/hideSensitiveInfo';
 import { ChangEmailPhone } from '../helpers/ChangEmailPhone';
 import { TextLoader } from './loaders/TextLoader';
 import { ChangeSexPopup } from '../helpers/ChangeSexPopup';
+
 import { ChangeBirthdayPopup } from '../helpers/ChangeBirthdayPopup';
+
+//USER SERVICE
+import {getUserInfo,updateUserInfo} from '../apis/user'
+import { AppContext } from '../contexts/main';
+import { fetchAPI } from '../helpers/fetch';
 
 export const ProfileAccount = () => {
     const [isChangeNameOpen, setIsChangeNameOpen] = useState(false);
@@ -23,6 +29,10 @@ export const ProfileAccount = () => {
     const [openChangeEPPopup, setOpenChangeEPPopup] = useState(false);
     const [emailChange, setEmailChange] = useState('');
     const [phoneChange, setPhoneChange] = useState('');
+
+    //user-service
+    const [pageLoading, setPageLoading] = useState(true);
+    const { userId, session, setIsLoading } = useContext(AppContext);
 
     //Xử lý mở popup thay đổi tên
     const handleChangeName = async () => {
@@ -76,6 +86,7 @@ export const ProfileAccount = () => {
     //Xử lý thay đổi giới tính
     const handleChangeSex = async () => {
         setOpenChangeSexPopup(true);
+      
     }
 
     //Xử lý thay đổi ngày sinh
@@ -84,18 +95,50 @@ export const ProfileAccount = () => {
     }
 
     //fetch user Profile
+    // useEffect(() => {
+    //     const url = '../data/test/userprofile.json';
+    //     const getUserProfile = async () => {
+    //         try {
+    //             const userData = await fetchData(url);
+    //             setUserData(userData[0])
+    //         } catch (error) {
+    //             // throw error;
+    //         }
+    //     }
+    //     setTimeout(() => {
+    //         getUserProfile()
+    //         setEmailChange('');
+    //         setPhoneChange('');
+    //         setReloadUserData(false)
+    //         setIsChangeNameOpen(false)
+    //         setOpenChangePassPopup(false);
+    //         setOpenChangeEPPopup(false);
+    //         setOpenChangeSexPopup(false);
+    //         setOpenChangeBirthdayPopup(false);
+    //     }, 1000)
+    // }, [reloadUserData])
+
+    //USER SERVICE
     useEffect(() => {
-        const url = '../data/test/userprofile.json';
-        const getUserProfile = async () => {
-            try {
-                const userData = await fetchData(url);
-                setUserData(userData[0])
-            } catch (error) {
-                // throw error;
-            }
-        }
+        setPageLoading(true);
+        console.log('reload')
+        const loadUserData = async () => {
+          if (!userId) return;
+          const userData = await fetchAPI(`../${getUserInfo}`, 'POST', {
+            //chưa login thử, nên dùng id=1 để test tạm = user từ Mysql 
+            //sau này sẽ thay = UserId lấy từ Appcontext
+            //chưa thêm Sid cho bảng user (mysql) - thêm và sửa trong lần commit sau
+            //khi reload, vẫn còn lỗi (mất dữ liệu)
+            userId: 1,
+          });
+        //   console.log(userData)
+          setUserData(userData.metadata.user_data);
+          setPageLoading(false);
+          setReloadUserData(false)
+        };
+      
+        loadUserData();
         setTimeout(() => {
-            getUserProfile()
             setEmailChange('');
             setPhoneChange('');
             setReloadUserData(false)
@@ -104,9 +147,8 @@ export const ProfileAccount = () => {
             setOpenChangeEPPopup(false);
             setOpenChangeSexPopup(false);
             setOpenChangeBirthdayPopup(false);
-        }, 1000)
-    }, [reloadUserData])
-
+        },50 )
+      }, [reloadUserData]);
 
     return (
         <div className="flex flex-col xl:w-2/3 overflow-y-auto h-full font-inter">
@@ -122,11 +164,13 @@ export const ProfileAccount = () => {
                                 <label className="flex items-center" htmlFor="Họ Tên">Họ Tên</label>
                                 <div className="flex items-center gap-2 text-gray-400">
                                     <div>{userData.fullname}</div>
+                                    
                                     <ChangeNamePopup
                                         open={isChangeNameOpen}
                                         setOpen={setIsChangeNameOpen}
                                         setReload={setReloadUserData}
                                         fullName={userData.fullname}
+                                    
                                         icon={
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4 xl:hidden">
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />

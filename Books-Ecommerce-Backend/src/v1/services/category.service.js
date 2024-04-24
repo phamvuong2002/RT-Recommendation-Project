@@ -6,7 +6,8 @@ class CategoryService {
 
   // Info for: Profile info page
   static getAllCategory = async () => {
-    return await db.category_1.findAll({
+    
+    const category= await db.category_1.findAll({
       include: [
         {
           model: db.category_2, as:'submenu',
@@ -28,10 +29,14 @@ class CategoryService {
       ],
       attributes: [['cate1_id', 'id'], ['cate1_name', 'name'],['cate1_id','parent']]
     });;
+
+    return {
+      categoryData:category
+    }
   }
 
   static getTop3Category = async () => {
-    return await db.category_1.findAll({
+   const category= await db.category_1.findAll({
       include: [
         {
           model: db.category_2, as:'submenu',
@@ -48,6 +53,9 @@ class CategoryService {
       ],
       attributes: [['cate1_id', 'id'], ['cate1_name', 'name']]
     });;
+    return {
+      categoryData: category
+    }
   }
 }
 module.exports = CategoryService;

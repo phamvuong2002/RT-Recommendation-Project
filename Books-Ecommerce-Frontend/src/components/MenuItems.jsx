@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useInsertionEffect } from "react";
 import Dropdown from "./DropDown";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -12,17 +12,20 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 const MenuItems = ({ items, depthLevel }) => {
   const navigate = useNavigate()
-
-
   let params = new URLSearchParams(document.location.search);
+
+  if (params.has('categories', 'all')) {
+    params.set('categories', '')
+  }
 
   let hasCate = params.has('categories')
   const [dropdown, setDropdown] = useState(false);
 
   let cateParam = []
   if (!hasCate) {
+    cateParam = ['all']
+    params.set('categories', 'all')
 
-    cateParam = []
   } else {
     cateParam = params.get('categories').split(',')
 
@@ -42,49 +45,66 @@ const MenuItems = ({ items, depthLevel }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
 
-  const handleSelectCategory = () => {
+  const handleSelectCategory = (event) => {
+    // console.log(items)
+    // console.log(`${items.id}-${depthLevel}`)
+    // console.log(items.parent == cateParam[depthLevel - 1])
+    // console.log(event.target.id)
+    if (!event.target.checked) {
+      cateParam.splice(depthLevel)
+    } else {
+      // cateParam[depthLevel] = items.id
 
-    let currentLength = cateParam.length
-    // console.log('current length & depth: ' + currentLength + ' ' + depthLevel)
-    // reset lại - set = Level trên cùng
-    if (currentLength < depthLevel + 1) {
-      cateParam.push(items.id)
+      let currentLength = cateParam.length
+      // cateParam.push(items.id)
+      // console.log('current length & depth: ' + currentLength + ' ' + depthLevel)
+      // reset lại - set = Level trên cùng
+
+      if (currentLength < depthLevel + 1) {
+        cateParam.push(items.id)
+      }
+      else if (depthLevel + 1 < currentLength) {
+        cateParam[depthLevel] = items.id
+        cateParam.splice(depthLevel + 1)
+      }
+      else if (currentLength === depthLevel + 1) {
+        cateParam[depthLevel] = items.id
+      }
+
     }
-    else if (depthLevel + 1 < currentLength) {
-      cateParam[depthLevel] = items.id
-      cateParam.splice(depthLevel + 1)
-    }
-    else if (currentLength === depthLevel + 1) {
-      cateParam[depthLevel] = items.id
-    }
-    console.log(cateParam)
+
+    // console.log(cateParam)
+    // console.log(`${items.id}-${depthLevel}`)
     if (cateParam.length > 0) {
       // const searchParams = new URLSearchParams({ 'genre': cateParam });
       params.set('categories', cateParam)
 
       navigate(`/search?${params}`)
     } else {
-      navigate(`/search`)
+      cateParam = ['all']
+      params.set('categories', 'all')
+      navigate(`/search?${params}`)
     }
   }
 
   return (
     <li
-      className={`menu-items  font-inter text-black text-left pl-1 pb-2 sm:text-black hover:cursor-pointer  hover:text-[red]`}>
-      <div key={items.id} className={`flex items-center `}>
+      className={`menu-items  font-inter text-black text-left pl-1 pb-2 sm:text-black `}>
+
+      <div key={`${items.id}-${depthLevel}`} className={`flex items-center `}>
         <input
-          id={`filter-${items.id}`}
+          id={`filter-${items.id}-${depthLevel}`}
           name={`${items.id}`}
           defaultValue={items.id}
           type="checkbox"
           aria-checked={true}
           onChange={handleSelectCategory}
           checked={cateParam[depthLevel] == items.id}
-          className="min-w-[15px] h-[15px] w-[15px] rounded-sm border-gray-300  accent-red-300"
+          className="min-w-[15px] h-[15px] w-[15px] rounded-sm border-gray-300   accent-red-300"
         />
         <label
-          htmlFor={`filter-${items.id}`}
-          className="ml-3 text-gray-500 text-[14px] sm:text-gray-600"
+          htmlFor={`filter-${items.id}-${depthLevel}`}
+          className="ml-3 text-gray-500 text-[14px] sm:text-gray-600 hover:cursor-pointer"
         >
           {items.name}
         </label>

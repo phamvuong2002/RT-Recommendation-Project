@@ -12,6 +12,9 @@ router.post("/send", asyncHandler(OTPController.sendOTP))  ;
 
 router.post("/verify", asyncHandler(OTPController.verifyOTP))  ;
 
+// xem OTP đã tạo (test xong sẽ xóa)
+router.get("/view", asyncHandler(OTPController.listOTP))  ;
+
 ///authentication////
 router.use(authentication);
 //////////////////////

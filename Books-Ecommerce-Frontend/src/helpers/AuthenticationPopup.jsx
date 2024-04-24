@@ -7,6 +7,10 @@ import { auth } from '../configs/firebase.config';
 import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
 import { CircleLoader } from '../components/loaders/CircleLoader';
 
+//USER SERVICE
+import { sendEmailOTP, verifyEmailOTP } from '../apis/emailOTP';
+import { fetchAPI } from './fetch';
+
 export const AuthenticationPopup = ({
   open,
   setOpen,
@@ -45,16 +49,32 @@ export const AuthenticationPopup = ({
   const handleChooseEmail = async () => {
     //Xử lý gửi mã OTP tới Email
     setLoading(true);
-    setTimeout(() => {
-      if (!emailInput) {
-        setEmail('girfler@gmail.com');
-      } else {
-        setEmail(emailInput);
+    if (!emailInput) {
+      setTimeout(() => {
+        handleReturn();
+      }, 1000);
+      // setEmail('girfler@gmail.com');
+    } else {
+      setEmail(emailInput);
+      const sendOTP = fetchAPI(`../${sendEmailOTP}`, 'POST', {
+        email: email
+      });
+      if (sendOTP) {
+        setTimeLeft(RESENDOTPTIME);
+        setSendOtpStatus(true);
+        setLoading(false);
       }
-      setTimeLeft(RESENDOTPTIME);
-      setSendOtpStatus(true);
-      setLoading(false);
-    }, 1000);
+      else {
+
+        setVaildOtpMessage('Đã có lỗi trong quá trình gửi mail. Vui lòng chọn Gửi lại mã để thực hiện việc xác thực');
+        setSendOtpStatus(false);
+
+      }
+    }
+
+
+
+
   };
 
   //Xử lý gửi mã OTP tới số điện thoại
@@ -76,16 +96,37 @@ export const AuthenticationPopup = ({
 
   const handleSubmit = async () => {
     //Xử lý xác thực mã otp
-    window.confirmationResult
-      .confirm(otp)
-      .then(async (res) => {
+    if (email) {
+      const emailOTP= await fetchAPI(`../${verifyEmailOTP}`,'POST', {
+        email: email,
+        otp: otp
+      });
+
+      if(emailOTP){
+        console.log('sucess')
         setAuthenStatus('success');
         setVaildOtpMessage('');
-      })
-      .catch((err) => {
+        handleReturn();
+        setOtp('')
+      }else{
         setVaildOtpMessage('Mã OTP không khớp. Vui lòng thử lại!');
         setAuthenStatus('falied');
-      });
+        setOtp('')
+      }
+
+    } else if (phone) {
+      window.confirmationResult
+        .confirm(otp)
+        .then(async (res) => {
+          setAuthenStatus('success');
+          setVaildOtpMessage('');
+        })
+        .catch((err) => {
+          setVaildOtpMessage('Mã OTP không khớp. Vui lòng thử lại!');
+          setAuthenStatus('falied');
+        });
+    }
+
   };
 
   //Xử lý gửi lại mã OTP
@@ -115,7 +156,7 @@ export const AuthenticationPopup = ({
             authenFunction(phonenumber);
             window.recaptchaVerifier = null;
           },
-          'expired-callback': () => {},
+          'expired-callback': () => { },
         },
       );
     }
@@ -180,6 +221,14 @@ export const AuthenticationPopup = ({
     // Clear interval khi component bị unmount
     return () => clearInterval(timer);
   }, []);
+
+
+  useEffect(()=>{
+    if(emailInput){
+      setEmail(emailInput)
+    }
+
+  },[emailInput])
 
   return (
     <div>

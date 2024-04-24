@@ -7,13 +7,13 @@ const { asyncHandler } = require("../../auth/checkAuth");
 const { authentication } = require("../../auth/authUtils");
 
 
-router.get("/profile-infomation", asyncHandler(userController.getUserInfo))  ;
-router.put("/profile-infomation", asyncHandler(userController.updateProfile))  ;
-    
-router.get("/general-infomation", asyncHandler(userController.getUserInfo))  ;
-router.put("/general-infomation", asyncHandler(userController.updateProfile))  ;
+router.post("/getInfo", asyncHandler(userController.getUserInfo))  ;
+
+router.post("/updateInfo", asyncHandler(userController.updateProfile))  ;
 
 router.post("/", asyncHandler(userController.addUserDB))  ;
+
+router.get("/mongo", asyncHandler(userController.getUserMongoDB))  ;
 
 
 ///authentication////

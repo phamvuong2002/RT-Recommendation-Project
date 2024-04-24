@@ -1,15 +1,35 @@
 import React, { useState } from 'react'
 import { PopupCenterPanel } from '../components/popup/PopupCenterPanel'
 
+
+//USER SERVICE
+import { updateUserInfo } from '../apis/user'
+import { fetchAPI } from '../helpers/fetch'
+import { AppContext } from '../contexts/main';
+import { useContext, useEffect } from 'react';
+
 export const ChangeBirthdayPopup = ({ open, setOpen, icon = '', birthday = '', setReload }) => {
     const [value, setValue] = useState(birthday)
+    // USER SERVICE 
+    const { userId, session, setIsLoading } = useContext(AppContext);
 
     const handleUpdateBirthday = async () => {
-        //xử lý update giới tính
+        //xử lý update Ngày sinh
         console.log(value)
-
+        setIsLoading(true);
+        const update = await fetchAPI(`../${updateUserInfo}`, 'POST', {
+            updatedField: 'dob',
+            updatedValue: value,
+            userId: userId
+        });
+     
+        setIsLoading(false);
         setReload(true)
     }
+
+    // useEffect(() => {
+    //     setValue(birthday)
+    // }, [birthday])
 
     return (
         <div>
@@ -33,7 +53,9 @@ export const ChangeBirthdayPopup = ({ open, setOpen, icon = '', birthday = '', s
                                             <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
                                         </svg>
                                     </div>
-                                    <input type="date" className="bg-gray-50 border outline-none focus:outline-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date" />
+                                    <input type="date" className="bg-gray-50 border outline-none focus:outline-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date" 
+                                    value={value}
+                                    onChange={(e)=>setValue(e.target.value)}/>   
                                 </div>
                             </div>
 

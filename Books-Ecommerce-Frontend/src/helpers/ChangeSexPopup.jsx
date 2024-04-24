@@ -1,21 +1,38 @@
 import React, { useState } from 'react'
 import { PopupCenterPanel } from '../components/popup/PopupCenterPanel'
 
+//USER SERVICE
+import {updateUserInfo} from '../apis/user'
+import {fetchAPI} from '../helpers/fetch'
+import { AppContext } from '../contexts/main';
+import { useContext,useEffect } from 'react';
+
 export const ChangeSexPopup = ({ open, setOpen, icon = '', sex = '', setReload }) => {
     const [value, setValue] = useState(sex)
+
+    // USER SERVICE 
+    const { userId, session, setIsLoading } = useContext(AppContext);
 
     const SEXS = [
         { sex: "male", name: "Nam" },
         { sex: "female", name: "Nữ" },
-        { sex: "unknow", name: "Khác" }
+        { sex: "unknown", name: "Khác" }
     ]
 
     const handleUpdateSex = async () => {
         //xử lý update giới tính
-        console.log(value)
-
+        setIsLoading(true);
+        const update = await fetchAPI(`../${updateUserInfo}`, 'POST', {
+            updatedField: 'sex',
+            updatedValue: value,
+            userId: userId
+        });
+        setIsLoading(false);
         setReload(true)
     }
+    useEffect(() => {
+        setValue(sex)
+    }, [sex])
 
     return (
         <div>

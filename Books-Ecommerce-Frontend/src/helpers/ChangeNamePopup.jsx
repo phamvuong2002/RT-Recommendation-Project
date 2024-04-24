@@ -1,14 +1,34 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { PopupCenterPanel } from '../components/popup/PopupCenterPanel'
 
+//USER SERVICE
+import { updateUserInfo } from '../apis/user'
+import { fetchAPI } from '../helpers/fetch'
+import { AppContext } from '../contexts/main';
+import { useContext } from 'react';
 export const ChangeNamePopup = ({ open, setOpen, icon = '', fullName = '', setReload }) => {
     const [value, setValue] = useState(fullName)
 
+    // USER SERVICE 
+    const { userId, session, setIsLoading } = useContext(AppContext);
+
     const handleUpdateName = async () => {
         //xử lý update tên
-
+        setIsLoading(true);
+        const update = await fetchAPI(`../${updateUserInfo}`, 'POST', {
+            updatedField: 'name',
+            updatedValue: value,
+            userId: userId
+        });
+        setIsLoading(false);
         setReload(true)
     }
+
+
+    useEffect(() => {
+        setValue(fullName)
+    }, [fullName])
+    
 
     return (
         <div>
@@ -30,7 +50,7 @@ export const ChangeNamePopup = ({ open, setOpen, icon = '', fullName = '', setRe
                                     type="text"
                                     className="w-full h-8 outline-none forcus:outline-none"
                                     value={value}
-                                    onChange={(e) => setValue(e.target.value)}
+                                    onChange={(e)=>setValue(e.target.value)}
                                 // readOnly
                                 />
                                 <div className="flex items-center text-gray-400" onClick={() => setValue('')}>

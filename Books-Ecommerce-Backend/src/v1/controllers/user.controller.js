@@ -26,6 +26,14 @@ class UserController {
         metadata: data,
       }).send(res);
   }
+
+  // Xem người dùng trong MongoDB (test xong xóa)
+  getUserMongoDB = async (req, res, next) =>{
+    const data = await UserService.getUserMongoDB(req.body);
+    new SuccessResponse({
+        metadata: data,
+      }).send(res);
+  }
 }
 
 module.exports = new UserController();

@@ -18,7 +18,7 @@ export const SearchPage = () => {
 
 
     return (
-        <div>
+        <div className='pb-5 sm:pb-0'>
             {/*Truyền thêm đống pages, totalPages, currentPage, setCurrentPag để gọi AllProduct trong cái FilterProduct luôn*/}
             <FilterProduct
                 _sort={sortBy}

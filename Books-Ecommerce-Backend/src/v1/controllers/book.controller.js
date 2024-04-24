@@ -5,6 +5,14 @@ const BookService = require("../services/book.service");
 
 class BookController {
 
+  createBook = async (req, res, next) => {
+    const data = await BookService.createBook(req.body);
+    new SuccessResponse({
+      metadata: data,
+    }).send(res);
+
+  }
+
   getAllBook = async (req, res, next) => {
     const data = await BookService.getAllBook();
     new SuccessResponse({

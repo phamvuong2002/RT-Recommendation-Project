@@ -16,7 +16,6 @@ import Login_SignUp from './Login_SignUp';
 import Category_dropdown from './Category_Dropdown';
 import { HiMiniSquares2X2, HiChevronDown } from 'react-icons/hi2';
 import { LuClipboardList, LuLogOut } from 'react-icons/lu';
-
 import { Link, useLocation } from 'react-router-dom';
 import { AppContext } from '../contexts/main';
 
@@ -25,7 +24,9 @@ function classNames(...classes) {
 }
 // Navbar chính
 export const Navbar = () => {
-  const { numCart } = useContext(AppContext);
+  const { numCart, requestAuth, userId, token, setrequestAuthm, setToken } =
+    useContext(AppContext);
+
   const location = useLocation();
   const path = location.search;
   const [isOpenShoppingCarts, setIsOpenShoppingCarts] = useState(false);
@@ -46,6 +47,19 @@ export const Navbar = () => {
   const timeoutDuration = 100;
   let timeoutButton;
   let timeoutMenu;
+
+  /************************CHECK AUTHENTICATION***********************************/
+  //Router thủ công cho những trang yêu cầu Xác Thực Tài Khoản
+  //Sử dung các biến token, userId, requestAuth (và một số biến liên quan)
+  //Để xác định có cần xác thực
+  //*** Lưu Ý: cần phải reset các biến yêu cầu xác thực khi xác thực thành công
+  //**** SET TOKEN CHO USER ĐÃ XÁC THỰC THÀNH CÔNG
+  useEffect(() => {
+    if (requestAuth && !token) {
+      setOpen(true);
+    }
+  }, [requestAuth, userId, token, open]);
+  /***********************************************************/
 
   const onMouseEnterButton = () => {
     clearTimeout(timeoutButton);
@@ -169,6 +183,7 @@ export const Navbar = () => {
                         setReload={setReloadLoginSignup}
                         setUser={setUser}
                         setOpen={setOpen}
+                        open={open}
                       />
                     )}
                   </>
@@ -258,7 +273,7 @@ export const Navbar = () => {
               <IoCartOutline className="text-red-500 h-5 w-5 ml-2 sm:h-6 sm:w-6 " />
               <span className="cart-quantity text-center text-sm min-w-[20px] h-[20px] rounded-[50%] ml-[-10px] mt-[-5px] bg-[red] text-white">
                 {' '}
-                {numCart >= 100 ? '99+' : numCart}{' '}
+                {numCart >= 100 ? '99+' : numCart >= 0 ? numCart : 0}{' '}
               </span>
             </div>
             <p className="hidden lg:block ">Giỏ hàng</p>

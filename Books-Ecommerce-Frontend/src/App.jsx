@@ -10,7 +10,7 @@ import { getnumcart } from './apis/cart';
 import { getsession } from './apis/access';
 
 function App() {
-  const { userId, setUserId, session, setSession, setNumCart } =
+  const { userId, setUserId, session, setSession, setNumCart, setToken } =
     useContext(AppContext);
 
   // Update Local Variables
@@ -21,6 +21,10 @@ function App() {
       if (data.status === 200) {
         setSession(data.metadata.sessionid);
         setUserId(1);
+        //FOR GUEST
+        setToken(null);
+        //FOR LOGINED USER
+        // setToken('123456789');
       }
     };
     fetchUserAuth();

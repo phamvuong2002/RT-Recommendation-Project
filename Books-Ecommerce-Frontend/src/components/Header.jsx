@@ -18,10 +18,10 @@ export const Header = () => {
           <a href="https://www.facebook.com/">
             <FaFacebookF className="w-4 h-4 sm:w-5 lg:h-5" />{' '}
           </a>
-          <a href="">
+          <a href="#">
             <FaInstagram className="w-4 h-4 sm:w-5 lg:h-5" />{' '}
           </a>
-          <a href="">
+          <a href="#">
             <FaLinkedin className="w-4 h-4 sm:w-5 lg:h-5" />{' '}
           </a>
         </div>
@@ -44,15 +44,15 @@ export const Header = () => {
             />
           </div>
           <div className=" flex justify-end flex-row pr-1 items-center gap-4 sm:px-10 w-1/3">
-            <a href="https://www.facebook.com/">
+            <button href="https://www.facebook.com/">
               <FaFacebookF className="w-4 h-4 sm:w-5 lg:h-5" />{' '}
-            </a>
-            <a href="">
+            </button>
+            <button href="#">
               <FaInstagram className="w-4 h-4 sm:w-5 lg:h-5" />{' '}
-            </a>
-            <a href="">
+            </button>
+            <button href="#">
               <FaLinkedin className="w-4 h- sm:w-5 lg:h-5" />{' '}
-            </a>
+            </button>
           </div>
         </div>
       </Link>

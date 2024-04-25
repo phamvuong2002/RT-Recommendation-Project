@@ -11,8 +11,6 @@ import { SelectAddressPopup } from '../helpers/SelectAddressPopup';
 import { calculateShippingFeeDefault } from '../utils/calculateShippingFeeDefault';
 import { handleFavoriteBook } from '../apis/book';
 import { AppContext } from '../contexts/main';
-
-import { shortenString } from '../utils/shortenString';
 import { getaddresses } from '../apis/address';
 
 export const DetailCart = ({ book }) => {
@@ -34,72 +32,24 @@ export const DetailCart = ({ book }) => {
   const [isCalFeeShipLoading, setIsCalFeeShipLoading] = useState(false);
 
   const [isClicked, setIsClicked] = useState(null); //nganvo add to control when this product is added to favorite book or not
+
+  //Set status favorite book (from db) at 1st render
   useEffect(() => {
-    const fetchData = async () => {
+    const getStatusFavBook = async () => {
       try {
         const productData = await fetchAPI(`../${handleFavoriteBook}`, 'POST', {
-          userId: userId, /// Chỗ này mốt truyền userID dô sao????
+          userId: userId,
           book: {
             book_id: 4,
           },
         });
-        setIsClicked(productData.metadata.favoriteBookStatus); // Cập nhật isClicked dựa trên dữ liệu fetch
+        setIsClicked(productData.metadata.favoriteBookStatus);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
-
-const SAMPLEVERSION = {
-    default: 'Thường',
-    'special': 'Đặt biệt'
-}
-
-
-export const DetailCart = (/*{ product }*/) => {
-
-    const { userId, session, setIsLoading, setNumCart } = useContext(AppContext);
-
-    const [product, setProduct] = useState({ productid: 0 })
-    const [numCarts, setNumCarts] = useState(1);
-    const [version, setVersion] = useState(SAMPLEVERSION.default);
-    const [isVersionOpen, setIsVersionOpen] = useState(false);
-    const [openLovePopup, setOpenLovePopup] = useState(false);
-    const [openAddToCartsPopup, setOpenAddToCartsPopup] = useState(false);
-    const [openSharePopup, setOpenSharePopup] = useState(false);
-    const [urlShare, setUrlShare] = useState('');
-
-    const [userAddresses, setUserAddresses] = useState([]);
-    const [defaultAddress, setDefaultAddress] = useState({ addressid: 0 });
-    const [isAddrPopupOpen, setIsAddrPopupOpen] = useState(false);
-    const [shippingService, setShippingService] = useState({ serviceid: 0 });
-
-    const [isClicked, setIsClicked] = useState(null);//nganvo add to control when this product is added to favorite book or not
-
-    //Set status favorite book (from db) at 1st render
-    useEffect(() => {
-        const getStatusFavBook = async () => {
-            try {
-                const productData = await fetchAPI(`../${handleFavoriteBook}`, 'POST', {
-                    "userId": userId,
-                    "book": {
-                        "book_id": 4
-                    }
-                });
-                setIsClicked(productData.metadata.favoriteBookStatus);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
-        getStatusFavBook();
-    }, [userId]);
-
-    //Xử lý chọn version
-    const handleVersionToggle = async () => {
-        setIsVersionOpen(!isVersionOpen);
-
     };
 
-    fetchData();
+    getStatusFavBook();
   }, [userId]);
 
   //Xử lý chọn version
@@ -163,7 +113,6 @@ export const DetailCart = (/*{ product }*/) => {
       const address = await fetchAPI(`../${getaddresses}`, 'POST', {
         userId,
       });
-      console.log('address::::', address);
       if (address.status !== 200) {
         setDefaultAddress('');
       } else {

@@ -11,8 +11,7 @@ import { getSearchFilterSort } from '../apis/book';
 
 
 //{/* pages, totalPages, currentPage, setCurrentPage, isShowHeader, numOfProductsInRow */}
-export const AllProducts = ({ userId, isShowHeader, limitProduct, numOfProductsInRow, _sort, _limit, _query }) => {
-
+export const AllProducts = ({ userId, isShowHeader, numOfProductsInRow, _sort, _cate, _limit, _query, _price, _publisher }) => {
     const location = useLocation()
     const navigate = useNavigate();
     const searchParams = new URLSearchParams(location.search);
@@ -22,6 +21,9 @@ export const AllProducts = ({ userId, isShowHeader, limitProduct, numOfProductsI
     const topRef = useRef(null);
     const prevQueryRef = useRef(null);
     const prevSortRef = useRef(null);
+    const prevCateRef = useRef(null);
+    const prevPriceRef = useRef(null);
+    const prevPublisherRef = useRef(null);
 
     const [products, setProducts] = useState([])
     const [pagination, setPagination] = useState({
@@ -32,9 +34,12 @@ export const AllProducts = ({ userId, isShowHeader, limitProduct, numOfProductsI
 
     const [filters, setFilters] = useState({
         search: "",
+        categories: _cate,
         page: 1,
         limit: _limit,
         sort: _sort,
+        price: _price,
+        publisher: _publisher
     })
 
     const handlePageChange = (newPage) => {
@@ -49,7 +54,6 @@ export const AllProducts = ({ userId, isShowHeader, limitProduct, numOfProductsI
     };
 
     useEffect(() => {
-        // Check if _query is updated
         if (_query !== prevQueryRef.current) {
             setFilters(prevFilters => ({
                 ...prevFilters,
@@ -65,7 +69,48 @@ export const AllProducts = ({ userId, isShowHeader, limitProduct, numOfProductsI
             }));
             prevSortRef.current = _sort;
         }
-    }, [_query, _sort]);
+        else if (_cate !== prevCateRef.current) {
+            setFilters(prevFilters => ({
+                ...prevFilters,
+                categories: _cate,
+                page: 1,
+            }));
+            prevCateRef.current = _cate;
+        }
+        else if (_price !== prevPriceRef.current) {
+            setFilters(prevFilters => ({
+                ...prevFilters,
+                price: _price,
+                page: 1,
+            }));
+            prevPriceRef.current = _price;
+        }
+        else if (_publisher !== prevPublisherRef.current) {
+            setFilters(prevFilters => ({
+                ...prevFilters,
+                publisher: _publisher,
+                page: 1,
+            }));
+            prevPublisherRef.current = _publisher;
+        }
+    }, [_query, _sort, _cate, _price, _publisher]);
+
+
+    useEffect(() => {
+        const loadProductData = async () => {
+            const paramsString = queryString.stringify(filters);//limit=1&page=1&search=ho
+            // console.log('filters', filters)
+            const res = await fetchAPI(`../${getSearchFilterSort}?${paramsString}`, 'POST')
+            console.log("url", `../${getSearchFilterSort}?${paramsString}`)
+            setProducts(res.metadata.productData);
+            setPagination(res.metadata.pagination);
+
+        }
+        //
+        setTimeout(() => {
+            loadProductData()
+        }, 100)
+    }, [filters])
 
 
     const showHeader = useMemo(() => {
@@ -80,25 +125,6 @@ export const AllProducts = ({ userId, isShowHeader, limitProduct, numOfProductsI
             )
         }
     }, [isShowHeader])
-
-
-    useEffect(() => {
-        const loadProductData = async () => {
-            const paramsString = queryString.stringify(filters);//limit=1&page=1&search=ho
-            // console.log('filters', filters)
-            const res = await fetchAPI(`../${getSearchFilterSort}?${paramsString}`, 'POST')
-            console.log("productData", res.metadata)
-            setProducts(res.metadata.productData);
-            setPagination(res.metadata.pagination);
-
-        }
-        //
-        setTimeout(() => {
-            loadProductData()
-        }, 100)
-    }, [filters])
-
-
 
     return (
         <div ref={topRef} className="w-full">
@@ -127,6 +153,9 @@ export const AllProducts = ({ userId, isShowHeader, limitProduct, numOfProductsI
                 onPageChange={handlePageChange}
                 query={_query}
                 sort={_sort}
+                cate={_cate}
+                price={_price}
+                publisher={_publisher}
             />
 
         </div>
@@ -135,13 +164,12 @@ export const AllProducts = ({ userId, isShowHeader, limitProduct, numOfProductsI
 
 AllProducts.propTypes = {
     userId: PropTypes.string.isRequired,
-    // setCurrentPage: PropTypes.func.isRequired,
-    // currentPage: PropTypes.number.isRequired,
-    // totalPages: PropTypes.number.isRequired,
     isShowHeader: PropTypes.bool,
-    limitProduct: PropTypes.number.isRequired,
     numOfProductsInRow: PropTypes.number.isRequired,
     _sort: PropTypes.string,
     _limit: PropTypes.number,
     _query: PropTypes.string,
+    _cate: PropTypes.string,
+    _price: PropTypes.string,
+    _publisher: PropTypes.string,
 };

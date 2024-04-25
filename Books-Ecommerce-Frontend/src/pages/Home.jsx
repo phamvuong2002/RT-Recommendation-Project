@@ -11,7 +11,7 @@ import { AppContext } from '../contexts/main';
 
 
 export const Home = () => {
-  const { userId, session, setIsLoading, setNumCart } = useContext(AppContext);
+  const { userId, numCart, setNumCart } = useContext(AppContext);
   const [user, setUser] = useState(userId);
   const [products, setProducts] = useState([]);
   const { setActivePage } = useContext(AppContext);
@@ -21,7 +21,7 @@ export const Home = () => {
     setActivePage('Home');
   }, []);
 
-  console.log("userIdaaaaa", userId)
+  console.log("HomePage usrId", userId)
   useEffect(() => {
     const loadProductData = async () => {
       const productData = await fetchAPI(`../${getAllBook}`, 'POST')
@@ -37,13 +37,18 @@ export const Home = () => {
     <div>
       <Slider></Slider>
       <div className="mx-2 md:mx-16">
-        <FlashSale productData={products}></FlashSale>
+        <FlashSale
+          userId={userId}
+          productData={products}>
+
+        </FlashSale>
         <InfoForGuest></InfoForGuest>
 
         {/*Sản phẩm bán chạy*/}
         <div className="h-full">
 
           <AllProducts
+            userId={userId}
             limitProduct={48}
             isShowHeader={true}
             numOfProductsInRow={5}
@@ -73,7 +78,10 @@ export const Home = () => {
               Xu hướng mua sắm
             </div>
           </div>
-          <SliderProducts productData={products}></SliderProducts>
+          <SliderProducts
+            userId={userId}
+            productData={products}>
+          </SliderProducts>
         </div>
       </div>
     </div>

@@ -200,7 +200,7 @@ export const Navbar = () => {
               as="div"
               className={`${user.id.length > 0 ? 'block' : 'hidden'} relative inline-block text-left`}
             >
-              {({}) => (
+              {({ }) => (
                 <div>
                   <div
                     onClick={() => setOpenDropdown(!openDropdown)}

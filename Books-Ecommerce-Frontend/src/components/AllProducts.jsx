@@ -11,7 +11,7 @@ import { getSearchFilterSort } from '../apis/book';
 
 
 //{/* pages, totalPages, currentPage, setCurrentPage, isShowHeader, numOfProductsInRow */}
-export const AllProducts = ({ isShowHeader, limitProduct, numOfProductsInRow, _sort, _limit, _query }) => {
+export const AllProducts = ({ userId, isShowHeader, limitProduct, numOfProductsInRow, _sort, _limit, _query }) => {
 
     const location = useLocation()
     const navigate = useNavigate();
@@ -107,7 +107,10 @@ export const AllProducts = ({ isShowHeader, limitProduct, numOfProductsInRow, _s
                 {/* Hiển thị các sản phẩm của trang hiện tại*/}
                 {products.map((product, index) => (
                     <div key={index} className="">
-                        <Product productData={product} />
+                        <Product
+                            userId={userId}
+                            productData={product}
+                        />
                     </div>
                 ))}
             </div>
@@ -131,7 +134,7 @@ export const AllProducts = ({ isShowHeader, limitProduct, numOfProductsInRow, _s
 };
 
 AllProducts.propTypes = {
-    // pages: PropTypes.array.isRequired,
+    userId: PropTypes.string.isRequired,
     // setCurrentPage: PropTypes.func.isRequired,
     // currentPage: PropTypes.number.isRequired,
     // totalPages: PropTypes.number.isRequired,

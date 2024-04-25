@@ -13,7 +13,7 @@ import 'swiper/css/free-mode';
 import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 
 
-export const SliderProducts = ({ productData }) => {
+export const SliderProducts = ({ userId, productData }) => {
     return (
         <div className="">
             <Swiper
@@ -44,7 +44,9 @@ export const SliderProducts = ({ productData }) => {
             >
                 {productData.map((product, index) => (
                     <SwiperSlide key={index} className="w-1/5 h-full ">
-                        <ProductForSlider productData={product} />
+                        <ProductForSlider
+                            userId={userId}
+                            productData={product} />
                     </SwiperSlide>
                 ))}
             </Swiper>
@@ -54,5 +56,6 @@ export const SliderProducts = ({ productData }) => {
 
 // Xác định PropTypes cho Product
 SliderProducts.propTypes = {
+    userId: PropTypes.string.isRequired,
     productData: PropTypes.arrayOf(PropTypes.object).isRequired,
 };

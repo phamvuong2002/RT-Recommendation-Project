@@ -54,29 +54,41 @@ class BookService {
   static getBookById = async (bookId) => {
     let bookData = await db.book.findOne({
       where: {
-        book_id: bookId,
-      },
+        book_id: bookId
+      }
     });
-    return bookData;
-  };
+    return bookData
+  }
 
-  static getBookSearchFilterSort = async (
-    search,
-    categories,
-    sortBy,
-    page,
-    limit
-  ) => {
+  static getBookSearchFilterSort = async (search, categories, price, publisher, sortBy, page, limit) => {
     let whereClause = {};
+    let include = [];
+    let minPrice = 0;
+    let maxPrice = 0;
     if (search) {
       whereClause.book_title = { [Op.like]: `%${search}%` };
     }
+
     if (categories && categories.length > 0) {
+
       whereClause[Op.and] = categories.map((category, index) => {
-        return Sequelize.literal(
-          `JSON_EXTRACT(book_categories, '$[${index}]') = ${category}`
-        );
+        return Sequelize.literal(`JSON_EXTRACT(book_categories, '$[${index}]') = ${category}`);
       });
+    }
+
+    if (publisher) {
+      include.push({
+        model: db.publisher,
+        where: { pub_slug: publisher }
+      });
+    }
+
+    if (price && price.length > 0) {
+      minPrice = parseFloat(price[0])
+      maxPrice = parseFloat(price[1])
+      whereClause.book_spe_price = {
+        [Op.between]: [minPrice, maxPrice]
+      };
     }
 
     let order = [];
@@ -84,13 +96,14 @@ class BookService {
       const [sortField, sortOrder] = sortBy.split("_");
       if (sortField === "price") {
         order.push(["book_spe_price", sortOrder === "desc" ? "DESC" : "ASC"]);
-      } else {
-        order.push([sortField, sortOrder === "desc" ? "DESC" : "ASC"]);
+      } else if (sortField === 'publishedDate') {
+        order.push(["create_time", sortOrder === "desc" ? "DESC" : "ASC"]);
       }
     }
 
     const { count, rows: books } = await db.book.findAndCountAll({
       where: whereClause,
+      include: include,
       order: order,
       offset: page * limit,
       limit: limit,
@@ -101,11 +114,13 @@ class BookService {
       _limit: limit,
       _totalRows: count,
     };
-
     return {
       productData: books,
       pagination,
     };
-  };
+
+
+  }
+
 }
 module.exports = BookService;

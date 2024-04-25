@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
   class Book extends Model {
     static associate(models) {
       // Define associations here if needed
+      this.belongsTo(models.publisher, { foreignKey: 'book_publisherId' });
     }
   }
   Book.init({
@@ -47,7 +48,7 @@ module.exports = (sequelize, DataTypes) => {
       comment: 'book thumbnail'
     },
     book_avg_rating: {
-      type: DataTypes.DECIMAL(3,1),
+      type: DataTypes.DECIMAL(3, 1),
       defaultValue: 0,
       comment: 'avg rating'
     },
@@ -57,12 +58,12 @@ module.exports = (sequelize, DataTypes) => {
       comment: 'number ratings'
     },
     book_spe_price: {
-      type: DataTypes.DECIMAL(11,2),
+      type: DataTypes.DECIMAL(11, 2),
       allowNull: false,
       comment: 'special price'
     },
     book_old_price: {
-      type: DataTypes.DECIMAL(11,2),
+      type: DataTypes.DECIMAL(11, 2),
       allowNull: false,
       comment: 'old price'
     },

@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
   class Publisher extends Model {
     static associate(models) {
       // Define associations here if needed
+
     }
   }
   Publisher.init({

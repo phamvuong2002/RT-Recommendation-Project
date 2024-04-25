@@ -9,14 +9,11 @@ import MenuItems from './MenuItems';
 import { PopupCenterPanel } from './popup/PopupCenterPanel';
 import { useInsertionEffect } from 'react';
 import PropTypes from 'prop-types';
-
 import { getallcategories } from "../apis/category"
 
+export default function FilterProduct({ _userId, _cate, _limit, _query, _price, _publisher }) {
 
-
-
-export default function FilterProduct({ _sort, _limit, _query }) {
-
+  console.log("price", _price, _publisher)
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [all_categories, setCategoriess] = useState([])
   const [cate, setCate] = useState()
@@ -29,7 +26,6 @@ export default function FilterProduct({ _sort, _limit, _query }) {
   const params = new URLSearchParams(location.search);
   let hasPublisher = params.has('publisher')
 
-  console.log('re render filter')
   let publisher_filter = ['']
   if (!hasPublisher) {
     //
@@ -86,10 +82,10 @@ export default function FilterProduct({ _sort, _limit, _query }) {
       id: 'price',
       name: 'Giá',
       options: [
-        { value: '0,150', label: '0-150.000đ', checked: false },
-        { value: '150,300', label: '150.000đ-300.000đ', checked: false },
-        { value: '300,500', label: '300.000đ-500.000đ', checked: false },
-        { value: '500,1000', label: '500.000đ-1.000.000đ', checked: false },
+        { value: '0,150000', label: '0-150.000đ', checked: false },
+        { value: '150000,300000', label: '150.000đ-300.000đ', checked: false },
+        { value: '300000,500000', label: '300.000đ-500.000đ', checked: false },
+        { value: '500000,1000000', label: '500.000đ-1.000.000đ', checked: false },
 
       ],
     },
@@ -98,9 +94,9 @@ export default function FilterProduct({ _sort, _limit, _query }) {
       id: 'publisher',
       name: 'Nhà xuất bản',
       options: [
-        { value: 'NXB-tre', label: 'NXB Trẻ', checked: false },
-        { value: 'NXB-kimdong', label: 'NXB Kim Đồng', checked: false },
-        { value: 'NXB-giaoducvn', label: 'NXB Giáo dục Việt Nam', checked: false },
+        { value: 'nxb-van-hoc', label: 'NXB Văn Học', checked: false },
+        { value: 'nxb-dan-tri', label: 'NXB Dân Trí', checked: false },
+        { value: 'nxb-dai-hoc-su-pham', label: 'NXB Đại học sư phạm', checked: false },
         { value: 'NXB-phunuvn', label: 'NXB Phụ nữ Việt Nam', checked: false },
 
       ],
@@ -135,10 +131,10 @@ export default function FilterProduct({ _sort, _limit, _query }) {
         // console.log('in price')
         price_filter = filter_target_value
         if (params.has('price')) {
-          console.log('in price navigate set '+price_filter)
+          console.log('in price navigate set ' + price_filter)
           params.set('price', price_filter)
         } else {
-          console.log('in price navigate append'+ price_filter)
+          console.log('in price navigate append' + price_filter)
           params.append('price', price_filter)
         }
       }
@@ -173,9 +169,9 @@ export default function FilterProduct({ _sort, _limit, _query }) {
     }
     navigate(location.pathname + '?' + params)
   }
-  
-  const handlClickAllCategory=()=>{
-    params.set('categories','all');
+
+  const handlClickAllCategory = () => {
+    params.set('categories', 'all');
     navigate(location.pathname + '?' + params)
   }
 
@@ -197,7 +193,7 @@ export default function FilterProduct({ _sort, _limit, _query }) {
       <div>
         <main className="hidden lg:block mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-24">
-            <button  className="text-[17px] font-bold tracking-tight text-gray-900" onClick={handlClickAllCategory}>TẤT CẢ NHÓM SẢN PHẨM</button>
+            <button className="text-[17px] font-bold tracking-tight text-gray-900" onClick={handlClickAllCategory}>TẤT CẢ NHÓM SẢN PHẨM</button>
 
             <div className="flex items-center">
               <Menu as="div" className="relative inline-block text-left">
@@ -312,7 +308,7 @@ export default function FilterProduct({ _sort, _limit, _query }) {
                                   className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 accent-red-300"
                                 />
                                 <label
-                                  htmlFor={option.value} 
+                                  htmlFor={option.value}
                                   className="ml-3 min-w-0 flex-1 text-gray-500 sm:text-sm sm:text-gray-600 hover:cursor-pointer"
                                 >
                                   {option.label}
@@ -333,11 +329,14 @@ export default function FilterProduct({ _sort, _limit, _query }) {
               <div className="lg:col-span-4">
                 {/* Your content */}
                 <AllProducts
-                  limitProduct={48}
+                  userId={_userId}
                   numOfProductsInRow={4}
+                  _cate={_cate}
                   _sort={sortOption}
                   _limit={parseInt(_limit)}
                   _query={_query}
+                  _price={_price}
+                  _publisher={_publisher}
                 >
                 </AllProducts>
 
@@ -489,11 +488,14 @@ export default function FilterProduct({ _sort, _limit, _query }) {
             <div className="lg:col-span-4 bg-gray-100">
               {/* Your content */}
               <AllProducts
-                limitProduct={48}
+                userId={_userId}
                 numOfProductsInRow={4}
+                _cate={_cate}
                 _sort={sortOption}
                 _limit={parseInt(_limit)}
                 _query={_query}
+                _price={_price}
+                _publisher={_publisher}
               >
               </AllProducts>
 
@@ -506,7 +508,10 @@ export default function FilterProduct({ _sort, _limit, _query }) {
 }
 
 FilterProduct.propTypes = {
-  _sort: PropTypes.string,
+  _userId: PropTypes.string.isRequired,
+  _cate: PropTypes.string,
   _limit: PropTypes.number,
   _query: PropTypes.string,
+  _price: PropTypes.string,
+  _publisher: PropTypes.string,
 };

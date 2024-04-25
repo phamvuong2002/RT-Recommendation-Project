@@ -21,7 +21,6 @@ export const Home = () => {
     setActivePage('Home');
   }, []);
 
-  console.log("HomePage usrId", userId)
   useEffect(() => {
     const loadProductData = async () => {
       const productData = await fetchAPI(`../${getAllBook}`, 'POST')
@@ -34,7 +33,7 @@ export const Home = () => {
   }, [])
 
   return (
-    <div>
+    <div className='pb-10 sm:pb-0'>
       <Slider></Slider>
       <div className="mx-2 md:mx-16">
         <FlashSale
@@ -49,7 +48,6 @@ export const Home = () => {
 
           <AllProducts
             userId={userId}
-            limitProduct={48}
             isShowHeader={true}
             numOfProductsInRow={5}
           >

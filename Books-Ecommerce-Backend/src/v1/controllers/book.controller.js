@@ -34,17 +34,13 @@ class BookController {
   };
 
   getBookBySearchFilterSort = async (req, res) => {
-    const { search, categories, sort, page = 1, limit = 24 } = req.query;
+    const { search, categories, sort, price, publisher, page = 1, limit = 1 } = req.query;
     try {
       const sortBy = sort ? sort : null;
-      const cate = categories ? categories.split(",").map(Number) : null;
-      const books = await BookService.getBookSearchFilterSort(
-        search,
-        cate,
-        sortBy,
-        parseInt(page - 1),
-        parseInt(limit)
-      );
+      const filterCate = categories !== "all" && categories ? categories.split(',').map(cat => encodeURIComponent(cat)) : null;
+      const filterPrice = price ? price.split(',').map(p => encodeURIComponent(p)) : null;
+      const filterPublisher = publisher ? publisher : null;
+      const books = await BookService.getBookSearchFilterSort(search, filterCate, filterPrice, filterPublisher, sortBy, parseInt(page - 1), parseInt(limit));
       new SuccessResponse({
         metadata: books,
       }).send(res);

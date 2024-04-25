@@ -49,14 +49,14 @@ import React, { useState, useEffect, useMemo } from 'react';
 //     handlePageChange: PropTypes.func.isRequired,
 // };
 
-export const PaginationButtons = ({ pagination, onPageChange, query, sort }) => {
+export const PaginationButtons = ({ pagination, onPageChange, query, sort, cate, price, publisher }) => {
     //console.log("pagination", pagination)
 
     const { _page, _limit, _totalRows } = pagination;
     const [currentPage, setCurrentPage] = useState(_page);
     useEffect(() => {
         setCurrentPage(1);
-    }, [query, sort]);
+    }, [query, sort, cate, price, publisher]);
 
     const totalPages = Math.ceil(_totalRows / _limit);
     // console.log('totalPages', typeof (totalPages))
@@ -108,5 +108,8 @@ PaginationButtons.propTypes = {
     onPageChange: PropTypes.func.isRequired,
     query: PropTypes.string,
     sort: PropTypes.string,
+    cate: PropTypes.string,
+    price: PropTypes.string,
+    publisher: PropTypes.string,
 };
 

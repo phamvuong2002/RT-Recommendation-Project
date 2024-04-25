@@ -33,14 +33,14 @@ function App() {
   //Num Cart
   useEffect(() => {
     const getNumCart = async () => {
-      if (!userId) return;
-      const data = await fetchAPI(getnumcart, 'POST', {
+      if (!userId || userId?.length <= 0) return;
+      const data = await fetchAPI(`../${getnumcart}`, 'POST', {
         userId,
       });
       if (data.status === 'error') {
         setNumCart(0);
       } else {
-        setNumCart(data.metadata.numCart);
+        setNumCart(data?.metadata?.numCart || 0);
       }
     };
     getNumCart();

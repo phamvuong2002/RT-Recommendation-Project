@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { DetailCart } from '../components/DetailCart';
 import { DescriptionFeedback } from '../components/DescriptionFeedback';
 import NavigationPath from '../components/NavigationPath';
@@ -8,8 +8,10 @@ import { fetchAPI } from '../helpers/fetch';
 import { getAllBook, getonebook } from '../apis/book';
 import { getCateFromText } from '../utils/getCateFromText';
 import { shortenString } from '../utils/shortenString';
+import { AppContext } from '../contexts/main';
 
 export const ProductDetailPage = () => {
+  const { userId } = useContext(AppContext);
   const { bookid } = useParams();
   const [id, setId] = useState('');
   const [paths, setPaths] = useState([]);
@@ -37,7 +39,6 @@ export const ProductDetailPage = () => {
   useEffect(() => {
     //get book ..
     //set navpath
-    console.log(book);
     setPaths([
       { path: '/', label: 'Trang Chủ' },
       {
@@ -55,7 +56,6 @@ export const ProductDetailPage = () => {
   useEffect(() => {
     const loadProductData = async () => {
       const productData = await fetchAPI(`../${getAllBook}`, 'POST');
-      console.log('url', `../${getAllBook}`);
       setProducts(productData.metadata);
     };
     loadProductData();
@@ -91,7 +91,10 @@ export const ProductDetailPage = () => {
             </div>
           </div>
           <div className="bg-white border-x border-b xl:border border-red-100">
-            <SliderProducts productData={products}></SliderProducts>
+            <SliderProducts
+              userId={userId?.toString()}
+              productData={products}
+            ></SliderProducts>
           </div>
         </div>
 
@@ -117,7 +120,10 @@ export const ProductDetailPage = () => {
             </div>
           </div>
           <div className="bg-white border-x border-b xl:border border-red-50">
-            <SliderProducts productData={products}></SliderProducts>
+            <SliderProducts
+              userId={userId?.toString()}
+              productData={products}
+            ></SliderProducts>
           </div>
         </div>
       </div>

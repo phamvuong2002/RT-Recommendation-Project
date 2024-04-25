@@ -121,7 +121,7 @@ export const ShoppingCarts = (/*items*/) => {
 
   // Xử lý xác nhận giỏ hàng
   const handleConfirmCarts = () => {
-    navigate('/payment');
+    navigate('/payment?type=cart');
   };
 
   //Fetch Shopping Carts

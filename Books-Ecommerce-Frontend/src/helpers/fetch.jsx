@@ -34,13 +34,13 @@ export const fetchAPI = async (
     });
     if (!res.ok) {
       console.log('Error to fetch');
-      return;
+      return res;
     }
 
     const data = await res.json();
     return data;
   } catch (error) {
-    console.log('There was an error fetch auth', error.message);
+    console.log('There was an error fetch auth', error);
     return;
   }
 };

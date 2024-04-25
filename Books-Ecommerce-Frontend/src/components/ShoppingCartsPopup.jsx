@@ -13,7 +13,8 @@ export const ShoppingCartsPopup = ({ open, setOpen }) => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [pageLoading, setPageLoading] = useState(true);
-  const { userId, session, setIsLoading, setNumCart } = useContext(AppContext);
+  const { userId, session, setIsLoading, setNumCart, numCart } =
+    useContext(AppContext);
   const NUMLOADER = 6;
 
   // Xử lý sự kiện khi nhấn nút "Xoá"
@@ -188,10 +189,10 @@ export const ShoppingCartsPopup = ({ open, setOpen }) => {
                       <div className="mt-6">
                         <Link
                           onClick={() => setOpen(false)}
-                          to="../payment"
+                          to="../payment?type=cart"
                           className={`flex items-center justify-center rounded-md border border-transparent bg-red-500 px-6 py-3 text-base font-bold text-white shadow-sm xl:hover:bg-red-700 ${products.length ? '' : 'hidden'}`}
                         >
-                          Thanh Toán
+                          Thanh Toán ({numCart})
                         </Link>
                       </div>
                       <div className="mt-6 flex justify-center text-center text-sm text-gray-500">

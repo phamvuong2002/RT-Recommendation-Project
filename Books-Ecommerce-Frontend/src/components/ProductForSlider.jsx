@@ -1,8 +1,28 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types';
+import { addtocart } from '../apis/cart';
+import { fetchAPI } from '../helpers/fetch';
+import { PopupOpen } from './popup/PopupOpen';
+import { popupContent } from '../helpers/popupContent'
 
-export const ProductForSlider = ({ productData }) => {
+export const ProductForSlider = ({ userId, productData }) => {
+    const [openAddToCartsPopup, setOpenAddToCartsPopup] = useState(false);
+
+    const AddToCart = async (e) => {
+        e.preventDefault();
+
+        await fetchAPI(`../${addtocart}`, 'POST', {
+            "userId": userId,
+            "book": {
+                "book_id": productData.book_id,
+                "quantity": 1,
+                "old_quantity": 0
+            }
+        })
+        setOpenAddToCartsPopup(true);
+
+    }
     return (
         <div className="block p-2 sm:p-0 bg-white min-h-full md:hover:shadow-2xl md:rounded-md md:shadow-md overflow-hidden">
             <Link to={`../books/${productData.book_id}`} className="h-full block">
@@ -19,8 +39,25 @@ export const ProductForSlider = ({ productData }) => {
 
                         {/*Image Hover*/}
                         <div className="flex items-center justify-center absolute w-full h-full bg-black/20 opacity-0 transition-all duration-300 sm:group-hover:opacity-100 sm:rounded-t-md">
+                            <PopupOpen
+                                open={openAddToCartsPopup}
+                                setOpen={setOpenAddToCartsPopup}
+                                autoClose={800}
+                                Content={popupContent('text-gray-800 text-base text-center',
+                                    <div className="flex flex-col gap-2 justify-center items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="120" height="120" viewBox="0 0 48 48">
+                                            <path fill="#4caf50" d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z"></path><path fill="#ccff90" d="M34.602,14.602L21,28.199l-5.602-5.598l-2.797,2.797L21,33.801l16.398-16.402L34.602,14.602z"></path>
+                                        </svg>
+                                        <div>
+                                            {`Bạn đã thêm sản phẩm vào Giỏ Hàng!`}
+                                        </div>
+                                    </div>
+
+                                )}
+                                onNoClick={() => setOpenAddToCartsPopup(false)}
+                            />
                             <button
-                                /*onClick={() => handleAddProductsToShoppingCart(productData.id)}*/
+                                onClick={AddToCart}
                                 className="bg-red-500 text-white  hover:bg-red-300 px-5 ">Add to Cart
                             </button>
                         </div>
@@ -58,6 +95,7 @@ export const ProductForSlider = ({ productData }) => {
 
 // Xác định PropTypes cho Product
 ProductForSlider.propTypes = {
+    userId: PropTypes.string.isRequired,
     productData: PropTypes.shape({
         book_img: PropTypes.string.isRequired,
         book_title: PropTypes.string.isRequired,

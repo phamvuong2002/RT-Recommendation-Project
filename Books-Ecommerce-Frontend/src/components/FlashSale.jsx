@@ -4,7 +4,7 @@ import { CountDownTimer } from './CountdownTimer';
 import PropTypes from 'prop-types';
 
 
-export const FlashSale = ({ productData }) => {
+export const FlashSale = ({ userId, productData }) => {
     const flashSaleDay = new Date("May 5, 2024").getTime()
     return (
         <div className="mt-4 h-full">
@@ -19,13 +19,16 @@ export const FlashSale = ({ productData }) => {
                     <CountDownTimer flashSaleDay={flashSaleDay} />
                 </div>
             </div>
-            <SliderProducts productData={productData} />
+            <SliderProducts
+                userId={userId}
+                productData={productData} />
 
         </div>
     );
 }
 
 FlashSale.propTypes = {
+    userId: PropTypes.string.isRequired,
     productData: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 

@@ -37,22 +37,24 @@ export const DetailCart = (/*{ product }*/) => {
     const [shippingService, setShippingService] = useState({ serviceid: 0 });
 
     const [isClicked, setIsClicked] = useState(null);//nganvo add to control when this product is added to favorite book or not
+
+    //Set status favorite book (from db) at 1st render
     useEffect(() => {
-        const fetchData = async () => {
+        const getStatusFavBook = async () => {
             try {
                 const productData = await fetchAPI(`../${handleFavoriteBook}`, 'POST', {
-                    "userId": userId, /// Chỗ này mốt truyền userID dô sao????
+                    "userId": userId,
                     "book": {
                         "book_id": 4
                     }
                 });
-                setIsClicked(productData.metadata.favoriteBookStatus); // Cập nhật isClicked dựa trên dữ liệu fetch
+                setIsClicked(productData.metadata.favoriteBookStatus);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
         };
 
-        fetchData();
+        getStatusFavBook();
     }, [userId]);
 
     //Xử lý chọn version

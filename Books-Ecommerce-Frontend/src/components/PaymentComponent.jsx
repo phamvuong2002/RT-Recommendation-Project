@@ -23,7 +23,8 @@ import { getaddresses } from '../apis/address';
 import { getdiscountwallet } from '../apis/discount';
 import StaggeredDropDown from './childComponents/StaggeredDropDown';
 import StaggeredDropDownDiscount from './childComponents/StaggeredDropDown';
-import { checkoutcartreview } from '../apis/checkout';
+import { checkoutcartreview, placeorder } from '../apis/checkout';
+import { PopupCenterPanel } from './popup/PopupCenterPanel';
 
 const SAMPLEPAYMENTMETHODS = [
   {
@@ -51,31 +52,6 @@ const SAMPLEPAYMENTMETHODS = [
   },
 ];
 
-const SAMPLECOUPONCODE = [
-  {
-    couponCodeId: '1',
-    couponCode: 'A123',
-    discount_percent: 0.3,
-    discount_price: 50000,
-    max_discount: 100000,
-    min_condition: 200000,
-    expiredDate: '10/10/2024',
-    isAvailable: true,
-    currency: 'đ',
-  },
-  {
-    couponCodeId: '2',
-    couponCode: 'A456',
-    discount_percent: 0.3,
-    discount_price: 50000,
-    max_discount: 100000,
-    min_condition: 200000,
-    expiredDate: '10/10/2024',
-    isAvailable: false,
-    currency: 'đ',
-  },
-];
-
 export const Payment = () => {
   // Generall setup
   const navigate = useNavigate();
@@ -85,7 +61,7 @@ export const Payment = () => {
   const type = queryParams.get('type');
   const data = queryParams.get('data');
 
-  const { userId, session, setIsLoading, numCart, setNumCart } =
+  const { userId, session, token, setIsLoading, numCart, setNumCart } =
     useContext(AppContext);
 
   // Vailables for checkout
@@ -102,6 +78,7 @@ export const Payment = () => {
   const [products, setProducts] = useState([]);
 
   const [serviceID, setServiceID] = useState('');
+  const [chosenService, setChosenService] = useState('');
   const [shippingFee, setShippingFee] = useState(0);
   const [shippingMethods, setShippingMethods] = useState([]);
 
@@ -117,6 +94,10 @@ export const Payment = () => {
   const [reviewPrice, setReviewPrice] = useState(0);
   const [serviceFee, setServiceFee] = useState(0);
   const [discountReview, setDiscountReview] = useState('');
+
+  //Popup Alert
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [messageAlert, setMessageAlert] = useState(false);
 
   //Remove Icon
   const removeIcon = (className) => {
@@ -162,11 +143,17 @@ export const Payment = () => {
 
     setServiceID(serviceID);
     setShippingFee(getFeeByServiceId(serviceID));
+    setChosenService(getServiceByServiceId(serviceID));
   };
 
   const getFeeByServiceId = (serviceId) => {
     const service = shippingMethods.find((s) => s.serviceid === serviceId);
     return service ? service.fee : 0;
+  };
+
+  const getServiceByServiceId = (serviceId) => {
+    const service = shippingMethods.find((s) => s.serviceid === serviceId);
+    return service || null;
   };
 
   //Xử lý sự kiện chọn phương thức thanh toán
@@ -191,10 +178,6 @@ export const Payment = () => {
     }
     setPaymentID(paymentMethodId);
   };
-
-  // const choicePayment = async (paymentID) => {
-  //     setPaymentID(paymentID);
-  // }
 
   // Xử lý sự kiện khi nhấn nút "Xoá"
   const handleDeleteProduct = async (productId) => {
@@ -293,6 +276,7 @@ export const Payment = () => {
           products[0],
         );
         setShippingMethods(services);
+        setChosenService(services[0]);
       } catch (error) {
         setIsAddrLoading(false);
         return;
@@ -386,8 +370,99 @@ export const Payment = () => {
     reviewCheckout();
   }, [couponDiscount, shippingFee, serviceFee, userId, couponCode, products]);
 
+  //Place Order
+  const placeOrder = async () => {
+    // if (!userId || !token) return;
+    if (!paymentID) {
+      setIsAlertOpen(true);
+      setMessageAlert('Vui lòng chọn một Phương Thức Thanh Toán!');
+      return;
+    }
+    if (!chosenService || !serviceID) {
+      setIsAlertOpen(true);
+      setMessageAlert('Vui lòng chọn một Phương Thức Vận Chuyển!');
+      return;
+    }
+
+    const dataCheckout = {
+      userId,
+      ...((couponDiscount || couponCode) && {
+        discount: {
+          discountId: couponDiscount?.dw_discount_id,
+          discountCode: couponCode,
+        },
+      }),
+      shipping: {
+        feeShip: shippingFee,
+        shippingCode: chosenService.code,
+      },
+      feeService: serviceFee,
+      payment: {
+        method: paymentID,
+      },
+    };
+    console.log('dataCheckout::', dataCheckout);
+
+    const createOrder = async () => {
+      setIsLoading(true);
+      const result = await fetchAPI(`../${placeorder}`, 'POST', dataCheckout);
+      if (result.status !== 200) {
+        setIsLoading(false);
+        setIsAlertOpen(true);
+        setMessageAlert('Đặt hàng thất bại! Vui lòng thử lại sau.');
+        return;
+      } else {
+        setIsLoading(false);
+        console.log('result:::', result);
+        window.location.href = result.metadata.payment_data.paymentUrl;
+      }
+    };
+
+    if (!userId) {
+      setIsAlertOpen(true);
+      setMessageAlert('Vui lòng đăng nhập để đặt hàng!');
+    } else {
+      createOrder();
+    }
+  };
+
   return (
     <div className="xl:flex xl:gap-2">
+      <PopupCenterPanel
+        open={isAlertOpen}
+        setOpen={setIsAlertOpen}
+        title="Đặt Hàng"
+        // titleClassName="hidden"
+        content={
+          <div>
+            <div className="flex flex-col gap-2 justify-center items-center">
+              {/* <svg
+                xmlns="http://www.w3.org/2000/svg"
+                x="0px"
+                y="0px"
+                width="120"
+                height="120"
+                viewBox="0 0 48 48"
+              >
+                <path
+                  fill="#4caf50"
+                  d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z"
+                ></path>
+                <path
+                  fill="#ccff90"
+                  d="M34.602,14.602L21,28.199l-5.602-5.598l-2.797,2.797L21,33.801l16.398-16.402L34.602,14.602z"
+                ></path>
+              </svg> */}
+              <img src="/img/miss_payment.png" alt="miss_payment" />
+              <div className="mt-2 font-semibold text-lg text-red-500">
+                {messageAlert}
+              </div>
+            </div>
+          </div>
+        }
+        autoClose={2500}
+      />
+
       {/* Preview*/}
       <div className="xl:w-2/3 flex flex-col gap-1 xl:gap-2">
         {/* Address preview*/}
@@ -851,6 +926,7 @@ export const Payment = () => {
               </div>
             </div>
             <button
+              onClick={placeOrder}
               className={`mt-6 w-full bg-red-500 py-1.5 font-bold text-blue-50 xl:hover:bg-red-600 ${products.length ? '' : 'hidden'}`}
             >
               ĐẶT HÀNG ({products.length})

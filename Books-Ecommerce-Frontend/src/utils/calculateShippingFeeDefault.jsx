@@ -113,6 +113,8 @@ export const calculateShippingFeeDefault = async (toAddress, product) => {
 
     if (service_fee.code === 200) {
       service_fee_data.push({
+        order_code: service_fee.data.order_code,
+        code: service_fee.data.sort_code,
         serviceid: service.service_id,
         fee: service_fee.data.total_fee,
         type: service.short_name,

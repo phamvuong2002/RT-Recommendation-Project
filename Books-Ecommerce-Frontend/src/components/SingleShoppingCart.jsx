@@ -44,7 +44,7 @@ export const SingleShoppingCart = ({
           <div className="flex flex-col xl:gap-2 mt-2 sm:mt-0">
             <div className="flex flex-col">
               <Link
-                to={`../books/${product.book.cb_book_id}`}
+                to={`../books/${product.cb_book_id}`}
                 className="w-full xl:h-12 max-h-20 text-base font-semibold text-gray-800 overflow-y-auto no-scrollbar xl:hover:text-red-500"
               >
                 {product.book.book_title}

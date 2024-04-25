@@ -20,7 +20,7 @@ export const SinglePopupCart = ({ product, handleDeleteProduct }) => {
         <div>
           <div className="flex justify-between text-sm font-medium text-gray-900">
             <h3>
-              <Link to={`../books/${product.book.cb_book_id}`}>
+              <Link to={`../books/${product.cb_book_id}`}>
                 {product.book.book_title}
               </Link>
             </h3>

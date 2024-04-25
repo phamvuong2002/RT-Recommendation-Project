@@ -52,7 +52,7 @@ const ShoppingCartsGroupedByPublisherID = ({
             <div className="flex gap-3 w-60 max-w-xs xl:w-full xl:max-w-full">
               <img
                 className="w-8 h-8 rounded-lg bg-white border"
-                src={products[0].publisherImgUrl}
+                src={products[0].publisherImgUrl || '/logo/logo_home.png'}
                 alt={products[0].book_detail.book_pulisherName}
               />
               <button className="font-inter font-semibold text-sm text-red-500 xl:hover:text-red-800">

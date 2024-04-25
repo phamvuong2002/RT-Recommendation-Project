@@ -129,6 +129,8 @@ class DiscountService {
       update_time: new Date(),
     });
 
+    if (!newDiscount) throw new BadRequestError("Discount create failed");
+
     return newDiscount;
   }
 

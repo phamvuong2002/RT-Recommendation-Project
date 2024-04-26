@@ -13,7 +13,7 @@ export const FadeInYDirection = (position, duration) => {
             if (position === 'top') {
                 controls.start({ y: -100, opacity: 0, transition: { duration } });
             }
-            else if (position === 'left') {
+            else if (position === 'bottom') {
                 controls.start({ y: 100, opacity: 0, transition: { duration } });
             }
         }

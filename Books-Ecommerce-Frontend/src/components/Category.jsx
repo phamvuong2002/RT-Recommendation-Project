@@ -1,7 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { fetchData } from '../helpers/fetch';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
+import Category_dropdown from './Category_Dropdown';
+import { FadeInYDirection } from '../helpers/animationFramerMotion'
+import { motion } from 'framer-motion'
 import 'swiper/css';
 import 'swiper/css/pagination';
 
@@ -10,7 +13,13 @@ import 'swiper/css/pagination';
 import { Pagination } from 'swiper/modules';
 
 export const Category = () => {
+    const { ref: topRef, animate: topAnimate, initial: topInitial } = FadeInYDirection("top", 0.3);
     const [category, setCategory] = useState([])
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
+    };
 
     //Fetch Category Data
     useEffect(() => {
@@ -47,12 +56,12 @@ export const Category = () => {
                     <img className="hidden md:block w-full h-full rounded-md" src="https://i.pinimg.com/564x/9f/11/78/9f11789aeadd48203dd2d3af10d9a57d.jpg"></img>
                 </Link>
 
-                <div className='hidden md:block w-full border-2 bg-white rounded-md shadow-lg md:px-[12%] lg:px-[20%] md:py-[20%] lg:py-[25%] '>
-                    <h1 className="md:text-2xl lg:text-3xl text-center font-semibold text-indigo-900 capitalize">
+                <div className='hidden md:flex md:flex-col w-full border-2 bg-white rounded-md shadow-lg md:px-[12%] lg:px-[20%] md:py-[20%] lg:py-[25%] '>
+                    <h1 className="sm:mb-5 md:text-2xl lg:text-3xl text-center font-semibold text-indigo-900 capitalize">
                         Top 5 thể loại được ưa chuộng
                     </h1>
-                    <button>
-                        Xem thêm
+                    <button onClick={toggleMenu} className='m-auto '>
+                        <p className='bg-red-500 text-white px-8 rounded-sm text-[1.2rem]'>Xem thêm</p>
                     </button>
                 </div>
 
@@ -80,6 +89,19 @@ export const Category = () => {
                     <img className="hidden md:block w-full h-full rounded-md" src="https://i.pinimg.com/564x/47/2d/42/472d4278bc724404d8f3ce18f301af0b.jpg"></img>
                 </div>
 
+
+            </div>
+
+            <div
+                className={`bg-black/30 flex fixed top-0 bottom-0 left-0 right-0 justify-center items-center z-10 ${isMenuOpen ? '' : 'hidden'}`}
+            >
+                <motion.div ref={topRef} animate={topAnimate} initial={topInitial}>
+
+                    <Category_dropdown isShowCloseIcon={true}
+                        isMenuOpen={isMenuOpen}
+                        toggleMenu={toggleMenu}
+                    />
+                </motion.div>
 
             </div>
 

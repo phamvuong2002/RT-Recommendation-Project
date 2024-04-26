@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unknown-property */
 import { useState, useEffect, React } from 'react'
 import { Tab, Disclosure } from '@headlessui/react'
 import { BiWorld } from "react-icons/bi";
@@ -6,6 +7,8 @@ import { HiChevronUp } from "react-icons/hi2";
 import { useNavigate, useLocation } from 'react-router-dom';
 import { fetchAPI } from '../helpers/fetch';
 import { Link } from 'react-router-dom';
+
+import PropTypes from 'prop-types';
 
 import axios from "axios";
 import { mergeObject } from "../utils/mergeObject";
@@ -17,11 +20,15 @@ function classNames(...classes) {
 }
 
 
-export default function Category_dropdown() {
+export default function Category_dropdown({ isShowCloseIcon, isMenuOpen, toggleMenu }) {
     const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState(true)
     const [cate, setCate] = useState([{}])
     const [all_categories, setCategoriess] = useState([])
+
+    const handleClose = () => {
+        toggleMenu();
+    };
 
     useEffect(() => {
         setIsLoading(true);
@@ -35,25 +42,6 @@ export default function Category_dropdown() {
         //ví dụ tải các sản phẩm trong giỏ hàng của khách
         loadCategoriesData();
     }, []);
-
-    // useEffect(() => {
-    //     const url = '../data/test/allCategories.json';
-    //     const loadCategoriesData = async () => {
-    //         try {
-    //             const categoriesData = await fetchData(url);
-    //             setCategoriess(categoriesData)
-    //             // console.log(categoriesData)
-    //         } catch (error) {
-    //             console.log('error')
-    //             // throw error;
-    //         }
-    //     }
-    //     //
-    //     setTimeout(() => {
-    //         loadCategoriesData()
-    //     }, 1000)
-    // }, [])
-
 
     const handleOnClick = ((value) => {
         // console.log(value)
@@ -71,7 +59,7 @@ export default function Category_dropdown() {
     return (
         // Desktop
         <div >
-            <div className="hidden sm:px-0 max-w-screen-xl lg:grid grid-cols-5  overflow-y-auto rounded-l-[6px] rounded-r-[6px] border-2 shadow-md relative ">
+            <div className="hidden sm:px-0 max-w-screen-xl lg:grid grid-cols-5 overflow-y-auto rounded-l-[6px] rounded-r-[6px] border-2 shadow-md relative ">
                 {isLoading && <p>Loading...</p>}
                 {!isLoading &&
                     <Tab.Group vertical>
@@ -103,6 +91,21 @@ export default function Category_dropdown() {
                                         'rounded-r-[6px] bg-white p-3 outline-none'
                                     )}
                                 >
+                                    {
+                                        isShowCloseIcon ?
+                                            <div>
+                                                {isMenuOpen && (
+                                                    <button onClick={handleClose} className="float-right">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="red" class="w-7 h-7 stroke-red-500">
+                                                            <path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                                        </svg>
+                                                    </button>
+                                                )}
+                                            </div>
+                                            :
+                                            <div className="hidden"></div>
+                                    }
+
                                     <div value={main_cates.id} className='text-xl uppercase py-3 font-semibold flex gap-2 items-center hover:cursor-pointer'
                                         onClick={() => handleOnClick(main_cates.id)}>
                                         {main_cates.id == '1' ? <FaBook className='text-red-500' /> : <BiWorld className='text-indigo-500' />}
@@ -240,3 +243,10 @@ export default function Category_dropdown() {
 
     )
 }
+
+Category_dropdown.propTypes = {
+    isShowCloseIcon: PropTypes.bool,
+    isMenuOpen: PropTypes.bool,
+    toggleMenu: PropTypes.func,
+
+};

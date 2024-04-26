@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { fetchData } from '../helpers/fetch'
 import { motion } from 'framer-motion'
-import { FadeInYDirection, FadeInXDirection } from '../helpers/animationFramerMotion'
+import { FadeInXDirection } from '../helpers/animationFramerMotion'
 
 export const InfoForGuest = () => {
     const { ref: leftRef, animate: leftAnimate, initial: leftInitial } = FadeInXDirection("left", 0.5);

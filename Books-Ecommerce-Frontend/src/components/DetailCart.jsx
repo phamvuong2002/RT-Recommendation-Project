@@ -12,9 +12,12 @@ import { calculateShippingFeeDefault } from '../utils/calculateShippingFeeDefaul
 import { handleFavoriteBook } from '../apis/book';
 import { AppContext } from '../contexts/main';
 import { getaddresses } from '../apis/address';
+import { addtocart } from '../apis/cart';
+import { useNavigate } from 'react-router-dom';
 
 export const DetailCart = ({ book }) => {
   const { userId, session, setIsLoading, setNumCart } = useContext(AppContext);
+  const [message, setMessage] = useState('');
 
   const [product, setProduct] = useState('');
   const [numCarts, setNumCarts] = useState(1);
@@ -31,26 +34,27 @@ export const DetailCart = ({ book }) => {
   const [shippingService, setShippingService] = useState('');
   const [isCalFeeShipLoading, setIsCalFeeShipLoading] = useState(false);
 
-  const [isClicked, setIsClicked] = useState(null); //nganvo add to control when this product is added to favorite book or not
+  const [isClicked, setIsClicked] = useState(null);
+
+  const navigator = useNavigate();
 
   //Set status favorite book (from db) at 1st render
   useEffect(() => {
     const getStatusFavBook = async () => {
-      try {
-        const productData = await fetchAPI(`../${handleFavoriteBook}`, 'POST', {
-          userId: userId,
-          book: {
-            book_id: 4,
-          },
-        });
-        setIsClicked(productData.metadata.favoriteBookStatus);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
+      if (!userId || !product) return;
+      const result = await fetchAPI(`../${handleFavoriteBook}`, 'POST', {
+        userId: userId,
+        book: {
+          book_id: product.book.book_id,
+        },
+      });
+      if (result.status !== 200) return;
+
+      setIsClicked(result.metadata.favoriteBookStatus);
     };
 
     getStatusFavBook();
-  }, [userId]);
+  }, [product]);
 
   //Xử lý chọn version
   const handleVersionToggle = async () => {
@@ -63,21 +67,51 @@ export const DetailCart = ({ book }) => {
     if (!numCarts) {
       return;
     }
+    setIsLoading(true);
+    const result = await fetchAPI(`../${addtocart}`, 'POST', {
+      userId,
+      book: {
+        book_id: product.book.book_id,
+        quantity: numCarts,
+        old_quantity: 0,
+      },
+    });
+    if (result.status !== 200) {
+      setMessage('Có một vài sự cố. Vui lòng thử lại sau!');
+    } else {
+      const { cart_count_products } = result.metadata;
+      if (cart_count_products) {
+        setNumCart(cart_count_products);
+      }
+      setMessage(`Bạn đã thêm ${numCarts} sản phẩm vào Giỏ Hàng!`);
+    }
+    setIsLoading(false);
     setOpenAddToCartsPopup(true);
   };
 
   //Xử lý khách hàng yêu thích sản phẩm
   const handleAddToInterestList = async (e) => {
     e.preventDefault();
-    setOpenLovePopup(true);
+    if (!userId) return;
 
-    const productData = await fetchAPI(`../${handleFavoriteBook}`, 'POST', {
+    const result = await fetchAPI(`../${handleFavoriteBook}`, 'POST', {
       userId: userId,
       book: {
-        book_id: 4,
+        book_id: book.book.book_id,
       },
     });
-    setIsClicked(productData.metadata.favoriteBookStatus);
+
+    if (result.status !== 200) {
+      setMessage('Có một số vấn đề. Vui lòng thử lại sau');
+    }
+    const isLoved = result.metadata.favoriteBookStatus;
+    setIsClicked(!isLoved);
+    if (isLoved) {
+      setMessage('Đã loại bỏ sách khỏi danh sách yêu thích');
+    } else {
+      setMessage('Đã thêm vào danh sách yêu thích');
+    }
+    setOpenLovePopup(true);
   };
 
   //Xử lý nút chia sẻ
@@ -334,26 +368,11 @@ export const DetailCart = ({ book }) => {
                           Content={popupContent(
                             'text-gray-800 text-base text-center',
                             <div className="flex flex-col gap-2 justify-center items-center">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                x="0px"
-                                y="0px"
-                                width="120"
-                                height="120"
-                                viewBox="0 0 48 48"
-                              >
-                                <path
-                                  fill="#4caf50"
-                                  d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z"
-                                ></path>
-                                <path
-                                  fill="#ccff90"
-                                  d="M34.602,14.602L21,28.199l-5.602-5.598l-2.797,2.797L21,33.801l16.398-16.402L34.602,14.602z"
-                                ></path>
-                              </svg>
-                              <div>
-                                {`Bạn đã thêm ${numCarts} sản phẩm vào Giỏ Hàng!`}
-                              </div>
+                              <img
+                                className="w-40 h-40"
+                                src="/img/add_to_cart.png"
+                              ></img>
+                              <div className="text-lg font-popi">{message}</div>
                             </div>,
                           )}
                           onNoClick={() => setOpenAddToCartsPopup(false)}
@@ -406,21 +425,14 @@ export const DetailCart = ({ book }) => {
                                     d="M34.602,14.602L21,28.199l-5.602-5.598l-2.797,2.797L21,33.801l16.398-16.402L34.602,14.602z"
                                   ></path>
                                 </svg>
-                                {isClicked ? (
-                                  <div>XÓA!</div>
-                                ) : (
-                                  <div>
-                                    Bạn đã thêm sản phẩm này vào danh sách yêu
-                                    thích!
-                                  </div>
-                                )}
+                                <div>{message}</div>
                               </div>,
                             )}
                             //onNoClick={() => setOpenLovePopup(false)}
                           />
                           <button
                             title="Thêm danh sách yêu thích"
-                            className="w-9 flex h-9  rounded border border-black border-opacity-50 items-center justify-center cursor-pointer"
+                            className={`w-9 flex h-9  rounded border ${isClicked ? 'border-red-900' : 'border-black'} border-opacity-50 items-center justify-center cursor-pointer`}
                             onClick={handleAddToInterestList}
                           >
                             <svg
@@ -476,6 +488,11 @@ export const DetailCart = ({ book }) => {
                   {/* Order button */}
                   <div className="w-full text-left my-4">
                     <button
+                      onClick={() =>
+                        navigator(
+                          `/payment?type=book&data=${product.book.book_id}&quantity=${numCarts}`,
+                        )
+                      }
                       className="flex justify-center items-center gap-2 w-full py-3 px-4 bg-red-500
                                     text-white font-bold border border-red-500 ease-in-out duration-150
                                     shadow-slate-600 xl:hover:bg-white xl:hover:text-red-500 lg:m-0 md:px-6"

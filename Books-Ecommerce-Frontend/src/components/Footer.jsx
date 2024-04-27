@@ -173,7 +173,7 @@ export const Footer = () => {
                     className={`cart-quantity text-center text-sm min-w-[20px] h-[20px] rounded-[50%] mr-[-30px] mt-[-38px] bg-red-100 text-red-500 font-semibold ${menu.name === activePage ? 'mt-[-44px]' : ''}`}
                   >
                     {' '}
-                    {numCart >= 100 ? '99+' : numCart}{' '}
+                    {numCart >= 100 ? '99+' : numCart >= 0 ? numCart : 0}{' '}
                   </span>
                 ) : (
                   ''

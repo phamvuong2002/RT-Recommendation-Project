@@ -23,8 +23,13 @@ import { getaddresses } from '../apis/address';
 import { getdiscountwallet } from '../apis/discount';
 import StaggeredDropDown from './childComponents/StaggeredDropDown';
 import StaggeredDropDownDiscount from './childComponents/StaggeredDropDown';
-import { checkoutcartreview, placeorder } from '../apis/checkout';
+import {
+  checkoutcartreview,
+  checkoutproductreview,
+  placeorder,
+} from '../apis/checkout';
 import { PopupCenterPanel } from './popup/PopupCenterPanel';
+import { getonebook } from '../apis/book';
 
 const SAMPLEPAYMENTMETHODS = [
   {
@@ -60,6 +65,7 @@ export const Payment = () => {
   const queryParams = new URLSearchParams(location.search);
   const type = queryParams.get('type');
   const data = queryParams.get('data');
+  const quantity = queryParams.get('quantity');
 
   const { userId, session, token, setIsLoading, numCart, setNumCart } =
     useContext(AppContext);
@@ -229,9 +235,9 @@ export const Payment = () => {
 
   //Fetch Shopping Carts
   useEffect(() => {
-    setPageLoading(true);
     //load shopping cart
     const loadShoppingCartsData = async () => {
+      setPageLoading(true);
       if (!userId) return;
       const shoppingCartsData = await fetchAPI(`../${getcarts}`, 'POST', {
         userId: userId,
@@ -243,16 +249,58 @@ export const Payment = () => {
       }
       setPageLoading(false);
     };
-    const loadBookData = async () => {};
+
+    //Load books
+    const loadBookData = async () => {
+      setPageLoading(true);
+      //Get book
+      const book = await fetchAPI(`../${getonebook}`, 'POST', {
+        bookId: data,
+      });
+      if (book.status !== 200) {
+        navigate('/');
+        return;
+      }
+
+      const data_book = [
+        {
+          cb_book_id: book.metadata.book.book_id,
+          cb_book_num: quantity,
+          book: {
+            book_title: book.metadata.book.book_title,
+            book_img: book.metadata.book.book_img,
+            book_spe_price: book.metadata.book.book_spe_price,
+            book_old_price: book.metadata.book.book_old_price,
+            book_publisherId: book.metadata.book.book_publisherId,
+          },
+          book_detail: {
+            book_authors_name:
+              book.metadata.book_detail.book_authors_name === 'null'
+                ? book.metadata.book_detail.book_pulisherName
+                : book.metadata.book_detail.book_authors_name,
+            book_pulisherName: book.metadata.book_detail.book_pulisherName,
+            book_layout: book.metadata.book_detail.book_layout,
+          },
+        },
+      ];
+
+      setProducts(data_book);
+      setPageLoading(false);
+    };
+
     //ví dụ tải các sản phẩm trong giỏ hàng của khách
     if (type === 'cart') {
       loadShoppingCartsData();
     } else if (type === 'book') {
-      loadBookData();
+      if (!data || !quantity) {
+        return;
+      } else {
+        loadBookData();
+      }
     } else {
       navigate('/notfound-page');
     }
-  }, [type, userId, numCart]);
+  }, [type, userId, numCart, data, quantity]);
 
   //Fetch Payment medthods
   useEffect(() => {
@@ -343,15 +391,24 @@ export const Payment = () => {
           discountCode: couponCode,
         },
       }),
+      ...((data || quantity) && {
+        book: {
+          bookId: products?.[0]?.cb_book_id,
+          quantity: parseInt(quantity),
+          price: products?.[0]?.book?.book_spe_price,
+        },
+      }),
       feeShip: shippingFee,
       feeService: serviceFee,
     };
+
+    console.log('dataCheckout::', dataCheckout);
 
     const reviewCheckout = async () => {
       if (!userId) return;
       setIsLoading(true);
       const result = await fetchAPI(
-        `../${checkoutcartreview}`,
+        `../${data && quantity ? checkoutproductreview : checkoutcartreview}`,
         'POST',
         dataCheckout,
       );
@@ -392,6 +449,13 @@ export const Payment = () => {
           discountCode: couponCode,
         },
       }),
+      ...((data || quantity) && {
+        book: {
+          bookId: products?.[0]?.cb_book_id,
+          quantity: parseInt(quantity),
+          price: products?.[0]?.book?.book_spe_price,
+        },
+      }),
       shipping: {
         feeShip: shippingFee,
         shippingCode: chosenService.code,
@@ -401,7 +465,6 @@ export const Payment = () => {
         method: paymentID,
       },
     };
-    console.log('dataCheckout::', dataCheckout);
 
     const createOrder = async () => {
       setIsLoading(true);
@@ -436,23 +499,6 @@ export const Payment = () => {
         content={
           <div>
             <div className="flex flex-col gap-2 justify-center items-center">
-              {/* <svg
-                xmlns="http://www.w3.org/2000/svg"
-                x="0px"
-                y="0px"
-                width="120"
-                height="120"
-                viewBox="0 0 48 48"
-              >
-                <path
-                  fill="#4caf50"
-                  d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z"
-                ></path>
-                <path
-                  fill="#ccff90"
-                  d="M34.602,14.602L21,28.199l-5.602-5.598l-2.797,2.797L21,33.801l16.398-16.402L34.602,14.602z"
-                ></path>
-              </svg> */}
               <img src="/img/miss_payment.png" alt="miss_payment" />
               <div className="mt-2 font-semibold text-lg text-red-500">
                 {messageAlert}

@@ -62,7 +62,7 @@ export const ProductDetailPage = () => {
   }, []);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col mb-14">
       <NavigationPath components={paths} />
       <div className="flex flex-col gap-[0.2rem]">
         <DetailCart book={book} />

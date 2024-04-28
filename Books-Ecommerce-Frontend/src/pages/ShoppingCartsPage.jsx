@@ -65,7 +65,7 @@ export const ShoppingCartsPage = () => {
             </div>
           </div>
           <div className="py-8 bg-white border-x border-b xl:border border-red-50">
-            <SliderProducts productData={products} />
+            {/* <SliderProducts productData={products} /> */}
           </div>
         </div>
 
@@ -91,7 +91,7 @@ export const ShoppingCartsPage = () => {
             </div>
           </div>
           <div className="bg-white border-x p-1 border-b xl:border border-red-50">
-            <SliderProducts productData={products} />
+            {/* <SliderProducts productData={products} /> */}
           </div>
         </div>
       </div>

@@ -13,6 +13,9 @@ import { AppContext } from '../contexts/main';
 import { addtocart, deletecartsbypub, getcarts } from '../apis/cart';
 import { getaddresses } from '../apis/address';
 import { CircleLoader } from './loaders/CircleLoader';
+import { PopupCenterPanel } from './popup/PopupCenterPanel';
+import { PopupOpen } from './popup/PopupOpen';
+import { popupContent } from '../helpers/popupContent';
 
 export const ShoppingCarts = (/*items*/) => {
   const navigate = useNavigate();
@@ -30,6 +33,9 @@ export const ShoppingCarts = (/*items*/) => {
   const [userAddresses, setUserAddresses] = useState('');
   const NUMLOADER = 2;
 
+  const [errMessage, setErrMessage] = useState('');
+  const [isShowNotiPopup, setIsShowNotiPopup] = useState(false);
+
   // Xử lý sự kiện khi nhấn nút "Xoá"
   const handleDeleteProduct = async (productId) => {
     //ví dụ gửi yêu cầu xoá sản phẩm xuống backend
@@ -43,7 +49,10 @@ export const ShoppingCarts = (/*items*/) => {
         old_quantity: 1,
       },
     });
-    if (update.status !== 200) return;
+    if (update.status !== 200) {
+      setIsLoading(false);
+      return;
+    }
     const updatedProducts = update.metadata.cart_data;
     setProducts(updatedProducts);
     setNumCart(update.metadata.cart_count_products);
@@ -94,7 +103,12 @@ export const ShoppingCarts = (/*items*/) => {
         old_quantity: currentQuantity,
       },
     });
-    if (update.status !== 200) return;
+    if (update.status !== 200) {
+      setErrMessage(update.message);
+      setIsShowNotiPopup(true);
+      setIsLoading(false);
+      return;
+    }
     if (newQuantity === 0) {
       await handleDeleteProduct(productId);
     }
@@ -170,6 +184,7 @@ export const ShoppingCarts = (/*items*/) => {
   //Lấy thông tin Address
   useEffect(() => {
     const getAddresses = async () => {
+      if (!userId) return;
       const address = await fetchAPI(`../${getaddresses}`, 'POST', {
         userId,
       });
@@ -191,9 +206,25 @@ export const ShoppingCarts = (/*items*/) => {
   //   }, [userId, session]);
 
   return (
-    <div className="flex flex-col" id="shopping-cart">
+    <div
+      className="flex flex-col outline-none focus:outline-none"
+      id="shopping-cart"
+    >
+      {/* Noti Popup */}
+      <PopupOpen
+        open={isShowNotiPopup}
+        setOpen={setIsShowNotiPopup}
+        autoClose={1500}
+        Content={popupContent(
+          'text-gray-800 text-base text-center outline-none focus:outline-none',
+          <div className="flex flex-col gap-2 justify-center items-center outline-none focus:outline-none">
+            <img className="w-40 h-40" src="/img/add_to_cart.png"></img>
+            <div className="text-lg font-popi">{errMessage}</div>
+          </div>,
+        )}
+        onNoClick={() => setIsShowNotiPopup(false)}
+      />
       {/* Shopping Carts */}
-
       <div className="flex flex-col items-center">
         <div className="w-full px-1">
           <div className=" xl:mx-0 mb-1 xl:w-full max-w-[82rem] h-[3rem] flex items-center text-red-500 text-lg font-bold bg-white border border-red-50 rounded-tl-lg rounded-tr-lg">

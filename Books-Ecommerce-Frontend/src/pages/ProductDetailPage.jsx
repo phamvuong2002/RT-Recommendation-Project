@@ -31,7 +31,7 @@ export const ProductDetailPage = () => {
         bookId: bookid,
       });
       if (book.status !== 200) {
-        navigate('/');
+        navigate('/notfound');
       } else {
         setBook(book.metadata);
       }
@@ -95,10 +95,10 @@ export const ProductDetailPage = () => {
             </div>
           </div>
           <div className="bg-white border-x border-b xl:border border-red-100">
-            <SliderProducts
+            {/* <SliderProducts
               userId={userId?.toString()}
               productData={products}
-            ></SliderProducts>
+            ></SliderProducts> */}
           </div>
         </div>
 
@@ -124,10 +124,10 @@ export const ProductDetailPage = () => {
             </div>
           </div>
           <div className="bg-white border-x border-b xl:border border-red-50">
-            <SliderProducts
+            {/* <SliderProducts
               userId={userId?.toString()}
               productData={products}
-            ></SliderProducts>
+            ></SliderProducts> */}
           </div>
         </div>
       </div>

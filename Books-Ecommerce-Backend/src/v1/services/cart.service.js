@@ -131,7 +131,16 @@ class CartService {
         */
     //check book exists
     const foundBook = await db.book.findByPk(book.book_id);
-    if (!foundBook) throw new NotFoundError("Book not found");
+    if (!foundBook || foundBook.dataValues.book_status === 0)
+      throw new NotFoundError("Book not found");
+
+    //check book quantity
+    const bookStock = await db.inventory.findByPk(book.book_id);
+    if (
+      bookStock.dataValues.inven_stock < book.quantity &&
+      book.quantity > book.old_quantity
+    )
+      throw new BadRequestError("Quantity out of range in stock");
 
     //check cart existed
     let userCart = await db.cart.findOne({ where: { cart_userid: userId } });
@@ -192,6 +201,12 @@ class CartService {
       }
 
       //add book to cart
+      //check book quantity in cart
+      if (
+        bookStock.dataValues.inven_stock <
+        existBook.dataValues.cb_book_num + (book.quantity - book.old_quantity)
+      )
+        throw new BadRequestError("Quantity out of range in stock");
       await existBook.set({
         cb_book_num:
           existBook.dataValues.cb_book_num +

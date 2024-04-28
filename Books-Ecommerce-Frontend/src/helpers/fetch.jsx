@@ -34,7 +34,8 @@ export const fetchAPI = async (
     });
     if (!res.ok) {
       console.log('Error to fetch');
-      return res;
+      const errorResponse = await res.json();
+      return { error: true, message: errorResponse.message };
     }
 
     const data = await res.json();

@@ -77,7 +77,7 @@ export const DetailCart = ({ book }) => {
       },
     });
     if (result.status !== 200) {
-      setMessage('Có một vài sự cố. Vui lòng thử lại sau!');
+      setMessage(result.message);
     } else {
       const { cart_count_products } = result.metadata;
       if (cart_count_products) {

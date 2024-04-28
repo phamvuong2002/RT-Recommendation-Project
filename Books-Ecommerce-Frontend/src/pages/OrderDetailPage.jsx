@@ -96,7 +96,7 @@ export const OrderDetailPage = () => {
             </div>
           </div>
           <div className="bg-white border-x border-b xl:border border-red-100">
-            <SliderProducts productData={products}></SliderProducts>
+            {/* <SliderProducts productData={products}></SliderProducts> */}
           </div>
         </div>
 
@@ -122,12 +122,12 @@ export const OrderDetailPage = () => {
             </div>
           </div>
           <div className="bg-white border-x border-b xl:border border-red-100">
-            <AllProducts
+            {/* <AllProducts
               pages={pages}
               totalPages={totalPages}
               currentPage={currentPage}
               setCurrentPage={setCurrentPage}
-            ></AllProducts>
+            ></AllProducts> */}
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 "use strict";
 
 const { DISCOUNT_APPLY_TO } = require("../const/discount");
+const { ORDER_STATUS, ORDER_DETAIL_STATUS } = require("../const/order");
 const { BadRequestError, NotFoundError } = require("../core/error.response");
 const db = require("../models/sequelize/models");
 const { calTotalPriceCart } = require("../utils/calculateTotalPrice");
@@ -16,6 +17,127 @@ const { acquireLock, releaselock } = require("./redis.service");
 */
 
 class CheckoutService {
+  static async rollbackOrder({ orderId }) {
+    const foundOrder = await db.order.findByPk(orderId);
+    if (!foundOrder) throw new NotFoundError("Order not found");
+
+    const orderBooks = await db.order_book.findAll({
+      where: {
+        ob_order_id: orderId,
+      },
+    });
+
+    let result = [];
+    for (let i = 0; i < orderBooks.length; i++) {
+      const oneOrder = orderBooks[i];
+      if (
+        oneOrder.ob_status === ORDER_DETAIL_STATUS.CANCELLED ||
+        oneOrder.ob_status === ORDER_DETAIL_STATUS.REFUNDED
+      ) {
+        //rollback inventory stock
+        const foundBook = await db.book.findByPk(oneOrder.ob_book_id);
+        if (foundBook) {
+          const bookStock = await db.inventory.findOne({
+            where: {
+              inven_book_id: foundBook.dataValues.book_id,
+            },
+          });
+          //update inventory
+          if (bookStock) {
+            await bookStock.set({
+              inven_stock:
+                bookStock.dataValues.inven_stock + oneOrder.ob_quantity,
+            });
+            await bookStock.save();
+          }
+          //update book status
+          if (foundBook.dataValues.book_status === 0) {
+            await foundBook.set({
+              book_status: 1,
+            });
+            await foundBook.save();
+          }
+        }
+        result.push({
+          rollback_book_id: oneOrder.ob_book_id,
+          rollback_quantity: oneOrder.ob_quantity,
+        });
+      }
+    }
+
+    return result;
+  }
+
+  static async createTransaction({ userId, sId, orderId, status, total }) {
+    const foundUser = await db.user.findByPk(userId);
+    if (!foundUser) throw new NotFoundError("User not found");
+
+    const foundTran = await db.transaction.findOne({
+      where: {
+        tran_sid: sId,
+      },
+    });
+    if (foundTran) throw new BadRequestError("Create transaction failed");
+
+    const foundOrder = await db.order.findByPk(orderId);
+    if (!foundOrder) throw new NotFoundError("Order not found");
+
+    const newTran = await db.transaction.create({
+      tran_sid: sId,
+      tran_order_id: orderId,
+      tran_user_id: userId,
+      tran_status: status,
+      tran_total: total,
+    });
+
+    if (!newTran) throw new BadRequestError("Create transaction failed");
+
+    const { tran_sid, tran_order_id, tran_user_id, tran_status, tran_total } =
+      newTran;
+    return { tran_sid, tran_order_id, tran_user_id, tran_status, tran_total };
+  }
+
+  static async updateOrderStatus({ orderId, status }) {
+    const foundOrder = await db.order.findByPk(orderId);
+    if (!foundOrder) throw new NotFoundError("Order not found");
+
+    //update order details
+    if (status === ORDER_STATUS.CANCELLED || status === ORDER_STATUS.REFUNDED) {
+      await db.order_book.update(
+        {
+          ob_status: status,
+          update_time: new Date(),
+        },
+        {
+          where: {
+            ob_order_id: foundOrder.dataValues.order_id,
+          },
+        }
+      );
+    } else if (status === ORDER_STATUS.COMPLETED) {
+      await db.order_book.update(
+        {
+          ob_status: ORDER_DETAIL_STATUS.DELIVERED,
+          update_time: new Date(),
+        },
+        {
+          where: {
+            ob_order_id: foundOrder.dataValues.order_id,
+          },
+        }
+      );
+    }
+
+    //update order
+    await foundOrder.set({
+      order_status: status,
+      update_time: new Date(),
+    });
+    const result = await foundOrder.save();
+
+    return result;
+  }
+
   /*
     "book": {
       "bookId": 2,
@@ -49,8 +171,9 @@ class CheckoutService {
 
     // review order
     let reviewOrder = null;
+    let type = "cart";
     if (Object.keys(book).length > 0) {
-      console;
+      type = "book";
       reviewOrder = await CheckoutService.checkoutProductReview({
         userId,
         book,
@@ -159,7 +282,7 @@ class CheckoutService {
         orderId: order.dataValues.order_id,
         urlReturn: `${url || process.env.FRONTEND_BASE_URL}/order-detail/${
           order.dataValues.order_id
-        }`,
+        }&type=${type}`,
         totalPrice: order.dataValues.order_spe_total,
         description: `Khach hang ${userId} thanh toan hoa don ${order.dataValues.order_id} bang hinh thuc ${payment.method}`,
       });
@@ -167,10 +290,12 @@ class CheckoutService {
       paymentResult = await PaymentService.paypal({
         urlReturn: `${url || process.env.FRONTEND_BASE_URL}/order-detail/${
           order.dataValues.order_id
-        }&statusCode=00&price=${order.dataValues.order_spe_total}`,
+        }&statusCode=00&price=${order.dataValues.order_spe_total}&type=${type}`,
         urlCancel: `${url || process.env.FRONTEND_BASE_URL}/order-detail/${
           order.dataValues.order_id
-        }&statusCode=404&price=${order.dataValues.order_spe_total}`,
+        }&statusCode=404&price=${
+          order.dataValues.order_spe_total
+        }&type=${type}`,
         totalPrice: order.dataValues.order_spe_total,
         description: `Khach hang ${userId} thanh toan hoa don ${order.dataValues.order_id} bang hinh thuc ${payment.method}`,
       });
@@ -181,7 +306,7 @@ class CheckoutService {
           order.dataValues.order_id
         }&statusCode=102&price=${
           order.dataValues.order_spe_total
-        }&tranId=cod-${new Date().getTime()}`,
+        }&tranId=cod-${new Date().getTime()}&type=${type}`,
       };
     } else {
       throw new NotFoundError("Payment method not found");
@@ -279,9 +404,9 @@ class CheckoutService {
       throw new BadRequestError("Book is available");
 
     //check quantity in stock
-    const foundInStock = db.inventory.findByPk(book.bookId);
+    const foundInStock = await db.inventory.findByPk(book.bookId);
     if (foundInStock?.dataValues?.inven_stock < book.quantity)
-      throw new BadRequestError("Book was sold out");
+      throw new BadRequestError("Quantity out of range in stock");
 
     //Create order review
     /*

@@ -394,7 +394,7 @@ export const Payment = () => {
       }),
       ...((data || quantity) && {
         book: {
-          bookId: products?.[0]?.cb_book_id,
+          bookId: products?.[0]?.cb_book_id || data,
           quantity: parseInt(quantity),
           price: products?.[0]?.book?.book_spe_price,
         },
@@ -404,7 +404,9 @@ export const Payment = () => {
     };
 
     const reviewCheckout = async () => {
-      if (!userId) return;
+      if (!userId || !data || !quantity) {
+        return;
+      }
       setIsLoading(true);
       const result = await fetchAPI(
         `../${data && quantity ? checkoutproductreview : checkoutcartreview}`,
@@ -412,8 +414,15 @@ export const Payment = () => {
         dataCheckout,
       );
       if (result.status !== 200) {
-        setCouponCodeStatus('Coupon không hợp lệ');
-        setDiscountReview(null);
+        if (result.message === 'Quantity out of range in stock') {
+          setMessageAlert(result.message);
+          setIsAlertOpen(true);
+        } else {
+          setCouponCodeStatus(result.message);
+          setDiscountReview(null);
+        }
+        setIsLoading(false);
+        return;
       } else {
         setOldPrice(result.metadata.data_review.oldTotal);
         setReviewPrice(result.metadata.data_review.reviewTotal);
@@ -490,8 +499,17 @@ export const Payment = () => {
     }
   };
 
+  //Handle Error
+  useEffect(() => {
+    if (messageAlert === 'Quantity out of range in stock' && !isAlertOpen) {
+      setMessageAlert('');
+      navigate(`/books/${data}`);
+    }
+  }, [messageAlert, isAlertOpen]);
+
   return (
     <div className="xl:flex xl:gap-2">
+      {/* Order Alert */}
       <PopupCenterPanel
         open={isAlertOpen}
         setOpen={setIsAlertOpen}

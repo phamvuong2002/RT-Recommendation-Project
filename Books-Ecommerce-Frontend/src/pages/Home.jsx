@@ -6,7 +6,7 @@ import { SliderProducts } from '../components/SliderProducts';
 import { AllProducts } from '../components/AllProducts';
 import { InfoForGuest } from '../components/infoForGuest';
 import { fetchAPI } from '../helpers/fetch';
-import { getAllBook } from '../apis/book';
+import { getAllBook, getListFavoriteBook } from '../apis/book';
 import { AppContext } from '../contexts/main';
 
 export const Home = () => {
@@ -29,7 +29,9 @@ export const Home = () => {
     setTimeout(() => {
       loadProductData();
     }, 1000);
+
   }, []);
+
 
   return (
     <div className="pb-10 sm:pb-0">
@@ -41,9 +43,9 @@ export const Home = () => {
         {/*Sản phẩm bán chạy*/}
         <div className="h-full">
           <AllProducts
-            userId={userId}
             isShowHeader={true}
             numOfProductsInRow={5}
+            _choose={"all"}
           ></AllProducts>
         </div>
 

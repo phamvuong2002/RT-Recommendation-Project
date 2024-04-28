@@ -1,21 +1,25 @@
 
-import React, { useState, useRef, useMemo, useEffect } from 'react';
+import React, { useState, useRef, useMemo, useEffect, useContext } from 'react';
 import { Product } from "./Product";
 import { PaginationButtons } from "./PaginationButtons";
 import PropTypes from 'prop-types';
 import queryString from 'query-string';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { fetchAPI } from '../helpers/fetch';
-import { getSearchFilterSort } from '../apis/book';
+import { getSearchFilterSort, getListFavoriteBook } from '../apis/book';
+import { AppContext } from '../contexts/main';
 
 
 
 //{/* pages, totalPages, currentPage, setCurrentPage, isShowHeader, numOfProductsInRow */}
-export const AllProducts = ({ userId, isShowHeader, numOfProductsInRow, _sort, _cate, _limit, _query, _price, _publisher }) => {
+export const AllProducts = ({ isShowHeader, numOfProductsInRow, _sort, _cate, _limit, _query, _price, _publisher, _choose }) => {
     const location = useLocation()
     const navigate = useNavigate();
+    const { userId } = useContext(AppContext);
+    console.log("UID", userId)
     const searchParams = new URLSearchParams(location.search);
-
+    //const [user, setUser] = useState(userId)
+    //console.log("userIDDDD", user)
     let pageUpdated = searchParams.get('page');
 
     const topRef = useRef(null);
@@ -97,20 +101,36 @@ export const AllProducts = ({ userId, isShowHeader, numOfProductsInRow, _sort, _
 
 
     useEffect(() => {
-        const loadProductData = async () => {
-            const paramsString = queryString.stringify(filters);//limit=1&page=1&search=ho
-            // console.log('filters', filters)
-            const res = await fetchAPI(`../${getSearchFilterSort}?${paramsString}`, 'POST')
-            console.log("url", `../${getSearchFilterSort}?${paramsString}`)
-            setProducts(res.metadata.productData);
-            setPagination(res.metadata.pagination);
+        if (_choose === "all") {
+            const loadProductData = async () => {
+                const paramsString = queryString.stringify(filters);//limit=1&page=1&search=ho
+                // console.log('filters', filters)
+                const res = await fetchAPI(`../${getSearchFilterSort}?${paramsString}`, 'POST')
+                console.log("url", `../${getSearchFilterSort}?${paramsString}`)
+                setProducts(res.metadata.productData);
+                setPagination(res.metadata.pagination);
+
+            }
+            //
+            setTimeout(() => {
+                loadProductData()
+            }, 100)
+        } else if (_choose === "favorite") {
+            const loadFavBook = async (user) => {
+                console.log("USERRRRRRR", user)
+                const productData = await fetchAPI(`../${getListFavoriteBook}`, 'POST', {
+                    "userId": user,
+                });
+                console.log("USE", user)
+                setProducts(productData.metadata);
+
+            };
+            loadFavBook(userId);
 
         }
-        //
-        setTimeout(() => {
-            loadProductData()
-        }, 100)
-    }, [filters])
+
+    }, [filters, _choose, userId])
+
 
 
     const showHeader = useMemo(() => {
@@ -163,7 +183,6 @@ export const AllProducts = ({ userId, isShowHeader, numOfProductsInRow, _sort, _
 };
 
 AllProducts.propTypes = {
-    userId: PropTypes.string.isRequired,
     isShowHeader: PropTypes.bool,
     numOfProductsInRow: PropTypes.number.isRequired,
     _sort: PropTypes.string,
@@ -172,4 +191,5 @@ AllProducts.propTypes = {
     _cate: PropTypes.string,
     _price: PropTypes.string,
     _publisher: PropTypes.string,
+    _choose: PropTypes.string
 };

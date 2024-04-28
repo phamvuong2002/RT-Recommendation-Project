@@ -1,7 +1,7 @@
 import { React, useContext, useEffect, useState } from 'react';
 import NavigationPath from '../components/NavigationPath';
 import SideBarNav from '../components/SideBarNav';
-import ProductListStatus from '../components/ProductListStatus';
+import { ProductListStatus } from '../components/ProductListStatus';
 import { GeneralInfo } from '../components/GeneralInfo';
 import { OrderInfo } from '../components/OrderInfo';
 
@@ -83,7 +83,7 @@ export const AccountPage = () => {
         }
         {selectedPageId === 'profile-infomation' && <ProfileAccount />}
         {selectedPageId === 'orders-infomation' && <OrderInfo />}
-        {selectedPageId === 'following-infomation' && <ProductListStatus />}
+        {selectedPageId === 'following-infomation' && <ProductListStatus _userId={userId} />}
       </div>
     </div>
   );

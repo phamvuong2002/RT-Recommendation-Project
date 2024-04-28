@@ -428,7 +428,7 @@ export const DetailCart = ({ book }) => {
                                 <div>{message}</div>
                               </div>,
                             )}
-                            //onNoClick={() => setOpenLovePopup(false)}
+                          //onNoClick={() => setOpenLovePopup(false)}
                           />
                           <button
                             title="Thêm danh sách yêu thích"

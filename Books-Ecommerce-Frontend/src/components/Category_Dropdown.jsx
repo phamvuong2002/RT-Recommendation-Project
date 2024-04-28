@@ -35,7 +35,7 @@ export default function Category_dropdown({ isShowCloseIcon, isMenuOpen, toggleM
         const loadCategoriesData = async () => {
             console.log('in get all cate')
             const categoriesData = await fetchAPI(`../${gettop3cate}`, 'POST');
-            console.log(categoriesData)
+            //console.log(categoriesData)
             setCate(categoriesData.metadata.categoryData);
             setIsLoading(false);
         };

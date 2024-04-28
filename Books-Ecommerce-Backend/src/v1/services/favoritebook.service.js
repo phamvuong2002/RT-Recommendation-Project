@@ -5,7 +5,6 @@ const db = require("../models/sequelize/models");
 
 class FavoriteBookService {
     static getListFavoriteBook = async ({ userId }) => {
-        console.log("userId", userId)
         const userFavoriteBook = await db.favorite_book.findOne({ where: { fav_userid: userId } });
         if (!userFavoriteBook) {
             throw new NotFoundError("User not found!");
@@ -18,8 +17,9 @@ class FavoriteBookService {
                 }
             ],
         });
+        const res = listFavoriteBook.map(detail => detail.book);
 
-        return listFavoriteBook;
+        return res;
     }
 
     static async createUserFavoriteBook({ userId }) {

@@ -38,6 +38,7 @@ class CheckoutService {
     feeService = 0,
     payment = {},
     addressId = null,
+    url = null,
   }) {
     //check data input
     if (Object.keys(payment) <= 0)
@@ -156,19 +157,32 @@ class CheckoutService {
     if (payment.method === "vnpay") {
       paymentResult = await PaymentService.vnpay({
         orderId: order.dataValues.order_id,
-        urlReturn: `${process.env.FRONTEND_BASE_URL}/order-detail/${order.dataValues.order_id}`,
+        urlReturn: `${url || process.env.FRONTEND_BASE_URL}/order-detail/${
+          order.dataValues.order_id
+        }`,
         totalPrice: order.dataValues.order_spe_total,
         description: `Khach hang ${userId} thanh toan hoa don ${order.dataValues.order_id} bang hinh thuc ${payment.method}`,
       });
     } else if (payment.method === "paypal") {
       paymentResult = await PaymentService.paypal({
-        urlReturn: `${process.env.FRONTEND_BASE_URL}/order-detail/${order.dataValues.order_id}&statusCode=00&price=${order.dataValues.order_spe_total}`,
-        urlCancel: `${process.env.FRONTEND_BASE_URL}/order-detail/${order.dataValues.order_id}&statusCode=404&price=${order.dataValues.order_spe_total}`,
+        urlReturn: `${url || process.env.FRONTEND_BASE_URL}/order-detail/${
+          order.dataValues.order_id
+        }&statusCode=00&price=${order.dataValues.order_spe_total}`,
+        urlCancel: `${url || process.env.FRONTEND_BASE_URL}/order-detail/${
+          order.dataValues.order_id
+        }&statusCode=404&price=${order.dataValues.order_spe_total}`,
         totalPrice: order.dataValues.order_spe_total,
         description: `Khach hang ${userId} thanh toan hoa don ${order.dataValues.order_id} bang hinh thuc ${payment.method}`,
       });
     } else if (payment.method === "cod") {
-      paymentResult = { method: payment.method };
+      paymentResult = {
+        method: payment.method,
+        paymentUrl: `${url || process.env.FRONTEND_BASE_URL}/order-detail/${
+          order.dataValues.order_id
+        }&statusCode=102&price=${
+          order.dataValues.order_spe_total
+        }&tranId=cod-${new Date().getTime()}`,
+      };
     } else {
       throw new NotFoundError("Payment method not found");
     }

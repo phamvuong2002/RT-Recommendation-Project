@@ -12,6 +12,7 @@ export const AppProvider = ({ children }) => {
   const [numCart, setNumCart] = useState(-1);
   const [addressDefault, setAddressDefault] = useState('');
   const [requestAuth, setRequestAuth] = useState(false);
+  const [isShowFooter, setIsShowFooter] = useState(true);
 
   return (
     <AppContext.Provider
@@ -23,6 +24,7 @@ export const AppProvider = ({ children }) => {
         isloading,
         activePage,
         requestAuth,
+        isShowFooter,
         refreshToken,
         addressDefault,
         setToken,
@@ -32,6 +34,7 @@ export const AppProvider = ({ children }) => {
         setIsLoading,
         setActivePage,
         setRequestAuth,
+        setIsShowFooter,
         setRefreshToken,
         setAddressDefault,
       }}

@@ -129,6 +129,7 @@ export const ShoppingCarts = (/*items*/) => {
     setPageLoading(true);
     const loadShoppingCartsData = async () => {
       if (!userId || userId === '') return;
+      setIsLoading(true);
       const shoppingCartsData = await fetchAPI(`../${getcarts}`, 'POST', {
         userId: userId,
       });
@@ -139,6 +140,7 @@ export const ShoppingCarts = (/*items*/) => {
         setProducts([]);
         setNumCart(0);
       }
+      setIsLoading(false);
       setPageLoading(false);
     };
     //ví dụ tải các sản phẩm trong giỏ hàng của khách

@@ -6,6 +6,7 @@ const cartController = require("../../controllers/cart.controller");
 const { asyncHandler } = require("../../auth/checkAuth");
 const { authentication } = require("../../auth/authUtils");
 
+router.post("/removeallcarts", asyncHandler(cartController.removeAllCarts));
 router.post("/getnumcart", asyncHandler(cartController.getNumCart));
 router.post("/addtocart", asyncHandler(cartController.addToCart));
 router.post("/getcarts", asyncHandler(cartController.getListCarts));

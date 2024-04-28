@@ -10,7 +10,7 @@ const DefaultLayout = ({ children }) => {
       <Spinner />
       <Header />
       <Navbar />
-      <div className="">
+      <div>
         <div className="bg-[#efefef] flex flex-col gap-[0.1rem]">
           {/* Pages */}
           {children}

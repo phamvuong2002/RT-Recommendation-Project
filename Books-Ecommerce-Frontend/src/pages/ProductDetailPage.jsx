@@ -11,13 +11,17 @@ import { shortenString } from '../utils/shortenString';
 import { AppContext } from '../contexts/main';
 
 export const ProductDetailPage = () => {
-  const { userId } = useContext(AppContext);
+  const { userId, setIsShowFooter } = useContext(AppContext);
   const { bookid } = useParams();
   const [id, setId] = useState('');
   const [paths, setPaths] = useState([]);
   const [products, setProducts] = useState([]);
   const [book, setBook] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setIsShowFooter(true);
+  }, []);
 
   //Get bookid from url
   useEffect(() => {

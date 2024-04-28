@@ -10,11 +10,12 @@ import { AppContext } from '../contexts/main';
 
 export const ShoppingCartsPage = () => {
   const [products, setProducts] = useState([]);
-  const { userId, setActivePage } = useContext(AppContext);
+  const { userId, setActivePage, setIsShowFooter } = useContext(AppContext);
 
   //set active page
   useEffect(() => {
     setActivePage('ShoppingCart');
+    setIsShowFooter(false);
   }, []);
 
   const paths = [
@@ -23,22 +24,22 @@ export const ShoppingCartsPage = () => {
   ];
 
   //Fetch Product Data
-  useEffect(() => {
-    const url = 'api/v1/api/book/all';
+  // useEffect(() => {
+  //   const url = 'api/v1/api/book/all';
 
-    const loadProductData = async () => {
-      const dataFetch = await fetchAPI(url, 'POST');
-      console.log('dataFetch::', dataFetch);
-      setProducts(dataFetch.metadata);
-    };
+  //   const loadProductData = async () => {
+  //     const dataFetch = await fetchAPI(url, 'POST');
+  //     console.log('dataFetch::', dataFetch);
+  //     setProducts(dataFetch.metadata);
+  //   };
 
-    loadProductData();
-  }, []);
+  //   loadProductData();
+  // }, []);
 
   return (
-    <div>
+    <div className="">
       <NavigationPath components={paths} />
-      <div className="xl:px-28 flex flex-col gap-[0.2rem] mb-[16.5rem] xl:mb-4 bg-white xl:bg-[#efefef]">
+      <div className="xl:px-28 mb-[16.5rem] flex flex-col gap-[0.2rem] xl:mb-4 xl:bg-[#efefef]">
         <div className="w-full">
           <ShoppingCarts />
         </div>
@@ -58,7 +59,7 @@ export const ShoppingCartsPage = () => {
               />
             </svg>
             <div className="flex px-4 text-sm items-center">
-              <div className="text-sm md:text-[150%] font-semibold font-['Inter'] tracking-wider">
+              <div className="text-lg md:text-[150%] font-semibold font-['Inter'] tracking-wider">
                 Dành Cho Bạn
               </div>
             </div>
@@ -84,7 +85,7 @@ export const ShoppingCartsPage = () => {
               />
             </svg>
             <div className="flex px-4 text-sm items-center">
-              <div className="text-sm md:text-[150%] font-semibold font-['Inter'] tracking-wider">
+              <div className="text-lg md:text-[150%] font-semibold font-['Inter'] tracking-wider">
                 Sản phẩm bán chạy
               </div>
             </div>

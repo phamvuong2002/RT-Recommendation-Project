@@ -4,6 +4,13 @@ const { SuccessResponse } = require("../core/success.response");
 const CartService = require("../services/cart.service");
 
 class CartController {
+  removeAllCarts = async (req, res, next) => {
+    const data = await CartService.removeAllCarts(req.body);
+    new SuccessResponse({
+      metadata: data,
+    }).send(res);
+  };
+
   getNumCart = async (req, res, next) => {
     const data = await CartService.getNumCart(req.body);
     new SuccessResponse({

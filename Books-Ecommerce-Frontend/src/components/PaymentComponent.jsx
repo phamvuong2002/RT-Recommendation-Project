@@ -30,6 +30,7 @@ import {
 } from '../apis/checkout';
 import { PopupCenterPanel } from './popup/PopupCenterPanel';
 import { getonebook } from '../apis/book';
+import { getBaseUrl } from '../utils/getUrlBase';
 
 const SAMPLEPAYMENTMETHODS = [
   {
@@ -402,8 +403,6 @@ export const Payment = () => {
       feeService: serviceFee,
     };
 
-    console.log('dataCheckout::', dataCheckout);
-
     const reviewCheckout = async () => {
       if (!userId) return;
       setIsLoading(true);
@@ -464,7 +463,10 @@ export const Payment = () => {
       payment: {
         method: paymentID,
       },
+      url: getBaseUrl(window.location),
     };
+
+    console.log('dataCheckout::', dataCheckout);
 
     const createOrder = async () => {
       setIsLoading(true);
@@ -476,7 +478,6 @@ export const Payment = () => {
         return;
       } else {
         setIsLoading(false);
-        console.log('result:::', result);
         window.location.href = result.metadata.payment_data.paymentUrl;
       }
     };

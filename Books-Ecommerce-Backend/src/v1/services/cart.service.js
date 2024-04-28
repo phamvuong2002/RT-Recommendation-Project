@@ -10,9 +10,38 @@ const db = require("../models/sequelize/models");
     - get list carts
     - delete cart by publisher id
     - delete cart item
+    - deleta all user carts
 */
 
 class CartService {
+  static async removeAllCarts({ userId }) {
+    const foundUser = await db.user.findByPk(userId);
+    if (!foundUser) throw new NotFoundError("User not found");
+
+    const foundCart = await db.cart.findOne({
+      where: {
+        cart_userid: foundUser.dataValues.user_id,
+      },
+    });
+    if (!foundCart) throw new NotFoundError("Cart not found");
+
+    const remove = db.cart_book.destroy({
+      where: {
+        cb_cart_id: foundCart.dataValues.cart_id,
+      },
+    });
+
+    if (!remove) throw new BadRequestError("Cart could not be removed");
+
+    //update num cart
+    await foundCart.set({
+      cart_count_products: 0,
+    });
+    await foundCart.save();
+
+    return await CartService.getListCarts({ userId });
+  }
+
   static async getNumCart({ userId }) {
     const foundUser = await db.user.findByPk(userId);
     if (!foundUser) throw new NotFoundError("User not found");

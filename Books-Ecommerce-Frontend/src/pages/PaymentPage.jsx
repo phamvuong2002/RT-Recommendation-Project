@@ -11,8 +11,13 @@ export const PaymentPage = () => {
     { path: `/${'shoppingcarts'}`, label: `${'Giỏ hàng'}` },
     { path: `/${'payment'}`, label: `${'Thanh Toán'}` },
   ];
-  const { numCart, token, requestAuth, setRequestAuth } =
+  const { numCart, token, requestAuth, setRequestAuth, setIsShowFooter } =
     useContext(AppContext);
+
+  //set footer
+  useEffect(() => {
+    setIsShowFooter(false);
+  }, []);
 
   //Check Authen
   useEffect(() => {

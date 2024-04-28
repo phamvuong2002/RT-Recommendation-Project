@@ -1,57 +1,50 @@
-import React, { useEffect, useState, useContext } from 'react'
-import { Slider } from '../components/Slider'
-import { FlashSale } from '../components/FlashSale'
-import { Category } from '../components/Category'
-import { SliderProducts } from '../components/SliderProducts'
-import { AllProducts } from '../components/AllProducts'
-import { InfoForGuest } from '../components/infoForGuest'
+import React, { useEffect, useState, useContext } from 'react';
+import { Slider } from '../components/Slider';
+import { FlashSale } from '../components/FlashSale';
+import { Category } from '../components/Category';
+import { SliderProducts } from '../components/SliderProducts';
+import { AllProducts } from '../components/AllProducts';
+import { InfoForGuest } from '../components/infoForGuest';
 import { fetchAPI } from '../helpers/fetch';
 import { getAllBook } from '../apis/book';
 import { AppContext } from '../contexts/main';
-
 
 export const Home = () => {
   const { userId, numCart, setNumCart } = useContext(AppContext);
   const [user, setUser] = useState(userId);
   const [products, setProducts] = useState([]);
-  const { setActivePage } = useContext(AppContext);
+  const { setActivePage, setIsShowFooter } = useContext(AppContext);
 
   //set active page
   useEffect(() => {
     setActivePage('Home');
+    setIsShowFooter(true);
   }, []);
 
   useEffect(() => {
     const loadProductData = async () => {
-      const productData = await fetchAPI(`../${getAllBook}`, 'POST')
-      setProducts(productData.metadata)
-    }
+      const productData = await fetchAPI(`../${getAllBook}`, 'POST');
+      setProducts(productData.metadata);
+    };
     setTimeout(() => {
-      loadProductData()
-    }, 1000)
-
-  }, [])
+      loadProductData();
+    }, 1000);
+  }, []);
 
   return (
-    <div className='pb-10 sm:pb-0'>
+    <div className="pb-10 sm:pb-0">
       <Slider></Slider>
       <div className="mx-2 md:mx-16">
-        <FlashSale
-          userId={userId}
-          productData={products}>
-
-        </FlashSale>
+        <FlashSale userId={userId} productData={products}></FlashSale>
         <InfoForGuest></InfoForGuest>
 
         {/*Sản phẩm bán chạy*/}
         <div className="h-full">
-
           <AllProducts
             userId={userId}
             isShowHeader={true}
             numOfProductsInRow={5}
-          >
-          </AllProducts>
+          ></AllProducts>
         </div>
 
         {/* Top 5 thể loại ưa chuộng */}
@@ -78,8 +71,8 @@ export const Home = () => {
           </div>
           <SliderProducts
             userId={userId}
-            productData={products}>
-          </SliderProducts>
+            productData={products}
+          ></SliderProducts>
         </div>
       </div>
     </div>

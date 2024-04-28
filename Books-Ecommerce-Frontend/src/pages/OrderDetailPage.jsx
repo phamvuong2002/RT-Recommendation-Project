@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import NavigationPath from '../components/NavigationPath';
 import { ShoppingCarts } from '../components/ShoppingCarts';
 import { AllProducts } from '../components/AllProducts';
@@ -9,8 +9,10 @@ import { FectchPaging } from '../helpers/fectchPaging';
 import { DetailOrder } from '../components/DetailOrder';
 import { shortenString } from '../utils/shortenString';
 import { vnpay } from '../utils/getPaymentReturn';
+import { AppContext } from '../contexts/main';
 
 export const OrderDetailPage = () => {
+  const { userId, setIsShowFooter } = useContext(AppContext);
   const [products, setProducts] = useState([]);
   const [orderId, setOrderId] = useState('');
   const [paymentInfo, setPaymentInfo] = useState(null);
@@ -33,6 +35,11 @@ export const OrderDetailPage = () => {
   const { pages, totalPages, currentPage, setCurrentPage } = FectchPaging({
     url,
   });
+
+  //set footer
+  useEffect(() => {
+    setIsShowFooter(true);
+  }, []);
 
   //Fetch Product Data
   useEffect(() => {

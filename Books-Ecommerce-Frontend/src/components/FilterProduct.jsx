@@ -329,7 +329,7 @@ export default function FilterProduct({ _userId, _cate, _limit, _query, _price, 
               <div className="lg:col-span-4">
                 {/* Your content */}
                 <AllProducts
-                  userId={_userId}
+
                   numOfProductsInRow={4}
                   _cate={_cate}
                   _sort={sortOption}
@@ -337,6 +337,7 @@ export default function FilterProduct({ _userId, _cate, _limit, _query, _price, 
                   _query={_query}
                   _price={_price}
                   _publisher={_publisher}
+                  _choose={"all"}
                 >
                 </AllProducts>
 
@@ -488,7 +489,7 @@ export default function FilterProduct({ _userId, _cate, _limit, _query, _price, 
             <div className="lg:col-span-4 bg-gray-100">
               {/* Your content */}
               <AllProducts
-                userId={_userId}
+
                 numOfProductsInRow={4}
                 _cate={_cate}
                 _sort={sortOption}
@@ -496,6 +497,7 @@ export default function FilterProduct({ _userId, _cate, _limit, _query, _price, 
                 _query={_query}
                 _price={_price}
                 _publisher={_publisher}
+                _choose={"all"}
               >
               </AllProducts>
 

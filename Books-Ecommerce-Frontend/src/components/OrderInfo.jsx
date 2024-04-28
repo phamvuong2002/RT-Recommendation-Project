@@ -46,7 +46,6 @@ export const OrderInfo = () => {
                 }
                 accumulator[billId].push(bill); // Thêm đơn hàng vào mảng tương ứng với số hóa đơn
             }
-            console.log('aaa', accumulator)
             return accumulator;
         }, {});
 

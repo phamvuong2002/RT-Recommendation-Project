@@ -41,8 +41,16 @@ class RecommendationService {
       const sold = parseInt(keysInRange[i + 1]);
       //getBook
       const book = await db.book.findByPk(productId);
-      if (book) {
-        result.push({ book: book, sold });
+      if (book && book.book_status === 1) {
+        result.push({
+          book: {
+            book_id: book.book_id,
+            book_img: book.book_img,
+            book_spe_price: book.book_spe_price,
+            book_old_price: book.book_old_price,
+          },
+          sold,
+        });
       }
     }
     return result;

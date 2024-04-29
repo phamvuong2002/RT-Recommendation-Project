@@ -4,7 +4,6 @@ const express = require("express");
 const { apiKey, permission } = require("../auth/checkAuth");
 const router = express.Router();
 
-// category
 router.use("/v1/api/category", require("./category"));
 router.use("/v1/api/otp", require("./otp"));
 router.use("/v1/api/emailotp", require("./emailotp"));
@@ -13,6 +12,8 @@ router.use("/v1/api/emailotp", require("./emailotp"));
 //router.use(apiKey);
 //check permissions
 //router.use(permission('0000'));
+router.use("/v1/api/recommendation", require("./recommendation"));
+router.use("/v1/api/collect", require("./collect"));
 router.use("/v1/api/book", require("./book"));
 router.use("/v1/api/user", require("./user"));
 router.use("/v1/api/order", require("./order"));

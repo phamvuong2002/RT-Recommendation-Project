@@ -9,8 +9,7 @@ export const ProductListStatus = () => {
       <div className="w-full sticky top-0 text-lg font-semibold text-red-500 font-inter py-5">Theo dõi sách</div>
       <div className="w-full max-w-full h-full  gap-y-5 overflow-y-auto">
         <AllProducts
-
-          _limit={24}
+          _limit={1}
           numOfProductsInRow={3}
           _choose={"favorite"}>
         </AllProducts>

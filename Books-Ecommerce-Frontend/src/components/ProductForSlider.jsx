@@ -1,18 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types';
 import { addtocart } from '../apis/cart';
 import { fetchAPI } from '../helpers/fetch';
 import { PopupOpen } from './popup/PopupOpen';
 import { popupContent } from '../helpers/popupContent'
+import { AppContext } from '../contexts/main';
+import { isMobileDevice } from '../utils/isMobileDevice';
 
 export const ProductForSlider = ({ userId, productData }) => {
+    const { setNumCart } = useContext(AppContext)
     const [openAddToCartsPopup, setOpenAddToCartsPopup] = useState(false);
 
     const AddToCart = async (e) => {
         e.preventDefault();
 
-        await fetchAPI(`../${addtocart}`, 'POST', {
+        let res = await fetchAPI(`../${addtocart}`, 'POST', {
             "userId": userId,
             "book": {
                 "book_id": productData.book_id,
@@ -20,7 +23,9 @@ export const ProductForSlider = ({ userId, productData }) => {
                 "old_quantity": 0
             }
         })
+        if (res.status !== 200) return;
         setOpenAddToCartsPopup(true);
+        setNumCart(res.metadata.cart_count_products);
 
     }
     return (
@@ -56,10 +61,14 @@ export const ProductForSlider = ({ userId, productData }) => {
                                 )}
                                 onNoClick={() => setOpenAddToCartsPopup(false)}
                             />
-                            <button
-                                onClick={AddToCart}
-                                className="bg-red-500 text-white  hover:bg-red-300 px-5 ">Add to Cart
-                            </button>
+                            {
+                                isMobileDevice ?
+                                    (<div className="hidden" />) :
+                                    (<button
+                                        onClick={AddToCart}
+                                        className="bg-red-500 text-white  hover:bg-red-300 px-5 ">Add to Cart
+                                    </button>)
+                            }
                         </div>
                     </div>
 

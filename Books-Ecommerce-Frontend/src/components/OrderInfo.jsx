@@ -1,16 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useContext } from 'react'
 import { isMobileDevice } from '../utils/isMobileDevice';
 import Bills from './Bills';
 import { ShoppingCartLoader } from './loaders/ShoppingCartLoader';
 import { SingleBill } from './SingleBill';
-import { determineBillStatus } from '../helpers/detemindBillsStatus';
-
-import { fetchData } from '../helpers/fetch';
-import { Link } from 'react-router-dom';
+import { fetchAPI } from '../helpers/fetch';
+import { getOrder } from '../apis/order';
+import { AppContext } from '../contexts/main';
 
 export const OrderInfo = () => {
-
-    const [activeTab, setActiveTab] = useState('All')
+    const { userId } = useContext(AppContext);
+    const [activeTab, setActiveTab] = useState('PendingConfirmation')
     const containerRef = useRef(null)
 
     const [bills, setBills] = useState([]);
@@ -18,37 +17,33 @@ export const OrderInfo = () => {
 
     //Fetch Bills Data
     useEffect(() => {
-        const url = '../data/test/bills.json';
         const BillsData = async () => {
-            try {
-                const billsData = await fetchData(url);
-                setBills(billsData)
-            } catch (error) {
-                // throw error;
-            }
-        }
-        //ví dụ tải các sản phẩm trong giỏ hàng của khách
-        setTimeout(() => {
-            BillsData()
-            setReloadBill(false)
-        }, 1000)
+            let billsData = await fetchAPI(`../${getOrder}`, 'POST', {
+                "userId": 1
+            });
 
+            setBills(billsData.metadata.order_book)
+        };
+        BillsData()
+        setReloadBill(false)
     }, [reloadBill])
+
 
     // Return Grouped Bills (check by Status) To Show At Correct Tab
     const checkGroupedBillsStaus = (bills, activeTab) => {
         const groupBillByStatusAndID = bills.reduce((accumulator, bill) => {
-            if (bill.status === activeTab) {
-                const billId = bill.billId; //tại rảnh nên thích gán như vậy, 
+            if (bill.ob_status === activeTab) {
+                const billId = bill.ob_order_id; //tại rảnh nên thích gán như vậy, 
                 //mà nếu gán như vậy thì nó sẽ gọi 1 cái bill 1 lần thôi rồi chọn id ra, tối ưu hơn
                 if (!accumulator[billId]) {
                     accumulator[billId] = []; // Tạo một mảng mới nếu chưa có số hóa đơn
                 }
                 accumulator[billId].push(bill); // Thêm đơn hàng vào mảng tương ứng với số hóa đơn
             }
+
             return accumulator;
         }, {});
-
+        console.log("BILLL", Object.keys(groupBillByStatusAndID))
         const renderedBills = Object.keys(groupBillByStatusAndID).map(billId => {
             return (
                 <div className="" key={billId}>
@@ -60,7 +55,7 @@ export const OrderInfo = () => {
                     </div>
                     {/* Render Swiper here for each group of bills */}
                     {groupBillByStatusAndID[billId].map(bill => (
-                        <SingleBill key={bill.detailBillId} bill={bill} setReload={setReloadBill} />
+                        <SingleBill key={bill.ob_order_id} bill={bill} setReload={setReloadBill} />
                     ))}
                 </div>
             );

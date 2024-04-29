@@ -108,7 +108,6 @@ export const Category = () => {
             <Swiper
                 slidesPerView={3}
                 spaceBetween={10}
-
                 modules={[Pagination]}
                 className="mySwiper block md:hidden"
             >

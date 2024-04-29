@@ -105,7 +105,7 @@ export const Navbar = () => {
   };
 
   useEffect(() => {
-    console.log('reloadLoginSignup::', reloadLoginSignup);
+    //console.log('reloadLoginSignup::', reloadLoginSignup);
     if (reloadLoginSignup) {
       setOpen(true);
       setReloadLoginSignup(false);

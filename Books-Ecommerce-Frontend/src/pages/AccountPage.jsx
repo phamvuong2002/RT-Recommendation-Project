@@ -40,7 +40,7 @@ export const AccountPage = () => {
 
   //set active page
   useEffect(() => {
-    console.log('selectedPageId::', selectedPageId);
+    //console.log('selectedPageId::', selectedPageId);
     if (selectedPageId === 'orders-infomation') {
       setActivePage('Order');
     } else {
@@ -63,7 +63,7 @@ export const AccountPage = () => {
   }, [selectedPageId]);
 
   useEffect(() => {
-    console.log(selectedPage, TAB[selectedPageId]);
+    //console.log(selectedPage, TAB[selectedPageId]);
   }, [selectedPageId]);
 
   return (

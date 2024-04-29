@@ -1,0 +1,1 @@
+export const getOrder = 'api/v1/api/order/getorder';

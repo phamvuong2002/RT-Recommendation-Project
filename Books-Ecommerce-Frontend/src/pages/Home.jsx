@@ -6,8 +6,9 @@ import { SliderProducts } from '../components/SliderProducts';
 import { AllProducts } from '../components/AllProducts';
 import { InfoForGuest } from '../components/infoForGuest';
 import { fetchAPI } from '../helpers/fetch';
-import { getAllBook, getListFavoriteBook } from '../apis/book';
+import { getAllBook } from '../apis/book';
 import { AppContext } from '../contexts/main';
+import { isMobileDevice } from '../utils/isMobileDevice';
 
 export const Home = () => {
   const { userId, numCart, setNumCart } = useContext(AppContext);
@@ -45,6 +46,7 @@ export const Home = () => {
           <AllProducts
             isShowHeader={true}
             numOfProductsInRow={5}
+            _limit={isMobileDevice() ? 2 : 8}
             _choose={"all"}
           ></AllProducts>
         </div>

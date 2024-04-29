@@ -128,16 +128,16 @@ export const GeneralInfo = () => {
     //USER SERVICE
     useEffect(() => {
         setPageLoading(true);
-        console.log('reload')
+        //console.log('reload')
         const loadUserData = async () => {
-            console.log('in load')
-            if(!userId) return;
+            //console.log('in load')
+            if (!userId) return;
             const user_data = await fetchAPI(`../${getUserInfo}`, 'POST', {
                 userId: 1,
             });
             setUserData(user_data.metadata.user_data);
             setPageLoading(false);
-         
+
             setReloadUserData(false)
         };
 
@@ -151,7 +151,7 @@ export const GeneralInfo = () => {
         }, 50)
     }, [reloadUserData]);
 
-  
+
 
 
     return (

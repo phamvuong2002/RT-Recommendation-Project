@@ -18,8 +18,6 @@ export const AllProducts = ({ isShowHeader, numOfProductsInRow, _sort, _cate, _l
     const { userId } = useContext(AppContext);
     console.log("UID", userId)
     const searchParams = new URLSearchParams(location.search);
-    //const [user, setUser] = useState(userId)
-    //console.log("userIDDDD", user)
     let pageUpdated = searchParams.get('page');
 
     const topRef = useRef(null);
@@ -104,32 +102,32 @@ export const AllProducts = ({ isShowHeader, numOfProductsInRow, _sort, _cate, _l
         if (_choose === "all") {
             const loadProductData = async () => {
                 const paramsString = queryString.stringify(filters);//limit=1&page=1&search=ho
-                // console.log('filters', filters)
                 const res = await fetchAPI(`../${getSearchFilterSort}?${paramsString}`, 'POST')
-                console.log("url", `../${getSearchFilterSort}?${paramsString}`)
                 setProducts(res.metadata.productData);
                 setPagination(res.metadata.pagination);
-
             }
-            //
             setTimeout(() => {
                 loadProductData()
             }, 100)
         } else if (_choose === "favorite") {
             const loadFavBook = async (user) => {
-                console.log("USERRRRRRR", user)
-                const productData = await fetchAPI(`../${getListFavoriteBook}`, 'POST', {
+                let productData = await fetchAPI(`../${getListFavoriteBook}`, 'POST', {
                     "userId": user,
                 });
                 console.log("USE", user)
                 setProducts(productData.metadata);
 
             };
-            loadFavBook(userId);
+            if (userId) {
+                loadFavBook(userId);
+            } else {
+                console.log("User ID null!!!")
+            }
+
 
         }
 
-    }, [filters, _choose, userId])
+    }, [filters, userId])
 
 
 

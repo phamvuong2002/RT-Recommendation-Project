@@ -11,6 +11,7 @@ const MongoDBStore = require("connect-mongodb-session")(session);
 const {
   app: { session_key, session_name, session_db },
 } = require("./v1/configs/config");
+const { connectProducer } = require("./v1/dbs/init.kafka");
 
 //init middlewares
 app.use(
@@ -71,6 +72,17 @@ app.use(
 
 //init db
 require("./v1/dbs/init.mongo");
+/* Kafka */
+// Connect Kafka producer when the server starts
+connectProducer()
+  .then(() => {
+    console.log("Producer connected to Kafka");
+  })
+  .catch((error) => {
+    console.error("Error connecting to Kafka:", error);
+    process.exit(1);
+  });
+
 //init routes
 app.use("/", require("./v1/routes"));
 

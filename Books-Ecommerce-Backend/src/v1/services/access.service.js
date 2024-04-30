@@ -17,6 +17,43 @@ const {
 const { findByEmail } = require("./user.service");
 
 class AccessService {
+  static loginGuest = async (data, req) => {
+    const sessionid = data?.id;
+    const userId = data.user?.user?._id?.toString();
+
+    if (!userId) {
+      // Kiểm tra user đã được tạo chưa
+      const foundUser = await userModel.findOne({
+        username: `user-${sessionid}`,
+      });
+
+      if (foundUser) {
+        return {
+          user: getInfoData({
+            fileds: ["_id", "username", "email", "roles"],
+            object: foundUser,
+          }),
+        };
+      } else {
+        //Tạo User
+        const newUser = await userModel.create({
+          username: `user-${sessionid}`,
+          email: `user-${sessionid}@email.com`,
+          password: sessionid,
+          roles: [ROLES.CLIENT],
+        });
+        //Tạo MySql
+        if (!newUser) throw new BadRequestError("create guest user failed");
+        return {
+          user: getInfoData({
+            fileds: ["_id", "username", "email", "roles"],
+            object: newUser,
+          }),
+        };
+      }
+    }
+  };
+
   static signUp = async ({ username, email, password }) => {
     // Step 1: check username
     const holderUserName = await userModel.findOne({ username }).lean();

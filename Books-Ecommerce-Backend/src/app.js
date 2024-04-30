@@ -62,7 +62,7 @@ app.use(
     store: mongoDBstore,
     cookie: {
       maxAge: 5 * 60 * 1000, // this is when our cookies will expired and the session will not be valid anymore (user will be log out)
-      sameSite: false,
+      sameSite: true,
       secure: false, // to turn on just in production
     },
     resave: true,

@@ -7,6 +7,9 @@ const { asyncHandler } = require("../../auth/checkAuth");
 const { authentication } = require("../../auth/authUtils");
 
 //set session
+router.post("/login-guest", asyncHandler(accessController.loginGuest));
+
+//set session
 router.post("/set-session", asyncHandler(accessController.setSession));
 
 //get session

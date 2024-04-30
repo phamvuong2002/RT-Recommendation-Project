@@ -19,22 +19,25 @@ import { LuClipboardList, LuLogOut } from 'react-icons/lu';
 import { Link, useLocation } from 'react-router-dom';
 import { AppContext } from '../contexts/main';
 
+import {getUserInfo} from '../apis/user';
+import {fetchAPI }from '../helpers/fetch';
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 // Navbar chính
 export const Navbar = () => {
-  const { numCart, requestAuth, userId, token, setrequestAuthm, setToken } =
+  const { numCart, requestAuth, userId, token, setrequestAuthm, setToken ,setUsername, userName} =
     useContext(AppContext);
 
   const location = useLocation();
   const path = location.search;
   const [isOpenShoppingCarts, setIsOpenShoppingCarts] = useState(false);
-  const [user, setUser] = useState({
-    id: '',
-    Name: '',
-    shoppingCart: 0,
-  });
+  const [user, setUser] = useState('')
+  //   {
+  //   id: '',
+  //   name: '',
+  //   // shoppingCart: 0,
+  // });
   const [reloadLoginSignup, setReloadLoginSignup] = useState(false);
 
   // Mở Drop down của Tài khoản
@@ -117,6 +120,24 @@ export const Navbar = () => {
     setIsMenuOpen(false);
   }, [path]);
 
+
+  useEffect(() => {
+    const loadUserData = async () => {
+      if (!userId || !token) return;
+      const userData = await fetchAPI(`../${getUserInfo}`, 'POST', {
+        userId: userId,
+      });
+      console.log(userData)
+    //   console.log(userData)
+    setUser(userData.metadata.user_data);
+    };
+   
+    
+    loadUserData();
+    console.log(userId)
+    console.log('user ',user)
+  }, [userId,token]);
+
   return (
     <nav className="max-w-screen-2xl font-inter flex flex-col ">
       <div className=" mx-auto my-1  sm:max-w-screen-md md:max-w-screen-2xl flex justify-between items-center md:justify-around lg:grid lg:grid-cols-6 lg:gap-4 lg:justify-items-start container  relative ">
@@ -160,7 +181,7 @@ export const Navbar = () => {
           <div className="flex items-center">
             {/* Chưa đăng nhập sẽ hiển thị popup Đăng ký/Đăng nhập */}
             <div
-              className={`group flex items-center text-lg font-medium text-black  ${user.id.length <= 0 ? 'block' : 'hidden'}`}
+              className={`group flex items-center text-lg font-medium text-black  ${!userId ? 'block' : 'hidden'}`}
             >
               <PopupCenterPanel
                 open={open}
@@ -181,7 +202,7 @@ export const Navbar = () => {
                       <Login_SignUp
                         reload={reloadLoginSignup}
                         setReload={setReloadLoginSignup}
-                        setUser={setUser}
+                        // setUser={setUser}
                         setOpen={setOpen}
                         open={open}
                       />
@@ -198,7 +219,7 @@ export const Navbar = () => {
                             + Đăng xuất */}
             <Menu
               as="div"
-              className={`${user.id.length > 0 ? 'block' : 'hidden'} relative inline-block text-left`}
+              className={`${userId ? 'block' : 'hidden'} relative inline-block text-left`}
             >
               {({ }) => (
                 <div>
@@ -211,7 +232,7 @@ export const Navbar = () => {
                       className={`group flex items-center  text-lg font-medium text-gray-700 hover:text-gray-90`}
                     >
                       <FaUser className="h-4 w-4 sm:h-5 sm:w-5 text-red-500" />
-                      <p className="hidden lg:block"> {user.Name}</p>
+                      <p className="hidden lg:block truncate max-w-[10rem] ml-2"> {user.fullname}</p>
                     </Menu.Button>
                   </div>
 
@@ -286,13 +307,13 @@ export const Navbar = () => {
       </div>
 
       <div
-        className={`desktop_menu absolute lg:mt-[4rem] lg:mx-[7rem]  z-10  ${isMenuOpen ? '' : 'hidden'}`}
+        className={`hidden desktop_menu absolute lg:mt-[4rem] lg:mx-[7rem]  z-10  ${isMenuOpen ? 'lg:block' : 'hidden'}`}
       >
         <Category_dropdown />
       </div>
 
       <div
-        className={`block lg:hidden absolute inset-y-0 left-0 lg:mx-auto lg:mt-1 z-10  w-full ease-in-out duration-500 ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
+        className={`block lg:hidden absolute inset-y-0 left-0 lg:mx-auto lg:mt-1 z-10  w-full ease-in-out duration-500 ${isMenuOpen ? 'translate-x-0' : '-translate-x-full '}`}
       >
         <div className=" w-full  flex lg:hidden text-center  bg-red-500 py-5 text-white font-bold">
           <button

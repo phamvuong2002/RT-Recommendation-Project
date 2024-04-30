@@ -133,7 +133,7 @@ export const GeneralInfo = () => {
             //console.log('in load')
             if (!userId) return;
             const user_data = await fetchAPI(`../${getUserInfo}`, 'POST', {
-                userId: 1,
+                userId: userId,
             });
             setUserData(user_data.metadata.user_data);
             setPageLoading(false);

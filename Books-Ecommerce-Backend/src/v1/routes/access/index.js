@@ -17,9 +17,11 @@ router.post("/get-session", asyncHandler(accessController.getSession));
 
 //signUp
 router.post("/signup", asyncHandler(accessController.signUp));
+router.post("/signup_user", asyncHandler(accessController.signup_user));
 
 //login
 router.post("/login", asyncHandler(accessController.login));
+router.post("/login_user", asyncHandler(accessController.login_user));
 
 ///authentication////
 router.use(authentication);

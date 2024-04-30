@@ -15,6 +15,9 @@ const {
 
 /// services ///
 const { findByEmail } = require("./user.service");
+const userService = require("./user.service")
+const db= require("../models/sequelize/models")
+const Op=require("sequelize")
 
 class AccessService {
   static loginGuest = async (data, req) => {
@@ -44,6 +47,11 @@ class AccessService {
         });
         //Tạo MySql
         if (!newUser) throw new BadRequestError("create guest user failed");
+
+        console.log('MY SQLLLLLLLLLLLLLLLLLLL');
+        await userService.addUserDB(newUser._id, `user-${sessionid}`, '', `user-${sessionid}@email.com`, sessionid)
+
+
         return {
           user: getInfoData({
             fileds: ["_id", "username", "email", "roles"],
@@ -297,6 +305,209 @@ class AccessService {
         username: foundUser.username,
         email: foundUser.email,
       },
+      tokens,
+    };
+  };
+
+  //SignUp
+  static signup_user = async ({ signupMethod, signupMethodValue, password} ,guest_id) => {
+    //Kiểm tra tham số có null
+    if (!(signupMethod && signupMethodValue && password)) {
+      throw new BadRequestError(`Signup method and password cannot be null`);
+    }
+    console.log(signupMethod, signupMethodValue, password)
+
+
+    //check Email/Phone number
+    let email_value = ''
+    let phone_value = ''
+    switch (signupMethod) {
+      case 'email':
+        email_value = signupMethodValue
+        break
+      case 'phone':
+        phone_value = signupMethodValue
+        break
+      default:
+        throw new BadRequestError('Invalid Signup method')
+    }
+
+    //điều kiện Or
+    let isUsed = await userModel.find({
+      where: { [Op.or]: [{ email: email_value }, { phone: phone_value }] }
+    }).exec();
+
+    console.log('isused', isUsed)
+
+    if (isUsed.length > 0) {
+      throw new BadRequestError(`${signupMethod} already Registered!`);
+    }
+
+    //
+    //hash password người dùng nhập
+    const passwordHash = await bcrypt.hash(password, 10);
+    // console.log("passwordHash::", passwordHash);
+
+    let registered_user = ''
+    // xem người dung Đăng ký bằng Email/Đt --> Cập nhật email/phone + pw (MONGO DB)
+    if (email_value !== '') {
+      registered_user = await userModel.findOneAndUpdate({ _id: guest_id },
+        {
+          email: email_value,
+          password: passwordHash,
+        },
+        { new: true })
+    } else if (phone_value !== '') {
+      registered_user = await userModel.findOneAndUpdate({ _id: guest_id },
+        {
+          phone: phone_value,
+          password: passwordHash,
+        },
+        { new: true })
+    }
+
+    // console.log(registered_user)
+    //cập nhật vào mysql db
+    if (registered_user) {
+      let foundUser = await db.user.findOne({
+        where: { user_sid: guest_id }
+      });
+
+      if (foundUser) {
+        await foundUser.set(
+          {
+            user_email: email_value,
+            user_phone: phone_value,
+            password: passwordHash
+          },
+        );
+      }
+      foundUser.save()
+
+      //create private key, public key (private key used for syncing a token
+      //and public key used for validation that token)
+      const { privateKey, publicKey } = crypto.generateKeyPairSync("rsa", {
+        modulusLength: 4096,
+        publicKeyEncoding: {
+          type: "pkcs1",
+          format: "pem",
+        },
+        privateKeyEncoding: {
+          type: "pkcs1",
+          format: "pem",
+        },
+      });
+
+      console.log({ privateKey, publicKey });
+
+      //create public key for decoding token
+      const publicKeyString = await KeyTokenService.createKeyToken({
+        userId: registered_user._id,
+        publicKey: publicKey,
+      });
+
+      if (!publicKeyString) {
+        throw new BadRequestError("Create Public Key Failed");
+      }
+      console.log(`publicKeyString:: ${publicKeyString}`);
+
+      //convert public key string to object
+      const publicKeyObject = crypto.createPublicKey(publicKeyString);
+      console.log(`publicKeyObject:: ${publicKeyObject}`);
+
+      // Create token pair
+      const tokens = await createTokenPair(
+        { userId: registered_user._id, username: foundUser.username, user_email: email_value, user_phone: phone_value },
+        publicKeyString,
+        privateKey
+      );
+      console.log(`Create token successfully::`, tokens);
+      return {
+        user: getInfoData({
+          fileds: ["_id", "username", signupMethod, "roles"],
+          object: registered_user,
+        }),
+        tokens,
+      };
+
+    }
+    else { // User không được add vào db thành công --> xóa record trong Mongo
+
+      return {
+        code: "200",
+        metadata: null,
+      };
+    }
+  };
+
+  static login_user = async ({ loginMethod, loginMethodValue, password, refreshToken = null }) => {
+    // 1
+    console.log('in login user')
+    console.log(loginMethod, loginMethodValue, password)
+    
+    let foundUser = '';
+    if (loginMethod == 'email') {
+      let email = loginMethodValue
+      foundUser = await userModel.find({ email: email }).lean();
+    }
+    else if (loginMethod == 'phone') {
+      let phone = loginMethodValue
+      foundUser = await userModel.findOne({ phone: phone }).lean();
+    }
+
+    console.log(foundUser)
+    if (!foundUser) throw new BadRequestError("Authentication failed");
+
+    //2
+    console.log(foundUser.password)
+    const match = await bcrypt.compare(password, foundUser.password);
+    console.log(match)
+
+    if (!match) throw new AuthFailureError("Authentication failed");
+
+    //3 create private key, public key (private key used for syncing a token
+    //and public key used for validation that token)
+    const { privateKey, publicKey } = crypto.generateKeyPairSync("rsa", {
+      modulusLength: 4096,
+      publicKeyEncoding: {
+        type: "pkcs1",
+        format: "pem",
+      },
+      privateKeyEncoding: {
+        type: "pkcs1",
+        format: "pem",
+      },
+    });
+    //create public key for decoding token
+    const publicKeyString = await KeyTokenService.createKeyToken({
+      userId: foundUser._id,
+      publicKey: publicKey,
+    });
+
+    //4
+    const tokens = await createTokenPair(
+      {
+        userId: foundUser._id,
+        username: foundUser.username,
+        email: foundUser.email,
+      },
+      publicKeyString,
+      privateKey
+    );
+
+    //5
+    await KeyTokenService.createKeyToken({
+      userId: foundUser._id,
+      publicKey: publicKey,
+      refreshToken: tokens.refreshToken,
+    });
+
+    const foundUserDB =await db.user.findOne({ user_sid: foundUser._id })
+    return {
+      user: getInfoData({
+        fileds: ["_id", "username", loginMethod, "roles"],
+        object: foundUser,
+      }),
       tokens,
     };
   };

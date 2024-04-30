@@ -4,6 +4,7 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert('user', [
       {
+        user_sid: '6630a41666faa0310b92d563',
         user_username: 'Nguyễn Văn A',
         user_slug:'nguyen-van-a',
         user_password: 'matkhau123',
@@ -18,7 +19,9 @@ module.exports = {
         update_time: new Date()
       },
       {
+        user_sid: '123a34',
         user_username: 'Trần Văn B',
+       
         user_slug:'tran-van-b',
         user_password: 'mk123456',
         user_salf: 'salf2',

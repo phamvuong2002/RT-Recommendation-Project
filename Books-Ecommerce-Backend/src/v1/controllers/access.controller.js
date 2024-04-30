@@ -80,6 +80,48 @@ class AccessController {
       metadata: await AccessService.handleRefreshToken(req.body.refreshToken),
     }).send(res);
   };
+
+  //
+  signup_user = async (req, res, next) => {
+    //còn lỗi
+    const guest_id=req.session.user.user._id;
+    console.log(guest_id)
+    const user= await AccessService.signup_user(req.body, guest_id)
+    console.log('user',user)
+    if (user) {
+      req.session.user = {
+        user: user.metadata.user,
+        tokens: user.metadata.tokens,
+        sessionid: req.session.id,
+      };
+
+    new CREATED({
+      message: "Regiserted OK!",
+      metadata: user,
+    }).send(res);
+  };
+  }
+
+  login_user = async (req, res, next) => {
+    // const session = req.session.id
+    // console.log(session)
+    const user = await AccessService.login_user(req.body);
+    console.log(user);
+    if (user) {
+      req.session.user = {
+        user: user.user,
+        token: user.tokens.accessToken,
+        sessionid: req.session.id,
+      };
+    } else {
+      new AuthFailureError("Invalid Request");
+    }
+
+    new SuccessResponse({
+      metadata: user,
+    }).send(res);
+  };
+
 }
 
 module.exports = new AccessController();

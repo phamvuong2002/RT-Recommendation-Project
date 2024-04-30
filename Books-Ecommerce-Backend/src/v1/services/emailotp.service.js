@@ -21,7 +21,7 @@ class emailOTPService {
                 email,
                 subject: "MÃ XÁC THỰC OTP",
                 message: "Verify your email with the code below",
-                duration: 60,
+                duration: 1,
             };
             const createdOTP = await OTPService.sendOTP(otpDetails);
             console.log('here')
@@ -44,12 +44,12 @@ class emailOTPService {
         };
         // let otpService= new OTPService();
         try {
-            console.log('in ')
+            // console.log('in ')
             const validOTP = await OTPService.verifyOTP(otpDetails)
             if(!validOTP){
                throw new BadRequestError("Invalid code passed. Check your inbox")
             }
-            console.log('in 2')
+            // console.log('in 2')
             //delete otp
             await OTPService.deleteOTP(email)
             return validOTP;

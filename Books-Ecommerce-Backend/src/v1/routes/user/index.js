@@ -11,13 +11,8 @@ const { authentication } = require("../../auth/authUtils");
 
 router.post("/getInfo", asyncHandler(userController.getUserInfo))  ;
 
+
 router.post("/updateInfo", asyncHandler(userController.updateProfile))  ;
-
-router.get("/profile-infomation", asyncHandler(userController.getUserInfo));
-router.put("/profile-infomation", asyncHandler(userController.updateProfile));
-
-router.get("/general-infomation", asyncHandler(userController.getUserInfo));
-router.put("/general-infomation", asyncHandler(userController.updateProfile));
 
 router.post("/", asyncHandler(userController.addUserDB));
 
@@ -27,6 +22,12 @@ router.post("/favorite-book/handlefavbook", asyncHandler(favoritebookController.
 
 
 router.get("/mongo", asyncHandler(userController.getUserMongoDB))  ;
+
+router.post("/signup", asyncHandler(userController.signUp_U))  ;
+
+
+router.post("/checkEmailnPhone", asyncHandler(userController.checkEmailnPhone))  ;
+router.post("/delete", asyncHandler(userController.delete_U))  ;
 
 
 ///authentication////

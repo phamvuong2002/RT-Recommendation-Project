@@ -7,7 +7,7 @@ import { useContext, useEffect, useState } from 'react';
 import { AppContext } from './contexts/main';
 import { fetchAPI } from './helpers/fetch';
 import { getnumcart } from './apis/cart';
-import { getsession } from './apis/access';
+import { getsession, loginGuest } from './apis/access';
 
 function App() {
   const { userId, setUserId, session, setSession, setNumCart, setToken } =
@@ -17,15 +17,31 @@ function App() {
   //Session
   useEffect(() => {
     const fetchUserAuth = async () => {
+      const savedSession = localStorage.getItem('session-id');
       const data = await fetchAPI(getsession, 'POST');
       if (data.status === 200) {
-        setSession(data.metadata.sessionid);
+        const currentSession = data.metadata.sessionid;
+        if (savedSession !== currentSession) {
+          localStorage.setItem('session-id', currentSession);
+          await fetchUserAuth();
+          return;
+        } else {
+          console.log('save::', savedSession);
+          console.log('cureent::', currentSession);
+          const data = await fetchAPI(loginGuest, 'POST');
+          console.log('login guest::', data);
+        }
+        // setSession(data.metadata.sessionid);
         setUserId(1);
         //FOR GUEST
-        setToken(null);
+        // setToken(null);
         //FOR LOGINED USER
         // setToken('123456789');
+        // setSession(data.metadata.sessionid);
+        // setUserId(data.metadata?.user?._id);
+        // setToken(data.metadata?.token);
       }
+      console.log('data session::', data);
     };
     fetchUserAuth();
   }, []);

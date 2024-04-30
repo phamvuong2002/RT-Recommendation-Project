@@ -142,7 +142,13 @@ export const ShoppingCarts = (/*items*/) => {
   useEffect(() => {
     setPageLoading(true);
     const loadShoppingCartsData = async () => {
-      if (!userId || userId === '') return;
+      if (!userId || userId === '') {
+        setProducts([]);
+        setNumCart(0);
+        setIsLoading(false);
+        setPageLoading(false);
+        return;
+      }
       setIsLoading(true);
       const shoppingCartsData = await fetchAPI(`../${getcarts}`, 'POST', {
         userId: userId,
@@ -184,7 +190,9 @@ export const ShoppingCarts = (/*items*/) => {
   //Lấy thông tin Address
   useEffect(() => {
     const getAddresses = async () => {
-      if (!userId) return;
+      if (!userId) {
+        return;
+      }
       const address = await fetchAPI(`../${getaddresses}`, 'POST', {
         userId,
       });

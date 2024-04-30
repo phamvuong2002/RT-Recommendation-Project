@@ -4,6 +4,7 @@ const { add } = require("lodash");
 const AccessService = require("../services/access.service");
 const { OK, CREATED, SuccessResponse } = require("../core/success.response");
 const { AuthFailureError } = require("../core/error.response");
+const { request } = require("express");
 
 class AccessController {
   setSession = async (req, res, next) => {
@@ -13,11 +14,34 @@ class AccessController {
     res.status(201).json(req.session.user);
   };
 
+  loginGuest = async (req, res, next) => {
+    const user = await AccessService.loginGuest(req.session, req);
+    if (user) {
+      //Ghi user vào session
+      req.session.user = {
+        user: user.user,
+        sessionid: req.session.id,
+      };
+      new SuccessResponse({
+        metadata: user,
+      }).send(res);
+      return;
+    } else {
+      // trả về user
+      new SuccessResponse({
+        metadata: req.session.user,
+      }).send(res);
+      return;
+    }
+  };
+
   getSession = async (req, res, next) => {
-    console.log("get session::", req.session?.id);
     new SuccessResponse({
-      metadata: { ...req.session.user, sessionid: req.session.id },
+      metadata: {
+        sessionid: req.session.id,
+      },
     }).send(res);
+    return;
   };
 
   signUp = async (req, res, next) => {
@@ -29,7 +53,6 @@ class AccessController {
 
   login = async (req, res, next) => {
     const user = await AccessService.login(req.body);
-    console.log(user);
     if (user) {
       req.session.user = {
         user: user.user,

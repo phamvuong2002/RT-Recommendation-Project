@@ -8,6 +8,8 @@ import { validatePassword } from '../utils/validatePassword';
 import { ChangePassword } from '../helpers/ChangePassword';
 import { AppContext } from '../contexts/main';
 import { useNavigate } from 'react-router-dom';
+import { fetchAPI } from '../helpers/fetch';
+import { login } from '../apis/access';
 // Tab ĐĂNG NHẬP/ĐĂNG KÝ (chưa xử lý logic để Đăng nhập/đăng ký)
 // Tạm thời chỉ hiển thị
 export default function Login_SignUp({
@@ -17,8 +19,15 @@ export default function Login_SignUp({
   setOpen,
   open,
 }) {
-  const { requestAuth, setRequestAuth, userId, token, setToken } =
-    useContext(AppContext);
+  const {
+    requestAuth,
+    setRequestAuth,
+    userId,
+    token,
+    setToken,
+    setUserId,
+    setSession,
+  } = useContext(AppContext);
   const navigate = useNavigate();
   const sampleUser = {
     id: '1',
@@ -66,6 +75,16 @@ export default function Login_SignUp({
       account: accountLogin,
       pass: passwordLogin,
     });
+    // const data = await fetchAPI(login, 'POST', {
+    //   password: 'pwd_admin_v2',
+    //   email: 'adminv2@gmail.com',
+    // });
+    // if (data.status === 200) {
+    //   console.log('login successful:::', data);
+    //   setSession(data.metadata.sessionid);
+    //   setUserId(1); //data.metadata.user._id
+    //   setToken(data.metadata.token);
+    // }
     const auth = '!ok';
     if (auth === 'ok') {
       setAuthenStatus('success');

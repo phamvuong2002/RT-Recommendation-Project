@@ -59,11 +59,16 @@ export const ShoppingCartsPopup = ({ open, setOpen }) => {
   };
 
   //Fetch Shopping Carts
-  //Fetch Shopping Carts
   useEffect(() => {
     setPageLoading(true);
     const loadShoppingCartsData = async () => {
-      if (!userId) return;
+      if (!userId) {
+        setProducts([]);
+        setNumCart(0);
+        setIsLoading(false);
+        setPageLoading(false);
+        return;
+      }
       const shoppingCartsData = await fetchAPI(`../${getcarts}`, 'POST', {
         userId: userId,
       });

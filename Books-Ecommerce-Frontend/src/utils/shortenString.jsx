@@ -1,6 +1,7 @@
 import { isMobileDevice } from './isMobileDevice';
 
 export const shortenString = (str, maxLength) => {
+  if (!str) return '...';
   if (isMobileDevice()) {
     if (str.length <= maxLength) {
       return str;

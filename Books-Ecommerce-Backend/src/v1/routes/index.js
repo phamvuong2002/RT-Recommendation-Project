@@ -16,6 +16,7 @@ router.use("/v1/api/recommendation", require("./recommendation"));
 router.use("/v1/api/collect", require("./collect"));
 router.use("/v1/api/book", require("./book"));
 router.use("/v1/api/user", require("./user"));
+router.use("/v1/api/feedback", require("./feedback"));
 router.use("/v1/api/order", require("./order"));
 router.use("/v1/api/address", require("./address"));
 router.use("/v1/api/cart", require("./cart"));

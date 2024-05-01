@@ -180,7 +180,7 @@ export const DetailCart = ({ book }) => {
   useEffect(() => {
     setProduct(book);
     setVersion(book?.book_detail?.book_layout);
-  }, [book, userId]);
+  }, [product, userId]);
 
   return (
     <div className="font-inter xl:px-28">
@@ -264,28 +264,15 @@ export const DetailCart = ({ book }) => {
                 </div>
                 {/* Order Space */}
                 <div className="mt-10">
-                  <div className="flex mt-6 justify-start items-center gap-4 text-base ">
-                    <div className="font-inter font-medium leading-tight tracking-wide">
-                      Phiên bản:
+                  {version ? (
+                    <div className="flex mt-6 justify-start items-center gap-4 text-base ">
+                      <div className="font-inter font-medium leading-tight tracking-wide">
+                        Phiên bản: {version}
+                      </div>
                     </div>
-                    <div></div>
-                    <DropDownClick
-                      icon={false}
-                      value={version}
-                      setValue={setVersion}
-                      titleOption={''}
-                      dataOption={{
-                        default: `${product.book_detail.book_layout}`,
-                      }}
-                      toggleDropdown={handleVersionToggle}
-                      isOpen={isVersionOpen}
-                      setIsOpen={setIsVersionOpen}
-                      className={
-                        'w-[7rem] h-[2rem] flex items-center justify-center border border-red-500 xl:hover:bg-red-500  xl:hover:text-white transition-all'
-                      }
-                      customButton={'text-base font-[400] pr-1'}
-                    />
-                  </div>
+                  ) : (
+                    ''
+                  )}
 
                   <div className="mt-6 flex gap-6">
                     <div>
@@ -428,7 +415,7 @@ export const DetailCart = ({ book }) => {
                                 <div>{message}</div>
                               </div>,
                             )}
-                          //onNoClick={() => setOpenLovePopup(false)}
+                            //onNoClick={() => setOpenLovePopup(false)}
                           />
                           <button
                             title="Thêm danh sách yêu thích"

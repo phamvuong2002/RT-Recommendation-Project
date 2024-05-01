@@ -16,20 +16,22 @@ import Login_SignUp from './Login_SignUp';
 import Category_dropdown from './Category_Dropdown';
 import { HiMiniSquares2X2, HiChevronDown } from 'react-icons/hi2';
 import { LuClipboardList, LuLogOut } from 'react-icons/lu';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AppContext } from '../contexts/main';
 
-import {getUserInfo} from '../apis/user';
-import {fetchAPI }from '../helpers/fetch';
+import { getUserInfo } from '../apis/user';
+import { fetchAPI } from '../helpers/fetch';
+import { logout } from '../apis/access'
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 // Navbar chính
 export const Navbar = () => {
-  const { numCart, requestAuth, userId, token, setrequestAuthm, setToken ,setUsername, userName} =
+  const { numCart, requestAuth, userId, token, setrequestAuthm, setToken, username, setUserId } =
     useContext(AppContext);
 
   const location = useLocation();
+  const navigate=useNavigate();
   const path = location.search;
   const [isOpenShoppingCarts, setIsOpenShoppingCarts] = useState(false);
   const [user, setUser] = useState('')
@@ -87,14 +89,14 @@ export const Navbar = () => {
   const show = openDropdown && (mouseOverMenu || mouseOverButton);
 
   const accountOption = [
-    { name: 'Tài khoản', icon: <FaUser className="mr-2" />, path: '/account' },
+    { name: 'Tài khoản', icon: <FaUser className="mr-2" />, path: '../account/general-infomation' },
     {
       name: 'Đơn hàng của tôi',
       icon: <LuClipboardList className="mr-2" />,
-      path: '/',
+      path: '../account/orders-infomation',
     },
-    { name: 'Mục yêu thích', icon: <FaHeart className="mr-2" />, path: '/' },
-    { name: 'Đăng xuất', icon: <LuLogOut className="mr-2" />, path: '/' },
+    { name: 'Mục yêu thích', icon: <FaHeart className="mr-2" />, path: '../account/following-infomation' },
+    // { name: 'Đăng xuất', icon: <LuLogOut className="mr-2" />, path: '/' },
   ];
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -106,6 +108,28 @@ export const Navbar = () => {
   const handleClickShoppingCarts = () => {
     setIsOpenShoppingCarts(!isOpenShoppingCarts);
   };
+
+  // LOGOUT
+  const handleLogout = async () => {
+    console.log(token.accessToken)
+    console.log(userId)
+    const logout_result=await fetchAPI(`../${logout}`, 'POST', {},
+      {
+        userId: userId,
+        token: token.accessToken
+      });
+    
+      console.log(logout_result)
+    if (logout_result.status===200){
+      setUserId('')
+      setToken('')
+      navigate('/')
+      console.log('in logout success')
+    }
+    console.log('in logout')
+    
+    //nhận lại kết quả, xem Logout có thành công 
+  }
 
   useEffect(() => {
     //console.log('reloadLoginSignup::', reloadLoginSignup);
@@ -128,15 +152,15 @@ export const Navbar = () => {
         userId: userId,
       });
       console.log(userData)
-    //   console.log(userData)
-    setUser(userData.metadata.user_data);
+      //   console.log(userData)
+      setUser(userData.metadata.user_data);
     };
-   
-    
+
+
     loadUserData();
-    console.log(userId)
-    console.log('user ',user)
-  }, [userId,token]);
+    // console.log(userId)
+    // console.log('user ', user)
+  }, [userId, token]);
 
   return (
     <nav className="max-w-screen-2xl font-inter flex flex-col ">
@@ -232,7 +256,7 @@ export const Navbar = () => {
                       className={`group flex items-center  text-lg font-medium text-gray-700 hover:text-gray-90`}
                     >
                       <FaUser className="h-4 w-4 sm:h-5 sm:w-5 text-red-500" />
-                      <p className="hidden lg:block truncate max-w-[10rem] ml-2"> {user.fullname}</p>
+                      <p className="hidden lg:block truncate max-w-[10rem] ml-2"> {username ? username : "Tài khoản"}</p>
                     </Menu.Button>
                   </div>
 
@@ -276,8 +300,17 @@ export const Navbar = () => {
                                 {option.name}
                               </Link>
                             )}
+
                           </Menu.Item>
                         ))}
+                      </div>
+                      <div
+                        name='logout-option'
+                        className={`flex flex-row items-center text-gray-500 text-[15px] px-3 py-2 hover:cursor-pointer hover:text-red-500`}
+                        onClick={handleLogout}
+                      >
+                        <LuLogOut className='mr-2' />
+                        Đăng xuất
                       </div>
                     </Menu.Items>
                   </Transition>

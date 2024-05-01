@@ -11,7 +11,7 @@ import { getsession, loginGuest } from './apis/access';
 import {getUserInfo} from './apis/user'
 
 function App() {
-  const { userId, setUserId, session, setSession, setNumCart, setToken, setUsername, userName } =
+  const { userId, setUserId, session, setSession, setNumCart, setToken, setUsername } =
     useContext(AppContext);
 
   // Update Local Variables
@@ -64,20 +64,22 @@ function App() {
   }, [userId]);
 
   // 
-  // useEffect(() => {
-  //   const getUsername = async () => {
-  //     if (!userId || userId?.length <= 0) return;
-  //     const data = await fetchAPI(`../${getUserInfo}`, 'POST', {
-  //       userId,
-  //     });
-  //     if (data.status === 'error') {
-  //       getUsername('');
-  //     } else {
-  //       getUsername(data.metadata.user_data.fullname);
-  //     }
-  //   };
-  //   getUsername();
-  // }, [userId]);
+  useEffect(() => {
+    const getUsername = async () => {
+      if (!userId || userId?.length <= 0) return;
+      const data = await fetchAPI(`../${getUserInfo}`, 'POST', {
+        userId,
+      });
+      if (data.status === 'error') {
+        setUsername('');
+      } else {
+        setUsername(data?.metadata?.user_data?.fullname||'');
+      }
+      console.log('in call getUsername')
+    };
+
+    getUsername();
+  }, [userId]);
 
   return (
     <>

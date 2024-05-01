@@ -16,8 +16,8 @@ const {
 /// services ///
 const { findByEmail } = require("./user.service");
 const userService = require("./user.service")
-const db= require("../models/sequelize/models")
-const Op=require("sequelize")
+const db = require("../models/sequelize/models")
+const Op = require("sequelize")
 
 class AccessService {
   static loginGuest = async (data, req) => {
@@ -310,14 +310,30 @@ class AccessService {
   };
 
   //SignUp
-  static signup_user = async ({ signupMethod, signupMethodValue, password} ,guest_id) => {
+  static signup_user = async ({ signupMethod, signupMethodValue, password }, req) => {
     //Kiểm tra tham số có null
     if (!(signupMethod && signupMethodValue && password)) {
       throw new BadRequestError(`Signup method and password cannot be null`);
     }
     console.log(signupMethod, signupMethodValue, password)
 
+    let guest_id = ''
+    let guest = ''
+    // console.log(req.session)
+    // Kiểm tra xem Session có user chưa (trường hợp loginGuest không kịp tạo user --> Gọi để tạo và trả về User --> Lấy userid để Đăng ký mới)
+    if (!req.session.user) {
+      console.log('in red session user')
+      guest = await AccessService.loginGuest(req.session, req)
+      guest_id = guest.user._id
+    }
+    // Trường hợp đã có User nhưng session đó có Tokens --> đang có phiên đăng nhập --> Lỗi tạo (lỗi này do session chưa hết và chưa xử lý Logout) --> Kiểm tra nếu chưa có Token thì gán guest_id = user_id của session và lấy id này đi đăng ký
+    else if (!req.session.user.tokens) {
+      guest_id = req.session.user.user._id
+    } else {
+      throw new BadRequestError(`Signup failed. Please try again later`);
+    }
 
+    console.log(guest)
     //check Email/Phone number
     let email_value = ''
     let phone_value = ''
@@ -332,7 +348,7 @@ class AccessService {
         throw new BadRequestError('Invalid Signup method')
     }
 
-    //điều kiện Or
+    //điều kiện Or 
     let isUsed = await userModel.find({
       where: { [Op.or]: [{ email: email_value }, { phone: phone_value }] }
     }).exec();
@@ -345,6 +361,7 @@ class AccessService {
 
     //
     //hash password người dùng nhập
+
     const passwordHash = await bcrypt.hash(password, 10);
     // console.log("passwordHash::", passwordHash);
 
@@ -366,13 +383,15 @@ class AccessService {
         { new: true })
     }
 
-    // console.log(registered_user)
+
+    console.log(registered_user)
     //cập nhật vào mysql db
     if (registered_user) {
       let foundUser = await db.user.findOne({
         where: { user_sid: guest_id }
       });
 
+      console.log('found user in Mysql ', foundUser)
       if (foundUser) {
         await foundUser.set(
           {
@@ -422,6 +441,7 @@ class AccessService {
         privateKey
       );
       console.log(`Create token successfully::`, tokens);
+
       return {
         user: getInfoData({
           fileds: ["_id", "username", signupMethod, "roles"],
@@ -432,34 +452,30 @@ class AccessService {
 
     }
     else { // User không được add vào db thành công --> xóa record trong Mongo
-
-      return {
-        code: "200",
-        metadata: null,
-      };
+      throw new BadRequestError('Fail to signup. Please try again later')
     }
   };
 
   static login_user = async ({ loginMethod, loginMethodValue, password, refreshToken = null }) => {
-    // 1
-    console.log('in login user')
-    console.log(loginMethod, loginMethodValue, password)
-    
+    // 1 Kiểm tra user đăng nhập = Email/sđt
+    // console.log('in login user')
+    // console.log(loginMethod, loginMethodValue, password)
+
     let foundUser = '';
     if (loginMethod == 'email') {
       let email = loginMethodValue
-      foundUser = await userModel.find({ email: email }).lean();
+      foundUser = await userModel.findOne({ email: email }).lean();
     }
     else if (loginMethod == 'phone') {
       let phone = loginMethodValue
       foundUser = await userModel.findOne({ phone: phone }).lean();
     }
 
-    console.log(foundUser)
+    //Không tìm thấy --> Lỗi
     if (!foundUser) throw new BadRequestError("Authentication failed");
 
-    //2
-    console.log(foundUser.password)
+    //2 Kiểm tra mật khẩu
+    // console.log(foundUser._id)
     const match = await bcrypt.compare(password, foundUser.password);
     console.log(match)
 
@@ -502,10 +518,68 @@ class AccessService {
       refreshToken: tokens.refreshToken,
     });
 
-    const foundUserDB =await db.user.findOne({ user_sid: foundUser._id })
+    const foundUserDB = await db.user.findOne({ user_sid: foundUser._id })
     return {
       user: getInfoData({
         fileds: ["_id", "username", loginMethod, "roles"],
+        object: foundUser,
+      }),
+      tokens,
+    };
+  };
+
+  static login_sms = async ({ phone }) => {
+    // 1 Kiểm tra user đăng nhập = Email/sđt
+    // console.log('in login user')
+    // console.log(loginMethod, loginMethodValue, password)
+
+    let foundUser = await userModel.findOne({ phone: phone }).lean();
+
+
+    //Không tìm thấy --> Lỗi
+    if (!foundUser) throw new BadRequestError("Authentication failed");
+
+    //3 create private key, public key (private key used for syncing a token
+    //and public key used for validation that token)
+    const { privateKey, publicKey } = crypto.generateKeyPairSync("rsa", {
+      modulusLength: 4096,
+      publicKeyEncoding: {
+        type: "pkcs1",
+        format: "pem",
+      },
+      privateKeyEncoding: {
+        type: "pkcs1",
+        format: "pem",
+      },
+    });
+    //create public key for decoding token
+    const publicKeyString = await KeyTokenService.createKeyToken({
+      userId: foundUser._id,
+      publicKey: publicKey,
+    });
+
+    //4
+    const tokens = await createTokenPair(
+      {
+        userId: foundUser._id,
+        username: foundUser.username,
+        email: foundUser.email,
+      },
+      publicKeyString,
+      privateKey
+    );
+
+    //5
+    await KeyTokenService.createKeyToken({
+      userId: foundUser._id,
+      publicKey: publicKey,
+      refreshToken: tokens.refreshToken,
+    });
+
+    // const foundUserDB = await db.user.findOne({ user_sid: foundUser._id })
+    return {
+      user: getInfoData({
+        fileds: ["_id", "username", 'phone', "roles"],
         object: foundUser,
       }),
       tokens,

@@ -13,6 +13,7 @@ export const AppProvider = ({ children }) => {
   const [addressDefault, setAddressDefault] = useState('');
   const [requestAuth, setRequestAuth] = useState(false);
   const [isShowFooter, setIsShowFooter] = useState(true);
+  const [username, setUsername] = useState('');
 
   return (
     <AppContext.Provider
@@ -27,6 +28,7 @@ export const AppProvider = ({ children }) => {
         isShowFooter,
         refreshToken,
         addressDefault,
+        username,
         setToken,
         setUserId,
         setSession,
@@ -37,6 +39,7 @@ export const AppProvider = ({ children }) => {
         setIsShowFooter,
         setRefreshToken,
         setAddressDefault,
+        setUsername
       }}
     >
       {children}

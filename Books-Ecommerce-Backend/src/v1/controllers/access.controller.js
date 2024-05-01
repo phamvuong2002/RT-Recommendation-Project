@@ -84,28 +84,50 @@ class AccessController {
   //
   signup_user = async (req, res, next) => {
     //còn lỗi
-    const guest_id=req.session.user.user._id;
-    console.log(guest_id)
-    const user= await AccessService.signup_user(req.body, guest_id)
-    console.log('user',user)
+    console.log('session id: ', req.session.id)
+    // console.log(guest_id)
+    // const guest_id="RTmt8iNjrrpR1mn-onMBZ-HpT7Y-3xXA"
+
+    const user = await AccessService.signup_user(req.body, req)
+    // console.log('user',user)
     if (user) {
       req.session.user = {
-        user: user.metadata.user,
-        tokens: user.metadata.tokens,
+        user: user.user,
+        tokens: user.tokens.accessToken,
         sessionid: req.session.id,
       };
 
-    new CREATED({
-      message: "Regiserted OK!",
-      metadata: user,
-    }).send(res);
-  };
+      new CREATED({
+        message: "Regiserted OK!",
+        metadata: user,
+      }).send(res);
+    };
   }
 
   login_user = async (req, res, next) => {
     // const session = req.session.id
     // console.log(session)
     const user = await AccessService.login_user(req.body);
+    console.log(user);
+    if (user) {
+      req.session.user = {
+        user: user.user,
+        token: user.tokens.accessToken,
+        sessionid: req.session.id,
+      };
+    } else {
+      new AuthFailureError("Invalid Request");
+    }
+
+    new SuccessResponse({
+      metadata: user,
+    }).send(res);
+  };
+
+  login_sms = async (req, res, next) => {
+    // const session = req.session.id
+    // console.log(session)
+    const user = await AccessService.login_sms(req.body);
     console.log(user);
     if (user) {
       req.session.user = {

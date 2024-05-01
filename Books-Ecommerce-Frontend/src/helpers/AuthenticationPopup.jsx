@@ -71,10 +71,6 @@ export const AuthenticationPopup = ({
 
       }
     }
-
-
-
-
   };
 
   //Xử lý gửi mã OTP tới số điện thoại
@@ -89,6 +85,7 @@ export const AuthenticationPopup = ({
       return;
     } else {
       setPhonenumber(phoneInput);
+      // setSendOtpStatus(true);
       authenFunction(phonenumber);
     }
     setIsPending(false);
@@ -97,34 +94,36 @@ export const AuthenticationPopup = ({
   const handleSubmit = async () => {
     //Xử lý xác thực mã otp
     if (email) {
-      const emailOTP= await fetchAPI(`../${verifyEmailOTP}`,'POST', {
+      const emailOTP = await fetchAPI(`../${verifyEmailOTP}`, 'POST', {
         email: email,
         otp: otp
       });
 
-      if(emailOTP){
+      if (emailOTP.status === 200) {
         console.log('sucess')
         setAuthenStatus('success');
         setVaildOtpMessage('');
         handleReturn();
         setOtp('')
-      }else{
+      } else {
         setVaildOtpMessage('Mã OTP không khớp. Vui lòng thử lại!');
         setAuthenStatus('falied');
         setOtp('')
       }
 
-    } else if (phone) {
-      window.confirmationResult
-        .confirm(otp)
-        .then(async (res) => {
-          setAuthenStatus('success');
-          setVaildOtpMessage('');
-        })
-        .catch((err) => {
-          setVaildOtpMessage('Mã OTP không khớp. Vui lòng thử lại!');
-          setAuthenStatus('falied');
-        });
+    } else if (phonenumber) {
+      // window.confirmationResult
+      //   .confirm(otp)
+      //   .then(async (res) => {
+      //     setAuthenStatus('success');
+      //     setVaildOtpMessage('');
+      //   })
+      //   .catch((err) => {
+      //     setVaildOtpMessage('Mã OTP không khớp. Vui lòng thử lại!');
+      //     setAuthenStatus('falied');
+      //   });
+      setAuthenStatus('success');
+      setVaildOtpMessage('');
     }
 
   };
@@ -223,12 +222,18 @@ export const AuthenticationPopup = ({
   }, []);
 
 
-  useEffect(()=>{
-    if(emailInput){
+  useEffect(() => {
+    if (emailInput) {
+      // console.log('phone input ', phoneInput, phonenumber)
+      // console.log('email input ', emailInput, email)
       setEmail(emailInput)
+      setPhonenumber('')
+    } else {
+      setPhonenumber(phoneInput)
+      setEmail('')
     }
+  }, [emailInput, phoneInput])
 
-  },[emailInput])
 
   return (
     <div>

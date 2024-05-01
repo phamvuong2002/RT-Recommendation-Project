@@ -166,7 +166,7 @@ class UserService {
 
       }
       result = true;
-      userInfo.save();
+      await userInfo.save();
     } catch (err) {
       // console.log('er here')
       throw new BadRequestError(err.message);

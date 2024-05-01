@@ -36,8 +36,11 @@ export default function Category_dropdown({ isShowCloseIcon, isMenuOpen, toggleM
             //console.log('in get all cate')
             const categoriesData = await fetchAPI(`../${gettop3cate}`, 'POST');
             //console.log(categoriesData)
-            setCate(categoriesData.metadata.categoryData);
-            setIsLoading(false);
+            if(categoriesData.metadata){
+                setCate(categoriesData.metadata.categoryData);
+                setIsLoading(false);
+            } 
+           
         };
         //ví dụ tải các sản phẩm trong giỏ hàng của khách
         loadCategoriesData();

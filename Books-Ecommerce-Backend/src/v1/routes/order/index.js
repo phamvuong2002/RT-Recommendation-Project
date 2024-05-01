@@ -7,7 +7,7 @@ const { asyncHandler } = require("../../auth/checkAuth");
 const { authentication } = require("../../auth/authUtils");
 
 router.post("/getorder", asyncHandler(orderController.getAllOrder));
-
+router.post("/getorders", asyncHandler(orderController.getOrders));
 
 ///authentication////
 router.use(authentication);

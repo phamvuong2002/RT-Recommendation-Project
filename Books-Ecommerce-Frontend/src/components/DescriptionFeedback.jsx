@@ -8,6 +8,7 @@ import 'swiper/css';
 import 'swiper/css/scrollbar';
 
 import { Keyboard, Scrollbar } from 'swiper/modules';
+import { shortenString } from '../utils/shortenString';
 
 export const DescriptionFeedback = ({ book }) => {
   const NUMBERLOADERS = 4;
@@ -164,8 +165,8 @@ export const DescriptionFeedback = ({ book }) => {
             >
               <SwiperSlide className="xl:p-6 overflow-y-auto scrollbar-thin p-6 scroll-smooth">
                 <div className="flex flex-col">
-                  <div className="h-12 text-lg font-semibold mb-4">{`Mô Tả Sách ${product?.book?.book_title}`}</div>
-                  <div className="flex gap-2 mt-12 items-start text-xs xl:text-sm font-normal text-gray-400 p-2 border border-gray-200">
+                  <div className="h-12 text-lg font-semibold mb-4">{`Mô Tả Sách ${shortenString(product?.book?.book_title, 55)}`}</div>
+                  <div className="flex gap-2 xl:mt-4 items-start text-xs xl:text-sm font-normal text-gray-400 p-2 border border-gray-200">
                     <div className="w-16 xl:w-6">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -204,7 +205,7 @@ export const DescriptionFeedback = ({ book }) => {
 
                   <div className="flex flex-col gap-4">
                     <div className="h-12 text-lg font-semibold">{`Đặt tính sách ${product?.book?.book_title}`}</div>
-                    <div className="flex gap-2 mt-12">
+                    <div className="flex gap-2 mt-6 xl:mt-4 ">
                       <div className="w-1/2 flex flex-col gap-4 xl:gap-8 ">
                         {renderProductAttributes(productAttributes, 1)}
                       </div>
@@ -217,7 +218,7 @@ export const DescriptionFeedback = ({ book }) => {
               </SwiperSlide>
               <SwiperSlide className="">
                 <div className="xl:p-6">
-                  <div className="h-12 text-lg font-semibold m-4 mb-20">{`Đánh Giá Và Nhận Xét Của Sách ${product?.book?.book_title}`}</div>
+                  <div className="h-12 text-lg font-semibold m-4 mb-6 xl:mb-12">{`Đánh Giá Và Nhận Xét Của Sách ${shortenString(product?.book?.book_title, 55)}`}</div>
                   <FeedBack bookId={book?.book?.book_id} />
                 </div>
               </SwiperSlide>

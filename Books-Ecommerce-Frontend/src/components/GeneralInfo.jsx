@@ -90,6 +90,58 @@ export const GeneralInfo = () => {
     BillsData();
   }, [userId]);
 
+    //Fetch Addresses Data
+    useEffect(() => {
+        const url = '../data/test/useraddresses.json';
+        const getAddressDefault = async () => {
+            try {
+                const addData = await fetchData(url);
+                setAddressDefault(addData[0])
+            } catch (error) {
+                // throw error;
+            }
+        }
+        setTimeout(() => {
+            getAddressDefault()
+        }, 1000)
+    }, [])
+
+    //fetch user Profile
+    // useEffect(() => {
+    //     const url = '../data/test/userprofile.json';
+    //     const getUserProfile = async () => {
+    //         try {
+    //             const userData = await fetchData(url);
+    //             setUserData(userData[0])
+    //         } catch (error) {
+    //             // throw error;
+    //         }
+    //     }
+    //     setTimeout(() => {
+    //         getUserProfile()
+    //         setEmailChange('');
+    //         setPhoneChange('');
+    //         setReloadUserData(false)
+    //         setIsChangeNameOpen(false)
+    //     }, 1000)
+    // }, [reloadUserData])
+
+    //USER SERVICE
+    useEffect(() => {
+        setPageLoading(true);
+        //console.log('reload')
+        const loadUserData = async () => {
+            //console.log('in load')
+            if (!userId) return;
+            const user_data = await fetchAPI(`../${getUserInfo}`, 'POST', {
+                userId: userId,
+            });
+            setUserData(user_data.metadata.user_data);
+            setPageLoading(false);
+
+            setReloadUserData(false)
+        };
+
   //Fetch Addresses Data
   useEffect(() => {
     const url = '../data/test/useraddresses.json';

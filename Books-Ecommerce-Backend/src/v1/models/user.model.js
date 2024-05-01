@@ -20,14 +20,22 @@ var userSchema = new Schema({
     },
     email:{
         type:String,
-        required:false,
-        unique:true,
+        // required:false,
+        // unique:true,
+        index: {
+            unique: true,
+            partialFilterExpression: {email: {$type: "string"}}
+          },
         trim:true,
     },
     phone:{
         type:String,
-        required:false,
-        unique:true,
+        // required:false,
+        // unique:true,
+        index: { 
+            unique: true, 
+            partialFilterExpression: {phone: {$type: "string"}}
+          },
         trim:true,
     },
     status:{
@@ -43,7 +51,8 @@ var userSchema = new Schema({
         type:Array,
         default: [],
     },
-},{
+},
+{
     timestamps: true,
     collection: COLLECTION_NAME,
 });

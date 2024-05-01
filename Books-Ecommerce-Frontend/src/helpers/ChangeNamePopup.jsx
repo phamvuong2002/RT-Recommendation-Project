@@ -10,7 +10,7 @@ export const ChangeNamePopup = ({ open, setOpen, icon = '', fullName = '', setRe
     const [value, setValue] = useState(fullName)
 
     // USER SERVICE 
-    const { userId, session, setIsLoading } = useContext(AppContext);
+    const { userId, session, setIsLoading, setUsername } = useContext(AppContext);
 
     const handleUpdateName = async () => {
         //xử lý update tên
@@ -20,6 +20,11 @@ export const ChangeNamePopup = ({ open, setOpen, icon = '', fullName = '', setRe
             updatedValue: value,
             userId: userId
         });
+        if (update.status === 200) {
+            setUsername(update.metadata.user_data.user_data.fullname)
+        }
+        console.log(update)
+        // setUsername()
         setIsLoading(false);
         setReload(true)
     }
@@ -28,7 +33,7 @@ export const ChangeNamePopup = ({ open, setOpen, icon = '', fullName = '', setRe
     useEffect(() => {
         setValue(fullName)
     }, [fullName])
-    
+
 
     return (
         <div>
@@ -50,7 +55,7 @@ export const ChangeNamePopup = ({ open, setOpen, icon = '', fullName = '', setRe
                                     type="text"
                                     className="w-full h-8 outline-none forcus:outline-none"
                                     value={value}
-                                    onChange={(e)=>setValue(e.target.value)}
+                                    onChange={(e) => setValue(e.target.value)}
                                 // readOnly
                                 />
                                 <div className="flex items-center text-gray-400" onClick={() => setValue('')}>

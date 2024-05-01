@@ -21,12 +21,13 @@ export const fetchAPI = async (
   if (!url) {
     return;
   }
+
   try {
     const res = await fetch(url, {
       method,
       headers: {
         'Content-Type': 'application/json',
-        'x-client-id': `'${authorization?.usedId}'`,
+        'x-client-id': `${authorization?.userId}`,
         authorization: `${authorization?.token}`,
       },
       credentials: 'include',

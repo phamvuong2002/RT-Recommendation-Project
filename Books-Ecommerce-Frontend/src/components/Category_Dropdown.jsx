@@ -154,7 +154,6 @@ export default function Category_dropdown({ isShowCloseIcon, isMenuOpen, toggleM
             </div>
 
             {/* mobile */}
-
             <div className=" sm:px-0 max-w-screen-xl h-dvh grid grid-cols-5 lg:hidden rounded-[5px] bg-gray-100 border-2 shadow-sm  overflow-y-scroll">
                 {isLoading && <p>Loading...</p>}
                 {!isLoading &&

@@ -8,9 +8,10 @@ import { AppContext } from './contexts/main';
 import { fetchAPI } from './helpers/fetch';
 import { getnumcart } from './apis/cart';
 import { getsession, loginGuest } from './apis/access';
+import {getUserInfo} from './apis/user'
 
 function App() {
-  const { userId, setUserId, session, setSession, setNumCart, setToken } =
+  const { userId, setUserId, session, setSession, setNumCart, setToken, setUsername, userName } =
     useContext(AppContext);
 
   // Update Local Variables
@@ -32,7 +33,7 @@ function App() {
           console.log('login guest::', data);
         }
         // setSession(data.metadata.sessionid);
-        setUserId(1);
+        // setUserId(1);
         //FOR GUEST
         // setToken(null);
         //FOR LOGINED USER
@@ -61,6 +62,22 @@ function App() {
     };
     getNumCart();
   }, [userId]);
+
+  // 
+  // useEffect(() => {
+  //   const getUsername = async () => {
+  //     if (!userId || userId?.length <= 0) return;
+  //     const data = await fetchAPI(`../${getUserInfo}`, 'POST', {
+  //       userId,
+  //     });
+  //     if (data.status === 'error') {
+  //       getUsername('');
+  //     } else {
+  //       getUsername(data.metadata.user_data.fullname);
+  //     }
+  //   };
+  //   getUsername();
+  // }, [userId]);
 
   return (
     <>

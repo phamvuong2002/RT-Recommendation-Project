@@ -14,7 +14,7 @@ import { ChangeSexPopup } from '../helpers/ChangeSexPopup';
 import { ChangeBirthdayPopup } from '../helpers/ChangeBirthdayPopup';
 
 //USER SERVICE
-import {getUserInfo,updateUserInfo} from '../apis/user'
+import { getUserInfo, updateUserInfo } from '../apis/user'
 import { AppContext } from '../contexts/main';
 import { fetchAPI } from '../helpers/fetch';
 
@@ -86,7 +86,7 @@ export const ProfileAccount = () => {
     //Xử lý thay đổi giới tính
     const handleChangeSex = async () => {
         setOpenChangeSexPopup(true);
-      
+
     }
 
     //Xử lý thay đổi ngày sinh
@@ -121,23 +121,21 @@ export const ProfileAccount = () => {
     //USER SERVICE
     useEffect(() => {
         setPageLoading(true);
-        console.log('reload')
+        console.log('reload ', userId)
         const loadUserData = async () => {
-          if (!userId) return;
-          const userData = await fetchAPI(`../${getUserInfo}`, 'POST', {
-            //chưa login thử, nên dùng id=1 để test tạm = user từ Mysql 
-            //sau này sẽ thay = UserId lấy từ Appcontext
-            //chưa thêm Sid cho bảng user (mysql) - thêm và sửa trong lần commit sau
-            //khi reload, vẫn còn lỗi (mất dữ liệu)
-            userId: 1,
-          });
-        //   console.log(userData)
-          setUserData(userData.metadata.user_data);
-          setPageLoading(false);
-          setReloadUserData(false)
+            if (!userId) return;
+            const userData = await fetchAPI(`../${getUserInfo}`, 'POST', {
+                userId: userId,
+            });
+              console.log(userData)
+            setUserData(userData.metadata.user_data);
+       
+            setPageLoading(false);
+            setReloadUserData(false);
         };
-      
+
         loadUserData();
+
         setTimeout(() => {
             setEmailChange('');
             setPhoneChange('');
@@ -147,8 +145,8 @@ export const ProfileAccount = () => {
             setOpenChangeEPPopup(false);
             setOpenChangeSexPopup(false);
             setOpenChangeBirthdayPopup(false);
-        },50 )
-      }, [reloadUserData]);
+        }, 50)
+    }, [reloadUserData]);
 
     return (
         <div className="flex flex-col xl:w-2/3 overflow-y-auto h-full font-inter">
@@ -164,13 +162,13 @@ export const ProfileAccount = () => {
                                 <label className="flex items-center" htmlFor="Họ Tên">Họ Tên</label>
                                 <div className="flex items-center gap-2 text-gray-400">
                                     <div>{userData.fullname}</div>
-                                    
+
                                     <ChangeNamePopup
                                         open={isChangeNameOpen}
                                         setOpen={setIsChangeNameOpen}
                                         setReload={setReloadUserData}
                                         fullName={userData.fullname}
-                                    
+
                                         icon={
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4 xl:hidden">
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />

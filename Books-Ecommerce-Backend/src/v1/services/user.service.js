@@ -5,12 +5,33 @@ const bcrypt = require("bcrypt");
 const { BadRequestError, NotFoundError } = require('../core/error.response');
 const db = require("../models/sequelize/models")
 const sequelize = require("sequelize")
+
 const { slugConverter } = require('../utils/convertToSlug')
-// function to get slug version of user name
+
 
 
 class UserService {
+  static checkEmailnPhone = async ({ method, methodValue }) => {
+    let isUsed = ''
+    let result = true
+    if (method == 'email') {
+      isUsed = await userModel.findOne({ email: methodValue }).lean();
+    }
+    else if (method == 'phone') {
+      isUsed = await userModel.findOne({ phone: methodValue }).lean();
+    }
 
+    if (!isUsed) {
+      result = false
+    }
+
+    return {
+      isUsed: result
+    }
+  };
+
+
+  //find by email
   static findByEmail = async ({
     email,
     select = {
@@ -26,9 +47,11 @@ class UserService {
   };
 
 
+
   // Get: User information
   static getUserInfo = async ({ userId }) => {
-    const user = await db.user.findOne({ where: { user_id: userId } });
+    console.log(userId)
+    const user = await db.user.findOne({ where: { user_sid: userId } });
     console.log(user)
     if (!user) {
       throw new NotFoundError('User not found');
@@ -36,6 +59,7 @@ class UserService {
     let userInfo = await db.user.findOne({
       attributes: [
         ['user_username', 'fullname'],
+        ['user_sid', 'userid'],
         ['user_email', 'email'],
         ['user_phone', 'phonenumber'],
         ['user_sex', 'sex'],
@@ -44,7 +68,7 @@ class UserService {
         [sequelize.fn('DATE', sequelize.col('user_day_of_birth')), 'birthday']
       ],
       where: {
-        user_id: userId,
+        user_sid: userId,
       },
     });;
 
@@ -60,7 +84,7 @@ class UserService {
     console.log(updatedField, updatedValue, userId)
     // Tìm user 
     let userInfo = await db.user.findOne({
-      where: { user_id: userId }
+      where: { user_sid: userId }
     });
 
     //Không tìm thấy --> Lỗi
@@ -91,12 +115,12 @@ class UserService {
       case 'dob':
         field = 'user_day_of_birth'
         break;
-
       case 'email':
         field = 'user_email'
         break
       case 'pw':
         field = 'user_password'
+        updatedValue = await bcrypt.hash(updatedValue, 10);
       case 'phonenumber':
         field = 'user_phone'
       default:
@@ -121,8 +145,28 @@ class UserService {
           },
         );
       }
-      result = true
-      userInfo.save()
+      console.log('switchs')
+      switch (updatedField) {
+        case 'email':
+          await userModel.findOneAndUpdate({ _id: userId }, { email: updatedValue }, {
+            new: true
+          });
+          break;
+
+        case 'phonenumber':
+          await userModel.findOneAndUpdate({ _id: userId }, { phone: updatedValue }, {
+            new: true
+          });
+          break;
+        case 'pw':
+          await userModel.findOneAndUpdate({ _id: userId }, { password: updatedValue }, {
+            new: true
+          });
+          break
+
+      }
+      result = true;
+      userInfo.save();
     } catch (err) {
       // console.log('er here')
       throw new BadRequestError(err.message);
@@ -136,23 +180,27 @@ class UserService {
 
 
   //  Add user to Mysql DB
-  static addUserDB = async ({ name, email, pw }) => {
-    if (name == null || name == '') {
-      throw new BadRequestError('Name cannot be null');
+  static addUserDB = async (userSid, name, phone, email, pw) => {
+    console.log('in add user')
+    if (!(userSid && name && (phone || email) && pw)) {
+      throw new BadRequestError('Signup values cannot be null');
     }
     const slug_name = slugConverter(name)
-    const passwordHash = await bcrypt.hash(pw, 10);
 
 
-    console.log("passwordHash::", passwordHash);
+
+    // const passwordHash = await bcrypt.hash(pw, 10);
+    // console.log("passwordHash::", passwordHash);
+    // console.log(method+' '+signupMethodValue)
     let new_user = await db.user.create({
+      user_sid: userSid,
       // them thuoc tinh mac dinh
       user_username: name,
-      user_password: passwordHash,
+      user_password: pw,
       user_salf: '',
       user_slug: slug_name,
       user_email: email,
-      user_phone: '',
+      user_phone: phone,
       user_sex: '',
       user_avatar: '',
     });
@@ -165,8 +213,25 @@ class UserService {
 
   // Để xem người dùng có trong DB (test xong sẽ xóa)
   static getUserMongoDB = async () => {
-    return await userModel.find({}).lean();
+    const userdata = await userModel.find({}).lean();
+    // const keytoken = await keyToken.find({});
+
+    return {
+      user_data: userdata,
+      // token: keytoken
+
+    }
+  }
+
+
+  static deleteUser = async ({ email_ }) => {
+    try {
+      await userModel.deleteOne({ email: email_ });
+    } catch (err) {
+      throw err;
+    }
   };
+
 
 
 }

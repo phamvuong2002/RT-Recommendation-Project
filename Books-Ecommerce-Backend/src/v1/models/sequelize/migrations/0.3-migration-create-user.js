@@ -10,6 +10,12 @@ module.exports = {
         type: Sequelize.BIGINT.UNSIGNED,
         comment: 'id'
       },
+      user_sid: {
+        allowNull: false,
+        primaryKey: true,
+        type: Sequelize.STRING,
+        comment: 'sid'
+      },
       user_username: {
         type: Sequelize.STRING,
         allowNull: false,

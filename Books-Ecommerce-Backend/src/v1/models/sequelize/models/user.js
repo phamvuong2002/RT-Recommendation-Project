@@ -21,8 +21,8 @@ module.exports = (sequelize, DataTypes) => {
       user_sid: {
         allowNull: false,
         primaryKey: true,
-        type: DataTypes.BIGINT.UNSIGNED,
-        comment: "id",
+        type: DataTypes.STRING,
+        comment: "sid",
       },
       user_username: {
         type: DataTypes.STRING,

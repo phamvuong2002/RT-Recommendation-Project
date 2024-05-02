@@ -44,13 +44,12 @@ class UserController {
   }
 
 
-  //
-  signUp_U = async (req, res, next) => {
-    new CREATED({
-      message: "Regiserted OK!",
-      metadata: await UserService.signUp_U(req.body),
+  getEmailnPhone = async (req,res,next)=>{
+    const data = await UserService.getEmailnPhone(req.body);
+    new SuccessResponse({
+      metadata: data,
     }).send(res);
-  };
+  }
 
   delete_U = async (req, res, next) => {
     new SuccessResponse({

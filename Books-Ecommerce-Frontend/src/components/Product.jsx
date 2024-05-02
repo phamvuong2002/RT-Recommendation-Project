@@ -1,17 +1,50 @@
-import React, { useState, useContext } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useState, useContext, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom'
 import { addtocart } from '../apis/cart';
+import { collectBehaviour } from '../apis/collectBehaviour';
 import { fetchAPI } from '../helpers/fetch';
 import { PopupOpen } from './popup/PopupOpen';
 import { popupContent } from '../helpers/popupContent';
 import { AppContext } from '../contexts/main';
-import { isMobileDevice } from '../utils/isMobileDevice';
 
 
 export const Product = ({ userId, productData }) => {
     const { setNumCart } = useContext(AppContext)
     const [openAddToCartsPopup, setOpenAddToCartsPopup] = useState(false);
+
+    const productRef = useRef(null);
+    let timeoutId = null;
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    timeoutId = setTimeout(() => {
+                        console.log(`Sản phẩm ${productData.book_id} đã được nhìn hơn 5 giây`);
+                        handleViewProduct(userId, productData.book_id)
+                    }, 5000);
+                } else {
+                    // Hủy thời gian nếu sản phẩm không còn nhìn thấy
+                    clearTimeout(timeoutId);
+                }
+            },
+            { threshold: 1.0 } //qui định thấy toàn bộ khung product mới được tính là xem
+        );
+
+        if (productRef.current) {
+            observer.observe(productRef.current);
+        }
+
+        return () => {
+            if (productRef.current) {
+                observer.unobserve(productRef.current);
+            }
+            // Đảm bảo hủy bỏ timeout khi component unmount
+            clearTimeout(timeoutId);
+        };
+    }, [productData.book_id]);
 
     const AddToCart = async (e) => {
         e.preventDefault();
@@ -24,17 +57,49 @@ export const Product = ({ userId, productData }) => {
                 "old_quantity": 0
             }
         })
+
+        let collectClick = await fetchAPI(`../${collectBehaviour}`, 'POST', {
+            "topic": "add-to-cart",
+            "message": {
+                "userId": userId,
+                "behaviour": "add-to-cart",
+                "productId": productData.book_id
+            }
+
+        })
         if (res.status !== 200) return;
         setOpenAddToCartsPopup(true);
         setNumCart(res.metadata.cart_count_products);
+    }
+    const handleClickProduct = async (e) => {
+        e.preventDefault();
+        let collectClickProduct = await fetchAPI(`../${collectBehaviour}`, 'POST', {
+            "topic": "click",
+            "message": {
+                "userId": userId,
+                "behaviour": "click",
+                "productId": productData.book_id
+            }
+
+        })
+    }
+    const handleViewProduct = async (userid, bookid) => {
+        let collectViewProduct = await fetchAPI(`../${collectBehaviour}`, 'POST', {
+            "topic": "view",
+            "message": {
+                "userId": userid,
+                "behaviour": "view",
+                "productId": bookid
+            }
+
+        })
     }
 
 
     return (
         <div className="block border rounded-md p-2 sm:p-0 bg-white min-h-full md:hover:shadow-2xl md:rounded-md md:shadow-md overflow-hidden">
-            <Link to={`../books/${productData.book_id}`} className="h-full block">
-                {/* to={productData.href} */}
-                <div className=''>
+            <Link to={`../books/${productData.book_id}`} onClick={handleClickProduct} className="h-full block">
+                <div ref={productRef}>
                     {/**Product Image */}
                     <div className="relative group object-cover flex justify-center items-center ">
                         <div className="">
@@ -64,14 +129,12 @@ export const Product = ({ userId, productData }) => {
                                 )}
                                 onNoClick={() => setOpenAddToCartsPopup(false)}
                             />
-                            {
-                                isMobileDevice ?
-                                    (<div className="hidden" />) :
-                                    (<button
-                                        onClick={AddToCart}
-                                        className="bg-red-500 text-white  hover:bg-red-300 px-5 ">Add to Cart
-                                    </button>)
-                            }
+
+                            <button
+                                onClick={AddToCart}
+                                className="hidden sm:block sm:bg-red-500 sm:text-white  sm:hover:bg-red-300 sm:px-5">Add to Cart
+                            </button>
+
 
                         </div>
                     </div>

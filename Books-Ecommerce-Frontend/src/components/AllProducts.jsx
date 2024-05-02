@@ -16,7 +16,6 @@ export const AllProducts = ({ isShowHeader, numOfProductsInRow, _sort, _cate, _l
     const location = useLocation()
     const navigate = useNavigate();
     const { userId } = useContext(AppContext);
-    console.log("UID", userId)
     const searchParams = new URLSearchParams(location.search);
     let pageUpdated = searchParams.get('page');
 
@@ -114,7 +113,6 @@ export const AllProducts = ({ isShowHeader, numOfProductsInRow, _sort, _cate, _l
                 let productData = await fetchAPI(`../${getListFavoriteBook}`, 'POST', {
                     "userId": user,
                 });
-                console.log("USE", user)
                 setProducts(productData.metadata);
 
             };
@@ -127,7 +125,7 @@ export const AllProducts = ({ isShowHeader, numOfProductsInRow, _sort, _cate, _l
 
         }
 
-    }, [filters, userId])
+    }, [filters, userId, _choose])
 
 
 

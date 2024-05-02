@@ -12,8 +12,6 @@ import PropTypes from 'prop-types';
 import { getallcategories } from "../apis/category"
 
 export default function FilterProduct({ _userId, _cate, _limit, _query, _price, _publisher }) {
-
-  console.log("price", _price, _publisher)
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [all_categories, setCategoriess] = useState([])
   const [cate, setCate] = useState()

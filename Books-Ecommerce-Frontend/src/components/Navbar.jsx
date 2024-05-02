@@ -112,17 +112,26 @@ export const Navbar = () => {
   // LOGOUT
   const handleLogout = async () => {
     console.log(token.accessToken)
+    let access_token=''
+    if(token.accessToken){
+      access_token=token.accessToken
+    }
+    else{
+      access_token=token
+    }
+
     console.log(userId)
     const logout_result=await fetchAPI(`../${logout}`, 'POST', {},
       {
         userId: userId,
-        token: token.accessToken
+        token: access_token
       });
     
       console.log(logout_result)
     if (logout_result.status===200){
       setUserId('')
       setToken('')
+      // setSession('')
       navigate('/')
       console.log('in logout success')
     }
@@ -205,7 +214,7 @@ export const Navbar = () => {
           <div className="flex items-center">
             {/* Chưa đăng nhập sẽ hiển thị popup Đăng ký/Đăng nhập */}
             <div
-              className={`group flex items-center text-lg font-medium text-black  ${!userId ? 'block' : 'hidden'}`}
+              className={`group flex items-center text-lg font-medium text-black  ${!token ? 'block' : 'hidden'}`}
             >
               <PopupCenterPanel
                 open={open}
@@ -213,7 +222,7 @@ export const Navbar = () => {
                 icon={
                   <div className=" flex items-center text-lg font-medium text-black ">
                     <FaUser className="h-4 w-4 ml-1 sm:h-5 sm:w-5 text-red-500 text-xs " />
-                    <p className="hidden lg:block ml-2">Tài khoản </p>
+                    <p className="hidden font-inter lg:block ml-2">Đăng nhập/ Đăng ký </p>
                   </div>
                 }
                 title={''}
@@ -243,7 +252,7 @@ export const Navbar = () => {
                             + Đăng xuất */}
             <Menu
               as="div"
-              className={`${userId ? 'block' : 'hidden'} relative inline-block text-left`}
+              className={`${token ? 'block' : 'hidden'} relative inline-block text-left`}
             >
               {({ }) => (
                 <div>
@@ -256,7 +265,7 @@ export const Navbar = () => {
                       className={`group flex items-center  text-lg font-medium text-gray-700 hover:text-gray-90`}
                     >
                       <FaUser className="h-4 w-4 sm:h-5 sm:w-5 text-red-500" />
-                      <p className="hidden lg:block truncate max-w-[10rem] ml-2"> {username ? username : "Tài khoản"}</p>
+                      <p className="hidden lg:block truncate max-w-[10rem] ml-2"> { token ? username : "Đăng nhập/ Đăng ký"}</p>
                     </Menu.Button>
                   </div>
 

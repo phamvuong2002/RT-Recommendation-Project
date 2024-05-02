@@ -89,16 +89,16 @@ class AccessController {
     // const guest_id="RTmt8iNjrrpR1mn-onMBZ-HpT7Y-3xXA"
 
     const user = await AccessService.signup_user(req.body, req)
-    // console.log('user',user)
+    console.log('user signup',user)
     if (user) {
       req.session.user = {
         user: user.user,
-        tokens: user.tokens.accessToken,
+        token: user.tokens.accessToken,
         sessionid: req.session.id,
       };
 
       new CREATED({
-        message: "Regiserted OK!",
+        message: "Regiserted OK!", 
         metadata: user,
       }).send(res);
     };

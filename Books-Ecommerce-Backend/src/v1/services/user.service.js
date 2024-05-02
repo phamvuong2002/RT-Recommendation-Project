@@ -99,7 +99,7 @@ class UserService {
 
     let field = ''
     let updated_slug = ''
-
+    let updated_pw=''
     switch (updatedField) {
       case 'name':
         field = 'user_username'
@@ -120,7 +120,8 @@ class UserService {
         break
       case 'pw':
         field = 'user_password'
-        updatedValue = await bcrypt.hash(updatedValue, 10);
+        updated_pw = await bcrypt.hash(updatedValue, 10);
+        console.log('password')
       case 'phonenumber':
         field = 'user_phone'
       default:
@@ -159,7 +160,7 @@ class UserService {
           });
           break;
         case 'pw':
-          await userModel.findOneAndUpdate({ _id: userId }, { password: updatedValue }, {
+          await userModel.findOneAndUpdate({ _id: userId }, { password: updated_pw }, {
             new: true
           });
           break
@@ -210,6 +211,20 @@ class UserService {
     }
   }
 
+
+  static getEmailnPhone = async ({userId})=>{
+
+    let email_phone = await db.user.findOne({ 
+      attributes :[['user_email','email'],['user_phone','phone']],
+      where: {user_sid:userId}});
+    if(!email_phone) {
+      throw new BadRequestError('User not found')
+    }
+   
+    return {
+      email_n_phone: email_phone
+    }
+  }
 
   // Để xem người dùng có trong DB (test xong sẽ xóa)
   static getUserMongoDB = async () => {

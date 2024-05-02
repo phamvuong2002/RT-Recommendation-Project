@@ -48,8 +48,9 @@ class AccessService {
         //Tạo MySql
         if (!newUser) throw new BadRequestError("create guest user failed");
 
-        console.log('MY SQLLLLLLLLLLLLLLLLLLL');
-        await userService.addUserDB(newUser._id, `user-${sessionid}`, '', `user-${sessionid}@email.com`, sessionid)
+        // console.log('MY SQLLLLLLLLLLLLLLLLLLL');
+        const user_id = newUser._id.toString()
+        await userService.addUserDB(user_id, `user-${sessionid}`, '', `user-${sessionid}@email.com`, sessionid)
 
 
         return {
@@ -327,8 +328,10 @@ class AccessService {
       guest_id = guest.user._id
     }
     // Trường hợp đã có User nhưng session đó có Tokens --> đang có phiên đăng nhập --> Lỗi tạo (lỗi này do session chưa hết và chưa xử lý Logout) --> Kiểm tra nếu chưa có Token thì gán guest_id = user_id của session và lấy id này đi đăng ký
-    else if (!req.session.user.tokens) {
+    else if (!req.session.user.token) {
+      console.log('no token')
       guest_id = req.session.user.user._id
+
     } else {
       throw new BadRequestError(`Signup failed. Please try again later`);
     }
@@ -373,14 +376,14 @@ class AccessService {
           email: email_value,
           password: passwordHash,
         },
-        { new: true })
+      )
     } else if (phone_value !== '') {
       registered_user = await userModel.findOneAndUpdate({ _id: guest_id },
         {
           phone: phone_value,
           password: passwordHash,
         },
-        { new: true })
+      )
     }
 
 
@@ -388,7 +391,7 @@ class AccessService {
     //cập nhật vào mysql db
     if (registered_user) {
       let foundUser = await db.user.findOne({
-        where: { user_sid: guest_id }
+        where: { user_sid: guest_id.toString() }
       });
 
       console.log('found user in Mysql ', foundUser)

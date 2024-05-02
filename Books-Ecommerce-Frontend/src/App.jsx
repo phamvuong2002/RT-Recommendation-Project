@@ -8,16 +8,18 @@ import { AppContext } from './contexts/main';
 import { fetchAPI } from './helpers/fetch';
 import { getnumcart } from './apis/cart';
 import { getsession, loginGuest } from './apis/access';
-import {getUserInfo} from './apis/user'
+import { getUserInfo } from './apis/user'
 
 function App() {
-  const { userId, setUserId, session, setSession, setNumCart, setToken, setUsername } =
+  const { userId, setUserId, session, setSession, setNumCart, setToken, setUsername ,setIsLoading} =
     useContext(AppContext);
 
   // Update Local Variables
   //Session
+
   useEffect(() => {
     const fetchUserAuth = async () => {
+      setIsLoading(true);
       const savedSession = localStorage.getItem('session-id');
       const data = await fetchAPI(getsession, 'POST');
       if (data.status === 200) {
@@ -27,25 +29,36 @@ function App() {
           await fetchUserAuth();
           return;
         } else {
-          console.log('save::', savedSession);
-          console.log('cureent::', currentSession);
-          const data = await fetchAPI(loginGuest, 'POST');
-          console.log('login guest::', data);
+          const userData = await fetchAPI(loginGuest, 'POST');
+          if (userData.status !== 200) {
+            const userData = await fetchAPI(loginGuest, 'POST');
+            if (userData.status !== 200) {
+              setIsLoading(false);
+              window.location.reload();
+              return;
+            }
+          }
+          setSession(currentSession);
+          setUserId(userData.metadata?.user?._id);
+         
+          console.log('data session::', userData);
+          if(userData.metadata.token){
+            setToken(userData.metadata?.token);
+          }else{
+            setToken('')
+          }
+          setIsLoading(false);
+          return;
         }
-        // setSession(data.metadata.sessionid);
-        // setUserId(1);
-        //FOR GUEST
-        // setToken(null);
-        //FOR LOGINED USER
-        // setToken('123456789');
-        // setSession(data.metadata.sessionid);
-        // setUserId(data.metadata?.user?._id);
-        // setToken(data.metadata?.token);
+      } else {
+        setIsLoading(false);
+        // window.location.reload();
+        return;
       }
-      console.log('data session::', data);
     };
     fetchUserAuth();
   }, []);
+
 
   //Num Cart
   useEffect(() => {
@@ -73,7 +86,7 @@ function App() {
       if (data.status === 'error') {
         setUsername('');
       } else {
-        setUsername(data?.metadata?.user_data?.fullname||'');
+        setUsername(data?.metadata?.user_data?.fullname || '');
       }
       console.log('in call getUsername')
     };

@@ -14,8 +14,13 @@ const db = require("../models/sequelize/models");
 */
 
 class CartService {
+  //remove all cart
   static async removeAllCarts({ userId }) {
-    const foundUser = await db.user.findByPk(userId);
+    const foundUser = await db.user.findOne({
+      where: {
+        user_sid: userId,
+      },
+    });
     if (!foundUser) throw new NotFoundError("User not found");
 
     const foundCart = await db.cart.findOne({
@@ -42,13 +47,18 @@ class CartService {
     return await CartService.getListCarts({ userId });
   }
 
+  //Get NumCart
   static async getNumCart({ userId }) {
-    const foundUser = await db.user.findByPk(userId);
+    const foundUser = await db.user.findOne({
+      where: {
+        user_sid: userId,
+      },
+    });
     if (!foundUser) throw new NotFoundError("User not found");
 
     const cart = await db.cart.findOne({
       where: {
-        cart_userid: userId,
+        cart_userid: foundUser.dataValues.user_id,
       },
     });
 
@@ -60,8 +70,18 @@ class CartService {
     };
   }
 
+  //Get Carts
   static async getListCarts({ userId }) {
-    const userCart = await db.cart.findOne({ where: { cart_userid: userId } });
+    const foundUser = await db.user.findOne({
+      where: {
+        user_sid: userId,
+      },
+    });
+    if (!foundUser) throw new NotFoundError("User not found");
+
+    const userCart = await db.cart.findOne({
+      where: { cart_userid: foundUser.dataValues.user_id },
+    });
     if (!userCart) {
       throw new NotFoundError("User Cart not found");
     }
@@ -92,8 +112,18 @@ class CartService {
     };
   }
 
+  //delete carts by publisher
   static async deleteCartsByPublisherId({ userId, publisherId }) {
-    const userCart = await db.cart.findOne({ where: { cart_userid: userId } });
+    const foundUser = await db.user.findOne({
+      where: {
+        user_sid: userId,
+      },
+    });
+    if (!foundUser) throw new NotFoundError("User not found");
+
+    const userCart = await db.cart.findOne({
+      where: { cart_userid: foundUser.dataValues.user_id },
+    });
     if (!userCart) {
       throw new NotFoundError("User Cart not found");
     }
@@ -117,10 +147,12 @@ class CartService {
     return await CartService.getListCarts({ userId });
   }
 
+  //create cart
   static async createUserCart(userId) {
     return await db.cart.create({ cart_userid: userId });
   }
 
+  //add to cart
   static async addToCart({ userId, book = {} }) {
     /*
             "book": {
@@ -129,6 +161,15 @@ class CartService {
                 "old_quantity": 0
             }
         */
+
+    //find user
+    const foundUser = await db.user.findOne({
+      where: {
+        user_sid: userId,
+      },
+    });
+    if (!foundUser) throw new NotFoundError("User not found");
+
     //check book exists
     const foundBook = await db.book.findByPk(book.book_id);
     if (!foundBook || foundBook.dataValues.book_status === 0)
@@ -143,10 +184,12 @@ class CartService {
       throw new BadRequestError("Quantity out of range in stock");
 
     //check cart existed
-    let userCart = await db.cart.findOne({ where: { cart_userid: userId } });
+    let userCart = await db.cart.findOne({
+      where: { cart_userid: foundUser.dataValues.user_id },
+    });
     if (!userCart) {
       //Create new cart
-      userCart = await CartService.createUserCart(userId);
+      userCart = await CartService.createUserCart(foundUser.dataValues.user_id);
       if (!userCart) {
         throw new BadRequestError("Create Cart Failed!");
       }

@@ -4,6 +4,7 @@ const db = require("../models/sequelize/models");
 const { BadRequestError, NotFoundError } = require("../core/error.response");
 
 class AddressService {
+  //create a new address
   static createAddress = async ({
     userId,
     provinceId,
@@ -20,7 +21,11 @@ class AddressService {
     isHome,
   }) => {
     //check user
-    const foundUser = await db.user.findByPk(userId);
+    const foundUser = await db.user.findOne({
+      where: {
+        user_sid: userId,
+      },
+    });
     if (!foundUser) throw new NotFoundError("User not found");
 
     //create address
@@ -48,7 +53,11 @@ class AddressService {
   //get addresses
   static getAddresses = async ({ userId }) => {
     //check user
-    const foundUser = await db.user.findByPk(userId);
+    const foundUser = await db.user.findOne({
+      where: {
+        user_sid: userId,
+      },
+    });
     if (!foundUser) throw new NotFoundError("User not found");
 
     return await db.address.findAll({
@@ -60,10 +69,17 @@ class AddressService {
 
   //remove address
   static removeAddress = async ({ userId, addressId }) => {
+    const foundUser = await db.user.findOne({
+      where: {
+        user_sid: userId,
+      },
+    });
+    if (!foundUser) throw new NotFoundError("User not found");
+
     const foundAddress = await db.address.findOne({
       where: {
         address_id: addressId,
-        address_user_id: userId,
+        address_user_id: foundUser.dataValues.user_id,
       },
     });
 

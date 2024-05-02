@@ -3,6 +3,7 @@ const db = require("../models/sequelize/models");
 const { BadRequestError, NotFoundError } = require("../core/error.response");
 
 class FeedbackService {
+  //summary
   static summary = async ({ bookId, limit }) => {
     const feedbacks = await db.feedback.findAll({
       where: {
@@ -52,6 +53,7 @@ class FeedbackService {
     };
   };
 
+  //get feedback for book
   static getFeedbackByBookId = async ({
     bookId,
     page = 1,
@@ -102,10 +104,18 @@ class FeedbackService {
     };
   };
 
+  //check user feedback
   static isFeedback = async ({ userId, bookId, orderId }) => {
+    const foundUser = await db.user.findOne({
+      where: {
+        user_sid: userId,
+      },
+    });
+    if (!foundUser) throw new NotFoundError("User not found");
+
     const foundFeedback = await db.feedback.findOne({
       where: {
-        feedback_userid: userId,
+        feedback_userid: foundUser.dataValues.user_id,
         feedback_bookid: bookId,
         feedback_orderid: orderId,
       },
@@ -122,6 +132,7 @@ class FeedbackService {
     }
   };
 
+  //submit feedback
   static submitFeedback = async ({
     userId,
     bookId,
@@ -129,6 +140,15 @@ class FeedbackService {
     rating,
     comment,
   }) => {
+    //find user
+    const foundUser = await db.user.findOne({
+      where: {
+        user_sid: userId,
+      },
+    });
+    if (!foundUser) throw new NotFoundError("User not found");
+
+    //find order
     const foundOrder = await db.order.findByPk(orderId);
     if (!foundOrder) throw new NotFoundError("Order not found");
 
@@ -144,7 +164,7 @@ class FeedbackService {
     if (status.isFeedback) throw new BadRequestError("Book has been reviewed");
 
     const feedback = await db.feedback.create({
-      feedback_userid: userId,
+      feedback_userid: foundUser.dataValues.user_id,
       feedback_bookid: bookId,
       feedback_orderid: foundOrder.dataValues.order_id,
       feedback_rating: JSON.stringify(rating),

@@ -11,7 +11,7 @@ import { shortenString } from '../utils/shortenString';
 import { AppContext } from '../contexts/main';
 
 export const ProductDetailPage = () => {
-  const { userId, setIsShowFooter } = useContext(AppContext);
+  const { userId, setIsShowFooter, token } = useContext(AppContext);
   const { bookid } = useParams();
   const [id, setId] = useState('');
   const [paths, setPaths] = useState([]);
@@ -21,7 +21,9 @@ export const ProductDetailPage = () => {
 
   useEffect(() => {
     setIsShowFooter(true);
-  }, []);
+    console.log('userId:::::::::::', userId);
+    console.log('token:::::::::::', token);
+  }, [userId]);
 
   //Get bookid from url
   useEffect(() => {

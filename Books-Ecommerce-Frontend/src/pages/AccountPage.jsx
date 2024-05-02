@@ -17,17 +17,28 @@ const TAB = {
 };
 
 export const AccountPage = () => {
-  const { userId, setActivePage, setIsShowFooter } = useContext(AppContext);
+  const {
+    userId,
+    setActivePage,
+    setIsShowFooter,
+    token,
+    requestAuth,
+    setRequestAuth,
+  } = useContext(AppContext);
   const [selectedPage, setSelectedPage] = useState(TAB['general-infomation']);
   const [selectedPageId, setSelectedPageId] = useState('general-infomation');
   const [paths, setPaths] = useState([]);
-  // const paths = [
-  //     { path: '/', label: 'Trang Chủ' },
-  //     { path: `/${'account'}`, label: `${'Tài khoản'}` },
-  //     { path: `/${'account'}/${selectedPageId}`, label: `${selectedPage}` },
-  // ]
-
   const { tab } = useParams();
+
+  //Check Authen
+  useEffect(() => {
+    if (
+      (!token || token === 'unknow' || token === null) &&
+      requestAuth === false
+    ) {
+      setRequestAuth(true);
+    }
+  }, [userId, token, requestAuth]);
 
   useEffect(() => {
     if (!tab) {
@@ -83,7 +94,9 @@ export const AccountPage = () => {
         }
         {selectedPageId === 'profile-infomation' && <ProfileAccount />}
         {selectedPageId === 'orders-infomation' && <OrderInfo />}
-        {selectedPageId === 'following-infomation' && <ProductListStatus _userId={userId} />}
+        {selectedPageId === 'following-infomation' && (
+          <ProductListStatus _userId={userId} />
+        )}
       </div>
     </div>
   );

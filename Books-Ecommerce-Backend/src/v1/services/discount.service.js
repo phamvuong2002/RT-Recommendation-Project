@@ -20,6 +20,7 @@ const {
 */
 
 class DiscountService {
+  //create discount
   static async createDiscount(payload) {
     /*
             {
@@ -134,6 +135,7 @@ class DiscountService {
     return newDiscount;
   }
 
+  //apply discount
   static async applyDiscount({ userId, discountId, product = {}, order = {} }) {
     /*
             discountId
@@ -151,10 +153,19 @@ class DiscountService {
                 feeService
             }
         */
+
+    //find user
+    const foundUser = await db.user.findOne({
+      where: {
+        user_sid: userId,
+      },
+    });
+    if (!foundUser) throw new NotFoundError("User not found");
+
     const discountWallet = await db.discount_wallet.findOne({
       where: {
         dw_discount_id: discountId,
-        dw_user_id: userId,
+        dw_user_id: foundUser.dataValues.user_id,
       },
     });
 
@@ -266,6 +277,7 @@ class DiscountService {
     };
   }
 
+  //get discount amount
   static async getDiscountAmount({
     discountId,
     discountCode,
@@ -273,6 +285,14 @@ class DiscountService {
     product = {},
     order = {},
   }) {
+    //find user
+    const foundUser = await db.user.findOne({
+      where: {
+        user_sid: userId,
+      },
+    });
+    if (!foundUser) throw new NotFoundError("User not found");
+
     let discount = null;
     let discountWallet = null;
     //Check discount is in wallet
@@ -285,14 +305,14 @@ class DiscountService {
 
       //collect discount
       discountWallet = await DiscountService.collectDiscount({
-        userId: userId,
+        userId: foundUser.dataValues.user_id,
         discountId: discount.dataValues.discount_id,
       });
     } else {
       discountWallet = await db.discount_wallet.findOne({
         where: {
           dw_discount_id: discountId,
-          dw_user_id: userId,
+          dw_user_id: foundUser.dataValues.user_id,
         },
       });
 
@@ -396,10 +416,20 @@ class DiscountService {
     }
   }
 
+  // get discount wallet
   static async getDiscountWallet({ userId }) {
+    //found user
+    const foundUser = await db.user.findOne({
+      where: {
+        user_sid: userId,
+      },
+    });
+    if (!foundUser) throw new NotFoundError("User not found");
+
     const listDiscounts = await db.discount_wallet.findAll({
       where: {
-        dw_user_id: userId,
+        dw_user_id: foundUser.dataValues.user_id,
+        dw_discount_status: DISCOUNT_WALLET_STATUS.ACTIVE,
       },
       include: [
         {
@@ -430,6 +460,7 @@ class DiscountService {
     };
   }
 
+  //add discount to wallet
   static async addDiscountToWallet({ userId, discountId, quantity }) {
     const addDiscount = await db.discount_wallet.create({
       dw_discount_id: discountId,
@@ -442,7 +473,16 @@ class DiscountService {
     return addDiscount;
   }
 
+  //collect discount
   static async collectDiscount({ userId, discountId }) {
+    //find user
+    const foundUser = await db.user.findOne({
+      where: {
+        user_sid: userId,
+      },
+    });
+    if (!foundUser) throw new NotFoundError("User not found");
+
     const foundDiscount = await db.discount.findByPk(discountId);
 
     checkDiscountCode(foundDiscount);
@@ -450,7 +490,7 @@ class DiscountService {
     const discountInWallet = await db.discount_wallet.findOne({
       where: {
         dw_discount_id: foundDiscount.dataValues.discount_id,
-        dw_user_id: userId,
+        dw_user_id: foundUser.dataValues.user_id,
       },
     });
 
@@ -458,7 +498,7 @@ class DiscountService {
     if (!discountInWallet) {
       //add discount to wallet
       return await DiscountService.addDiscountToWallet({
-        userId,
+        userId: foundUser.dataValues.user_id,
         discountId: foundDiscount.dataValues.discount_id,
         quantity: 1,
       });

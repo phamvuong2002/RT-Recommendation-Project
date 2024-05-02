@@ -17,6 +17,7 @@ const { acquireLock, releaselock } = require("./redis.service");
 */
 
 class CheckoutService {
+  //rollbackOrder
   static async rollbackOrder({ orderId }) {
     const foundOrder = await db.order.findByPk(orderId);
     if (!foundOrder) throw new NotFoundError("Order not found");
@@ -68,8 +69,13 @@ class CheckoutService {
     return result;
   }
 
+  //Create transaction
   static async createTransaction({ userId, sId, orderId, status, total }) {
-    const foundUser = await db.user.findByPk(userId);
+    const foundUser = await db.user.findOne({
+      where: {
+        user_sid: userId,
+      },
+    });
     if (!foundUser) throw new NotFoundError("User not found");
 
     const foundTran = await db.transaction.findOne({
@@ -85,7 +91,7 @@ class CheckoutService {
     const newTran = await db.transaction.create({
       tran_sid: sId,
       tran_order_id: orderId,
-      tran_user_id: userId,
+      tran_user_id: foundUser.dataValues.user_id,
       tran_status: status,
       tran_total: total,
     });
@@ -97,6 +103,7 @@ class CheckoutService {
     return { tran_sid, tran_order_id, tran_user_id, tran_status, tran_total };
   }
 
+  //Update order Status
   static async updateOrderStatus({ orderId, status }) {
     const foundOrder = await db.order.findByPk(orderId);
     if (!foundOrder) throw new NotFoundError("Order not found");
@@ -152,6 +159,7 @@ class CheckoutService {
       "method": "cod"
     },
   */
+  //  Place order
   static async placeOrder({
     book = {},
     userId,
@@ -168,6 +176,14 @@ class CheckoutService {
 
     if (Object.keys(shipping).length <= 0 || !shipping.shippingCode)
       throw new BadRequestError("Not found valid shipping method");
+
+    //find user
+    const foundUser = await db.user.findOne({
+      where: {
+        user_sid: userId,
+      },
+    });
+    if (!foundUser) throw new NotFoundError("User not found");
 
     // review order
     let reviewOrder = null;
@@ -225,7 +241,7 @@ class CheckoutService {
 
     //create a new order
     const order = await db.order.create({
-      order_user_id: userId,
+      order_user_id: foundUser.dataValues.user_id,
       order_tracking_code: shipping.shippingCode,
       order_discounts: reviewOrder?.data_amount?.discountId
         ? [reviewOrder?.data_amount?.discountId]
@@ -319,6 +335,7 @@ class CheckoutService {
     };
   }
 
+  //checkout cart review
   static async checkoutCartReview({
     userId,
     discount = {},
@@ -326,8 +343,12 @@ class CheckoutService {
     feeService = 0,
   }) {
     //check user exists
-    const foundUserId = await db.user.findByPk(userId);
-    if (!foundUserId) throw new NotFoundError("User not found");
+    // const foundUserId = await db.user.findOne({
+    //   where: {
+    //     user_sid: userId,
+    //   },
+    // });
+    // if (!foundUserId) throw new NotFoundError("User not found");
 
     //check cart
     const cart = await CartService.getListCarts({ userId });
@@ -379,6 +400,7 @@ class CheckoutService {
     };
   }
 
+  //checkout product review
   static async checkoutProductReview({
     userId,
     book = {},
@@ -391,7 +413,11 @@ class CheckoutService {
       throw new BadRequestError("Input data is invalid");
 
     //check user exists
-    const foundUserId = await db.user.findByPk(userId);
+    const foundUserId = await db.user.findOne({
+      where: {
+        user_sid: userId,
+      },
+    });
     if (!foundUserId) throw new NotFoundError("User not found");
 
     //check book exists

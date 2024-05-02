@@ -13,6 +13,8 @@ import { getUserInfo, updateUserInfo } from '../apis/user';
 import { AppContext } from '../contexts/main';
 import { fetchAPI } from '../helpers/fetch';
 import { getorders } from '../apis/order';
+import { shortenString } from '../utils/shortenString';
+import { getaddresses } from '../apis/address';
 
 export const GeneralInfo = () => {
   const [bills, setBills] = useState([]);
@@ -31,17 +33,20 @@ export const GeneralInfo = () => {
 
   //user-service
   const [pageLoading, setPageLoading] = useState(true);
-  const { userId, session, setIsLoading } = useContext(AppContext);
+  const { userId, session, setIsLoading, token } = useContext(AppContext);
 
-  //Xử lý mở popup thay đổi địa chỉ
-  const handleChangeAddress = async () => {
-    setIsAddrPopupOpen(true);
-    try {
-      const url = '../data/test/useraddresses.json';
-      const addData = await fetchData(url);
-      setAddresses(addData);
-    } catch (error) {
-      // throw error;
+  // //Xử lý mở popup thay đổi địa chỉ
+  const handleChangeAddress = async (e) => {
+    e.preventDefault();
+    const address = await fetchAPI(`../${getaddresses}`, 'POST', {
+      userId,
+    });
+    if (address.status !== 200) {
+      setAddresses([]);
+      setIsAddrPopupOpen(true);
+    } else {
+      setAddresses(address.metadata);
+      setIsAddrPopupOpen(true);
     }
   };
 
@@ -52,11 +57,11 @@ export const GeneralInfo = () => {
 
   //xử lý mở popup thay đổi email và số điện thoại
   const handleChangeEmailPhone = async (type) => {
-    console.log('email change ' + userData.email);
+    // console.log('email change ' + userData.email);
     if (type === 'email') {
       if (!userData.email) return;
       if (!phoneChange) {
-        console.log('in set email change');
+        // console.log('in set email change');
         setEmailChange(userData.email);
       }
     } else if (type === 'phone') {
@@ -88,68 +93,31 @@ export const GeneralInfo = () => {
       setReloadBill(false);
     };
     BillsData();
-  }, [userId]);
+  }, [userId, token]);
 
-  //Fetch Addresses Data
-  // useEffect(() => {
-  //   const url = '../data/test/useraddresses.json';
-  //   const getAddressDefault = async () => {
-  //     try {
-  //       const addData = await fetchData(url);
-  //       setAddressDefault(addData[0]);
-  //     } catch (error) {
-  //       // throw error;
-  //     }
-  //   };
-  //   setTimeout(() => {
-  //     getAddressDefault();
-  //   }, 1000);
-  // }, []);
-
-  //USER SERVICE
-  // useEffect(() => {
-  //   setPageLoading(true);
-  //   //console.log('reload')
-  //   const loadUserData = async () => {
-  //     //console.log('in load')
-  //     if (!userId) return;
-  //     const user_data = await fetchAPI(`../${getUserInfo}`, 'POST', {
-  //       userId: userId,
-  //     });
-  //     setUserData(user_data.metadata.user_data);
-  //     setPageLoading(false);
-
-  //     setReloadUserData(false);
-  //   };
-
-  //   loadUserData();
-  // }, [userId]);
-
-  //Fetch Addresses Data
+  //Lấy thông tin Address
   useEffect(() => {
-    const url = '../data/test/useraddresses.json';
-    const getAddressDefault = async () => {
-      try {
-        const addData = await fetchData(url);
-        setAddressDefault(addData[0]);
-      } catch (error) {
-        // throw error;
+    const getAddresses = async () => {
+      if (!userId) return;
+      const address = await fetchAPI(`../${getaddresses}`, 'POST', {
+        userId,
+      });
+      if (address.status !== 200) {
+        setAddressDefault('');
+      } else {
+        setAddressDefault(address.metadata?.[0]);
       }
     };
-    setTimeout(() => {
-      getAddressDefault();
-    }, 1000);
-  }, []);
+    getAddresses();
+  }, [userId]);
 
-  //USER SERVICE
+  //Load thông tin user
   useEffect(() => {
     setPageLoading(true);
-    //console.log('reload')
     const loadUserData = async () => {
-      //console.log('in load')
       if (!userId) return;
       const user_data = await fetchAPI(`../${getUserInfo}`, 'POST', {
-        userId: 1,
+        userId,
       });
       setUserData(user_data.metadata.user_data);
       setPageLoading(false);
@@ -164,7 +132,7 @@ export const GeneralInfo = () => {
       setReloadUserData(false);
       setIsChangeNameOpen(false);
     }, 50);
-  }, [reloadUserData]);
+  }, [reloadUserData, userId, token]);
 
   return (
     <div className="flex flex-col xl:w-2/3 overflow-y-auto h-full">
@@ -193,7 +161,7 @@ export const GeneralInfo = () => {
                 >
                   <label htmlFor="Họ Tên">Họ Tên</label>
                   <div className="flex items-center gap-2 text-gray-400">
-                    <div>{userData.fullname}</div>
+                    <div>{shortenString(userData.fullname, 29, true)}</div>
                     <ChangeNamePopup
                       open={isChangeNameOpen}
                       setOpen={setIsChangeNameOpen}
@@ -226,7 +194,7 @@ export const GeneralInfo = () => {
                   <label htmlFor="Email">Email</label>
                   <div className="flex items-center gap-2 text-gray-400">
                     <div className="text-gray-400">
-                      {maskEmail(userData.email)}
+                      {shortenString(maskEmail(userData.email), 30, true)}
                     </div>
 
                     <ChangEmailPhone
@@ -340,7 +308,7 @@ export const GeneralInfo = () => {
               </div>
               <div className="flex flex-col gap-2 mt-1">
                 <div className="font-semibold">
-                  {addressDefault.userFullName}
+                  {addressDefault?.address_user_name}
                 </div>
                 <div className="flex flex-col gap-1 text-[0.8rem]">
                   <div className="flex justify-between xl:justify-start">
@@ -348,7 +316,7 @@ export const GeneralInfo = () => {
                       Địa Chỉ Chi Tiết
                     </label>
                     <div className="text-gray-400">
-                      {addressDefault.addressDetail}
+                      {addressDefault?.address_detail}
                     </div>
                   </div>
                   <div className="flex justify-between xl:justify-start">
@@ -356,8 +324,9 @@ export const GeneralInfo = () => {
                       Mã Vùng
                     </label>
                     <div className="text-gray-400">
-                      {addressDefault.proviceName} -{' '}
-                      {addressDefault.distristName} - {addressDefault.wardName}
+                      {addressDefault?.address_province_name} -{' '}
+                      {addressDefault?.address_district_name} -{' '}
+                      {addressDefault?.address_ward_name}
                     </div>
                   </div>
                   <div className="flex justify-between xl:justify-start">
@@ -365,7 +334,7 @@ export const GeneralInfo = () => {
                       SĐT
                     </label>
                     <div className="text-gray-400">
-                      (+84) {addressDefault.userPhone}
+                      (+84) {addressDefault?.address_user_phone}
                     </div>
                   </div>
                 </div>
@@ -379,7 +348,7 @@ export const GeneralInfo = () => {
               </div>
               <div className="flex flex-col gap-2 mt-1">
                 <div className="font-semibold">
-                  {addressDefault.userFullName}
+                  {addressDefault?.address_user_name}
                 </div>
                 <div className="flex flex-col gap-1 text-[0.8rem]">
                   <div className="flex justify-between xl:justify-start">
@@ -387,7 +356,7 @@ export const GeneralInfo = () => {
                       Địa Chỉ Chi Tiết
                     </label>
                     <div className="text-gray-400">
-                      {addressDefault.addressDetail}
+                      {addressDefault?.address_detail}
                     </div>
                   </div>
                   <div className="flex justify-between xl:justify-start">
@@ -395,8 +364,9 @@ export const GeneralInfo = () => {
                       Mã Vùng
                     </label>
                     <div className="text-gray-400">
-                      {addressDefault.proviceName} -{' '}
-                      {addressDefault.distristName} - {addressDefault.wardName}
+                      {addressDefault?.address_province_name} -{' '}
+                      {addressDefault?.address_district_name} -{' '}
+                      {addressDefault?.address_ward_name}
                     </div>
                   </div>
                   <div className="flex justify-between xl:justify-start">
@@ -404,7 +374,7 @@ export const GeneralInfo = () => {
                       SĐT
                     </label>
                     <div className="text-gray-400">
-                      (+84) {addressDefault.userPhone}
+                      (+84) {addressDefault?.address_user_phone}
                     </div>
                   </div>
                 </div>

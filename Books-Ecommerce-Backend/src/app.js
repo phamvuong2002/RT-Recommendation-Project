@@ -61,7 +61,7 @@ app.use(
     name: session_name, // cookies name to be put in "key" field in postman
     store: mongoDBstore,
     cookie: {
-      maxAge: 5 * 60 * 1000, // this is when our cookies will expired and the session will not be valid anymore (user will be log out)
+      maxAge: 24 * 60 * 60 * 1000, //5 * 60 * 1000, // this is when our cookies will expired and the session will not be valid anymore (user will be log out)
       sameSite: true,
       secure: false, // to turn on just in production
     },

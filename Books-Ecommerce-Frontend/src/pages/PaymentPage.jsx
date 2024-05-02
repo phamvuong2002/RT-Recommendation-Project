@@ -11,8 +11,14 @@ export const PaymentPage = () => {
     { path: `/${'shoppingcarts'}`, label: `${'Giỏ hàng'}` },
     { path: `/${'payment'}`, label: `${'Thanh Toán'}` },
   ];
-  const { numCart, token, requestAuth, setRequestAuth, setIsShowFooter } =
-    useContext(AppContext);
+  const {
+    userId,
+    numCart,
+    token,
+    requestAuth,
+    setRequestAuth,
+    setIsShowFooter,
+  } = useContext(AppContext);
 
   //set footer
   useEffect(() => {
@@ -21,10 +27,13 @@ export const PaymentPage = () => {
 
   //Check Authen
   useEffect(() => {
-    if (token === null && requestAuth === false) {
-      // setRequestAuth(true);
+    if (
+      (!token || token === 'unknow' || token === null) &&
+      requestAuth === false
+    ) {
+      setRequestAuth(true);
     }
-  }, [token, requestAuth]);
+  }, [userId, token, requestAuth]);
 
   //Get numCart
   useEffect(() => {

@@ -1,5 +1,5 @@
-'use strict';
-const { Model } = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
@@ -16,75 +16,75 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
         primaryKey: true,
         type: DataTypes.BIGINT.UNSIGNED,
-        comment: 'id'
+        comment: "id",
       },
       user_sid: {
         allowNull: false,
         primaryKey: true,
         type: DataTypes.BIGINT.UNSIGNED,
-        comment: 'id'
+        comment: "id",
       },
       user_username: {
         type: DataTypes.STRING,
         allowNull: false,
-        comment: 'username'
+        comment: "username",
       },
       user_slug: {
         type: DataTypes.STRING,
         allowNull: false,
-        comment: 'slug'
+        comment: "slug",
       },
       user_password: {
         type: DataTypes.STRING,
         allowNull: false,
-        comment: 'password'
+        comment: "password",
       },
       user_salf: {
         type: DataTypes.STRING,
         allowNull: false,
-        comment: 'salf'
+        comment: "salf",
       },
       user_email: {
         type: DataTypes.STRING,
-        comment: 'email'
+        comment: "email",
       },
       user_phone: {
         type: DataTypes.STRING,
-        comment: 'phone'
+        comment: "phone",
       },
       user_sex: {
         type: DataTypes.STRING,
-        comment: 'sex'
+        comment: "sex",
       },
       user_avatar: {
         type: DataTypes.STRING,
-        comment: 'avatar'
+        comment: "avatar",
       },
       user_day_of_birth: {
         type: DataTypes.DATE,
-        comment: 'birthday'
+        comment: "birthday",
       },
       user_status: {
-        type: DataTypes.ENUM('pending', 'active', 'block'),
-        defaultValue: 'pending',
-        comment: 'status'
+        type: DataTypes.ENUM("pending", "active", "block"),
+        defaultValue: "pending",
+        comment: "status",
       },
       create_time: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
-        comment: 'created timestamp'
+        comment: "created timestamp",
       },
       update_time: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
-        comment: 'updated timestamp'
-      }
+        comment: "updated timestamp",
+      },
     },
     {
       sequelize,
-      modelName: 'user',
-      tableName: 'user',
-      timestamps: false
+      modelName: "user",
+      tableName: "user",
+      timestamps: false,
     }
   );
 

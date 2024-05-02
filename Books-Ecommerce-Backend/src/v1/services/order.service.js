@@ -3,7 +3,15 @@ const db = require("../models/sequelize/models");
 const { BadRequestError, NotFoundError } = require("../core/error.response");
 
 class OrderService {
+  //get order of user ID
   static getOrders = async ({ userId, status = null, page, limit }) => {
+    const foundUser = await db.user.findOne({
+      where: {
+        user_sid: userId,
+      },
+    });
+    if (!foundUser) throw new NotFoundError("User not found");
+
     let whereClause = {};
     if (status !== null) {
       whereClause.ob_status = status;
@@ -13,7 +21,7 @@ class OrderService {
         {
           model: db.order,
           attributes: ["order_id", "order_status", "order_user_id"],
-          where: { order_user_id: userId },
+          where: { order_user_id: foundUser.dataValues.user_id },
         },
         {
           model: db.book,

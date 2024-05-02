@@ -95,7 +95,6 @@ export const FeedBack = ({ bookId }) => {
         setSummaryBook('');
         return;
       } else {
-        console.log(result.metadata);
         setSummaryBook(result.metadata);
       }
     };
@@ -162,7 +161,7 @@ export const FeedBack = ({ bookId }) => {
               </svg>
               <p className="h-2 w-full sm:min-w-[278px] rounded-3xl bg-amber-50 ml-5 mr-3">
                 <span
-                  className={`h-full w-[${(summaryBook?.star_5 * 100) / summaryBook?.totalCount}%] rounded-3xl bg-amber-400 flex`}
+                  className={`h-full ${summaryBook?.star_5 ? `w-[${(summaryBook?.star_5 * 100) / summaryBook?.totalCount}%]` : 'w-[0%]'} rounded-3xl bg-amber-400 flex`}
                 ></span>
               </p>
               <p className="font-medium text-lg  text-black mr-0.5">
@@ -192,7 +191,7 @@ export const FeedBack = ({ bookId }) => {
               </svg>
               <p className="h-2 w-full xl:min-w-[278px] rounded-3xl bg-amber-50 ml-5 mr-3">
                 <span
-                  className={`h-full w-[${(summaryBook?.star_4 * 100) / summaryBook?.totalCount}%] rounded-3xl bg-amber-400 flex`}
+                  className={`h-full ${summaryBook?.star_4 ? `w-[${(summaryBook?.star_4 * 100) / summaryBook?.totalCount}%]` : 'w-[0%]'} rounded-3xl bg-amber-400 flex`}
                 ></span>
               </p>
               <p className="font-medium text-lg text-black mr-0.5">
@@ -222,7 +221,7 @@ export const FeedBack = ({ bookId }) => {
               </svg>
               <p className="h-2 w-full xl:min-w-[278px] rounded-3xl bg-amber-50 ml-5 mr-3">
                 <span
-                  className={`h-full w-[${(summaryBook?.star_3 * 100) / summaryBook?.totalCount}%] rounded-3xl bg-amber-400 flex`}
+                  className={`h-full ${summaryBook?.star_3 ? `w-[${(summaryBook?.star_3 * 100) / summaryBook?.totalCount}%]` : 'w-[0%]'} rounded-3xl bg-amber-400 flex`}
                 ></span>
               </p>
               <p className="font-medium text-lg text-black mr-0.5">
@@ -252,7 +251,7 @@ export const FeedBack = ({ bookId }) => {
               </svg>
               <p className="h-2 w-full xl:min-w-[278px] rounded-3xl bg-amber-50 ml-5 mr-3">
                 <span
-                  className={`h-full w-[${(summaryBook?.star_2 * 100) / summaryBook?.totalCount}%] rounded-3xl bg-amber-400 flex`}
+                  className={`h-full ${summaryBook?.star_2 ? `w-[${(summaryBook?.star_2 * 100) / summaryBook?.totalCount}%]` : 'w-[0%]'} rounded-3xl bg-amber-400 flex`}
                 ></span>
               </p>
               <p className="font-medium text-lg text-black mr-0.5">
@@ -282,7 +281,7 @@ export const FeedBack = ({ bookId }) => {
               </svg>
               <p className="h-2 w-full xl:min-w-[278px] rounded-3xl bg-amber-50 ml-5 mr-3">
                 <span
-                  className={`h-full w-[${(summaryBook?.star_1 * 100) / summaryBook?.totalCount}%] rounded-3xl bg-amber-400 flex`}
+                  className={`h-full ${summaryBook?.star_1 ? `w-[${(summaryBook?.star_1 * 100) / summaryBook?.totalCount}%]` : 'w-[0%]'} rounded-3xl bg-amber-400 flex`}
                 ></span>
               </p>
               <p className="font-medium text-lg py-[1px] text-black mr-0.5">

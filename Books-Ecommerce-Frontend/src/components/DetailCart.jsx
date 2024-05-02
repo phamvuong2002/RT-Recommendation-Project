@@ -56,11 +56,6 @@ export const DetailCart = ({ book }) => {
     getStatusFavBook();
   }, [product]);
 
-  //Xử lý chọn version
-  const handleVersionToggle = async () => {
-    setIsVersionOpen(!isVersionOpen);
-  };
-
   //Xử lý khách hàng thêm sản phẩm vào giỏ
   const handleAddToCarts = async (e) => {
     e.preventDefault();
@@ -180,7 +175,7 @@ export const DetailCart = ({ book }) => {
   useEffect(() => {
     setProduct(book);
     setVersion(book?.book_detail?.book_layout);
-  }, [product, userId]);
+  }, [product, book]);
 
   return (
     <div className="font-inter xl:px-28">

@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 
 export const PaymentPage = () => {
   const navigate = useNavigate();
+  const queryParams = new URLSearchParams(location.search);
+  const type = queryParams.get('type');
   const paths = [
     { path: '/', label: 'Trang Chủ' },
     { path: `/${'shoppingcarts'}`, label: `${'Giỏ hàng'}` },
@@ -37,7 +39,7 @@ export const PaymentPage = () => {
 
   //Get numCart
   useEffect(() => {
-    if (numCart === 0) {
+    if (numCart === 0 && type === 'cart') {
       navigate('/shoppingcarts');
     }
   }, [numCart]);

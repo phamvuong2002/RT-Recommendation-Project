@@ -71,6 +71,7 @@ class CheckoutService {
 
   //Create transaction
   static async createTransaction({ userId, sId, orderId, status, total }) {
+    //Tìm user
     const foundUser = await db.user.findOne({
       where: {
         user_sid: userId,
@@ -78,6 +79,7 @@ class CheckoutService {
     });
     if (!foundUser) throw new NotFoundError("User not found");
 
+    //check Transaction có tồn tại
     const foundTran = await db.transaction.findOne({
       where: {
         tran_sid: sId,
@@ -88,6 +90,7 @@ class CheckoutService {
     const foundOrder = await db.order.findByPk(orderId);
     if (!foundOrder) throw new NotFoundError("Order not found");
 
+    //tạo Transition
     const newTran = await db.transaction.create({
       tran_sid: sId,
       tran_order_id: orderId,
@@ -298,7 +301,7 @@ class CheckoutService {
         orderId: order.dataValues.order_id,
         urlReturn: `${url || process.env.FRONTEND_BASE_URL}/order-detail/${
           order.dataValues.order_id
-        }&type=${type}`,
+        }&type=${type}&paymentType=${payment.method}&`,
         totalPrice: order.dataValues.order_spe_total,
         description: `Khach hang ${userId} thanh toan hoa don ${order.dataValues.order_id} bang hinh thuc ${payment.method}`,
       });
@@ -306,12 +309,15 @@ class CheckoutService {
       paymentResult = await PaymentService.paypal({
         urlReturn: `${url || process.env.FRONTEND_BASE_URL}/order-detail/${
           order.dataValues.order_id
-        }&statusCode=00&price=${order.dataValues.order_spe_total}&type=${type}`,
+        }&statusCode=00&price=${
+          order.dataValues.order_spe_total
+        }&type=${type}&paymentType=${payment.method}`,
+
         urlCancel: `${url || process.env.FRONTEND_BASE_URL}/order-detail/${
           order.dataValues.order_id
         }&statusCode=404&price=${
           order.dataValues.order_spe_total
-        }&type=${type}`,
+        }&type=${type}&paymentType=${payment.method}`,
         totalPrice: order.dataValues.order_spe_total,
         description: `Khach hang ${userId} thanh toan hoa don ${order.dataValues.order_id} bang hinh thuc ${payment.method}`,
       });
@@ -322,7 +328,9 @@ class CheckoutService {
           order.dataValues.order_id
         }&statusCode=102&price=${
           order.dataValues.order_spe_total
-        }&tranId=cod-${new Date().getTime()}&type=${type}`,
+        }&tranId=cod-${new Date().getTime()}&type=${type}&paymentType=${
+          payment.method
+        }`,
       };
     } else {
       throw new NotFoundError("Payment method not found");

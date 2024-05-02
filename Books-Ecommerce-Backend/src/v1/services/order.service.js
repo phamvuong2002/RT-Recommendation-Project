@@ -58,6 +58,54 @@ class OrderService {
     return formattedListOrders;
   };
 
+  //get one order
+  static getOneOrder = async ({ orderId }) => {
+    const foundOrder = await db.order.findByPk(orderId);
+    if (!foundOrder) throw new NotFoundError("Order not found");
+
+    const orderDetail = await db.order_book.findAll({
+      where: {
+        ob_order_id: foundOrder.dataValues.order_id,
+      },
+    });
+
+    const orderBook = [];
+    for (let i = 0; i < orderDetail.length; i++) {
+      const bookId = orderDetail[i].ob_book_id;
+
+      const book = await db.book.findByPk(bookId);
+      const bookDetail = await db.book_detail.findByPk(bookId);
+
+      orderBook.push({
+        bookId: book.dataValues.book_id,
+        bookImg: book.dataValues.book_img,
+        bookTitle: book.dataValues.book_title,
+        bookQuantity: orderDetail[i].ob_quantity,
+        bookPrice: orderDetail[i].ob_total_price,
+        bookStatus: orderDetail[i].ob_status,
+        bookAuthor: bookDetail.dataValues.book_authors_name,
+        bookLayout: bookDetail.dataValues.book_layout,
+      });
+    }
+
+    return {
+      order: {
+        order_id: foundOrder.dataValues.order_id,
+        order_tracking_code: foundOrder.dataValues.order_tracking_code,
+        order_status: foundOrder.dataValues.order_status,
+        order_payment: foundOrder.dataValues.order_payment,
+        order_num_books: foundOrder.dataValues.order_num_books,
+        order_old_total: foundOrder.dataValues.order_old_total,
+        order_spe_total: foundOrder.dataValues.order_spe_total,
+        order_fee_service: foundOrder.dataValues.order_fee_service,
+        order_fee_shiping: foundOrder.dataValues.order_fee_shiping,
+        order_discount_amount: foundOrder.dataValues.order_discount_amount,
+        create_time: foundOrder.dataValues.create_time,
+      },
+      orderDetail: orderBook,
+    };
+  };
+
   static getAllOrder = async ({ userId }) => {
     const foundOrder = await db.order.findOne({
       where: { order_user_id: userId },

@@ -21,20 +21,28 @@ import { AppContext } from '../contexts/main';
 
 import { getUserInfo } from '../apis/user';
 import { fetchAPI } from '../helpers/fetch';
-import { logout } from '../apis/access'
+import { logout } from '../apis/access';
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 // Navbar chính
 export const Navbar = () => {
-  const { numCart, requestAuth, userId, token, setrequestAuthm, setToken, username, setUserId } =
-    useContext(AppContext);
+  const {
+    numCart,
+    requestAuth,
+    userId,
+    token,
+    setrequestAuthm,
+    setToken,
+    username,
+    setUserId,
+  } = useContext(AppContext);
 
   const location = useLocation();
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const path = location.search;
   const [isOpenShoppingCarts, setIsOpenShoppingCarts] = useState(false);
-  const [user, setUser] = useState('')
+  const [user, setUser] = useState('');
   //   {
   //   id: '',
   //   name: '',
@@ -60,8 +68,13 @@ export const Navbar = () => {
   //*** Lưu Ý: cần phải reset các biến yêu cầu xác thực khi xác thực thành công
   //**** SET TOKEN CHO USER ĐÃ XÁC THỰC THÀNH CÔNG
   useEffect(() => {
-    if (requestAuth && !token) {
+    if (requestAuth && (!token || token === 'unkown') && !open) {
+      //Về home nếu user thoát xác thực (vấn bậc popup yêu cầu xác thực ở trang home)
+      // navigate('/');
       setOpen(true);
+    }
+    if (token && token !== 'unkown') {
+      setOpen(false);
     }
   }, [requestAuth, userId, token, open]);
   /***********************************************************/
@@ -89,13 +102,21 @@ export const Navbar = () => {
   const show = openDropdown && (mouseOverMenu || mouseOverButton);
 
   const accountOption = [
-    { name: 'Tài khoản', icon: <FaUser className="mr-2" />, path: '../account/general-infomation' },
+    {
+      name: 'Tài khoản',
+      icon: <FaUser className="mr-2" />,
+      path: '../account/general-infomation',
+    },
     {
       name: 'Đơn hàng của tôi',
       icon: <LuClipboardList className="mr-2" />,
       path: '../account/orders-infomation',
     },
-    { name: 'Mục yêu thích', icon: <FaHeart className="mr-2" />, path: '../account/following-infomation' },
+    {
+      name: 'Mục yêu thích',
+      icon: <FaHeart className="mr-2" />,
+      path: '../account/following-infomation',
+    },
     // { name: 'Đăng xuất', icon: <LuLogOut className="mr-2" />, path: '/' },
   ];
 
@@ -111,34 +132,37 @@ export const Navbar = () => {
 
   // LOGOUT
   const handleLogout = async () => {
-    console.log(token.accessToken)
-    let access_token=''
-    if(token.accessToken){
-      access_token=token.accessToken
-    }
-    else{
-      access_token=token
+    console.log(token.accessToken);
+    let access_token = '';
+    if (token.accessToken) {
+      access_token = token.accessToken;
+    } else {
+      access_token = token;
     }
 
-    console.log(userId)
-    const logout_result=await fetchAPI(`../${logout}`, 'POST', {},
+    console.log(userId);
+    const logout_result = await fetchAPI(
+      `../${logout}`,
+      'POST',
+      {},
       {
         userId: userId,
-        token: access_token
-      });
-    
-      console.log(logout_result)
-    if (logout_result.status===200){
-      setUserId('')
-      setToken('')
+        token: access_token,
+      },
+    );
+
+    console.log(logout_result);
+    if (logout_result.status === 200) {
+      setUserId('');
+      setToken('');
       // setSession('')
-      navigate('/')
-      console.log('in logout success')
+      navigate('/');
+      console.log('in logout success');
     }
-    console.log('in logout')
-    
-    //nhận lại kết quả, xem Logout có thành công 
-  }
+    console.log('in logout');
+
+    //nhận lại kết quả, xem Logout có thành công
+  };
 
   useEffect(() => {
     //console.log('reloadLoginSignup::', reloadLoginSignup);
@@ -153,18 +177,16 @@ export const Navbar = () => {
     setIsMenuOpen(false);
   }, [path]);
 
-
   useEffect(() => {
     const loadUserData = async () => {
       if (!userId || !token) return;
       const userData = await fetchAPI(`../${getUserInfo}`, 'POST', {
         userId: userId,
       });
-      console.log(userData)
+      console.log(userData);
       //   console.log(userData)
       setUser(userData.metadata.user_data);
     };
-
 
     loadUserData();
     // console.log(userId)
@@ -222,7 +244,9 @@ export const Navbar = () => {
                 icon={
                   <div className=" flex items-center text-lg font-medium text-black ">
                     <FaUser className="h-4 w-4 ml-1 sm:h-5 sm:w-5 text-red-500 text-xs " />
-                    <p className="hidden font-inter lg:block ml-2">Đăng nhập/ Đăng ký </p>
+                    <p className="hidden font-inter lg:block ml-2">
+                      Đăng nhập/ Đăng ký{' '}
+                    </p>
                   </div>
                 }
                 title={''}
@@ -254,7 +278,7 @@ export const Navbar = () => {
               as="div"
               className={`${token ? 'block' : 'hidden'} relative inline-block text-left`}
             >
-              {({ }) => (
+              {({}) => (
                 <div>
                   <div
                     onClick={() => setOpenDropdown(!openDropdown)}
@@ -265,7 +289,10 @@ export const Navbar = () => {
                       className={`group flex items-center  text-lg font-medium text-gray-700 hover:text-gray-90`}
                     >
                       <FaUser className="h-4 w-4 sm:h-5 sm:w-5 text-red-500" />
-                      <p className="hidden lg:block truncate max-w-[10rem] ml-2"> { token ? username : "Đăng nhập/ Đăng ký"}</p>
+                      <p className="hidden lg:block truncate max-w-[10rem] ml-2">
+                        {' '}
+                        {token ? username : 'Đăng nhập/ Đăng ký'}
+                      </p>
                     </Menu.Button>
                   </div>
 
@@ -309,16 +336,15 @@ export const Navbar = () => {
                                 {option.name}
                               </Link>
                             )}
-
                           </Menu.Item>
                         ))}
                       </div>
                       <div
-                        name='logout-option'
+                        name="logout-option"
                         className={`flex flex-row items-center text-gray-500 text-[15px] px-3 py-2 hover:cursor-pointer hover:text-red-500`}
                         onClick={handleLogout}
                       >
-                        <LuLogOut className='mr-2' />
+                        <LuLogOut className="mr-2" />
                         Đăng xuất
                       </div>
                     </Menu.Items>

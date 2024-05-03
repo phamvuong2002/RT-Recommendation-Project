@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { PopupCenterPanel } from '../components/popup/PopupCenterPanel';
 import { TextLoader } from '../components/loaders/TextLoader';
 import OtpInput from 'react-otp-input';
@@ -57,18 +57,17 @@ export const AuthenticationPopup = ({
     } else {
       setEmail(emailInput);
       const sendOTP = fetchAPI(`../${sendEmailOTP}`, 'POST', {
-        email: email
+        email: email,
       });
       if (sendOTP) {
         setTimeLeft(RESENDOTPTIME);
         setSendOtpStatus(true);
         setLoading(false);
-      }
-      else {
-
-        setVaildOtpMessage('Đã có lỗi trong quá trình gửi mail. Vui lòng chọn Gửi lại mã để thực hiện việc xác thực');
+      } else {
+        setVaildOtpMessage(
+          'Đã có lỗi trong quá trình gửi mail. Vui lòng chọn Gửi lại mã để thực hiện việc xác thực',
+        );
         setSendOtpStatus(false);
-
       }
     }
   };
@@ -96,21 +95,20 @@ export const AuthenticationPopup = ({
     if (email) {
       const emailOTP = await fetchAPI(`../${verifyEmailOTP}`, 'POST', {
         email: email,
-        otp: otp
+        otp: otp,
       });
 
       if (emailOTP.status === 200) {
-        console.log('sucess')
+        console.log('sucess');
         setAuthenStatus('success');
         setVaildOtpMessage('');
         handleReturn();
-        setOtp('')
+        setOtp('');
       } else {
         setVaildOtpMessage('Mã OTP không khớp. Vui lòng thử lại!');
         setAuthenStatus('falied');
-        setOtp('')
+        setOtp('');
       }
-
     } else if (phonenumber) {
       // window.confirmationResult
       //   .confirm(otp)
@@ -125,7 +123,6 @@ export const AuthenticationPopup = ({
       setAuthenStatus('success');
       setVaildOtpMessage('');
     }
-
   };
 
   //Xử lý gửi lại mã OTP
@@ -155,7 +152,7 @@ export const AuthenticationPopup = ({
             authenFunction(phonenumber);
             window.recaptchaVerifier = null;
           },
-          'expired-callback': () => { },
+          'expired-callback': () => {},
         },
       );
     }
@@ -219,21 +216,19 @@ export const AuthenticationPopup = ({
 
     // Clear interval khi component bị unmount
     return () => clearInterval(timer);
-  }, []);
-
+  }, [timeLeft]);
 
   useEffect(() => {
     if (emailInput) {
       // console.log('phone input ', phoneInput, phonenumber)
       // console.log('email input ', emailInput, email)
-      setEmail(emailInput)
-      setPhonenumber('')
+      setEmail(emailInput);
+      setPhonenumber('');
     } else {
-      setPhonenumber(phoneInput)
-      setEmail('')
+      setPhonenumber(phoneInput);
+      setEmail('');
     }
-  }, [emailInput, phoneInput])
-
+  }, [emailInput, phoneInput]);
 
   return (
     <div>

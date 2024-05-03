@@ -115,14 +115,14 @@ export default function Login_SignUp({
         loginMethodValue: accountLogin,
         password: passwordLogin,
       });
-      // const auth = "!ok"
-      console.log('login user ', login_user_data);
+      // // const auth = "!ok"
+      // console.log('login user ', login_user_data);
     } else {
       setMessage('Email hoặc Số điện thoại không hợp lệ');
       return;
     }
 
-    console.log('login_user_data', login_user_data);
+    // console.log('login_user_data', login_user_data);
     if (login_user_data.status === 200) {
       // const userid = login_user_data.metadata.user.user._id
       // setloginuser(login_user_data)
@@ -136,7 +136,7 @@ export default function Login_SignUp({
       // setSession();
       if (login_user_data.metadata.tokens) {
         console.log('tokens ', login_user_data.metadata.user.tokens);
-        setToken(login_user_data.metadata.tokens);
+        setToken(login_user_data.metadata.tokens.accessToken);
       }
       console.log(login_user_data.metadata.user._id);
       setUserId(login_user_data.metadata.user._id);
@@ -323,7 +323,7 @@ export default function Login_SignUp({
             // setSession();
             if (login_result.metadata.tokens) {
               // console.log('tokens ', login_result.metadata.user.tokens)
-              setToken(login_result.metadata.tokens);
+              setToken(login_result.metadata.tokens.accessToken);
             }
             console.log(login_result.metadata.user._id);
             setUserId(login_result.metadata.user._id);
@@ -373,7 +373,7 @@ export default function Login_SignUp({
         }
 
         // setSession(loginuser.metadata.sessionid);
-        setToken(signup_.metadata.tokens);
+        setToken(signup_.metadata.tokens.accessToken);
         setUserId(signup_.metadata.user._id);
         // setOpen(false);
         console.log('set token, userid after Signup');

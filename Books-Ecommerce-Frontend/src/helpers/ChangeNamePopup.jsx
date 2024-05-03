@@ -23,7 +23,7 @@ export const ChangeNamePopup = ({ open, setOpen, icon = '', fullName = '', setRe
         if (update.status === 200) {
             setUsername(update.metadata.user_data.user_data.fullname)
         }
-        console.log(update)
+        // console.log(update)
         // setUsername()
         setIsLoading(false);
         setReload(true)

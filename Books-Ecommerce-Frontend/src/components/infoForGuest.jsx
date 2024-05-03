@@ -2,8 +2,13 @@ import React, { useEffect, useState, useRef } from 'react';
 import { fetchData } from '../helpers/fetch';
 import { motion } from 'framer-motion';
 import { FadeInXDirection } from '../helpers/animationFramerMotion';
+import { PopupCenterPanel } from './popup/PopupCenterPanel';
+import Login_SignUp from './Login_SignUp';
 
 export const InfoForGuest = () => {
+  const [reloadLoginSignup, setReloadLoginSignup] = useState(false);
+  const [open, setOpen] = useState(false);
+
   const {
     ref: leftRef,
     animate: leftAnimate,
@@ -14,6 +19,15 @@ export const InfoForGuest = () => {
     animate: rightAnimate,
     initial: rightInitial,
   } = FadeInXDirection('right', 0.5);
+
+
+  useEffect(() => {
+    //console.log('reloadLoginSignup::', reloadLoginSignup);
+    if (reloadLoginSignup) {
+      setOpen(true);
+      setReloadLoginSignup(false);
+    }
+  }, [reloadLoginSignup]);
 
   return (
     <div className="my-5">
@@ -56,9 +70,41 @@ export const InfoForGuest = () => {
               </h3>
             </div>
             <div className="bg-red-500 lg:hover:bg-[#47d873] rounded-lg text-center mx-auto mt-3 md:mt-5 px-6 py-2">
-              <button className=" text-white text-lg font-bold tracking-tight">
+
+              {/* <button className=" text-white text-lg font-bold tracking-tight">
                 Đăng ký ngay
-              </button>
+              </button> */}
+              <div
+                className={`group flex items-center text-lg font-medium text-black `}
+              >
+                <PopupCenterPanel
+                  open={open}
+                  setOpen={setOpen}
+                  icon={
+                    <button className=" text-white text-lg font-bold tracking-tight hover:cursor-pointer">
+                      Đăng ký ngay
+                    </button>
+
+                  }
+                  title={''}
+                  titleClassName="p-2 hidden"
+                  content={
+                    <>
+                      {reloadLoginSignup ? (
+                        <div></div>
+                      ) : (
+                        <Login_SignUp
+                          reload={reloadLoginSignup}
+                          setReload={setReloadLoginSignup}
+                          // setUser={setUser}
+                          setOpen={setOpen}
+                          open={open}
+                        />
+                      )}
+                    </>
+                  }
+                />
+              </div>
             </div>
           </div>
         </motion.div>

@@ -68,6 +68,7 @@ class AccessController {
   };
 
   logout = async (req, res, next) => {
+    req.session.user =  null
     new SuccessResponse({
       message: "Logout OK!",
       metadata: await AccessService.logout(req.keyStore),

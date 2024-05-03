@@ -7,6 +7,8 @@ import { SelectAddressPopup } from '../helpers/SelectAddressPopup';
 import { ChangeNamePopup } from '../helpers/ChangeNamePopup';
 import { TextLoader } from './loaders/TextLoader';
 import { ChangEmailPhone } from '../helpers/ChangEmailPhone';
+import { AddEmailPhone } from '../helpers/AddEmailPhone';
+
 
 //USER SERVICE
 import { getUserInfo, updateUserInfo } from '../apis/user';
@@ -29,6 +31,8 @@ export const GeneralInfo = () => {
   const [emailChange, setEmailChange] = useState('');
   const [phoneChange, setPhoneChange] = useState('');
 
+  const [OpenEmailPhoneAdd, setOpenEmailPhoneAdd] = useState(false);
+  const [addType, setAddType] = useState('')
   const NUMLOADERS = 1;
 
   //user-service
@@ -57,21 +61,36 @@ export const GeneralInfo = () => {
 
   //xử lý mở popup thay đổi email và số điện thoại
   const handleChangeEmailPhone = async (type) => {
-    // console.log('email change ' + userData.email);
+
     if (type === 'email') {
-      if (!userData.email) return;
-      if (!phoneChange) {
-        // console.log('in set email change');
+    
+      if (!userData.email) {
+        console.log('in add email')
+        setAddType('email')
+        setOpenEmailPhoneAdd(true)
+      } else {
         setEmailChange(userData.email);
-      }
-    } else if (type === 'phone') {
-      if (!userData.phonenumber) return;
-      if (!emailChange) {
         setPhoneChange(userData.phonenumber);
+        setOpenChangeEPPopup(true);
+      }
+      // console.log('in set email change');
+
+    } else if (type === 'phone') {
+      
+      if (!userData.phonenumber) {
+        setAddType('phone')
+        console.log('in add phone')
+        setOpenEmailPhoneAdd(true)
+      }
+      else {
+        setEmailChange(userData.email);
+        setPhoneChange(userData.phonenumber);
+        setOpenChangeEPPopup(true);
       }
     }
-    setOpenChangeEPPopup(true);
-  };
+    console.log('general info')
+  }
+
 
   //Fetch Bills
   useEffect(() => {
@@ -113,13 +132,19 @@ export const GeneralInfo = () => {
 
   //Load thông tin user
   useEffect(() => {
+    console.log('reload')
     setPageLoading(true);
     const loadUserData = async () => {
       if (!userId) return;
       const user_data = await fetchAPI(`../${getUserInfo}`, 'POST', {
         userId,
       });
-      setUserData(user_data.metadata.user_data);
+      if (user_data.status === 200) {
+        setUserData(user_data.metadata.user_data);
+      } else[
+        //thông báo lỗi 
+      ]
+
       setPageLoading(false);
 
       setReloadUserData(false);
@@ -132,6 +157,7 @@ export const GeneralInfo = () => {
       setReloadUserData(false);
       setIsChangeNameOpen(false);
     }, 50);
+
   }, [reloadUserData, userId, token]);
 
   return (
@@ -161,7 +187,7 @@ export const GeneralInfo = () => {
                 >
                   <label htmlFor="Họ Tên">Họ Tên</label>
                   <div className="flex items-center gap-2 text-gray-400">
-                    <div>{shortenString(userData.fullname, 29, true)}</div>
+                    <div>{shortenString(userData.fullname, 28, true)}</div>
                     <ChangeNamePopup
                       open={isChangeNameOpen}
                       setOpen={setIsChangeNameOpen}
@@ -196,32 +222,6 @@ export const GeneralInfo = () => {
                     <div className="text-gray-400">
                       {shortenString(maskEmail(userData.email), 30, true)}
                     </div>
-
-                    <ChangEmailPhone
-                      open={openChangeEPPopup}
-                      setOpen={setOpenChangeEPPopup}
-                      email={emailChange}
-                      setEmail={setEmailChange}
-                      phone={phoneChange}
-                      setPhone={setPhoneChange}
-                      setReload={setReloadUserData}
-                      icon={
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth="1.5"
-                          stroke="currentColor"
-                          className="w-4 h-4 xl:hidden"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="m8.25 4.5 7.5 7.5-7.5 7.5"
-                          />
-                        </svg>
-                      }
-                    />
                   </div>
                 </div>
                 <hr className="xl:hidden" />
@@ -250,6 +250,54 @@ export const GeneralInfo = () => {
                     </svg>
                   </div>
                 </div>
+                <ChangEmailPhone
+                  open={openChangeEPPopup}
+                  setOpen={setOpenChangeEPPopup}
+                  email={emailChange}
+                  setEmail={setEmailChange}
+                  phone={phoneChange}
+                  setPhone={setPhoneChange}
+                  setReload={setReloadUserData}
+                  icon={
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="1.5"
+                      stroke="currentColor"
+                      className="w-4 h-4 xl:hidden"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="m8.25 4.5 7.5 7.5-7.5 7.5"
+                      />
+                    </svg>
+                  }
+                />
+
+                <AddEmailPhone
+                  open={OpenEmailPhoneAdd}
+                  setOpen={setOpenEmailPhoneAdd}
+                  setReload={setReloadUserData}
+                  type={addType}
+                  icon={
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="1.5"
+                      stroke="currentColor"
+                      className="w-4 h-4 xl:hidden"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="m8.25 4.5 7.5 7.5-7.5 7.5"
+                      />
+                    </svg>
+                  }
+                />
                 <hr className="border-t border-white xl:hidden" />
               </div>
             )}

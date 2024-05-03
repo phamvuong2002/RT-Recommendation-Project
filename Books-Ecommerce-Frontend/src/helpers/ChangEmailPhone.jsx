@@ -4,7 +4,7 @@ import { PopupCenterPanel } from '../components/popup/PopupCenterPanel';
 import { validateEmail } from '../utils/validateEmail';
 import { isValidPhoneNumber } from '../utils/isValidPhoneNumber';
 
-import { updateUserInfo } from '../apis/user';
+import { updateUserInfo, checkEmailnPhone } from '../apis/user';
 import { fetchAPI } from './fetch';
 import { AppContext } from '../contexts/main';
 import { useContext } from 'react';
@@ -13,51 +13,95 @@ export const ChangEmailPhone = ({ open, setOpen, icon, email = '', setEmail, pho
     const [authenStatus, setAuthenStatus] = useState('pending');
     const [isOpenChange, setIsOpenChange] = useState(false);
     const [value, setValue] = useState('');
-    const [message, setMessage] = useState(''); 
+    const [message, setMessage] = useState('');
 
     // USER SERVICE 
     const { userId, session, setIsLoading } = useContext(AppContext);
 
     const handleUpdateEmail = async () => {
+        if (value === email) {
+            // setOpen(false);
+            setReload(false);
+            setIsOpenChange(false);
+            setAuthenStatus('pending')
+            console.log('same email');
+            return;
+        }
         const check = validateEmail(value);
         if (check.status) {
-            //xử lý update email
-            const updateEmail = await fetchAPI(`../${updateUserInfo}`, 'POST', {
-                updatedField: 'email',
-                updatedValue: value,
-                userId: userId
-            });
-            
-            let statusUpdate = ''
-            if (updateEmail.metadata.update_result) {
-                statusUpdate = 'ok'
-            }
+            const isRegistered = await fetchAPI(`../${checkEmailnPhone}`, 'POST', {
+                method: 'email',
+                methodValue: value
+            })
 
-            if (statusUpdate === 'ok') { //update thành công
-                setOpen(false);
-                setReload(true);
-                setAuthenStatus('pending')
-            }
-            else { //update thất bại
+            if (isRegistered.status === 200) {
+                if (isRegistered.metadata.isUsed) {
+                    setMessage('Email đã được đăng ký, vui lòng cập nhật bằng Email khác');
+                    return;
+                } else {
+                    //xử lý update email
+                    const updateEmail = await fetchAPI(`../${updateUserInfo}`, 'POST', {
+                        updatedField: 'email',
+                        updatedValue: value,
+                        userId: userId
+                    });
+
+                    // let statusUpdate = ''
+                    // if (updateEmail.metadata.update_result) {
+                    //     statusUpdate = 'ok'
+                    // }
+
+                    if (updateEmail.status === 200) { //update thành công
+                        setOpen(false);
+                        setReload(true);
+                        setAuthenStatus('pending')
+                    }
+                    else { //update thất bại
+                        setMessage("Lỗi cập nhật! vui lòng thử lại sau.");
+                        setOpen(false);
+                    }
+                }
+            } else {
                 setMessage("Lỗi cập nhật! vui lòng thử lại sau.");
                 setOpen(false);
             }
+
         } else {
             setMessage(check.message);
         }
     }
+
     const handleUpdatePhone = async () => {
         if (isValidPhoneNumber(value)) {
-            //xử lý update phone number
-            const statusUpdate = 'ok'
-            if (statusUpdate === 'ok') { //update thành công
-                setOpen(false);
-                setReload(true);
-                setAuthenStatus('pending')
-            }
-            else { //update thất bại
-                setMessage("Lỗi cập nhật! vui lòng thử lại sau.");
-                setOpen(false);
+            const isRegistered = await fetchAPI(`../${checkEmailnPhone}`, 'POST', {
+                method: 'phone',
+                methodValue: value,
+            });
+
+            if (isRegistered.status === 200) {
+                if (isRegistered.metadata.isUsed) {
+                    setMessage('Số điện thoại đã được đăng ký, vui lòng đăng ký bằng Số điện thoại khác');
+                    return;
+                } else {
+                    //xử lý update phone number
+                    const updateEmail = await fetchAPI(`../${updateUserInfo}`, 'POST', {
+                        updatedField: 'phonenumber',
+                        updatedValue: value,
+                        userId: userId
+                    });
+
+                    if (updateEmail.status === 200) { //update thành công
+                        setOpen(false);
+                        setReload(true);
+                        setAuthenStatus('pending')
+                    }
+                    else { //update thất bại
+                        setMessage("Lỗi cập nhật! vui lòng thử lại sau.");
+                        setOpen(false);
+                    }
+                }
+            } else {
+                setMessage('Đã xảy ra lỗi trong quá trình cập nhật. Vui lòng thử lại sau');
             }
         }
         else {

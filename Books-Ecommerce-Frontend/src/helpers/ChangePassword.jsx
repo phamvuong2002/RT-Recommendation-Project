@@ -1,20 +1,33 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { AuthenticationPopup } from './AuthenticationPopup'
 import { PopupCenterPanel } from '../components/popup/PopupCenterPanel';
 import { validatePassword } from '../utils/validatePassword';
 
-export const ChangePassword = ({ open, setOpen, icon, setReload }) => {
+import { getEmailnPhone, updateUserInfo } from '../apis/user';
+import { AppContext } from '../contexts/main';
+import { fetchAPI } from './fetch';
+
+export const ChangePassword = ({ open, setOpen, icon, setReload, userEmail, userPhone }) => {
     const [authenStatus, setAuthenStatus] = useState('pending');
     const [isOpenChange, setIsOpenChange] = useState(false);
     const [value, setValue] = useState('');
     const [messages, setMessages] = useState([]);
+    const { userId, session, setIsLoading, token } = useContext(AppContext);
 
     const handleUpdatePassword = async () => {
         const check = validatePassword(value);
         if (check.length === 0) {
-            //xử lý update email
-            const statusUpdate = 'ok'
-            if (statusUpdate === 'ok') { //update thành công
+            //xử lý update password
+            const updatePW = await fetchAPI(`../${updateUserInfo}`, 'POST',
+                {
+                    updatedField: 'pw',
+                    updatedValue: value,
+                    userId: userId
+                }
+            );
+            // const statusUpdate = 'ok'
+            // if (statusUpdate === 'ok') { //update thành công
+            if (updatePW.status === 200) {
                 setOpen(false);
                 setReload(true);
                 setIsOpenChange(false);
@@ -52,6 +65,25 @@ export const ChangePassword = ({ open, setOpen, icon, setReload }) => {
         }
     }, [isOpenChange])
 
+    // useEffect(() => {
+    //     const checkEmailPhone = async () => {
+    //         const userEmailnPhone = await fetchAPI(`../${getEmailnPhone}`, 'POST',
+    //             { userId: userId }
+    //         )
+    //         if (userEmailnPhone.status == 200) {
+    //             if (userEmailnPhone.metadata) {
+    //                 setEmail(userEmailnPhone.metadata.email_n_phone.email)
+    //                 setPhone(userEmailnPhone.metadata.email_n_phone.phone)
+    //             }
+    //         } else {
+    //             console.log('error');
+    //             return;
+    //         }
+    //     }
+    //     checkEmailPhone();
+    //     console.log('in change pw ', email, phone)
+    // }, [email,phone,authenStatus])
+
     return (
         <div>
             <AuthenticationPopup
@@ -59,6 +91,8 @@ export const ChangePassword = ({ open, setOpen, icon, setReload }) => {
                 setOpen={setOpen}
                 setAuthenStatus={setAuthenStatus}
                 authenStatus={authenStatus}
+                emailInput={userEmail}
+                phoneInput={userPhone}
                 nextStep={() => setIsOpenChange(true)}
                 icon={icon}
             />

@@ -10,6 +10,7 @@ import { maskEmail, maskPhone } from '../utils/hideSensitiveInfo';
 import { ChangEmailPhone } from '../helpers/ChangEmailPhone';
 import { TextLoader } from './loaders/TextLoader';
 import { ChangeSexPopup } from '../helpers/ChangeSexPopup';
+import { AddEmailPhone } from '../helpers/AddEmailPhone';
 
 import { ChangeBirthdayPopup } from '../helpers/ChangeBirthdayPopup';
 
@@ -17,6 +18,7 @@ import { ChangeBirthdayPopup } from '../helpers/ChangeBirthdayPopup';
 import { getUserInfo, updateUserInfo } from '../apis/user'
 import { AppContext } from '../contexts/main';
 import { fetchAPI } from '../helpers/fetch';
+
 
 export const ProfileAccount = () => {
     const [isChangeNameOpen, setIsChangeNameOpen] = useState(false);
@@ -33,7 +35,9 @@ export const ProfileAccount = () => {
     //user-service
     const [pageLoading, setPageLoading] = useState(true);
     const { userId, session, setIsLoading } = useContext(AppContext);
-
+    const [OpenEmailPhoneAdd, setOpenEmailPhoneAdd] = useState(false);
+    const [addType, setAddType] = useState('')
+    
     //Xử lý mở popup thay đổi tên
     const handleChangeName = async () => {
         setIsChangeNameOpen(true);
@@ -66,21 +70,52 @@ export const ProfileAccount = () => {
         setOpenChangePassPopup(true);
     }
 
+    // const handleChangeEmailPhone = async (type) => {
+    //     // console.log('email change ' + userData.email);
+    //     if (type === 'email') {
+    //       if (!userData.email) return;
+    //       if (!phoneChange) {
+    //         // console.log('in set email change');
+    //         setEmailChange(userData.email);
+    //       }
+    //     } else if (type === 'phone') {
+    //       if (!userData.phonenumber) return;
+    //       if (!emailChange) {
+    //         setPhoneChange(userData.phonenumber);
+    //       }
+    //     }
+    //     setOpenChangeEPPopup(true);
+    //   };
+
+
     //xử lý mở popup thay đổi email và số điện thoại
     const handleChangeEmailPhone = async (type) => {
         if (type === 'email') {
-            if (!userData.email) return
-            if (!phoneChange) {
-                setEmailChange(userData.email)
+            if (!userData.email) {
+                console.log('in add email')
+                setAddType('email')
+                setOpenEmailPhoneAdd(true)
+            } else {
+                setEmailChange(userData.email);
+                setPhoneChange(userData.phonenumber);
+                setOpenChangeEPPopup(true);
+            }
+            // console.log('in set email change');
+
+        } else if (type === 'phone') {
+
+            if (!userData.phonenumber) {
+                setAddType('phone')
+                console.log('in add phone')
+                setOpenEmailPhoneAdd(true)
+            }
+            else {
+                setEmailChange(userData.email);
+                setPhoneChange(userData.phonenumber);
+                setOpenChangeEPPopup(true);
             }
         }
-        else if (type === 'phone') {
-            if (!userData.phonenumber) return
-            if (!emailChange) {
-                setPhoneChange(userData.phonenumber)
-            }
-        }
-        setOpenChangeEPPopup(true);
+        console.log('general info')
     }
 
     //Xử lý thay đổi giới tính
@@ -127,9 +162,9 @@ export const ProfileAccount = () => {
             const userData = await fetchAPI(`../${getUserInfo}`, 'POST', {
                 userId: userId,
             });
-              console.log(userData)
+            console.log(userData)
             setUserData(userData.metadata.user_data);
-       
+
             setPageLoading(false);
             setReloadUserData(false);
         };
@@ -213,6 +248,8 @@ export const ProfileAccount = () => {
                                         open={openChangePassPopup}
                                         setOpen={setOpenChangePassPopup}
                                         setReload={setReloadUserData}
+                                        userEmail={userData.email}
+                                        userPhone={userData.phonenumber}
                                         icon={
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4 xl:hidden">
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
@@ -230,20 +267,7 @@ export const ProfileAccount = () => {
                                 <label className="flex items-center" htmlFor="Thay Đổi Email">Thay Đổi Email</label>
                                 <div className="flex items-center gap-2 text-gray-400">
                                     <div>{maskEmail(userData.email)}</div>
-                                    <ChangEmailPhone
-                                        open={openChangeEPPopup}
-                                        setOpen={setOpenChangeEPPopup}
-                                        email={emailChange}
-                                        setEmail={setEmailChange}
-                                        phone={phoneChange}
-                                        setPhone={setPhoneChange}
-                                        setReload={setReloadUserData}
-                                        icon={
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4 xl:hidden">
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                                            </svg>
-                                        }
-                                    />
+                                 
                                 </div>
                             </div>
 
@@ -258,6 +282,44 @@ export const ProfileAccount = () => {
                                     </svg>
                                 </div>
                             </div>
+
+                            <ChangEmailPhone
+                                        open={openChangeEPPopup}
+                                        setOpen={setOpenChangeEPPopup}
+                                        email={emailChange}
+                                        setEmail={setEmailChange}
+                                        phone={phoneChange}
+                                        setPhone={setPhoneChange}
+                                        setReload={setReloadUserData}
+                                        icon={
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4 xl:hidden">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                                            </svg>
+                                        }
+                                    />
+
+                                    <AddEmailPhone
+                                        open={OpenEmailPhoneAdd}
+                                        setOpen={setOpenEmailPhoneAdd}
+                                        setReload={setReloadUserData}
+                                        type={addType}
+                                        icon={
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth="1.5"
+                                                stroke="currentColor"
+                                                className="w-4 h-4 xl:hidden"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="m8.25 4.5 7.5 7.5-7.5 7.5"
+                                                />
+                                            </svg>
+                                        }
+                                    />
 
                             {/* Giới Tính */}
                             <div className="flex xl:gap-2 justify-between text-sm bg-white h-12 px-2 border-b border-gray-200" onClick={handleChangeSex}>

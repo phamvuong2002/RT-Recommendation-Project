@@ -4,12 +4,13 @@ import { TextLoader } from '../components/loaders/TextLoader';
 import OtpInput from 'react-otp-input';
 import { fetchData } from './fetch';
 import { auth } from '../configs/firebase.config';
-import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
+import { EmailAuthCredential, RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
 import { CircleLoader } from '../components/loaders/CircleLoader';
 
 //USER SERVICE
 import { sendEmailOTP, verifyEmailOTP } from '../apis/emailOTP';
 import { fetchAPI } from './fetch';
+
 
 export const AuthenticationPopup = ({
   open,
@@ -34,6 +35,7 @@ export const AuthenticationPopup = ({
   const [sendOTPMessage, setSendOTPMessage] = useState('');
   const [isPending, setIsPending] = useState(false);
   const [recaptchaVerifier, setRecaptchaVerifier] = useState(null);
+  const [isVerifiedbyEmail, setVerifybyEmail] = useState(false);
 
   const NUMLOADERS = 1;
   const RESENDOTPTIME = 60;
@@ -47,6 +49,7 @@ export const AuthenticationPopup = ({
   };
 
   const handleChooseEmail = async () => {
+    setVerifybyEmail(true)
     //Xử lý gửi mã OTP tới Email
     setLoading(true);
     if (!emailInput) {
@@ -59,7 +62,8 @@ export const AuthenticationPopup = ({
       const sendOTP = fetchAPI(`../${sendEmailOTP}`, 'POST', {
         email: email,
       });
-      if (sendOTP) {
+
+      if (sendOTP.status === 200) {
         setTimeLeft(RESENDOTPTIME);
         setSendOtpStatus(true);
         setLoading(false);
@@ -68,12 +72,20 @@ export const AuthenticationPopup = ({
           'Đã có lỗi trong quá trình gửi mail. Vui lòng chọn Gửi lại mã để thực hiện việc xác thực',
         );
         setSendOtpStatus(false);
+
+        // }
       }
-    }
-  };
+    };
+    setTimeLeft(RESENDOTPTIME);
+    setSendOtpStatus(true);
+    setLoading(false);
+  }
+
 
   //Xử lý gửi mã OTP tới số điện thoại
   const handleChooseSMS = async () => {
+
+    setVerifybyEmail(false)
     setIsPending(true);
     if (!phoneInput) {
       setSendOtpStatus(false);
@@ -110,19 +122,26 @@ export const AuthenticationPopup = ({
         setOtp('');
       }
     } else if (phonenumber) {
-      // window.confirmationResult
-      //   .confirm(otp)
-      //   .then(async (res) => {
-      //     setAuthenStatus('success');
-      //     setVaildOtpMessage('');
-      //   })
-      //   .catch((err) => {
-      //     setVaildOtpMessage('Mã OTP không khớp. Vui lòng thử lại!');
-      //     setAuthenStatus('falied');
-      //   });
-      setAuthenStatus('success');
-      setVaildOtpMessage('');
+      window.confirmationResult
+        .confirm(otp)
+        .then(async (res) => {
+          setAuthenStatus('success');
+          setVaildOtpMessage('');
+        })
+        .catch((err) => {
+          setVaildOtpMessage('Mã OTP không khớp. Vui lòng thử lại!');
+          setAuthenStatus('falied');
+        });
+      // setAuthenStatus('success');
+      // setVaildOtpMessage('');
     }
+
+    // setAuthenStatus('success');
+    // setVaildOtpMessage('');
+    // handleReturn();
+    // setOtp('');
+   
+  
   };
 
   //Xử lý gửi lại mã OTP
@@ -152,7 +171,7 @@ export const AuthenticationPopup = ({
             authenFunction(phonenumber);
             window.recaptchaVerifier = null;
           },
-          'expired-callback': () => {},
+          'expired-callback': () => { },
         },
       );
     }
@@ -219,16 +238,20 @@ export const AuthenticationPopup = ({
   }, [timeLeft]);
 
   useEffect(() => {
-    if (emailInput) {
-      // console.log('phone input ', phoneInput, phonenumber)
-      // console.log('email input ', emailInput, email)
+
+    if (emailInput && !phoneInput) {
       setEmail(emailInput);
-      setPhonenumber('');
-    } else {
+      setVerifybyEmail(true)
+    } else if (!emailInput && phoneInput) {
+      setPhonenumber(phoneInput)
+      setVerifybyEmail(false)
+    } else if (emailInput && phoneInput) {
       setPhonenumber(phoneInput);
-      setEmail('');
+      setEmail(emailInput);
     }
+    // console.log('email phone input received', email, emailInput, phonenumber, phoneInput)
   }, [emailInput, phoneInput]);
+
 
   return (
     <div>
@@ -247,9 +270,9 @@ export const AuthenticationPopup = ({
                   <div className="flex text-sm flex-col text-gray-400">
                     <div>
                       Nhập mã 6 ký tự đã gửi về{' '}
-                      {email ? 'Email' : 'Số điện thoại'}
+                      {isVerifiedbyEmail ? 'Email' : 'Số điện thoại'}
                     </div>
-                    <div>{email || phonenumber}</div>
+                    <div>{isVerifiedbyEmail ? email : phonenumber}</div>
                   </div>
                   <div className="flex ">
                     <OtpInput
@@ -323,7 +346,7 @@ export const AuthenticationPopup = ({
                     Vui lòng chọn cách xác minh:
                   </div>
                   <div className="flex gap-4 flex-col mt-2">
-                    {!emailInput && !phoneInput && (
+                    {emailInput && phoneInput && (
                       <div className="flex gap-4 flex-col mt-2">
                         {/* Authen by Email */}
                         <div

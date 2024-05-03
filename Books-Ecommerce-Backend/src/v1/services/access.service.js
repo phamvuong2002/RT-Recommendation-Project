@@ -19,6 +19,7 @@ const userService = require("./user.service")
 const db = require("../models/sequelize/models")
 const Op = require("sequelize")
 
+
 class AccessService {
   static loginGuest = async (data, req) => {
     const sessionid = data?.id;
@@ -310,6 +311,8 @@ class AccessService {
     };
   };
 
+
+
   //SignUp
   static signup_user = async ({ signupMethod, signupMethodValue, password }, req) => {
     //Kiểm tra tham số có null
@@ -335,6 +338,8 @@ class AccessService {
     } else {
       throw new BadRequestError(`Signup failed. Please try again later`);
     }
+  
+    const new_user_name =  `user-${guest_id}`;
 
     console.log(guest)
     //check Email/Phone number
@@ -373,6 +378,7 @@ class AccessService {
     if (email_value !== '') {
       registered_user = await userModel.findOneAndUpdate({ _id: guest_id },
         {
+          username: new_user_name,
           email: email_value,
           password: passwordHash,
         },
@@ -380,6 +386,7 @@ class AccessService {
     } else if (phone_value !== '') {
       registered_user = await userModel.findOneAndUpdate({ _id: guest_id },
         {
+          username: new_user_name,
           phone: phone_value,
           password: passwordHash,
         },
@@ -398,9 +405,11 @@ class AccessService {
       if (foundUser) {
         await foundUser.set(
           {
+            user_username: new_user_name,
+            user_slug: new_user_name,
             user_email: email_value,
             user_phone: phone_value,
-            password: passwordHash
+            user_password: passwordHash
           },
         );
       }

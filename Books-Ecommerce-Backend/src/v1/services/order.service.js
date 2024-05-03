@@ -4,7 +4,12 @@ const { BadRequestError, NotFoundError } = require("../core/error.response");
 
 class OrderService {
   //get order of user ID
-  static getOrders = async ({ userId, status = null, page, limit }) => {
+  static getOrders = async ({
+    userId,
+    status = null,
+    page = 1,
+    limit = 10,
+  }) => {
     const foundUser = await db.user.findOne({
       where: {
         user_sid: userId,
@@ -36,6 +41,7 @@ class OrderService {
         "ob_status",
         "create_time",
       ],
+      order: [["create_time", "DESC"]],
       limit: limit,
       offset: (page - 1) * limit,
     });

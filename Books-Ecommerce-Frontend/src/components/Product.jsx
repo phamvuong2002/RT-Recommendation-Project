@@ -1,14 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useContext, useRef, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom'
+import PropTypes from 'prop-types';
 import { addtocart } from '../apis/cart';
 import { collectBehaviour } from '../apis/collectBehaviour';
 import { fetchAPI } from '../helpers/fetch';
 import { PopupOpen } from './popup/PopupOpen';
-import { popupContent } from '../helpers/popupContent';
+import { popupContent } from '../helpers/popupContent'
 import { AppContext } from '../contexts/main';
-
 
 export const Product = ({ userId, productData }) => {
     const { setNumCart } = useContext(AppContext)
@@ -58,7 +57,7 @@ export const Product = ({ userId, productData }) => {
             }
         })
 
-        let collectClick = await fetchAPI(`../${collectBehaviour}`, 'POST', {
+        let collectClickAddToCart = await fetchAPI(`../${collectBehaviour}`, 'POST', {
             "topic": "add-to-cart",
             "message": {
                 "userId": userId,
@@ -70,9 +69,10 @@ export const Product = ({ userId, productData }) => {
         if (res.status !== 200) return;
         setOpenAddToCartsPopup(true);
         setNumCart(res.metadata.cart_count_products);
+
     }
+
     const handleClickProduct = async (e) => {
-        e.preventDefault();
         let collectClickProduct = await fetchAPI(`../${collectBehaviour}`, 'POST', {
             "topic": "click",
             "message": {
@@ -83,18 +83,18 @@ export const Product = ({ userId, productData }) => {
 
         })
     }
+
     const handleViewProduct = async (userid, bookid) => {
         let collectViewProduct = await fetchAPI(`../${collectBehaviour}`, 'POST', {
-            "topic": "view",
-            "message": {
-                "userId": userid,
-                "behaviour": "view",
-                "productId": bookid
+            topic: "view",
+            message: {
+                userId: userid,
+                behaviour: "view",
+                productId: bookid
             }
 
         })
     }
-
 
     return (
         <div className="block border rounded-md p-2 sm:p-0 bg-white min-h-full md:hover:shadow-2xl md:rounded-md md:shadow-md overflow-hidden">
@@ -129,13 +129,10 @@ export const Product = ({ userId, productData }) => {
                                 )}
                                 onNoClick={() => setOpenAddToCartsPopup(false)}
                             />
-
                             <button
                                 onClick={AddToCart}
                                 className="hidden sm:block sm:bg-red-500 sm:text-white  sm:hover:bg-red-300 sm:px-5">Add to Cart
                             </button>
-
-
                         </div>
                     </div>
 
@@ -156,7 +153,6 @@ export const Product = ({ userId, productData }) => {
                                         {productData.book_old_price}đ {/*Giá bỏ/ giá cũ */}
                                     </p>)
                             }
-
                             <p className="text-[0.9rem] text-red-500 sm:text-[1.15rem] font-semibold tracking-wide font-['Inter']">
                                 {productData.book_spe_price}đ {/*giá mới*/}
                                 {/* <span className="text-[0.8rem] md:text-[1rem]">đ</span> */}

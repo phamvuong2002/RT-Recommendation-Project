@@ -12,7 +12,7 @@ import { isMobileDevice } from '../utils/isMobileDevice';
 
 export const Home = () => {
   const { userId, numCart, setNumCart } = useContext(AppContext);
-  //console.log("userId: ", userId)
+
   const [user, setUser] = useState(userId);
   const [products, setProducts] = useState([]);
   const { setActivePage, setIsShowFooter } = useContext(AppContext);

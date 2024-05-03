@@ -14,6 +14,7 @@ import { AppContext } from '../contexts/main';
 import { getaddresses } from '../apis/address';
 import { addtocart } from '../apis/cart';
 import { useNavigate } from 'react-router-dom';
+import { collectBehaviour } from '../apis/collectBehaviour';
 
 export const DetailCart = ({ book }) => {
   const { userId, session, setIsLoading, setNumCart } = useContext(AppContext);
@@ -82,6 +83,17 @@ export const DetailCart = ({ book }) => {
     }
     setIsLoading(false);
     setOpenAddToCartsPopup(true);
+
+    //collect behavior add to cart
+    const dataCollect = {
+      topic: 'add-to-cart',
+      message: {
+        userId,
+        behaviour: 'add-to-cart',
+        productId: product.book.book_id,
+      },
+    };
+    await fetchAPI(`../${collectBehaviour}`, 'POST', dataCollect);
   };
 
   //Xử lý khách hàng yêu thích sản phẩm

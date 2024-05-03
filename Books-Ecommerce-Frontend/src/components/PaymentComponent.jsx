@@ -31,6 +31,7 @@ import {
 import { PopupCenterPanel } from './popup/PopupCenterPanel';
 import { getonebook } from '../apis/book';
 import { getBaseUrl } from '../utils/getUrlBase';
+import { collectBehaviour } from '../apis/collectBehaviour';
 
 const SAMPLEPAYMENTMETHODS = [
   {
@@ -486,6 +487,7 @@ export const Payment = () => {
         setMessageAlert('Đặt hàng thất bại! Vui lòng thử lại sau.');
         return;
       } else {
+        await collectBehaviourFunction();
         setIsLoading(false);
         window.location.href = result.metadata.payment_data.paymentUrl;
       }
@@ -496,6 +498,24 @@ export const Payment = () => {
       setMessageAlert('Vui lòng đăng nhập để đặt hàng!');
     } else {
       createOrder();
+    }
+  };
+
+  //collect behavior
+  const collectBehaviourFunction = async () => {
+    //collect behavior add to cart
+    if (products.length > 0 && userId) {
+      products.map(async (product) => {
+        const dataCollect = {
+          topic: 'place-order',
+          message: {
+            userId,
+            behaviour: 'place-order',
+            productId: product.cb_book_id,
+          },
+        };
+        await fetchAPI(`../${collectBehaviour}`, 'POST', dataCollect);
+      });
     }
   };
 
@@ -722,7 +742,9 @@ export const Payment = () => {
                                 <div>{`Tác giả: ${product.book_detail.book_authors_name}`}</div>
                               </div>
                               <div className="text-xs text-gray-500 font-bold">
-                                <div className="w-fit bg-gray-300 px-1">
+                                <div
+                                  className={`w-fit bg-gray-300 px-1 ${!product?.book?.inven_stock || product.book.inven_stock > 50 ? 'hidden' : ''}`}
+                                >
                                   {`Chỉ còn ${product.book.inven_stock} sản phẩm`}
                                 </div>
                               </div>

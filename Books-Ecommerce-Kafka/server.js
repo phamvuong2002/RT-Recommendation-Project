@@ -17,7 +17,7 @@ const SCORE = {
   click: 1,
   "place-order": 5,
   "cancel-order": 3,
-  "cancel-order": 3,
+  "add-to-cart": 3,
   love: 3,
 };
 

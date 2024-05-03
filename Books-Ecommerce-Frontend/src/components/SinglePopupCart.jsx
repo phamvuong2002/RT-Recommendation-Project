@@ -1,10 +1,33 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { formatNumberToText } from '../utils/formatNumberToText';
 import { Popup } from './popup/Popup';
 import { popupContent } from '../helpers/popupContent';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { AppContext } from '../contexts/main';
+import { collectBehaviour } from '../apis/collectBehaviour';
+import { fetchAPI } from '../helpers/fetch';
 
 export const SinglePopupCart = ({ product, handleDeleteProduct }) => {
+  const { userId } = useContext(AppContext);
+  const navigate = useNavigate();
+  const handleClickBook = async () => {
+    const dataCollect = {
+      topic: 'click',
+      message: {
+        userId,
+        behaviour: 'click',
+        productId: product.cb_book_id,
+      },
+    };
+    const result = await fetchAPI(
+      `../${collectBehaviour}`,
+      'POST',
+      dataCollect,
+    );
+    // navigate(`../books/${product.cb_book_id}`);
+    // return;
+  };
+
   return (
     <div key={product.id} className="flex py-6">
       <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
@@ -20,7 +43,11 @@ export const SinglePopupCart = ({ product, handleDeleteProduct }) => {
         <div>
           <div className="flex justify-between text-sm font-medium text-gray-900">
             <h3>
-              <Link to={`../books/${product.cb_book_id}`}>
+              <Link
+                to={`../books/${product.cb_book_id}`}
+                onClick={handleClickBook}
+                className="hover:text-red-300 cursor-pointer"
+              >
                 {product.book.book_title}
               </Link>
             </h3>

@@ -8,27 +8,27 @@ import { getAuth } from 'firebase/auth';
 
 //phamvuong10012002@gmail.com
 // ACCOUNT FOR TESTING -- PHONE: 0948908485 -- OTP: 123456
-// const firebaseConfig = {
-//   apiKey: 'AIzaSyAIakMBJ_4VUN9oVTe3A6DLU_ofYJK5WJU',
-//   authDomain: 'bookada-ffe4b.firebaseapp.com',
-//   projectId: 'bookada-ffe4b',
-//   storageBucket: 'bookada-ffe4b.appspot.com',
-//   messagingSenderId: '690299951951',
-//   appId: '1:690299951951:web:0e2b202760026fc1d8833a',
-//   measurementId: 'G-F96SNP9BQZ',
-// };
+const firebaseConfig = {
+  apiKey: 'AIzaSyAIakMBJ_4VUN9oVTe3A6DLU_ofYJK5WJU',
+  authDomain: 'bookada-ffe4b.firebaseapp.com',
+  projectId: 'bookada-ffe4b',
+  storageBucket: 'bookada-ffe4b.appspot.com',
+  messagingSenderId: '690299951951',
+  appId: '1:690299951951:web:0e2b202760026fc1d8833a',
+  measurementId: 'G-F96SNP9BQZ',
+};
 
 //pqvuong20022002@gmail.com
 // ACCOUNT FOR TESTING -- PHONE: 0948908485 -- OTP: 123456
-const firebaseConfig = {
-  apiKey: 'AIzaSyBwXKZEv2U3uIZGKD7PcKXrdmanZGwXBV8',
-  authDomain: 'bookada-2baad.firebaseapp.com',
-  projectId: 'bookada-2baad',
-  storageBucket: 'bookada-2baad.appspot.com',
-  messagingSenderId: '1059889013797',
-  appId: '1:1059889013797:web:ce25bbdcbdb25845158bcc',
-  measurementId: 'G-216D849J96',
-};
+// const firebaseConfig = {
+//   apiKey: 'AIzaSyBwXKZEv2U3uIZGKD7PcKXrdmanZGwXBV8',
+//   authDomain: 'bookada-2baad.firebaseapp.com',
+//   projectId: 'bookada-2baad',
+//   storageBucket: 'bookada-2baad.appspot.com',
+//   messagingSenderId: '1059889013797',
+//   appId: '1:1059889013797:web:ce25bbdcbdb25845158bcc',
+//   measurementId: 'G-216D849J96',
+// };
 
 //girflerpham@gmail.com
 // const firebaseConfig = {

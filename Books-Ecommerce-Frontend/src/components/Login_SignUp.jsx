@@ -72,8 +72,9 @@ export default function Login_SignUp({
   useEffect(() => {
     if (requestAuth && !token && !open) {
       //Về home nếu user thoát xác thực (vấn bậc popup yêu cầu xác thực ở trang home)
-      navigate('/');
+      // navigate('/');
       setRequestAuth(false);
+     
       return;
     }
   }, [requestAuth, userId, token, open]);
@@ -349,7 +350,6 @@ export default function Login_SignUp({
           }
           // setOpen(false);
           // console.log('set token, userid after Signup')
-
         }
         login_by_sms();
       }
@@ -390,6 +390,7 @@ export default function Login_SignUp({
         setToken(signup_.metadata.tokens)
         setUserId(signup_.metadata.user._id);
         // setOpen(false);
+        setOpen(false); 
         console.log('set token, userid after Signup')
 
       }
@@ -397,7 +398,7 @@ export default function Login_SignUp({
       signup_for_user();
       // setUser(sampleUser);
       // console.log('after calling signup')
-      setOpen(false);
+      
     }
     //Forgot password
     if (

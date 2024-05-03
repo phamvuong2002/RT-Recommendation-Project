@@ -13,7 +13,7 @@ import { login } from '../apis/access';
 
 import { checkEmailnPhone, getUserInfo } from '../apis/user';
 import { signup_user, login_user, login_sms } from '../apis/access';
-import { TfiEmail } from "react-icons/tfi";
+import { TfiEmail } from 'react-icons/tfi';
 import { validateEmail } from '../utils/validateEmail';
 
 //
@@ -35,11 +35,6 @@ export default function Login_SignUp({
     setIsLoading,
   } = useContext(AppContext);
   const navigate = useNavigate();
-  const sampleUser = {
-    id: '1',
-    Name: 'Nguyễn Văn b',
-    shoppingCart: 10,
-  };
 
   const [authenStatus, setAuthenStatus] = useState('pending');
   const [accountLogin, setAccountLogin] = useState('');
@@ -58,11 +53,10 @@ export default function Login_SignUp({
   const [isOpenForgetPass, setIsOpenForgetPass] = useState(false);
   const [accountForgot, setAccountForgot] = useState('');
 
-  const [isEmailSignup, setIsEmailSignup] = useState(false)
-  const [emailSignupMessage, setEmailSignupMessage] = useState('')
+  const [isEmailSignup, setIsEmailSignup] = useState(false);
+  const [emailSignupMessage, setEmailSignupMessage] = useState('');
 
-
-  const [isSMSLogin, setSMSLogin] = useState(false)
+  const [isSMSLogin, setSMSLogin] = useState(false);
   /************************CHECK AUTHENTICATION***********************************/
   //Router thủ công cho những trang yêu cầu Xác Thực Tài Khoản
   //Sử dung các biến token, userId, requestAuth (và một số biến liên quan)
@@ -70,12 +64,10 @@ export default function Login_SignUp({
   //*** Lưu Ý: cần phải reset các biến yêu cầu xác thực khi xác thực thành công
   //**** SET TOKEN CHO USER ĐÃ XÁC THỰC THÀNH CÔNG
   useEffect(() => {
-    if (requestAuth && !token && !open) {
+    if (requestAuth && (!token || token === 'unkown') && !open) {
       //Về home nếu user thoát xác thực (vấn bậc popup yêu cầu xác thực ở trang home)
       // navigate('/');
       setRequestAuth(false);
-     
-      return;
     }
   }, [requestAuth, userId, token, open]);
   /***********************************************************/
@@ -104,37 +96,34 @@ export default function Login_SignUp({
     // } else {
     //   setMessage('Tài khoản hoặc mật khẩu không đúng!');
     // }
-    const isValidEmail = validateEmail(accountLogin)
-    const isValidPhonenum = isValidPhoneNumber(accountLogin)
+    const isValidEmail = validateEmail(accountLogin);
+    const isValidPhonenum = isValidPhoneNumber(accountLogin);
 
     let login_user_data = '';
     if (isValidEmail.status) {
       // console.log(isValidEmail)
       login_user_data = await fetchAPI(`../${login_user}`, 'POST', {
-        "loginMethod": "email",
-        "loginMethodValue": accountLogin,
-        "password": passwordLogin
+        loginMethod: 'email',
+        loginMethodValue: accountLogin,
+        password: passwordLogin,
       });
       // const auth = "!ok"
-    }
-    else if (isValidPhonenum) {
+    } else if (isValidPhonenum) {
       // console.log(isValidPhonenum)
       login_user_data = await fetchAPI(`../${login_user}`, 'POST', {
-        "loginMethod": "phone",
-        "loginMethodValue": accountLogin,
-        "password": passwordLogin
+        loginMethod: 'phone',
+        loginMethodValue: accountLogin,
+        password: passwordLogin,
       });
       // const auth = "!ok"
-      console.log('login user ', login_user_data)
-    }
-    else {
-      setMessage("Email hoặc Số điện thoại không hợp lệ");
+      console.log('login user ', login_user_data);
+    } else {
+      setMessage('Email hoặc Số điện thoại không hợp lệ');
       return;
     }
 
-    console.log('login_user_data', login_user_data)
+    console.log('login_user_data', login_user_data);
     if (login_user_data.status === 200) {
-
       // const userid = login_user_data.metadata.user.user._id
       // setloginuser(login_user_data)
       // // console.log(userid)
@@ -146,25 +135,22 @@ export default function Login_SignUp({
 
       // setSession();
       if (login_user_data.metadata.tokens) {
-        console.log('tokens ', login_user_data.metadata.user.tokens)
-        setToken(login_user_data.metadata.tokens)
+        console.log('tokens ', login_user_data.metadata.user.tokens);
+        setToken(login_user_data.metadata.tokens);
       }
-      console.log(login_user_data.metadata.user._id)
+      console.log(login_user_data.metadata.user._id);
       setUserId(login_user_data.metadata.user._id);
-      setAuthenStatus("success");
-
-    }
-    else {
-      setMessage("Tài khoản hoặc mật khẩu không đúng!")
+      setAuthenStatus('success');
+    } else {
+      setMessage('Tài khoản hoặc mật khẩu không đúng!');
       setIsLoading(false);
       return;
     }
-  
   };
 
   // Xử lý đăng nhập bằng SĐT
   const handleLoginSMS = async () => {
-    setSMSLogin(true)
+    setSMSLogin(true);
     if (!isValidPhoneNumber(phoneInput)) {
       if (!phoneInput) {
         setMessage('Bạn chưa nhập số điện thoại!');
@@ -174,19 +160,19 @@ export default function Login_SignUp({
       return;
     }
     const isRegistered = await fetchAPI(`../${checkEmailnPhone}`, 'POST', {
-      method: "phone",
+      method: 'phone',
       methodValue: phoneInput,
     });
 
     if (!isRegistered.metadata.isUsed) {
-      setMessage('Số điện thoại chưa đăng ký. Vui lòng đăng ký để sử dụng dịch vụ của chúng tôi. Xin cảm ơn')
+      setMessage(
+        'Số điện thoại chưa đăng ký. Vui lòng đăng ký để sử dụng dịch vụ của chúng tôi. Xin cảm ơn',
+      );
       return;
     }
 
     setIsShowAuthenPopup(true);
   };
-
-
 
   // --------SIGNUP--------------------
   //Xử lý đăng ký bằng SĐT
@@ -201,69 +187,70 @@ export default function Login_SignUp({
     }
 
     const isRegistered = await fetchAPI(`../${checkEmailnPhone}`, 'POST', {
-      method: "phone",
+      method: 'phone',
       methodValue: phoneInput,
     });
 
     if (isRegistered.status === 200) {
       if (isRegistered.metadata.isUsed) {
-        setMessage('Số điện thoại đã được đăng ký, vui lòng đăng ký bằng Số điện thoại khác')
+        setMessage(
+          'Số điện thoại đã được đăng ký, vui lòng đăng ký bằng Số điện thoại khác',
+        );
         return;
       } else {
         setIsSignUp(true);
         setIsShowAuthenPopup(true);
       }
-    } else{
-      setMessage('Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại sau')
+    } else {
+      setMessage('Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại sau');
     }
-
-
   };
 
-  const handleSignUpFB = async () => { };
+  const handleSignUpFB = async () => {};
 
-  const handleSignUpGG = async () => { };
+  const handleSignUpGG = async () => {};
 
   //Xử lý đăng ký bằng Email
   const handleSignUpEmail = async () => {
-    const isValidEmail = validateEmail(emailInput)
-    console.log('in handle signup: ', emailInput)
+    const isValidEmail = validateEmail(emailInput);
+    console.log('in handle signup: ', emailInput);
     //email hợp lệ
     if (isValidEmail.status) {
       const isRegistered = await fetchAPI(`../${checkEmailnPhone}`, 'POST', {
-        method: "email",
+        method: 'email',
         methodValue: emailInput,
       });
 
       if (isRegistered.status === 200) {
         if (isRegistered.metadata.isUsed) {
-          setEmailSignupMessage('Email đã được đăng ký, vui lòng đăng ký bằng Email khác')
+          setEmailSignupMessage(
+            'Email đã được đăng ký, vui lòng đăng ký bằng Email khác',
+          );
           return;
         } else {
           setIsSignUp(true);
           setIsShowAuthenPopup(true);
         }
-      } else{
-        setMessage('Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại sau')
+      } else {
+        setMessage(
+          'Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại sau',
+        );
       }
-    }
-    else {
-      setEmailSignupMessage("Email không hợp lệ");
+    } else {
+      setEmailSignupMessage('Email không hợp lệ');
       return;
     }
-  }
+  };
 
   useEffect(() => {
     if (isEmailSignup) {
-      setPhoneInput('')
-    }
-    else {
-      setEmailInput('')
-      setEmailSignupMessage('')
+      setPhoneInput('');
+    } else {
+      setEmailInput('');
+      setEmailSignupMessage('');
     }
     // console.log('is email signup ', isEmailSignup)
-  }, [isEmailSignup])
-
+  }, [isEmailSignup]);
 
   //Xử lý tạo mật khẩu
   const handleCreatePassword = async () => {
@@ -293,15 +280,14 @@ export default function Login_SignUp({
     const check = validatePassword(againPass);
     if (check.length === 0) {
       //xử lý tạo mật khẩu mới
-      const statusUpdate = 'ok'
-      if (statusUpdate === 'ok') { //tạo thành công
-        setIsCreatedPassSuccess(true)
-
-
+      const statusUpdate = 'ok';
+      if (statusUpdate === 'ok') {
+        //tạo thành công
+        setIsCreatedPassSuccess(true);
       } else {
         setMessages(check);
       }
-    };
+    }
   };
 
   //Xử lý quên mật khẩu
@@ -321,31 +307,31 @@ export default function Login_SignUp({
     setIsShowAuthenPopup(true);
   };
 
-
   //xử lý sau khi đã xác thực
   useEffect(() => {
     console.log('authentication::', authenStatus);
     // Đăng nhập
     if (authenStatus === 'success' && !isSignUp && !isOpenForgetPass) {
-      // nếu login = sms và Nhận mã otp thành công 
+      // nếu login = sms và Nhận mã otp thành công
       if (isSMSLogin) {
         const login_by_sms = async () => {
           const login_result = await fetchAPI(`../${login_sms}`, 'POST', {
-            phone: phoneInput
+            phone: phoneInput,
           });
           if (login_result.status === 200) {
             // console.log('status 200')
             // setSession();
             if (login_result.metadata.tokens) {
               // console.log('tokens ', login_result.metadata.user.tokens)
-              setToken(login_result.metadata.tokens)
+              setToken(login_result.metadata.tokens);
             }
-            console.log(login_result.metadata.user._id)
+            console.log(login_result.metadata.user._id);
             setUserId(login_result.metadata.user._id);
-            setAuthenStatus("success");
-          }
-          else {
-            setMessage("Đã có lỗi trong quá trình đăng nhập. Xin vui lòng thử lại sau. Xin cảm ơn")
+            setAuthenStatus('success');
+          } else {
+            setMessage(
+              'Đã có lỗi trong quá trình đăng nhập. Xin vui lòng thử lại sau. Xin cảm ơn',
+            );
             return;
           }
           // setOpen(false);
@@ -354,7 +340,7 @@ export default function Login_SignUp({
         login_by_sms();
       }
 
-      console.log('login success')
+      console.log('login success');
       setOpen(false);
     }
     // Đăng ký
@@ -362,38 +348,37 @@ export default function Login_SignUp({
       // console.log('register')
       const signup_for_user = async () => {
         //Đăng ký
-        let method = ''
-        let methodValue = ''
+        let method = '';
+        let methodValue = '';
         if (emailInput) {
-          method = 'email'
-          methodValue = emailInput
+          method = 'email';
+          methodValue = emailInput;
+        } else if (phoneInput) {
+          method = 'phone';
+          methodValue = phoneInput;
         }
-        else if (phoneInput) {
-          method = 'phone'
-          methodValue = phoneInput
-        }
-        console.log(method, methodValue)
+        console.log(method, methodValue);
         const signup_ = await fetchAPI(`../${signup_user}`, 'POST', {
           signupMethod: method,
           signupMethodValue: methodValue,
-          password: passwordSignUp
-
+          password: passwordSignUp,
         });
-        console.log("signp_up result: ", signup_)
+        console.log('signp_up result: ', signup_);
         //TẠO THẤT BẠI
         if (signup_.status !== 201) {
-          setMessages([{ code: "400", message: "Lỗi cập nhật! vui lòng thử lại sau." }]);
+          setMessages([
+            { code: '400', message: 'Lỗi cập nhật! vui lòng thử lại sau.' },
+          ]);
           return;
         }
 
         // setSession(loginuser.metadata.sessionid);
-        setToken(signup_.metadata.tokens)
+        setToken(signup_.metadata.tokens);
         setUserId(signup_.metadata.user._id);
         // setOpen(false);
-        setOpen(false); 
-        console.log('set token, userid after Signup')
-
+        console.log('set token, userid after Signup');
       }
+
 
       signup_for_user();
       // setUser(sampleUser);
@@ -415,6 +400,10 @@ export default function Login_SignUp({
     setMessages([]);
   }, [authenStatus, isSignUp, isCreatedPassSuccess, isOpenForgetPass]);
 
+  useEffect(() => {
+    console.log('token::::', token);
+  }, [token]);
+
   return (
     <div className="w-full max-w-md mx-auto py-auto sm:px-0 ">
       {/* Authen Popup */}
@@ -426,7 +415,7 @@ export default function Login_SignUp({
         phoneInput={phoneInput}
         emailInput={emailInput}
         nextStep={() => setIsShowAuthenPopup(false)}
-      // icon={icon}
+        // icon={icon}
       />
       <Tab.Group>
         {/* Tab list: Danh sách Tab gồm (Đăng nhập, Đăng ký) */}
@@ -486,7 +475,7 @@ export default function Login_SignUp({
                               onChange={(e) =>
                                 setPasswordSignUp(e.target.value)
                               }
-                            // readOnly
+                              // readOnly
                             />
                             <div
                               className="flex items-center text-gray-400"
@@ -526,7 +515,7 @@ export default function Login_SignUp({
                                 setAgainPass(e.target.value);
                                 setMessages([]);
                               }}
-                            // readOnly
+                              // readOnly
                             />
                             <div
                               className="flex items-center text-gray-400"
@@ -998,7 +987,7 @@ export default function Login_SignUp({
                             className="w-full h-8 outline-none forcus:outline-none"
                             value={passwordSignUp}
                             onChange={(e) => setPasswordSignUp(e.target.value)}
-                          // readOnly
+                            // readOnly
                           />
                           <div
                             className="flex items-center text-gray-400"
@@ -1038,7 +1027,7 @@ export default function Login_SignUp({
                               setAgainPass(e.target.value);
                               setMessages([]);
                             }}
-                          // readOnly
+                            // readOnly
                           />
                           <div
                             className="flex items-center text-gray-400"
@@ -1091,21 +1080,26 @@ export default function Login_SignUp({
                   <div className="flex flex-col gap-4">
                     {/* SMS Sign Up */}
                     <div>
-                      {isEmailSignup ?
+                      {isEmailSignup ? (
                         <div>
-                          <div className="text-sm font-bold xl:mb-2">Bạn Đang Dùng Email Nào?</div>
+                          <div className="text-sm font-bold xl:mb-2">
+                            Bạn Đang Dùng Email Nào?
+                          </div>
                           <div className="mt-1">
                             <div className="flex flex-col gap-1">
                               <div className="flex">
                                 <div className="w-[20%] text-xs flex items-center justify-center bg-gray-200 text-gray-400 rounded-l-md">
-                                  <TfiEmail className='w-5 h-5' />
+                                  <TfiEmail className="w-5 h-5" />
                                 </div>
                                 <input
                                   id="email_signup"
                                   name="email_signup"
                                   type="text"
                                   value={emailInput}
-                                  onChange={(e) => { setEmailInput(e.target.value); setEmailSignupMessage(''); }}
+                                  onChange={(e) => {
+                                    setEmailInput(e.target.value);
+                                    setEmailSignupMessage('');
+                                  }}
                                   required
                                   placeholder="Nhập địa chỉ email"
                                   className="block px-2 xl:px-3 h-10 rounded-r-md w-full border-[1px] py-1.5 text-gray-900 placeholder:text-gray-400 placeholder:italic text-sm sm:text-sm sm:leading-6  focus:outline-none "
@@ -1117,10 +1111,12 @@ export default function Login_SignUp({
                             </div>
                           </div>
                         </div>
-                        :
+                      ) : (
                         // SMS signup
                         <div>
-                          <div className="text-sm font-bold xl:mb-2">Bạn Đang Dùng Số Di Động Nào?</div>
+                          <div className="text-sm font-bold xl:mb-2">
+                            Bạn Đang Dùng Số Di Động Nào?
+                          </div>
                           <div className="mt-1">
                             <div className="flex flex-col gap-1">
                               <div className="flex">
@@ -1132,7 +1128,10 @@ export default function Login_SignUp({
                                   name="sms_login"
                                   type="number"
                                   value={phoneInput}
-                                  onChange={(e) => { setPhoneInput(e.target.value); setMessage(''); }}
+                                  onChange={(e) => {
+                                    setPhoneInput(e.target.value);
+                                    setMessage('');
+                                  }}
                                   required
                                   placeholder="Nhập số di động"
                                   className="block px-2 xl:px-3 h-10 rounded-r-md w-full border-[1px] py-1.5 text-gray-900 placeholder:text-gray-400 placeholder:italic text-sm sm:text-sm sm:leading-6  focus:outline-none "
@@ -1142,24 +1141,26 @@ export default function Login_SignUp({
                                 {message}
                               </div>
                             </div>
-                          </div></div>
-                      }
-
+                          </div>
+                        </div>
+                      )}
                     </div>
 
-                    {isEmailSignup ?
+                    {isEmailSignup ? (
                       <button
                         className="flex uppercase outline-none w-full h-10 items-center justify-center rounded-md bg-gradient-to-r from-pink-500 to-red-500 transition-all hover:from-red-400 hover:to-pink-400 px-1 sm:px-3 py-1.5  font-semibold leading-6  border-red-500  text-white shadow-sm text-xs sm:text-sm  "
                         onClick={handleSignUpEmail}
                       >
                         Đăng Ký Với Email
-                      </button> :
+                      </button>
+                    ) : (
                       <button
                         className="flex uppercase outline-none w-full h-10 items-center justify-center rounded-md bg-gradient-to-r from-pink-500 to-red-500 transition-all hover:from-red-400 hover:to-pink-400 px-1 sm:px-3 py-1.5  font-semibold leading-6  border-red-500  text-white shadow-sm text-xs sm:text-sm  "
                         onClick={handleSignUpSMS}
                       >
                         Đăng Ký Với Số Điện Thoại
-                      </button>}
+                      </button>
+                    )}
 
                     {/* OR */}
                     <div className="other_login_method flex flex-col ">
@@ -1198,30 +1199,29 @@ export default function Login_SignUp({
                           </span>
                         </button>
 
-
                         <button
                           type="submit"
                           className=" flex outline-none justify-center border border-red-200 rounded-md bg-white hover:bg-slate-50 px-3 py-1.5 text-sm font-semibold leading-6   text-black shadow-sm items-center h-fit ml-4"
                           onClick={() => {
-                            setIsEmailSignup(!isEmailSignup); setMessage('');
+                            setIsEmailSignup(!isEmailSignup);
+                            setMessage('');
                           }}
                         >
                           <div>
-                            {
-                              isEmailSignup ?
-                                <div>
-                                  <img className="w-5 h-5 xl:w-6 xl:h-6" src="data:image/png;base64,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" />
-                                </div> :
-
-                                <TfiEmail className='fill-red-200 h-6 w-6' />
-
-                            }
+                            {isEmailSignup ? (
+                              <div>
+                                <img
+                                  className="w-5 h-5 xl:w-6 xl:h-6"
+                                  src="data:image/png;base64,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"
+                                />
+                              </div>
+                            ) : (
+                              <TfiEmail className="fill-red-200 h-6 w-6" />
+                            )}
                           </div>
                           {/* <img className="h-5 w-5" src="/img/sms-login.png" alt="sms-login" /> */}
-                          <span className='hidden sm:block sm:text-base font-normal xl:ml-2'>
-                            {
-                              isEmailSignup ? "SMS" : "Email"
-                            }
+                          <span className="hidden sm:block sm:text-base font-normal xl:ml-2">
+                            {isEmailSignup ? 'SMS' : 'Email'}
                           </span>
                         </button>
                       </div>

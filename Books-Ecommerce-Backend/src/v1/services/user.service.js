@@ -91,7 +91,7 @@ class UserService {
     if (!userInfo) {
       throw new NotFoundError('User not found');
     }
-    console.log(userInfo)
+    // console.log(userInfo)
     //Nếu giá trị update rỗng --> Trả về record cũ
     if (updatedValue == null || updatedValue == '') {
       return { user_info: userInfo }
@@ -99,7 +99,6 @@ class UserService {
 
     let field = ''
     let updated_slug = ''
-    let updated_pw=''
     switch (updatedField) {
       case 'name':
         field = 'user_username'
@@ -120,10 +119,13 @@ class UserService {
         break
       case 'pw':
         field = 'user_password'
-        updated_pw = await bcrypt.hash(updatedValue, 10);
+        updatedValue = await bcrypt.hash(updatedValue, 10);
+      
         console.log('password')
+        break;
       case 'phonenumber':
         field = 'user_phone'
+        break;
       default:
         throw new BadRequestError('Request data is not valid');
     }
@@ -156,11 +158,11 @@ class UserService {
 
         case 'phonenumber':
           await userModel.findOneAndUpdate({ _id: userId }, { phone: updatedValue }, {
-            new: true
+            new: true 
           });
           break;
         case 'pw':
-          await userModel.findOneAndUpdate({ _id: userId }, { password: updated_pw }, {
+          await userModel.findOneAndUpdate({ _id: userId }, { password: updatedValue }, {
             new: true
           });
           break
@@ -178,7 +180,7 @@ class UserService {
       update_result: result
     };
   }
-
+ 
 
   //  Add user to Mysql DB
   static addUserDB = async (userSid, name, phone, email, pw) => {

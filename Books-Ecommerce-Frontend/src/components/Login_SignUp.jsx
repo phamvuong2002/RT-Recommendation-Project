@@ -336,7 +336,7 @@ export default function Login_SignUp({
           }
           // setOpen(false);
           // console.log('set token, userid after Signup')
-        };
+        }
         login_by_sms();
       }
 
@@ -377,12 +377,13 @@ export default function Login_SignUp({
         setUserId(signup_.metadata.user._id);
         // setOpen(false);
         console.log('set token, userid after Signup');
-      };
+      }
+
 
       signup_for_user();
       // setUser(sampleUser);
       // console.log('after calling signup')
-      setOpen(false);
+      
     }
     //Forgot password
     if (

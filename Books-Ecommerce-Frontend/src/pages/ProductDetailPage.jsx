@@ -9,6 +9,7 @@ import { getAllBook, getonebook } from '../apis/book';
 import { getCateFromText } from '../utils/getCateFromText';
 import { shortenString } from '../utils/shortenString';
 import { AppContext } from '../contexts/main';
+import { collectBehaviour } from '../apis/collectBehaviour';
 
 export const ProductDetailPage = () => {
   const { userId, setIsShowFooter, token } = useContext(AppContext);
@@ -21,9 +22,28 @@ export const ProductDetailPage = () => {
 
   useEffect(() => {
     setIsShowFooter(true);
-    console.log('userId:::::::::::', userId);
-    console.log('token:::::::::::', token);
-  }, [userId]);
+    if (userId) {
+      const timeoutId = setTimeout(async () => {
+        //collect behavior "view"
+        const dataCollect = {
+          topic: 'view',
+          message: {
+            userId,
+            behaviour: 'view',
+            productId: bookid,
+          },
+        };
+        const result = await fetchAPI(
+          `../${collectBehaviour}`,
+          'POST',
+          dataCollect,
+        );
+      }, 5000);
+
+      // Xóa timeout khi component unmount
+      return () => clearTimeout(timeoutId);
+    }
+  }, [userId, book]);
 
   //Get bookid from url
   useEffect(() => {
@@ -72,7 +92,6 @@ export const ProductDetailPage = () => {
       <NavigationPath components={paths} />
       <div className="flex flex-col gap-[0.2rem]">
         <DetailCart book={book} />
-        {/* {book ? <DetailCart book={book} /> : ''} */}
         <DescriptionFeedback book={book} />
 
         {/*Gợi ý cho bạn*/}
@@ -97,10 +116,10 @@ export const ProductDetailPage = () => {
             </div>
           </div>
           <div className="bg-white border-x border-b xl:border border-red-100">
-            {/* <SliderProducts
+            <SliderProducts
               userId={userId?.toString()}
               productData={products}
-            ></SliderProducts> */}
+            ></SliderProducts>
           </div>
         </div>
 

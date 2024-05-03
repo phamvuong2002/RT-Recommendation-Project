@@ -5,7 +5,18 @@ const db = require("../models/sequelize/models");
 
 class FavoriteBookService {
     static getListFavoriteBook = async ({ userId }) => {
-        const userFavoriteBook = await db.favorite_book.findOne({ where: { fav_userid: userId } });
+        const foundUser = await db.user.findOne({
+            where: {
+                user_sid: userId,
+            },
+        });
+        if (!foundUser) throw new NotFoundError("User not found");
+
+        const userFavoriteBook = await db.favorite_book.findOne({
+            where: {
+                fav_userid: foundUser.dataValues.user_id,
+            }
+        });
         if (!userFavoriteBook) {
             throw new NotFoundError("User not found!");
         }
@@ -22,7 +33,7 @@ class FavoriteBookService {
         return res;
     }
 
-    static async createUserFavoriteBook({ userId }) {
+    static async createUserFavoriteBook(userId) {
         return await db.favorite_book.create({ fav_userid: userId });
     }
 
@@ -33,10 +44,20 @@ class FavoriteBookService {
         if (!foundBook) throw new NotFoundError("Book not found");
 
         //check Favorite Book existed
-        let userFavoriteBook = await db.favorite_book.findOne({ where: { fav_userid: userId } });
+        const foundUser = await db.user.findOne({
+            where: {
+                user_sid: userId,
+            },
+        });
+        if (!foundUser) throw new NotFoundError("User not found");
+
+        const userFavoriteBook = await db.favorite_book.findOne({
+            where: {
+                fav_userid: foundUser.dataValues.user_id,
+            }
+        });
         if (!userFavoriteBook) {
-            //Create new cart
-            userFavoriteBook = await FavoriteBookService.createUserFavoriteBook({ userId });
+            userFavoriteBook = await FavoriteBookService.createUserFavoriteBook(foundUser.dataValues.user_id);
             if (!userFavoriteBook) {
                 throw new BadRequestError("Create Favorite Books Failed!");
             }

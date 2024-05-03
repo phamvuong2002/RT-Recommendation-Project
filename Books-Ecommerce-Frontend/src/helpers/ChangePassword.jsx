@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useContext } from 'react'
 import { AuthenticationPopup } from './AuthenticationPopup'
 import { PopupCenterPanel } from '../components/popup/PopupCenterPanel';
@@ -41,7 +42,9 @@ export const ChangePassword = ({ open, setOpen, icon, setReload, userEmail, user
         } else {
             setMessages(check);
         }
+
     }
+  };
 
 
     useEffect(() => {
@@ -142,12 +145,10 @@ export const ChangePassword = ({ open, setOpen, icon, setReload, userEmail, user
                                 Xác nhận
                             </button>
 
-                        </div>
-
-                    </div>
-                }
-            />
-
-        </div>
-    )
-}
+            </div>
+          </div>
+        }
+      />
+    </div>
+  );
+};

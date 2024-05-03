@@ -16,6 +16,7 @@ export const AllProducts = ({ isShowHeader, numOfProductsInRow, _sort, _cate, _l
     const location = useLocation()
     const navigate = useNavigate();
     const { userId } = useContext(AppContext);
+
     const searchParams = new URLSearchParams(location.search);
     let pageUpdated = searchParams.get('page');
 

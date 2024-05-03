@@ -2,6 +2,7 @@ import React from 'react';
 import { ShoppingCartLoader } from './loaders/ShoppingCartLoader';
 import { SingleBill } from './SingleBill';
 import { determineBillStatus } from '../helpers/detemindBillsStatus';
+import { Link } from 'react-router-dom';
 
 const Bills = ({ bills, className = '', setReload }) => {
   const NUMLOADER = 5;
@@ -39,7 +40,10 @@ const Bills = ({ bills, className = '', setReload }) => {
         groupedBills[billId] = [bookDetails];
       }
     });
-    return groupedBills;
+
+    const entries = Object.entries(groupedBills);
+    const reversedEntries = entries.reverse();
+    return reversedEntries;
   };
 
   // Group bills by billId
@@ -51,15 +55,18 @@ const Bills = ({ bills, className = '', setReload }) => {
         <ShoppingCartLoader items={NUMLOADER} />
       ) : (
         <div className="">
-          {Object.keys(groupedBills).map((billId) => {
-            const status = determineBillStatus(groupedBills[billId]); // Đặt biến status tại vị trí này
+          {groupedBills.map(([billId, orders]) => {
+            const status = determineBillStatus(orders); // Đặt biến status tại vị trí này
             return (
               <div key={billId} className="">
                 <div className="flex items-center text-xs justify-between xl:text-base gap-3 xl:py-2 xl:h-8 xl:rounded-full h-7 w-full text-white px-1 font-semibold bg-red-500">
-                  <div className="flex gap-1">
-                    <div className="xl:pl-1"> Số hoá đơn #{billId}</div>
-                    <div className="xl:pr-1">
-                      ({groupedBills[billId].length} đơn hàng)
+                  <div className="flex gap-2">
+                    <div className="flex gap-1 items-center">
+                      <div className="xl:pl-1"> Số hoá đơn #{billId}</div>
+                      <div className="xl:pr-1">({orders.length} đơn hàng)</div>
+                    </div>
+                    <div className="flex items-center h-6 justify-center rounded-full bg-blue-300 px-2">
+                      <Link to={`../order-detail/${billId}`}>Xem Chi Tiết</Link>
                     </div>
                   </div>
                   <div
@@ -73,7 +80,7 @@ const Bills = ({ bills, className = '', setReload }) => {
                   </div>
                 </div>
                 {/* Render Swiper here for each group of bills */}
-                {groupedBills[billId].map((bill) => (
+                {orders.map((bill) => (
                   <SingleBill
                     key={bill.detailBillId}
                     bill={bill}

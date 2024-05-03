@@ -113,6 +113,22 @@ class FeedbackService {
     });
     if (!foundUser) throw new NotFoundError("User not found");
 
+    const foundTransations = await db.transaction.findOne({
+      where: {
+        tran_order_id: orderId,
+      },
+    });
+
+    if (
+      !foundTransations ||
+      (foundTransations.dataValues.tran_status !== "Completed" &&
+        foundTransations.dataValues.tran_status !== "Pending")
+    ) {
+      return {
+        isFeedback: true,
+      };
+    }
+
     const foundFeedback = await db.feedback.findOne({
       where: {
         feedback_userid: foundUser.dataValues.user_id,

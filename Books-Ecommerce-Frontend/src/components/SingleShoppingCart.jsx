@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { formatNumberToText } from '../utils/formatNumberToText';
 import { Popup } from './popup/Popup';
 import { popupContent } from '../helpers/popupContent';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { PopupCenterPanel } from './popup/PopupCenterPanel';
+import { AppContext } from '../contexts/main';
+import { fetchAPI } from '../helpers/fetch';
+import { collectBehaviour } from '../apis/collectBehaviour';
 
 export const SingleShoppingCart = ({
   product,
@@ -11,6 +14,8 @@ export const SingleShoppingCart = ({
   handleIncreaseQuantity,
   handleDecreaseQuantity,
 }) => {
+  const { userId } = useContext(AppContext);
+  const navigate = useNavigate();
   const [openLovePopup, setOpenLovePopup] = useState(false);
   const [statusLovePopup, setStatusLovePopup] = useState('fail');
   const CLOSE_LOVE_POPUP = 1000;
@@ -23,6 +28,23 @@ export const SingleShoppingCart = ({
     } else {
       setOpenLovePopup(true);
     }
+  };
+
+  const handleClickBook = async () => {
+    const dataCollect = {
+      topic: 'click',
+      message: {
+        userId,
+        behaviour: 'click',
+        productId: product.cb_book_id,
+      },
+    };
+    const result = await fetchAPI(
+      `../${collectBehaviour}`,
+      'POST',
+      dataCollect,
+    );
+    navigate(`../books/${product.cb_book_id}`);
   };
 
   return (
@@ -43,12 +65,13 @@ export const SingleShoppingCart = ({
           {/* base info */}
           <div className="flex flex-col xl:gap-2 mt-2 sm:mt-0">
             <div className="flex flex-col">
-              <Link
-                to={`../books/${product.cb_book_id}`}
-                className="w-full xl:h-12 max-h-20 text-base font-semibold text-gray-800 overflow-y-auto no-scrollbar xl:hover:text-red-500"
+              <div
+                // to={`../books/${product.cb_book_id}`}
+                onClick={handleClickBook}
+                className="w-full xl:h-12 max-h-20 text-base font-semibold text-gray-800 overflow-y-auto no-scrollbar xl:hover:text-red-500 cursor-pointer"
               >
                 {product.book.book_title}
-              </Link>
+              </div>
               <div className="flex flex-col gap-1 mt-1 text-xs text-gray-600">
                 <span>Tác giả: {product.book_detail.book_authors_name}</span>
                 <span>
@@ -226,7 +249,7 @@ export const SingleShoppingCart = ({
                   Title={'Xóa khỏi giỏ hàng'}
                   Content={popupContent(
                     null,
-                    'Bạn có đồng ý loại bỏ tất cả sản phẩm của Nhà Xuất Bản này khỏi giỏ hàng?',
+                    'Bạn có đồng ý loại bỏ này khỏi giỏ hàng?',
                   )}
                   ErrorHandling={{
                     title: 'Lỗi xoá giỏ hàng',
@@ -300,7 +323,7 @@ export const SingleShoppingCart = ({
               Title={'Xóa khỏi giỏ hàng'}
               Content={popupContent(
                 null,
-                'Bạn có đồng ý loại bỏ tất cả sản phẩm của Nhà Xuất Bản này khỏi giỏ hàng?',
+                'Bạn có đồng ý loại bỏ sản phẩm này khỏi giỏ hàng?',
               )}
               ErrorHandling={{
                 title: 'Lỗi xoá giỏ hàng',

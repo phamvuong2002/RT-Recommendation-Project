@@ -15,7 +15,11 @@ import {
   extractQueryString,
   getStringBeforeAmpersand,
 } from '../utils/getUrlBase';
-import { createtransaction } from '../apis/checkout';
+import {
+  createtransaction,
+  rollbackorder,
+  updateorderstatus,
+} from '../apis/checkout';
 import { removeallcarts } from '../apis/cart';
 import { getoneorder } from '../apis/order';
 
@@ -47,7 +51,7 @@ export const OrderDetailPage = () => {
       label: `${shortenString('Chi Tiết Đơn Hàng', 1)}`,
     },
     {
-      path: `/${'order-detail/'} ${orderId}`,
+      path: `/${'order-detail/'} ${parseInt(orderId)}`,
       label: `${shortenString(`Đơn hàng # ${orderId}`, 11)}`,
     },
   ];
@@ -79,11 +83,12 @@ export const OrderDetailPage = () => {
         setPaymentStatus('failed');
         const dataTran = {
           userId,
-          sId: dataVnpay.vnp_BankTranNo,
+          sId: `VNP${new Date().getTime()}`,
           orderId: parseInt(orderId),
           status: 'Failed',
           total: parseFloat(dataVnpay.vnp_Amount),
         };
+        dataOrder.statusCode = dataVnpay.vnp_ResponseCode;
         setPaymentData(dataTran);
       } else {
         setPaymentStatus('success');
@@ -103,7 +108,7 @@ export const OrderDetailPage = () => {
         setPaymentStatus('failed');
         const dataTran = {
           userId,
-          sId: dataOrder.paymentId,
+          sId: `PAYID-${new Date().getTime()}`,
           orderId: parseInt(orderId),
           status: 'Failed',
           total: parseFloat(dataOrder.price),
@@ -185,12 +190,29 @@ export const OrderDetailPage = () => {
       if (!orderId || !userId) {
         return;
       }
-      const result = await fetchAPI(`../${removeallcarts}`, 'POST', {
-        orderId,
+      const result = await fetchAPI(`../${rollbackorder}`, 'POST', {
+        orderId: parseInt(orderId),
       });
       if (result.status !== 200) {
         // navigate('/notfound');
         console.log('ERROR ROLLBACK ORDER :::::', result);
+      } else {
+        return;
+      }
+    };
+
+    //update order status
+    const updateOrderStatus = async (status) => {
+      if (!orderId || !userId) {
+        return;
+      }
+      const result = await fetchAPI(`../${updateorderstatus}`, 'POST', {
+        orderId: parseInt(orderId),
+        status,
+      });
+      if (result.status !== 200) {
+        // navigate('/notfound');
+        console.log('ERROR UPDATE ORDER :::::', result);
       } else {
         return;
       }
@@ -206,10 +228,14 @@ export const OrderDetailPage = () => {
     } else if (paymentStatus === 'failed') {
       //create a new transaction
       createTran();
+      if (dataOrder?.statusCode === '24' || dataOrder?.statusCode === '404') {
+        updateOrderStatus('Cancelled');
+      }
+      // if()
       //rollback order
-      rollbackOrder();
+      // rollbackOrder();
     }
-  }, [paymentStatus, paymentData]);
+  }, [paymentStatus, paymentData, userId]);
 
   //load order details
   useEffect(() => {

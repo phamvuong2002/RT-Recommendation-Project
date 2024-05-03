@@ -54,12 +54,25 @@ export const DetailOrder = ({ dataOrder, dataDetail, status }) => {
                   </span>
                 </p>
               </div>
-              <Link
-                to="../account/general-infomation"
-                className="flex justify-center rounded-full py-3 px-7 font-semibold text-sm leading-7 text-white bg-red-500 max-lg:mt-5 shadow-sm shadow-transparent transition-all duration-500 hover:bg-red-700 hover:shadow-red-400"
-              >
-                Theo Dõi Đơn Hàng
-              </Link>
+              <div className="flex flex-col gap-4">
+                {status === 'success' ? (
+                  <Link
+                    to="../account/general-infomation"
+                    className="flex justify-center rounded-full py-3 px-7 font-semibold text-sm leading-7 text-white bg-red-500 max-lg:mt-5 shadow-sm shadow-transparent transition-all duration-500 hover:bg-red-700 hover:shadow-red-400"
+                  >
+                    Theo Dõi Đơn Hàng
+                  </Link>
+                ) : (
+                  ''
+                )}
+                <div className="flex items-center justify-center">
+                  <p
+                    className={`font-medium text-sm leading-6 whitespace-nowrap py-0.5 px-3 rounded-full ${dataOrder?.order_status === 'Cancelled' ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'} `}
+                  >
+                    Trạng thái: {dataOrder?.order_status}
+                  </p>
+                </div>
+              </div>
             </div>
 
             {/* Chi tiết Đơn Hàng */}
@@ -71,6 +84,7 @@ export const DetailOrder = ({ dataOrder, dataDetail, status }) => {
                       key={order?.bookId}
                       order={order}
                       orderId={dataOrder?.order_id}
+                      status={status}
                     />
                   ))}
             </div>

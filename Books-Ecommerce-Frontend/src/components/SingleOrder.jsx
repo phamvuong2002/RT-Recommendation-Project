@@ -6,7 +6,7 @@ import { checkstatus, submitfeedback } from '../apis/feedback';
 import { Link } from 'react-router-dom';
 import { PopupCenterPanel } from './popup/PopupCenterPanel';
 
-export const SingleOrder = ({ order, orderId }) => {
+export const SingleOrder = ({ order, orderId, status }) => {
   const { userId, setIsLoading } = useContext(AppContext);
   const [isOpenRatingPopup, setIsOpenRatingPopup] = useState(false);
   const [rating, setRating] = useState(0);
@@ -204,7 +204,9 @@ export const SingleOrder = ({ order, orderId }) => {
                   <p className="font-medium xl:text-base text-sm leading-7 text-black">
                     Trạng Thái
                   </p>
-                  <p className="font-medium text-sm leading-6 whitespace-nowrap py-0.5 px-3 rounded-full lg:mt-3 bg-emerald-50 text-emerald-600">
+                  <p
+                    className={`font-medium xl:mt-3 text-sm leading-6 whitespace-nowrap py-0.5 px-3 rounded-full ${order?.bookStatus === 'Cancelled' ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'} `}
+                  >
                     {order?.bookStatus}
                   </p>
                 </div>
@@ -218,7 +220,11 @@ export const SingleOrder = ({ order, orderId }) => {
                     }}
                     className="flex items-end font-medium text-sm whitespace-nowrap leading-6 text-blue-500 hover:text-blue-800 cursor-pointer"
                   >
-                    {isFeedback ? 'Đã Đánh giá' : 'Viết Đánh giá'}
+                    {status === 'failed'
+                      ? ''
+                      : isFeedback
+                        ? 'Đã Đánh giá'
+                        : 'Viết Đánh giá'}
                   </div>
                   <Link
                     to={`../payment?type=book&data=${order.bookId}&quantity=${order.bookQuantity}`}

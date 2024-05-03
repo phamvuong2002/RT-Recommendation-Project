@@ -22,7 +22,6 @@ class BookService {
   };
 
   static createBook = async (bookData) => {
-    console.log("bookData", bookData);
     const newBook = await db.book.create({
       book_id: bookData.book_id,
       book_title: bookData.book_title,

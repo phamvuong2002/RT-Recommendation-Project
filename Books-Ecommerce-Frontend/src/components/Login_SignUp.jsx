@@ -336,7 +336,7 @@ export default function Login_SignUp({
           }
           // setOpen(false);
           // console.log('set token, userid after Signup')
-        }
+        };
         login_by_sms();
       }
 
@@ -377,13 +377,11 @@ export default function Login_SignUp({
         setUserId(signup_.metadata.user._id);
         // setOpen(false);
         console.log('set token, userid after Signup');
-      }
-
+      };
 
       signup_for_user();
       // setUser(sampleUser);
       // console.log('after calling signup')
-      
     }
     //Forgot password
     if (
@@ -543,7 +541,6 @@ export default function Login_SignUp({
                           <div
                             className={`${messages.length === 0 ? 'hidden' : ''}`}
                           >
-                            {console.log(messages.length)}
                             Mật khẩu phải bao gồm:
                           </div>
                           {messages.map((message) => (
@@ -1055,7 +1052,6 @@ export default function Login_SignUp({
                         <div
                           className={`${messages.length === 0 ? 'hidden' : ''}`}
                         >
-                          {console.log(messages.length)}
                           Mật khẩu phải bao gồm:
                         </div>
                         {messages.map((message) => (

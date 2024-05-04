@@ -9,19 +9,20 @@ const { authentication } = require("../../auth/authUtils");
 
 
 
-router.post("/getInfo", asyncHandler(userController.getUserInfo))  ;
-router.post("/updateInfo", asyncHandler(userController.updateProfile))  ;
-router.post("/getEmailnPhone", asyncHandler(userController.getEmailnPhone))  ;
-router.post("/checkEmailnPhone", asyncHandler(userController.checkEmailnPhone))  ;
+router.post("/getInfo", asyncHandler(userController.getUserInfo));
+router.post("/updateInfo", asyncHandler(userController.updateProfile));
+router.post("/getEmailnPhone", asyncHandler(userController.getEmailnPhone));
+router.post("/checkEmailnPhone", asyncHandler(userController.checkEmailnPhone));
 
 router.post("/", asyncHandler(userController.addUserDB));
 
 router.post("/favorite-book", asyncHandler(favoritebookController.getListFavoriteBook));
 router.post("/favorite-book/handlefavbook", asyncHandler(favoritebookController.addFavoriteBook));
+router.post("/favorite-book/statusfavbook", asyncHandler(favoritebookController.getStatusFavoriteBook));
 
-router.get("/mongo", asyncHandler(userController.getUserMongoDB))  ;
+router.get("/mongo", asyncHandler(userController.getUserMongoDB));
 
-router.post("/delete", asyncHandler(userController.delete_U))  ;
+router.post("/delete", asyncHandler(userController.delete_U));
 
 
 ///authentication////

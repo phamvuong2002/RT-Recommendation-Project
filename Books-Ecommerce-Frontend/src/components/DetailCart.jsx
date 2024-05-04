@@ -9,7 +9,7 @@ import { fetchData, fetchDataGHN, fetchAPI } from '../helpers/fetch';
 import { TextLoader } from '../components/loaders/TextLoader';
 import { SelectAddressPopup } from '../helpers/SelectAddressPopup';
 import { calculateShippingFeeDefault } from '../utils/calculateShippingFeeDefault';
-import { handleFavoriteBook } from '../apis/book';
+import { handleFavoriteBook, getStatusFavoriteBook } from '../apis/book';
 import { AppContext } from '../contexts/main';
 import { getaddresses } from '../apis/address';
 import { addtocart } from '../apis/cart';
@@ -43,7 +43,7 @@ export const DetailCart = ({ book }) => {
   useEffect(() => {
     const getStatusFavBook = async () => {
       if (!userId || !product) return;
-      const result = await fetchAPI(`../${handleFavoriteBook}`, 'POST', {
+      const result = await fetchAPI(`../${getStatusFavoriteBook}`, 'POST', {
         userId: userId,
         book: {
           book_id: product.book.book_id,
@@ -55,7 +55,7 @@ export const DetailCart = ({ book }) => {
     };
 
     getStatusFavBook();
-  }, [product]);
+  }, [product, userId]);
 
   //Xử lý khách hàng thêm sản phẩm vào giỏ
   const handleAddToCarts = async (e) => {
@@ -112,11 +112,11 @@ export const DetailCart = ({ book }) => {
       setMessage('Có một số vấn đề. Vui lòng thử lại sau');
     }
     const isLoved = result.metadata.favoriteBookStatus;
-    setIsClicked(!isLoved);
+    setIsClicked(isLoved);
     if (isLoved) {
-      setMessage('Đã loại bỏ sách khỏi danh sách yêu thích');
-    } else {
       setMessage('Đã thêm vào danh sách yêu thích');
+    } else {
+      setMessage('Đã loại bỏ sách khỏi danh sách yêu thích');
     }
     setOpenLovePopup(true);
   };
@@ -422,7 +422,7 @@ export const DetailCart = ({ book }) => {
                                 <div>{message}</div>
                               </div>,
                             )}
-                            //onNoClick={() => setOpenLovePopup(false)}
+                          //onNoClick={() => setOpenLovePopup(false)}
                           />
                           <button
                             title="Thêm danh sách yêu thích"

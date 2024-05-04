@@ -38,6 +38,7 @@ class BookController {
     try {
       const sortBy = sort ? sort : null;
       const filterCate = categories !== "all" && categories ? categories.split(',').map(cat => encodeURIComponent(cat)) : null;
+      //console.log("categories", filterCate)
       const filterPrice = price ? price.split(',').map(p => encodeURIComponent(p)) : null;
       const filterPublisher = publisher ? publisher : null;
       const books = await BookService.getBookSearchFilterSort(search, filterCate, filterPrice, filterPublisher, sortBy, parseInt(page - 1), parseInt(limit));

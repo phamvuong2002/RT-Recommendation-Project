@@ -37,6 +37,44 @@ class FavoriteBookService {
         return await db.favorite_book.create({ fav_userid: userId });
     }
 
+    static getStatusFavoriteBook = async ({ userId, book = {} }) => {
+        let favBookStatus = false
+        //check book exists
+        const foundBook = await db.book.findByPk(book.book_id);
+        if (!foundBook) throw new NotFoundError("Book not found");
+
+        //check Favorite Book existed
+        const foundUser = await db.user.findOne({
+            where: {
+                user_sid: userId,
+            },
+        });
+        if (!foundUser) throw new NotFoundError("User not found");
+
+        const userFavoriteBook = await db.favorite_book.findOne({
+            where: {
+                fav_userid: foundUser.dataValues.user_id,
+            }
+        });
+
+        // check book existed
+        const existBook = await db.favorite_book_detail.findOne({
+            where: {
+                fb_fav_id: userFavoriteBook.dataValues.fav_id,
+                fb_book_id: book.book_id,
+            },
+        });
+
+        if (!existBook) {
+            favBookStatus = false;
+        } else {
+            favBookStatus = true;
+        }
+        return {
+            favoriteBookStatus: favBookStatus
+        }
+    }
+
     static addFavoriteBook = async ({ userId, book = {} }) => {
         let favBookStatus = false
         //check book exists
@@ -72,13 +110,11 @@ class FavoriteBookService {
         });
 
         if (!existBook) {
-            //Create card book
             let newFavoriteBook = await db.favorite_book_detail.create({
                 fb_fav_id: userFavoriteBook.dataValues.fav_id,
                 fb_book_id: book.book_id,
             });
             favBookStatus = true;
-            //update cart_count_products in cart
             if (!newFavoriteBook) {
                 favBookStatus = false;
                 throw new BadRequestError("Add To Favorite Book Failed!");

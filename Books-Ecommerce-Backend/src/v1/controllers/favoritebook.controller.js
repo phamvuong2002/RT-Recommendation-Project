@@ -12,6 +12,13 @@ class FavoriteBookController {
         }).send(res);
     }
 
+    getStatusFavoriteBook = async (req, res, next) => {
+        const data = await FavoriteBookService.getStatusFavoriteBook(req.body);
+        new SuccessResponse({
+            metadata: data,
+        }).send(res);
+    }
+
     addFavoriteBook = async (req, res, next) => {
         const data = await FavoriteBookService.addFavoriteBook(req.body);
         new SuccessResponse({

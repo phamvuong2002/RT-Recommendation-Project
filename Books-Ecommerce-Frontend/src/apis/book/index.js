@@ -4,3 +4,4 @@ export const getBookById = 'api/v1/api/book/';
 export const getonebook = 'api/v1/api/book/getonebook';
 export const getListFavoriteBook = 'api/v1/api/user/favorite-book';
 export const handleFavoriteBook = 'api/v1/api/user/favorite-book/handlefavbook';
+export const getStatusFavoriteBook = 'api/v1/api/user/favorite-book/statusfavbook';

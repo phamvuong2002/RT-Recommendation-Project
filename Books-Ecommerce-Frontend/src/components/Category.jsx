@@ -65,29 +65,29 @@ export const Category = () => {
                     </button>
                 </div>
 
-                <div className="md:relative md:text-white font-semibold">
+                <Link className="md:relative md:text-white font-semibold">
                     <span className="hidden md:block md:absolute md:top-[4%] md:left-[8%] md:text-5xl">2</span>
                     <p className="hidden md:block text-[18px] font-bold md:absolute md:bottom-12 md:w-full md:text-center md:text-[20px] lg:text-[28px] md:font-bold">{category.top2}</p>
                     <img className="hidden md:block w-full h-full rounded-md" src="https://i.pinimg.com/564x/90/af/2f/90af2f0ffb3dcbee2fbc87b10d2d98f0.jpg"></img>
-                </div>
+                </Link>
 
-                <div className="md:relative md:text-white font-semibold">
+                <Link className="md:relative md:text-white font-semibold">
                     <span className="hidden md:block md:absolute md:top-[4%] md:left-[8%] md:text-5xl">3</span>
                     <p className="hidden md:block text-[18px] font-bold md:absolute md:bottom-12 md:w-full md:text-center md:text-[20px] lg:text-[28px] md:font-bold">{category.top3}</p>
                     <img className="hidden md:block h-full rounded-md" src="https://i.pinimg.com/564x/89/ad/1f/89ad1f413de58358e757b6da8444709f.jpg"></img>
-                </div>
+                </Link>
 
-                <div className="md:relative md:text-white font-semibold">
+                <Link className="md:relative md:text-white font-semibold">
                     <span className="hidden md:block md:absolute md:top-[4%] md:left-[8%] md:text-5xl">4</span>
                     <p className=" hidden md:block md:absolute md:bottom-12 md:w-full md:text-center md:text-[20px] lg:text-[28px] md:font-bold">{category.top4}</p>
                     <img className="hidden md:block w-full h-full rounded-md" src="https://i.pinimg.com/564x/63/24/97/6324977f3f0c1c0f7ecdb1072e7ded00.jpg"></img>
-                </div>
+                </Link>
 
-                <div className="md:relative md:text-white font-semibold">
+                <Link className="md:relative md:text-white font-semibold">
                     <span className="hidden md:block md:absolute md:top-[4%] md:left-[8%] md:text-5xl">5</span>
                     <p className="hidden md:block md:absolute md:bottom-12 md:w-full md:text-center md:text-[20px] lg:text-[28px] md:font-bold">{category.top5}</p>
                     <img className="hidden md:block w-full h-full rounded-md" src="https://i.pinimg.com/564x/47/2d/42/472d4278bc724404d8f3ce18f301af0b.jpg"></img>
-                </div>
+                </Link>
 
 
             </div>

@@ -8,7 +8,7 @@ import { updateUserInfo, checkEmailnPhone } from '../apis/user'
 import { fetchAPI } from './fetch'
 import { AppContext } from '../contexts/main';
 import { useContext } from 'react';
-export const AddEmailPhone = ({ open, setOpen, icon = '', type = '', setReload }) => {
+export const AddEmailPhone = ({ open, setOpen, icon = '', isAddEmail, setReload }) => {
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
     const [authenStatus, setAuthenStatus] = useState('pending');
@@ -150,12 +150,12 @@ export const AddEmailPhone = ({ open, setOpen, icon = '', type = '', setReload }
                 setOpen={setOpen}
                 content={
                     <div className="flex flex-col gap-2">
-                        <div className="flex items-center justify-center font-semibold">Nhập {type=='email' ? 'Email' : 'Số Điện Thoại'}</div>
+                        <div className="flex items-center justify-center font-semibold">Nhập {isAddEmail ? 'Email' : 'Số Điện Thoại'}</div>
                         <div className="">
-                            <label className="text-gray-400 text-xs" htmlFor="Nhập email mới">Nhập {type=='email'  ? 'Email' : 'Số Điện Thoại'} mới</label>
+                            <label className="text-gray-400 text-xs" htmlFor="Nhập email mới">Nhập {isAddEmail ? 'Email' : 'Số Điện Thoại'} mới</label>
                             <div className="flex border-b border-gray-200">
                                 <input
-                                    type={type=='email' ? "email" : "number"}
+                                    type={isAddEmail ? "email" : "number"}
                                     className="w-full h-8 outline-none forcus:outline-none"
                                     value={value}
                                     onChange={(e) => setValue(e.target.value)}
@@ -171,12 +171,12 @@ export const AddEmailPhone = ({ open, setOpen, icon = '', type = '', setReload }
 
                         </div>
                         <div className="flex items-center mt-4 justify-center">
-                            <button className={`${type == 'email' ? '' : 'hidden'} w-4/5 h-10 rounded-full text-white font-normal xl:font-semibold xl: text-base bg-gradient-to-r from-pink-500 to-red-500 transition-all xl:hover:from-red-400 xl:hover:to-pink-400`}
+                            <button className={`${isAddEmail ? '' : 'hidden'} w-4/5 h-10 rounded-full text-white font-normal xl:font-semibold xl: text-base bg-gradient-to-r from-pink-500 to-red-500 transition-all xl:hover:from-red-400 xl:hover:to-pink-400`}
                                 onClick={handleUpdateEmail}
                             >
                                 Xác nhận
                             </button>
-                            <button className={`${type == 'phone' ? '' : 'hidden'} w-4/5 h-10 rounded-full text-white font-normal xl:font-semibold xl: text-base bg-gradient-to-r from-pink-500 to-red-500 transition-all xl:hover:from-red-400 xl:hover:to-pink-400`}
+                            <button className={`${!isAddEmail ? '' : 'hidden'} w-4/5 h-10 rounded-full text-white font-normal xl:font-semibold xl: text-base bg-gradient-to-r from-pink-500 to-red-500 transition-all xl:hover:from-red-400 xl:hover:to-pink-400`}
                                 onClick={handleUpdatePhone}
                             >
                                 Xác nhận

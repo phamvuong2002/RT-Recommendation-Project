@@ -6,7 +6,6 @@ import { FaBook } from "react-icons/fa6";
 import { HiChevronUp } from "react-icons/hi2";
 import { useNavigate, useLocation } from 'react-router-dom';
 import { fetchAPI } from '../helpers/fetch';
-import { Link } from 'react-router-dom';
 
 import PropTypes from 'prop-types';
 
@@ -68,13 +67,13 @@ export default function Category_dropdown({ isShowCloseIcon, isMenuOpen, toggleM
                     <Tab.Group vertical>
                         <Tab.List className="flex flex-col py-1 border-r-2 bg-red-500 rounded-l-[6px]"
                         >
-                            <h1 className='text-center text-[17px] py-3 text-slate-100'>DANH MỤC SẢN PHẨM</h1>
+                            <h1 className='text-center text-[1rem] py-3 text-slate-100'>DANH MỤC SẢN PHẨM</h1>
                             {cate.map((main_category) => (
                                 <Tab
                                     key={main_category.id}
                                     className={({ selected }) =>
                                         classNames(
-                                            'w-full py-4 text-[17px] font-semibold uppercase font-inter border-none outline-none ',
+                                            'w-full py-4 text-[1rem] font-semibold uppercase font-inter border-none outline-none ',
                                             selected
                                                 ? 'bg-rose-50 text-red-500 border-none '
                                                 : 'text-white hover:bg-white/[0.12] border-none'
@@ -109,8 +108,8 @@ export default function Category_dropdown({ isShowCloseIcon, isMenuOpen, toggleM
                                             <div className="hidden"></div>
                                     }
 
-                                    <div value={main_cates.id} className='text-xl uppercase py-3 font-semibold flex gap-2 items-center hover:cursor-pointer'
-                                        onClick={() => handleOnClick(main_cates.id)}>
+                                    <div value={main_cates.name_slug} className='text-xl uppercase py-3 font-semibold flex gap-2 items-center hover:cursor-pointer'
+                                        onClick={() => handleOnClick(main_cates.name_slug)}>
                                         {main_cates.id == '1' ? <FaBook className='text-red-500' /> : <BiWorld className='text-indigo-500' />}
                                         {main_cates.name}
                                     </div>
@@ -122,7 +121,7 @@ export default function Category_dropdown({ isShowCloseIcon, isMenuOpen, toggleM
                                                 key={main_cate.id}
                                                 className="flex flex-col p-3 uppercase hover:cursor-pointer hover:text-red-500 "
                                             >
-                                                <div value={`${main_cates.id},${main_cate.id}`} onClick={() => handleOnClick(`${main_cates.id},${main_cate.id}`)}>
+                                                <div value={`${main_cates.name_slug},${main_cate.name_slug}`} onClick={() => handleOnClick(`${main_cates.name_slug},${main_cate.name_slug}`)}>
                                                     <h3 className="text-sm font-semibold font-inter truncate">{main_cate.name}</h3>
                                                 </div>
                                                 {/* Submenu */}
@@ -132,8 +131,8 @@ export default function Category_dropdown({ isShowCloseIcon, isMenuOpen, toggleM
                                                             key={single_submenu.id}
                                                             className="relative py-2 hover:text-red-400 text-sm normal-case truncate hover:cursor-pointer  "
                                                         > {single_submenu.name}
-                                                            <div value={`${main_cates.id},${main_cate.id},${single_submenu.id}`}
-                                                                onClick={() => handleOnClick(`${main_cates.id},${main_cate.id},${single_submenu.id}`)}
+                                                            <div value={`${main_cates.name_slug},${main_cate.name_slug},${single_submenu.name_slug}`}
+                                                                onClick={() => handleOnClick(`${main_cates.name_slug},${main_cate.name_slug},${single_submenu.name_slug}`)}
                                                                 className={classNames(
                                                                     'absolute inset-0 rounded-md',
                                                                 )}
@@ -141,7 +140,7 @@ export default function Category_dropdown({ isShowCloseIcon, isMenuOpen, toggleM
                                                         </li>
 
                                                     ))}
-                                                    <button className={`${main_cate.submenu.length >= 5 ? "" : "hidden"} text-[15px] font-normal leading-4 text-left text-blue-400`} onClick={() => handleOnClick(`${main_cates.id},${main_cate.id}`)}> Xem tất cả</button>
+                                                    <button className={`${main_cate.submenu.length >= 5 ? "" : "hidden"} text-[15px] font-normal leading-4 text-left text-blue-400`} onClick={() => handleOnClick(`${main_cates.name_slug},${main_cate.name_slug}`)}> Xem tất cả</button>
                                                 </ul>
 
                                             </li>
@@ -213,7 +212,7 @@ export default function Category_dropdown({ isShowCloseIcon, isMenuOpen, toggleM
                                                                     key={single_submenu.id}
                                                                     className={`relative py-2 hover:text-red-400 text-xs sm:text-base normal-case truncate `}
                                                                 > {single_submenu.name}
-                                                                    <div value={`${main_cates.id},${main_cate.id},${single_submenu.id}`} onClick={() => handleOnClick(`${main_cates.id},${main_cate.id},${single_submenu.id}`)}
+                                                                    <div value={`${main_cates.name_slug},${main_cate.name_slug},${single_submenu.name_slug}`} onClick={() => handleOnClick(`${main_cates.name_slug},${main_cate.name_slug},${single_submenu.name_slug}`)}
                                                                         className={classNames(
                                                                             'absolute inset-0 rounded-md',
 
@@ -224,7 +223,7 @@ export default function Category_dropdown({ isShowCloseIcon, isMenuOpen, toggleM
 
                                                             ))
                                                             }
-                                                            <button className={`${main_cate.submenu.length >= 5 ? "" : "hidden"} text-[15px] font-normal leading-4 text-left text-blue-400`} onClick={() => handleOnClick(`${main_cates.id},${main_cate.id}`)}> Xem tất cả</button>
+                                                            <button className={`${main_cate.submenu.length >= 5 ? "" : "hidden"} text-[15px] font-normal leading-4 text-left text-blue-400`} onClick={() => handleOnClick(`${main_cates.name_slug},${main_cate.name_slug}`)}> Xem tất cả</button>
                                                         </Disclosure.Panel>
 
                                                     </>

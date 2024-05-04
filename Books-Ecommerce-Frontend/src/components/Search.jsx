@@ -43,11 +43,11 @@ const Search = () => {
     }, [location]);
 
     return (
-        <div id="search-bar" className="min-h-[38px] sm:h-0.8  bg-gray-200 rounded-[5px] grid">
+        <div id="search-bar" className="min-h-[2.5rem] sm:h-0.8  bg-gray-200 rounded-[5px] grid">
             <div className="relative flex items-stretch">
                 <input
                     type="search"
-                    className={`w-full relative m-0 block flex-auto border-neutral-300 bg-gray-200 bg-clip-padding x px-3 py-[0.1rem] text-[15px] sm:text-base lg:text-lg font-normal  text-neutral-700 outline-none transition duration-200 ease-in-out focus:z-[3] 
+                    className={`w-full relative m-0 block flex-auto border-neutral-300 bg-gray-200 bg-clip-padding-x px-3 py-[0.1rem] text-[1rem] sm:text-base lg:text-lg font-normal  text-neutral-700 outline-none transition duration-200 ease-in-out focus:z-[3] 
                         focus:outline-none search-cancel:w-4 search-cancel:h-4  search-cancel:grayscale `}
                     placeholder="Tìm kiếm"
                     value={input}

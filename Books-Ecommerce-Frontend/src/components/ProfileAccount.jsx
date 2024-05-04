@@ -36,8 +36,9 @@ export const ProfileAccount = () => {
     const [pageLoading, setPageLoading] = useState(true);
     const { userId, session, setIsLoading } = useContext(AppContext);
     const [OpenEmailPhoneAdd, setOpenEmailPhoneAdd] = useState(false);
-    const [addType, setAddType] = useState('')
-    
+    const [isAddedEmail, setAddEmail] = useState('')
+    const [isChangeEmail, setChangeEmail] = useState('')
+
     //Xử lý mở popup thay đổi tên
     const handleChangeName = async () => {
         setIsChangeNameOpen(true);
@@ -93,11 +94,12 @@ export const ProfileAccount = () => {
         if (type === 'email') {
             if (!userData.email) {
                 console.log('in add email')
-                setAddType('email')
+                setAddEmail(true)
                 setOpenEmailPhoneAdd(true)
             } else {
                 setEmailChange(userData.email);
                 setPhoneChange(userData.phonenumber);
+                setChangeEmail(true)
                 setOpenChangeEPPopup(true);
             }
             // console.log('in set email change');
@@ -105,13 +107,14 @@ export const ProfileAccount = () => {
         } else if (type === 'phone') {
 
             if (!userData.phonenumber) {
-                setAddType('phone')
-                console.log('in add phone')
+                setAddEmail(false)
+                // console.log('in add phone')
                 setOpenEmailPhoneAdd(true)
             }
             else {
                 setEmailChange(userData.email);
-                setPhoneChange(userData.phonenumber);
+                setPhoneChange(userData.phonenumber);           
+                setChangeEmail(false)
                 setOpenChangeEPPopup(true);
             }
         }
@@ -191,7 +194,7 @@ export const ProfileAccount = () => {
             {
                 reloadUserData ? < TextLoader items={4} /> :
                     <div className="flex flex-col gap-2">
-                        <div className="flex flex-col mt-2">
+                        <div className="flex flex-col mt-2 lg:mt-0">
                             {/* Họ Tên */}
                             <div className="flex xl:gap-2 justify-between text-sm bg-white h-12 px-2 border-b border-gray-200" onClick={handleChangeName}>
                                 <label className="flex items-center" htmlFor="Họ Tên">Họ Tên</label>
@@ -267,7 +270,7 @@ export const ProfileAccount = () => {
                                 <label className="flex items-center" htmlFor="Thay Đổi Email">Thay Đổi Email</label>
                                 <div className="flex items-center gap-2 text-gray-400">
                                     <div>{maskEmail(userData.email)}</div>
-                                 
+
                                 </div>
                             </div>
 
@@ -284,42 +287,23 @@ export const ProfileAccount = () => {
                             </div>
 
                             <ChangEmailPhone
-                                        open={openChangeEPPopup}
-                                        setOpen={setOpenChangeEPPopup}
-                                        email={emailChange}
-                                        setEmail={setEmailChange}
-                                        phone={phoneChange}
-                                        setPhone={setPhoneChange}
-                                        setReload={setReloadUserData}
-                                        icon={
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4 xl:hidden">
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                                            </svg>
-                                        }
-                                    />
+                                open={openChangeEPPopup}
+                                setOpen={setOpenChangeEPPopup}
+                                email={emailChange}
+                                setEmail={setEmailChange}
+                                phone={phoneChange}
+                                setPhone={setPhoneChange}
+                                setReload={setReloadUserData}
+                                isChangeEmail={isChangeEmail}
+                            />
 
-                                    <AddEmailPhone
-                                        open={OpenEmailPhoneAdd}
-                                        setOpen={setOpenEmailPhoneAdd}
-                                        setReload={setReloadUserData}
-                                        type={addType}
-                                        icon={
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                strokeWidth="1.5"
-                                                stroke="currentColor"
-                                                className="w-4 h-4 xl:hidden"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    d="m8.25 4.5 7.5 7.5-7.5 7.5"
-                                                />
-                                            </svg>
-                                        }
-                                    />
+                            <AddEmailPhone
+                                open={OpenEmailPhoneAdd}
+                                setOpen={setOpenEmailPhoneAdd}
+                                setReload={setReloadUserData}
+                                isAddEmail={isAddedEmail}
+
+                            />
 
                             {/* Giới Tính */}
                             <div className="flex xl:gap-2 justify-between text-sm bg-white h-12 px-2 border-b border-gray-200" onClick={handleChangeSex}>

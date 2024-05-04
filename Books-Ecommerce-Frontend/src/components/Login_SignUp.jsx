@@ -20,7 +20,7 @@ import { validateEmail } from '../utils/validateEmail';
 export default function Login_SignUp({
   reload,
   setReload,
-  setUser,
+  onlySignup=0,
   setOpen,
   open,
 }) {
@@ -57,6 +57,9 @@ export default function Login_SignUp({
   const [emailSignupMessage, setEmailSignupMessage] = useState('');
 
   const [isSMSLogin, setSMSLogin] = useState(false);
+
+
+
   /************************CHECK AUTHENTICATION***********************************/
   //Router thủ công cho những trang yêu cầu Xác Thực Tài Khoản
   //Sử dung các biến token, userId, requestAuth (và một số biến liên quan)
@@ -71,6 +74,9 @@ export default function Login_SignUp({
     }
   }, [requestAuth, userId, token, open]);
   /***********************************************************/
+
+   
+
 
   // -------LOGIN--------------------
   //Xử lý đăng nhập bằng account
@@ -206,9 +212,9 @@ export default function Login_SignUp({
     }
   };
 
-  const handleSignUpFB = async () => {};
+  const handleSignUpFB = async () => { };
 
-  const handleSignUpGG = async () => {};
+  const handleSignUpGG = async () => { };
 
   //Xử lý đăng ký bằng Email
   const handleSignUpEmail = async () => {
@@ -277,34 +283,74 @@ export default function Login_SignUp({
     // }
 
     //Tạo mật khẩu thành công --> đăng ký
+    console.log('handle create pw')
     const check = validatePassword(againPass);
+
     if (check.length === 0) {
-      //xử lý tạo mật khẩu mới
-      const statusUpdate = 'ok';
-      if (statusUpdate === 'ok') {
-        //tạo thành công
-        setIsCreatedPassSuccess(true);
-      } else {
-        setMessages(check);
-      }
+      // //xử lý tạo mật khẩu mới
+      setIsCreatedPassSuccess(true);
+    } else {
+      setMessages(check);
     }
   };
 
   //Xử lý quên mật khẩu
   const handleForgetPassword = async () => {
     // Tìm email và sđt của forgot account
-    const email = 'vuongdaquen@gmail.com';
-    const phone = '0919489084';
-    if (!email && !phone) {
-      setMessage('Không tìm thấy tài khoản này.');
-      return;
-    }
-    if (email) {
-      setEmailInput(email);
+    // const email = 'vuongdaquen@gmail.com';
+    // const phone = '0919489084';
+    console.log('forgot account: ', accountForgot)
+    let email = ''
+    let phone = ''
+    const isValidEmail = validateEmail(accountForgot);
+    const isValidPhonenum = isValidPhoneNumber(accountForgot);
+    let checkRegistered = ''
+
+    if (isValidEmail.status) {
+      checkRegistered = await fetchAPI(`../${checkEmailnPhone}`, 'POST', {
+        method: 'email',
+        methodValue: accountForgot,
+      });
+
+      email = accountForgot
+
+    } else if (isValidPhonenum) {
+      checkRegistered = await fetchAPI(`../${checkEmailnPhone}`, 'POST', {
+        method: 'phone',
+        methodValue: accountForgot,
+      });
+      phone = accountForgot
     } else {
-      setPhoneInput(phone);
+      setMessage('Email hoặc Số điện thoại không hợp lệ');
     }
-    setIsShowAuthenPopup(true);
+
+    console.log('phone',phone)
+    if (checkRegistered.status === 200) {
+      if (checkRegistered.metadata.isUsed && email) {
+        setEmailInput(email)
+        setIsShowAuthenPopup(true);
+      }
+      else if (checkRegistered.metadata.isUsed && phone) {
+        setPhoneInput(phone)
+        setIsShowAuthenPopup(true);
+      }
+      else {
+        setMessage('Không tìm thấy tài khoản này')
+      }
+    } else {
+      setMessage('Đã xảy ra lỗi. Vui lòng thử lại sau')
+    }
+
+    // if (!email && !phone) {
+    //   setMessage('Không tìm thấy tài khoản này.');
+    //   return;
+    // }
+    // if (email) {
+    //   setEmailInput(email);
+    // } else {
+    //   setPhoneInput(phone);
+    // }
+
   };
 
   //xử lý sau khi đã xác thực
@@ -398,9 +444,9 @@ export default function Login_SignUp({
     setMessages([]);
   }, [authenStatus, isSignUp, isCreatedPassSuccess, isOpenForgetPass]);
 
-  useEffect(() => {
-    console.log('token::::', token);
-  }, [token]);
+  // useEffect(() => {
+  //   console.log('token::::', token);
+  // }, [token]);
 
   return (
     <div className="w-full max-w-md mx-auto py-auto sm:px-0 ">
@@ -413,17 +459,17 @@ export default function Login_SignUp({
         phoneInput={phoneInput}
         emailInput={emailInput}
         nextStep={() => setIsShowAuthenPopup(false)}
-        // icon={icon}
+      // icon={icon}
       />
-      <Tab.Group>
+      <Tab.Group defaultIndex={onlySignup}>
         {/* Tab list: Danh sách Tab gồm (Đăng nhập, Đăng ký) */}
-        <Tab.List className="flex justify-around space-x-1 bg-white ">
-          <Tab as={Fragment}>
+        <Tab.List className={`flex justify-around space-x-1 bg-white }`}>
+          <Tab as={Fragment} className={`${onlySignup?"hidden":""}`}>
             {({ selected }) => (
               <button
                 onClick={() => setMessage('')}
                 className={`w-1/2 py-1 sm:py-2.5 text-xs sm:text-sm font-medium leading-5 outline-none
-                                    ${selected ? 'text-red-500 border-b-[1px] border-b-red-500' : ' text-black'}
+                                    ${selected? 'text-red-500 border-b-[1px] border-b-red-500' : ' text-black'}
                                 `}
               >
                 ĐĂNG NHẬP
@@ -447,7 +493,7 @@ export default function Login_SignUp({
 
         <Tab.Panels className="bg-white">
           {/* Tab panels: gồm 2 panel lần lượt là Form Login/Signup */}
-          <Tab.Panel className="flex outline-none h-full flex-1 flex-col justify-center px-3 py-5 sm:py-12 lg:px-8 ">
+          <Tab.Panel className={`flex outline-none h-full flex-1 flex-col justify-center px-3 py-5 sm:py-12 lg:px-8 ${onlySignup?"hidden":""}`}>
             {isOpenForgetPass ? (
               <div>
                 {authenStatus === 'success' ? (
@@ -473,7 +519,7 @@ export default function Login_SignUp({
                               onChange={(e) =>
                                 setPasswordSignUp(e.target.value)
                               }
-                              // readOnly
+                            // readOnly
                             />
                             <div
                               className="flex items-center text-gray-400"
@@ -513,7 +559,7 @@ export default function Login_SignUp({
                                 setAgainPass(e.target.value);
                                 setMessages([]);
                               }}
-                              // readOnly
+                            // readOnly
                             />
                             <div
                               className="flex items-center text-gray-400"
@@ -984,7 +1030,7 @@ export default function Login_SignUp({
                             className="w-full h-8 outline-none forcus:outline-none"
                             value={passwordSignUp}
                             onChange={(e) => setPasswordSignUp(e.target.value)}
-                            // readOnly
+                          // readOnly
                           />
                           <div
                             className="flex items-center text-gray-400"
@@ -1024,7 +1070,7 @@ export default function Login_SignUp({
                               setAgainPass(e.target.value);
                               setMessages([]);
                             }}
-                            // readOnly
+                          // readOnly
                           />
                           <div
                             className="flex items-center text-gray-400"

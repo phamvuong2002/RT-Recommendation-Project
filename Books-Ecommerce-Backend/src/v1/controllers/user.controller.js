@@ -9,7 +9,7 @@ class UserController {
   checkEmailnPhone = async (req, res, next) => {
     const data = await UserService.checkEmailnPhone (req.body);
     new SuccessResponse({
-      metadata: data,
+      metadata: data, 
     }).send(res);
   }
 

@@ -16,18 +16,18 @@ class CategoryService {
               model: db.category_3, as:'submenu',
               include: [{
                 model: db.category_4, as:'submenu',
-                attributes: [['cate4_id', 'id'], ['cate4_name', 'name'],['cate3_id','parent']
+                attributes: [['cate4_id', 'id'], ['cate4_name', 'name'],['cate3_sid','parent'], ['cate4_slug','name_slug']
                   /* list the wanted attributes here */
                 ],
 
               }]
               ,
-              attributes: [['cate3_id', 'id'], ['cate3_name', 'name'],['cate2_id','parent']]
+              attributes: [['cate3_id', 'id'], ['cate3_name', 'name'],['cate2_sid','parent'],['cate3_slug','name_slug']]
             }],
-          attributes: [['cate2_id', 'id'], ['cate2_name', 'name'],['cate1_id','parent']]
+          attributes: [['cate2_id', 'id'], ['cate2_name', 'name'],['cate1_sid','parent'],['cate2_slug','name_slug']]
         },
       ],
-      attributes: [['cate1_id', 'id'], ['cate1_name', 'name'],['cate1_id','parent']]
+      attributes: [['cate1_id', 'id'], ['cate1_name', 'name'],['cate1_slug','name_slug']]
     });;
 
     return {
@@ -44,14 +44,14 @@ class CategoryService {
             {
               model: db.category_3, as:'submenu',
               right:true,
-              attributes: [['cate3_id', 'id'], ['cate3_name', 'name']],
+              attributes: [['cate3_id', 'id'], ['cate3_name', 'name'],['cate3_slug','name_slug']],
              
             }], 
           
-          attributes: [['cate2_id', 'id'], ['cate2_name', 'name']]
+          attributes: [['cate2_id', 'id'], ['cate2_name', 'name'],['cate2_slug','name_slug']]
         },
       ],
-      attributes: [['cate1_id', 'id'], ['cate1_name', 'name']]
+      attributes: [['cate1_id', 'id'], ['cate1_name', 'name'],['cate1_slug','name_slug']]
     });;
     return {
       categoryData: category

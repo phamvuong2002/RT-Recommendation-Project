@@ -213,7 +213,8 @@ export const Navbar = () => {
           </button>
         </div>
 
-        <div className="hidden lg:block cate_drop_down group relative mx-auto lg:col-span-1">
+
+        <div className="hidden lg:block cate_drop_down group relative mx-auto lg:col-span-1 ">
           <button
             className=" p-2 text-gray-400 hover:text-gray-500 flex items-center "
             onClick={toggleMenu}
@@ -226,10 +227,10 @@ export const Navbar = () => {
           </button>
         </div>
 
-        {/* Vị trí thanh Search - Còn chỉnh sửa */}
-        <div className="search-bar-container relative inline-block w-[75%] mx-auto md:w-[55%] lg:col-span-2 lg:w-full rounded-[5px] my-3 ">
+        {/* Vị trí thanh Search*/}
+        <div className="search-bar-container relative inline-block w-[75%] mx-auto md:w-[55%] lg:col-span-2 lg:w-[120%] lg:ml-[-4.5rem] rounded-[5px] my-3 ">
           <Search />
-        </div>
+        </div>  
 
         {/* ACCOUNT: Guest/User*/}
         <div className="hidden text-xl lg:text-lg ml-1  sm:inline-flex justify-between gap-1 mr-1 md:absolute  md:right-4 md:mr-0 lg:relative lg:mr-3 sm:my-auto sm:gap-4   text-black lg:col-span-2 lg:justify-self-center lg:gap-10 ">
@@ -311,7 +312,7 @@ export const Navbar = () => {
                       onMouseEnter={onMouseEnterMenu}
                       onMouseLeave={onMouseLeaveMenu}
                       className={
-                        'absolute right-0 z-10 mt-2 w-[175px] rounded-md bg-white shadow-2xl focus:outline-none'
+                        'absolute right-0 z-10 mt-2 w-[11rem] rounded-md bg-white shadow-2xl focus:outline-none'
                       }
                     >
                       <div className="py-1">
@@ -325,7 +326,7 @@ export const Navbar = () => {
                                 to={option.path}
                                 name={option.name}
                                 className={classNames(
-                                  'flex flex-row items-center text-[15px] px-3 py-2  hover:text-red-500',
+                                  'flex flex-row items-center text-[1rem] px-3 py-2  hover:text-red-500',
                                   option.current
                                     ? 'font-medium text-gray-900'
                                     : 'text-gray-500',
@@ -341,7 +342,7 @@ export const Navbar = () => {
                       </div>
                       <div
                         name="logout-option"
-                        className={`flex flex-row items-center text-gray-500 text-[15px] px-3 py-2 hover:cursor-pointer hover:text-red-500`}
+                        className={`flex flex-row items-center text-gray-500 text-[1rem] px-3 py-2 hover:cursor-pointer hover:text-red-500`}
                         onClick={handleLogout}
                       >
                         <LuLogOut className="mr-2" />
@@ -360,7 +361,7 @@ export const Navbar = () => {
           >
             <div className="flex">
               <IoCartOutline className="text-red-500 h-5 w-5 ml-2 sm:h-6 sm:w-6 " />
-              <span className="cart-quantity text-center text-sm min-w-[20px] h-[20px] rounded-[50%] ml-[-10px] mt-[-5px] bg-[red] text-white">
+              <span className="cart-quantity text-center text-sm min-w-[1.25rem] h-[1.25rem] rounded-[50%] ml-[-0.625rem] mt-[-0.315rem] bg-[red] text-white">
                 {' '}
                 {numCart >= 100 ? '99+' : numCart >= 0 ? numCart : 0}{' '}
               </span>

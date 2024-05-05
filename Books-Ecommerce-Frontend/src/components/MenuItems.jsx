@@ -42,13 +42,16 @@ const MenuItems = ({ items, depthLevel }) => {
   }, [dropdown]);
 
 
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(true);
 
 
   const handleSelectCategory = (event) => {
     // console.log(items)
-    // console.log(`${items.id}-${depthLevel}`)
-    // console.log(items.parent == cateParam[depthLevel - 1])
+    // console.log(`${items.name_slug}-${depthLevel}`)
+    // console.log(`${items.parent}-${depthLevel}`)
+    // console.log(cateParam[depthLevel - 1])
+    // console.log(cateParam)
+    // console.log('true/false ', items.name_slug==cateParam[depthLevel] && items.parent==cateParam[depthLevel-1])
     // console.log(event.target.id)
     if (!event.target.checked) {
       cateParam.splice(depthLevel)
@@ -61,18 +64,18 @@ const MenuItems = ({ items, depthLevel }) => {
       // reset lại - set = Level trên cùng
 
       if (currentLength < depthLevel + 1) {
-        cateParam.push(items.id)
+        cateParam.push(items.name_slug)
       }
       else if (depthLevel + 1 < currentLength) {
-        cateParam[depthLevel] = items.id
+        cateParam[depthLevel] = items.name_slug
         cateParam.splice(depthLevel + 1)
       }
       else if (currentLength === depthLevel + 1) {
-        cateParam[depthLevel] = items.id
+        cateParam[depthLevel] = items.name_slug
       }
 
     }
-
+    // console.log('true/false ', )
     // console.log(cateParam)
     // console.log(`${items.id}-${depthLevel}`)
     if (cateParam.length > 0) {
@@ -87,23 +90,24 @@ const MenuItems = ({ items, depthLevel }) => {
     }
   }
 
+
   return (
     <li
       className={`menu-items  font-inter text-black text-left pl-1 pb-2 sm:text-black `}>
 
-      <div key={`${items.id}-${depthLevel}`} className={`flex items-center `}>
+      <div key={`${items.name_slug}-${depthLevel}`} className={`flex items-center `}>
         <input
-          id={`filter-${items.id}-${depthLevel}`}
-          name={`${items.id}`}
-          defaultValue={items.id}
+          id={`filter-${items.name_slug}-${depthLevel}`}
+          name={`${items.name_slug}`}
+          defaultValue={items.name_slug}
           type="checkbox"
           aria-checked={true}
           onChange={handleSelectCategory}
-          checked={cateParam[depthLevel] == items.id}
+          checked={cateParam[depthLevel] == items.name_slug}
           className="min-w-[15px] h-[15px] w-[15px] rounded-sm border-gray-300   accent-red-300"
         />
         <label
-          htmlFor={`filter-${items.id}-${depthLevel}`}
+          htmlFor={`filter-${items.name_slug}-${depthLevel}`}
           className="ml-3 text-gray-500 text-[14px] sm:text-gray-600 hover:cursor-pointer"
         >
           {items.name}
@@ -115,12 +119,13 @@ const MenuItems = ({ items, depthLevel }) => {
           <Dropdown
             depthLevel={depthLevel}
             submenus={items.submenu}
-            dropdown={cateParam[depthLevel] == items.id}
+            dropdown={items.name_slug==cateParam[depthLevel]}
           />
         </>
       ) : ""}
 
     </li>
+    
 
   );
 };

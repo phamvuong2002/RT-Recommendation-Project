@@ -18,6 +18,7 @@ import { getorders } from '../apis/order';
 import { shortenString } from '../utils/shortenString';
 import { getaddresses } from '../apis/address';
 
+
 export const GeneralInfo = () => {
   const [bills, setBills] = useState([]);
   const [reloadBill, setReloadBill] = useState(false);
@@ -32,7 +33,9 @@ export const GeneralInfo = () => {
   const [phoneChange, setPhoneChange] = useState('');
 
   const [OpenEmailPhoneAdd, setOpenEmailPhoneAdd] = useState(false);
-  const [addType, setAddType] = useState('')
+  const [isAddedEmail, setAddEmail] = useState('')
+  const [isChangeEmail, setChangeEmail] = useState('')
+
   const NUMLOADERS = 1;
 
   //user-service
@@ -61,34 +64,35 @@ export const GeneralInfo = () => {
 
   //xử lý mở popup thay đổi email và số điện thoại
   const handleChangeEmailPhone = async (type) => {
-
     if (type === 'email') {
-    
       if (!userData.email) {
-        console.log('in add email')
-        setAddType('email')
+        // console.log('in add email')
+        setAddEmail(true)
         setOpenEmailPhoneAdd(true)
       } else {
+        // console.log('in change email')
         setEmailChange(userData.email);
         setPhoneChange(userData.phonenumber);
+        setChangeEmail(true)
         setOpenChangeEPPopup(true);
       }
       // console.log('in set email change');
 
     } else if (type === 'phone') {
-      
       if (!userData.phonenumber) {
-        setAddType('phone')
-        console.log('in add phone')
+        setAddEmail(false)
+        // console.log('in add phone')
         setOpenEmailPhoneAdd(true)
       }
       else {
+        // console.log('in change phone')
         setEmailChange(userData.email);
         setPhoneChange(userData.phonenumber);
+        setChangeEmail(false)
         setOpenChangeEPPopup(true);
       }
     }
-    console.log('general info')
+
   }
 
 
@@ -141,9 +145,9 @@ export const GeneralInfo = () => {
       });
       if (user_data.status === 200) {
         setUserData(user_data.metadata.user_data);
-      } else[
-        //thông báo lỗi 
-      ]
+      } else{
+        
+      }
 
       setPageLoading(false);
 
@@ -182,7 +186,7 @@ export const GeneralInfo = () => {
             ) : (
               <div className="flex flex-col gap-4 text-sm px-1 cursor-pointer">
                 <div
-                  className="flex xl:gap-2 justify-between"
+                  className="flex xl:gap-2 justify-between mt-2"
                   onClick={handleChangeName}
                 >
                   <label htmlFor="Họ Tên">Họ Tên</label>
@@ -258,45 +262,15 @@ export const GeneralInfo = () => {
                   phone={phoneChange}
                   setPhone={setPhoneChange}
                   setReload={setReloadUserData}
-                  icon={
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth="1.5"
-                      stroke="currentColor"
-                      className="w-4 h-4 xl:hidden"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="m8.25 4.5 7.5 7.5-7.5 7.5"
-                      />
-                    </svg>
-                  }
+                  isChangeEmail={isChangeEmail}
                 />
 
                 <AddEmailPhone
                   open={OpenEmailPhoneAdd}
                   setOpen={setOpenEmailPhoneAdd}
                   setReload={setReloadUserData}
-                  type={addType}
-                  icon={
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth="1.5"
-                      stroke="currentColor"
-                      className="w-4 h-4 xl:hidden"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="m8.25 4.5 7.5 7.5-7.5 7.5"
-                      />
-                    </svg>
-                  }
+                  isAddEmail={isAddedEmail}
+
                 />
                 <hr className="border-t border-white xl:hidden" />
               </div>

@@ -50,35 +50,41 @@ export const AuthenticationPopup = ({
 
   const handleChooseEmail = async () => {
     setVerifybyEmail(true)
+
     //Xử lý gửi mã OTP tới Email
-    setLoading(true);
+    // setLoading(true);
     if (!emailInput) {
       setTimeout(() => {
         handleReturn();
       }, 1000);
       // setEmail('girfler@gmail.com');
     } else {
+
       setEmail(emailInput);
-      const sendOTP = fetchAPI(`../${sendEmailOTP}`, 'POST', {
+      setSendOtpStatus(true);
+      const sendOTP = await fetchAPI(`../${sendEmailOTP}`, 'POST', {
         email: email,
       });
 
       if (sendOTP.status === 200) {
+        // console.log('in send otp success')
         setTimeLeft(RESENDOTPTIME);
-        setSendOtpStatus(true);
         setLoading(false);
       } else {
-        setVaildOtpMessage(
-          'Đã có lỗi trong quá trình gửi mail. Vui lòng chọn Gửi lại mã để thực hiện việc xác thực',
-        );
         setSendOtpStatus(false);
-
+        setSendOTPMessage(
+          'OTP đã không được gửi, vui lòng kiểm tra lại Email và thử lại!',
+        );
+        //auto return
+        setTimeout(() => {
+          handleReturn();
+        }, 3000);
         // }
       }
     };
-    setTimeLeft(RESENDOTPTIME);
-    setSendOtpStatus(true);
-    setLoading(false);
+    // setTimeLeft(RESENDOTPTIME);
+    // setSendOtpStatus(true);
+    // setLoading(false);
   }
 
 
@@ -99,7 +105,9 @@ export const AuthenticationPopup = ({
       // setSendOtpStatus(true);
       authenFunction(phonenumber);
     }
-    setIsPending(false);
+    // setPhonenumber(phoneInput);
+    // setSendOtpStatus(true);
+    // setIsPending(false);
   };
 
   const handleSubmit = async () => {
@@ -114,8 +122,7 @@ export const AuthenticationPopup = ({
         console.log('sucess');
         setAuthenStatus('success');
         setVaildOtpMessage('');
-        handleReturn();
-        setOtp('');
+       
       } else {
         setVaildOtpMessage('Mã OTP không khớp. Vui lòng thử lại!');
         setAuthenStatus('falied');
@@ -131,6 +138,7 @@ export const AuthenticationPopup = ({
         .catch((err) => {
           setVaildOtpMessage('Mã OTP không khớp. Vui lòng thử lại!');
           setAuthenStatus('falied');
+          setOtp('');
         });
       // setAuthenStatus('success');
       // setVaildOtpMessage('');
@@ -140,8 +148,8 @@ export const AuthenticationPopup = ({
     // setVaildOtpMessage('');
     // handleReturn();
     // setOtp('');
-   
-  
+
+
   };
 
   //Xử lý gửi lại mã OTP
@@ -151,8 +159,10 @@ export const AuthenticationPopup = ({
       return;
     } else {
       if (email) {
+        setVaildOtpMessage('');
         await handleChooseEmail();
       } else {
+        setVaildOtpMessage('');
         await handleChooseSMS();
       }
     }

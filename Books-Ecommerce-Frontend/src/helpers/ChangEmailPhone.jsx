@@ -9,16 +9,18 @@ import { fetchAPI } from './fetch';
 import { AppContext } from '../contexts/main';
 import { useContext } from 'react';
 
-export const ChangEmailPhone = ({ open, setOpen, icon, email = '', setEmail, phone = '', setPhone, setReload }) => {
+export const ChangEmailPhone = ({ open, setOpen, icon, email = '', setEmail, phone = '', setPhone, setReload , isChangeEmail}) => {
     const [authenStatus, setAuthenStatus] = useState('pending');
     const [isOpenChange, setIsOpenChange] = useState(false);
     const [value, setValue] = useState('');
     const [message, setMessage] = useState('');
+    
 
     // USER SERVICE 
     const { userId, session, setIsLoading } = useContext(AppContext);
 
     const handleUpdateEmail = async () => {
+
         if (value === email) {
             // setOpen(false);
             setReload(false);
@@ -72,6 +74,7 @@ export const ChangEmailPhone = ({ open, setOpen, icon, email = '', setEmail, pho
     }
 
     const handleUpdatePhone = async () => {
+
         if (isValidPhoneNumber(value)) {
             const isRegistered = await fetchAPI(`../${checkEmailnPhone}`, 'POST', {
                 method: 'phone',
@@ -151,12 +154,12 @@ export const ChangEmailPhone = ({ open, setOpen, icon, email = '', setEmail, pho
                 setOpen={setIsOpenChange}
                 content={
                     <div className="flex flex-col gap-2">
-                        <div className="flex items-center justify-center font-semibold">Thay Đổi {email ? 'Email' : 'Số Điện Thoại'}</div>
+                        <div className="flex items-center justify-center font-semibold">Thay Đổi {isChangeEmail ? 'Email' : 'Số Điện Thoại'}</div>
                         <div className="">
-                            <label className="text-gray-400 text-xs" htmlFor="Nhập email mới">Nhập {email ? 'Email' : 'Số Điện Thoại'} mới</label>
+                            <label className="text-gray-400 text-xs" htmlFor="Nhập email mới">Nhập {isChangeEmail ? 'Email' : 'Số Điện Thoại'} mới</label>
                             <div className="flex border-b border-gray-200">
                                 <input
-                                    type={email ? "email" : "number"}
+                                    type={isChangeEmail? "email" : "number"}
                                     className="w-full h-8 outline-none forcus:outline-none"
                                     value={value}
                                     onChange={(e) => setValue(e.target.value)}
@@ -172,12 +175,12 @@ export const ChangEmailPhone = ({ open, setOpen, icon, email = '', setEmail, pho
 
                         </div>
                         <div className="flex items-center mt-4 justify-center">
-                            <button className={`${email ? '' : 'hidden'} w-4/5 h-10 rounded-full text-white font-normal xl:font-semibold xl: text-base bg-gradient-to-r from-pink-500 to-red-500 transition-all xl:hover:from-red-400 xl:hover:to-pink-400`}
+                            <button className={`${isChangeEmail ? '' : 'hidden'} w-4/5 h-10 rounded-full text-white font-normal xl:font-semibold xl: text-base bg-gradient-to-r from-pink-500 to-red-500 transition-all xl:hover:from-red-400 xl:hover:to-pink-400`}
                                 onClick={handleUpdateEmail}
                             >
                                 Xác nhận
                             </button>
-                            <button className={`${phone ? '' : 'hidden'} w-4/5 h-10 rounded-full text-white font-normal xl:font-semibold xl: text-base bg-gradient-to-r from-pink-500 to-red-500 transition-all xl:hover:from-red-400 xl:hover:to-pink-400`}
+                            <button className={`${!isChangeEmail ? '' : 'hidden'} w-4/5 h-10 rounded-full text-white font-normal xl:font-semibold xl: text-base bg-gradient-to-r from-pink-500 to-red-500 transition-all xl:hover:from-red-400 xl:hover:to-pink-400`}
                                 onClick={handleUpdatePhone}
                             >
                                 Xác nhận

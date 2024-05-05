@@ -1,13 +1,17 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef , useContext} from 'react';
 import { fetchData } from '../helpers/fetch';
 import { motion } from 'framer-motion';
 import { FadeInXDirection } from '../helpers/animationFramerMotion';
 import { PopupCenterPanel } from './popup/PopupCenterPanel';
 import Login_SignUp from './Login_SignUp';
+import { AppContext } from '../contexts/main';
 
 export const InfoForGuest = () => {
   const [reloadLoginSignup, setReloadLoginSignup] = useState(false);
   const [open, setOpen] = useState(false);
+  const {
+    token,
+  } = useContext(AppContext);
 
   const {
     ref: leftRef,
@@ -45,9 +49,9 @@ export const InfoForGuest = () => {
           ref={rightRef}
           animate={rightAnimate}
           initial={rightInitial}
-          className="w-full font-['Inter'] p-4 md:p-8"
+          className={`w-full font-['Inter'] p-4 md:p-8 ${token?'my-auto':''}`}
         >
-          <div className="flex flex-col">
+          <div className={`flex flex-col `}>
             <div className="mb-3">
               <h3 className="text-red-500 text-xl xl:text-2xl md:text-sm font-bold tracking-wider">
                 Bookada - Book For You
@@ -64,12 +68,12 @@ export const InfoForGuest = () => {
               </h1>
             </div>
             <div>
-              <h3 className="md:my-3 text-[#1a2055] text-opacity-70 text-xs md:text-lg font-medium">
+              <h3 className={`md:my-3 text-[#1a2055] text-opacity-70 text-xs md:text-lg font-medium ${token?'hidden':''}`}>
                 Để có thể tìm thấy và theo dõi những quyển sách hữu ích, hãy
                 đăng ký tài khoản ngay bạn nhé!
               </h3>
             </div>
-            <div className="bg-red-500 lg:hover:bg-[#47d873] rounded-lg text-center mx-auto mt-3 md:mt-5 px-6 py-2">
+            <div className={`bg-red-500 lg:hover:bg-[#47d873] rounded-lg text-center mx-auto mt-3 md:mt-5 px-6 py-2 ${token ? 'hidden' : ''}`}>
 
               {/* <button className=" text-white text-lg font-bold tracking-tight">
                 Đăng ký ngay
@@ -96,7 +100,7 @@ export const InfoForGuest = () => {
                         <Login_SignUp
                           reload={reloadLoginSignup}
                           setReload={setReloadLoginSignup}
-                          // setUser={setUser}
+                          onlySignup={1}
                           setOpen={setOpen}
                           open={open}
                         />

@@ -80,18 +80,12 @@ export const AccountPage = () => {
   return (
     <div className="mb-4">
       <NavigationPath components={paths} />
-      <div className="grid-cols-1 sm:flex sm:align-top h-lvh w-full justify-between lg:justify-evenly overflow-hidden py-4">
-        <SideBarNav
+      <div className="grid-cols-1 sm:flex sm:align-top h-lvh w-full justify-around overflow-hidden py-4">
+        <SideBarNav 
           setSelectedPage={setSelectedPage}
           setSelectedPageId={setSelectedPageId}
         />
-        {
-          // selectedPage === TAB[selectedPageId] ? <GeneralInfo />
-          //     : selectedPage === TAB[selectedPageId] ? ""
-          //         : selectedPage === TAB[selectedPageId] ? ""
-          //             : selectedPage === TAB[selectedPageId] ? <ProductListStatus /> : ""
-          selectedPageId === 'general-infomation' && <GeneralInfo />
-        }
+        {selectedPageId === 'general-infomation' && <GeneralInfo />}
         {selectedPageId === 'profile-infomation' && <ProfileAccount />}
         {selectedPageId === 'orders-infomation' && <OrderInfo />}
         {selectedPageId === 'following-infomation' && (

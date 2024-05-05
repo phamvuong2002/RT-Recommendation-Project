@@ -34,7 +34,7 @@ export const ProfileAccount = () => {
 
     //user-service
     const [pageLoading, setPageLoading] = useState(true);
-    const { userId, session, setIsLoading } = useContext(AppContext);
+    const { userId, session, setIsLoading , token} = useContext(AppContext);
     const [OpenEmailPhoneAdd, setOpenEmailPhoneAdd] = useState(false);
     const [isAddedEmail, setAddEmail] = useState('')
     const [isChangeEmail, setChangeEmail] = useState('')
@@ -184,7 +184,7 @@ export const ProfileAccount = () => {
             setOpenChangeSexPopup(false);
             setOpenChangeBirthdayPopup(false);
         }, 50)
-    }, [reloadUserData]);
+    }, [reloadUserData,userId, token]);
 
     return (
         <div className="flex flex-col xl:w-2/3 overflow-y-auto h-full font-inter">

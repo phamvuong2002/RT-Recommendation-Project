@@ -79,13 +79,13 @@ export const ProductDetailPage = () => {
   }, [book]);
 
   //Fetch Product Data
-  useEffect(() => {
-    const loadProductData = async () => {
-      const productData = await fetchAPI(`../${getAllBook}`, 'POST');
-      setProducts(productData.metadata);
-    };
-    loadProductData();
-  }, []);
+  // useEffect(() => {
+  //   const loadProductData = async () => {
+  //     const productData = await fetchAPI(`../${getAllBook}`, 'POST');
+  //     setProducts(productData.metadata);
+  //   };
+  //   loadProductData();
+  // }, []);
 
   return (
     <div className="flex flex-col mb-14">
@@ -116,10 +116,10 @@ export const ProductDetailPage = () => {
             </div>
           </div>
           <div className="bg-white border-x border-b xl:border border-red-100">
-            <SliderProducts
+            {/* <SliderProducts
               userId={userId?.toString()}
               productData={products}
-            ></SliderProducts>
+            ></SliderProducts> */}
           </div>
         </div>
 

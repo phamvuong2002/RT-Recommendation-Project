@@ -7,7 +7,6 @@ export const StarRating = ({
   className = 'flex gap-2 text-sm text-zinc-400 font-medium',
 }) => {
   const stars = [];
-
   const totalStars = 5;
   const fullStars = Math.floor(averageRating);
   const emptyStars = Math.floor(totalStars - averageRating);

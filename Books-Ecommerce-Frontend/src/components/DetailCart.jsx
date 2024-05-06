@@ -234,8 +234,8 @@ export const DetailCart = ({ book }) => {
                   </div>
                   {/* Rating */}
                   <StarRating
-                    averageRating={product?.book_detail?.book_avg_rating}
-                    numReviews={product?.book_detail?.book_num_ratings}
+                    averageRating={product?.book?.book_avg_rating}
+                    numReviews={book?.book?.book_num_ratings}
                     className={
                       'flex flex-col px-1 xl:flex-row gap-2 text-sm text-zinc-400 font-medium'
                     }
@@ -422,7 +422,7 @@ export const DetailCart = ({ book }) => {
                                 <div>{message}</div>
                               </div>,
                             )}
-                          //onNoClick={() => setOpenLovePopup(false)}
+                            //onNoClick={() => setOpenLovePopup(false)}
                           />
                           <button
                             title="Thêm danh sách yêu thích"

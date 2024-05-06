@@ -156,7 +156,9 @@ export const Navbar = () => {
       setUserId('');
       setToken('');
       // setSession('')
-      navigate('/');
+      
+      // navigate('/');
+      window.location.assign('/')
       console.log('in logout success');
     }
     console.log('in logout');

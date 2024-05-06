@@ -1,16 +1,25 @@
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useState, useContext } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { HiChevronDown, HiOutlineHome } from "react-icons/hi2";
 import { FaUser } from "react-icons/fa";
 import { LuClipboardList } from "react-icons/lu";
 import { BiSolidBookHeart } from "react-icons/bi";
 import { Link, useParams, useNavigate } from 'react-router-dom';
-
+import { fetchAPI } from '../helpers/fetch';
+import { logout } from '../apis/access';
+import { LuLogOut } from 'react-icons/lu';
+import { AppContext } from '../contexts/main';
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
 export default function SideBarNav({ setSelectedPage, setSelectedPageId }) {
+    const {
+        userId,
+        token,
+        setToken,
+        setUserId,
+      } = useContext(AppContext);
     const navigate = useNavigate()
     const [currentPage, setCurrentPage] = useState("general-infomation")
     const { tab } = useParams();
@@ -49,6 +58,39 @@ export default function SideBarNav({ setSelectedPage, setSelectedPageId }) {
             setCurrentPage(tab)
         }
     }, [tab])
+    // LOGOUT
+    const handleLogout = async () => {
+        console.log(token.accessToken);
+        let access_token = '';
+        if (token.accessToken) {
+            access_token = token.accessToken;
+        } else {
+            access_token = token;
+        }
+
+        console.log(userId);
+        const logout_result = await fetchAPI(
+            `../${logout}`,
+            'POST',
+            {},
+            {
+                userId: userId,
+                token: access_token,
+            },
+        );
+
+        console.log(logout_result);
+        if (logout_result.status === 200) {
+            setUserId('');
+            setToken('');
+            // setSession('')
+            window.location.assign('/')
+            console.log('in logout success');
+        }
+        console.log('in logout');
+
+        //nhận lại kết quả, xem Logout có thành công
+    };
 
 
     return (
@@ -71,12 +113,12 @@ export default function SideBarNav({ setSelectedPage, setSelectedPageId }) {
 
             <div className="z-[5] w-full grid relative sm:hidden  pr-4">
                 <Menu as="div" className="text-left w-[14rem] flex justify-self-end bg-white">
-                    <Menu.Button className="w-full group grid grid-cols-3   text-left text-sm font-semibold text-gray-700 hover:text-gray-900 my-2 rounded-sm font-inter ">
+                    <Menu.Button className="w-full group grid grid-cols-3   text-left text-sm font-semibold text-gray-700 hover:text-gray-900 my-2 rounded-sm font-inter items-center">
                         <span className='justify-self-center col-span-2 my-[0.1rem] ml-[0.3rem]'>
                             {TAB[currentPage]}
                         </span>
                         <HiChevronDown
-                            className="h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500 justify-self-end my-[0.1rem] mr-[0.1rem]"
+                            className="h-8 w-8 flex-shrink-0 text-gray-400 group-hover:text-gray-500 justify-self-end my-[0.1rem] mr-[0.1rem]"
                             aria-hidden="true"
                         />
 
@@ -110,12 +152,20 @@ export default function SideBarNav({ setSelectedPage, setSelectedPageId }) {
                                                 </div>
                                                 {menu.title}
                                             </button>
-                                           
+
                                         )}
                                     </Menu.Item>
                                 ))}
+                                <div
+                                    name="logout-option"
+                                    className={`text-gray-600 hover:cursor-pointer hover:text-red-400 flex flex-row items-center py-2 `}
+                                    onClick={handleLogout}
+                                >
+                                    <LuLogOut className="mr-2" />
+                                    Đăng xuất
+                                </div>
                             </div>
-                           
+
                         </Menu.Items>
                     </Transition>
                 </Menu>

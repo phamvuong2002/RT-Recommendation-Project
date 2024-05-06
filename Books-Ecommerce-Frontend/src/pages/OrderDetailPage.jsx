@@ -48,7 +48,7 @@ export const OrderDetailPage = () => {
     { path: `/${'payment'}`, label: `${shortenString('Thanh Toán', 5)}` },
     {
       path: `/${'order-detail'}`,
-      label: `${shortenString('Chi Tiết Đơn Hàng', 1)}`,
+      label: `${shortenString('Chi Tiết Đơn Hàng', 10)}`,
     },
     {
       path: `/${'order-detail/'} ${parseInt(orderId)}`,

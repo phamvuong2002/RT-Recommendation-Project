@@ -65,7 +65,7 @@ export const DetailOrder = ({ dataOrder, dataDetail, status }) => {
                 ) : (
                   ''
                 )}
-                <div className="flex items-center justify-center">
+                <div className="flex items-center justify-center mt-4 xl:mt-0">
                   <p
                     className={`font-medium text-sm leading-6 whitespace-nowrap py-0.5 px-3 rounded-full ${dataOrder?.order_status === 'Cancelled' ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'} `}
                   >

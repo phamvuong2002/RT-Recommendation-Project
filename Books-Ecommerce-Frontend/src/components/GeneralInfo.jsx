@@ -9,7 +9,6 @@ import { TextLoader } from './loaders/TextLoader';
 import { ChangEmailPhone } from '../helpers/ChangEmailPhone';
 import { AddEmailPhone } from '../helpers/AddEmailPhone';
 
-
 //USER SERVICE
 import { getUserInfo, updateUserInfo } from '../apis/user';
 import { AppContext } from '../contexts/main';
@@ -17,7 +16,6 @@ import { fetchAPI } from '../helpers/fetch';
 import { getorders } from '../apis/order';
 import { shortenString } from '../utils/shortenString';
 import { getaddresses } from '../apis/address';
-
 
 export const GeneralInfo = () => {
   const [bills, setBills] = useState([]);
@@ -33,8 +31,8 @@ export const GeneralInfo = () => {
   const [phoneChange, setPhoneChange] = useState('');
 
   const [OpenEmailPhoneAdd, setOpenEmailPhoneAdd] = useState(false);
-  const [isAddedEmail, setAddEmail] = useState('')
-  const [isChangeEmail, setChangeEmail] = useState('')
+  const [isAddedEmail, setAddEmail] = useState('');
+  const [isChangeEmail, setChangeEmail] = useState('');
 
   const NUMLOADERS = 1;
 
@@ -67,34 +65,30 @@ export const GeneralInfo = () => {
     if (type === 'email') {
       if (!userData.email) {
         // console.log('in add email')
-        setAddEmail(true)
-        setOpenEmailPhoneAdd(true)
+        setAddEmail(true);
+        setOpenEmailPhoneAdd(true);
       } else {
         // console.log('in change email')
         setEmailChange(userData.email);
         setPhoneChange(userData.phonenumber);
-        setChangeEmail(true)
+        setChangeEmail(true);
         setOpenChangeEPPopup(true);
       }
       // console.log('in set email change');
-
     } else if (type === 'phone') {
       if (!userData.phonenumber) {
-        setAddEmail(false)
+        setAddEmail(false);
         // console.log('in add phone')
-        setOpenEmailPhoneAdd(true)
-      }
-      else {
+        setOpenEmailPhoneAdd(true);
+      } else {
         // console.log('in change phone')
         setEmailChange(userData.email);
         setPhoneChange(userData.phonenumber);
-        setChangeEmail(false)
+        setChangeEmail(false);
         setOpenChangeEPPopup(true);
       }
     }
-
-  }
-
+  };
 
   //Fetch Bills
   useEffect(() => {
@@ -136,7 +130,7 @@ export const GeneralInfo = () => {
 
   //Load thông tin user
   useEffect(() => {
-    console.log('reload')
+    console.log('reload');
     setPageLoading(true);
     const loadUserData = async () => {
       if (!userId) return;
@@ -145,8 +139,6 @@ export const GeneralInfo = () => {
       });
       if (user_data.status === 200) {
         setUserData(user_data.metadata.user_data);
-      } else{
-        
       }
 
       setPageLoading(false);
@@ -161,7 +153,6 @@ export const GeneralInfo = () => {
       setReloadUserData(false);
       setIsChangeNameOpen(false);
     }, 50);
-
   }, [reloadUserData, userId, token]);
 
   return (
@@ -270,7 +261,6 @@ export const GeneralInfo = () => {
                   setOpen={setOpenEmailPhoneAdd}
                   setReload={setReloadUserData}
                   isAddEmail={isAddedEmail}
-
                 />
                 <hr className="border-t border-white xl:hidden" />
               </div>
@@ -407,7 +397,7 @@ export const GeneralInfo = () => {
       </div>
 
       {/* Đơn hàng gần đây */}
-      <div className="px-1 xl:px-4 mt-2 gap-2 bg-white xl:overflow-y-auto no-scrollbar">
+      <div className="px-1 xl:px-4 mt-2 gap-2 bg-white xl:overflow-y-auto no-scrollbar mb-2">
         <div className="font-semibold text-red-500 py-2 bg-white xl:hidden">
           Đơn Hàng Gần Đây ({bills.length})
         </div>

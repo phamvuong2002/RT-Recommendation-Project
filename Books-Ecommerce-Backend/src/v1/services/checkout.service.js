@@ -7,6 +7,7 @@ const db = require("../models/sequelize/models");
 const { calTotalPriceCart } = require("../utils/calculateTotalPrice");
 const CartService = require("./cart.service");
 const DiscountService = require("./discount.service");
+const FeedbackService = require("./feedback.service");
 const PaymentService = require("./payment");
 const { acquireLock, releaselock } = require("./redis.service");
 /*
@@ -266,6 +267,16 @@ class CheckoutService {
         ob_book_id: acquireBooks[i].bookId,
         ob_quantity: acquireBooks[i].quantity,
         ob_total_price: acquireBooks[i].totalPrice,
+      });
+
+      //create feedback
+      await FeedbackService.submitFeedback({
+        userId,
+        bookId: acquireBooks[i].bookId,
+        orderId: order.dataValues.order_id,
+        rating: 0,
+        comment: "",
+        isWithTran: false,
       });
 
       if (!newOrderDetail) throw new BadRequestError("Create order failed!");

@@ -199,7 +199,7 @@ export const SingleOrder = ({ order, orderId, status }) => {
                   </p>
                 </div>
               </div>
-              <div className="col-span-5 lg:col-span-2 flex items-center max-lg:mt-3 ">
+              <div className="col-span-5 lg:col-span-2 flex items-center max-lg:mt-3">
                 <div className="flex gap-3 lg:block">
                   <p className="font-medium xl:text-base text-sm leading-7 text-black">
                     Trạng Thái
@@ -211,8 +211,9 @@ export const SingleOrder = ({ order, orderId, status }) => {
                   </p>
                 </div>
               </div>
-              <div className="xl:col-span-1 flex items-center xl:justify-end max-lg:mt-3">
-                <div className="flex xl:flex-col xl:justify-end justify-between gap-[11rem] xl:gap-2">
+              {/* button rating for desktop */}
+              <div className="xl:col-span-1 xl:flex hidden items-center xl:justify-end max-lg:mt-3">
+                <div className="flex xl:flex-col xl:justify-end justify-between gap-[8rem] xl:gap-2">
                   <div
                     onClick={() => {
                       setChooseBill(order);
@@ -234,6 +235,30 @@ export const SingleOrder = ({ order, orderId, status }) => {
                   </Link>
                 </div>
               </div>
+            </div>
+            {/* button rating for mobile */}
+            <div className="flex items-center justify-between mt-2 xl:hidden">
+              <div className="flex xl:flex-col mt-4 justify-end xl:gap-2">
+                <div
+                  onClick={() => {
+                    setChooseBill(order);
+                    setIsOpenRatingPopup(isFeedback ? false : true);
+                  }}
+                  className="flex items-end font-medium text-sm whitespace-nowrap leading-6 text-blue-500 hover:text-blue-800 cursor-pointer"
+                >
+                  {status === 'failed'
+                    ? ''
+                    : isFeedback
+                      ? 'Đã Đánh giá'
+                      : 'Viết Đánh giá'}
+                </div>
+              </div>
+              <Link
+                to={`../payment?type=book&data=${order.bookId}&quantity=${order.bookQuantity}`}
+                className="flex justify-center items-center font-medium h-10 w-20 text-sm whitespace-nowrap leading-6 text-white hover:text-red-600 hover:bg-red-400 bg-red-500"
+              >
+                Mua Lại
+              </Link>
             </div>
           </div>
         </div>

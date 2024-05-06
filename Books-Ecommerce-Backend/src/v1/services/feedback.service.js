@@ -8,6 +8,7 @@ class FeedbackService {
     const feedbacks = await db.feedback.findAll({
       where: {
         feedback_bookid: bookId,
+        feedback_rating: { [db.Sequelize.Op.ne]: "0" },
       },
       attributes: ["feedback_rating"],
     });
@@ -74,6 +75,7 @@ class FeedbackService {
     const totalCount = await db.feedback.count({
       where: {
         feedback_bookid: bookId,
+        feedback_rating: { [db.Sequelize.Op.ne]: "0" },
         ...(filter === "default" ? "" : { feedback_rating: filter }),
       },
       order: orderBy,
@@ -84,6 +86,7 @@ class FeedbackService {
     const listFeedback = await db.feedback.findAll({
       where: {
         feedback_bookid: bookId,
+        feedback_rating: { [db.Sequelize.Op.ne]: "0" },
         ...(filter === "default" ? "" : { feedback_rating: filter }),
       },
       include: [
@@ -105,7 +108,12 @@ class FeedbackService {
   };
 
   //check user feedback
-  static isFeedback = async ({ userId, bookId, orderId }) => {
+  static isFeedback = async ({
+    userId,
+    bookId,
+    orderId,
+    isWithTran = true,
+  }) => {
     const foundUser = await db.user.findOne({
       where: {
         user_sid: userId,
@@ -113,20 +121,22 @@ class FeedbackService {
     });
     if (!foundUser) throw new NotFoundError("User not found");
 
-    const foundTransations = await db.transaction.findOne({
-      where: {
-        tran_order_id: orderId,
-      },
-    });
+    if (isWithTran) {
+      const foundTransations = await db.transaction.findOne({
+        where: {
+          tran_order_id: orderId,
+        },
+      });
 
-    if (
-      !foundTransations ||
-      (foundTransations.dataValues.tran_status !== "Completed" &&
-        foundTransations.dataValues.tran_status !== "Pending")
-    ) {
-      return {
-        isFeedback: true,
-      };
+      if (
+        !foundTransations ||
+        (foundTransations.dataValues.tran_status !== "Completed" &&
+          foundTransations.dataValues.tran_status !== "Pending")
+      ) {
+        return {
+          isFeedback: true,
+        };
+      }
     }
 
     const foundFeedback = await db.feedback.findOne({
@@ -134,6 +144,7 @@ class FeedbackService {
         feedback_userid: foundUser.dataValues.user_id,
         feedback_bookid: bookId,
         feedback_orderid: orderId,
+        feedback_rating: { [db.Sequelize.Op.ne]: "0" },
       },
     });
 
@@ -155,6 +166,7 @@ class FeedbackService {
     orderId,
     rating,
     comment,
+    isWithTran = true,
   }) => {
     //find user
     const foundUser = await db.user.findOne({
@@ -175,32 +187,50 @@ class FeedbackService {
       userId,
       bookId,
       orderId: foundOrder.dataValues.order_id,
+      isWithTran,
     });
 
-    if (status.isFeedback) throw new BadRequestError("Book has been reviewed");
-
-    const feedback = await db.feedback.create({
-      feedback_userid: foundUser.dataValues.user_id,
-      feedback_bookid: bookId,
-      feedback_orderid: foundOrder.dataValues.order_id,
-      feedback_rating: JSON.stringify(rating),
-      feedback_content: comment,
-    });
+    let feedback = null;
+    if (isWithTran || status.isFeedback) {
+      feedback = await db.feedback.update(
+        {
+          feedback_rating: JSON.stringify(rating),
+          feedback_content: comment,
+        },
+        {
+          where: {
+            feedback_userid: foundUser.dataValues.user_id,
+            feedback_bookid: bookId,
+            feedback_orderid: foundOrder.dataValues.order_id,
+          },
+        }
+      );
+    } else {
+      feedback = await db.feedback.create({
+        feedback_userid: foundUser.dataValues.user_id,
+        feedback_bookid: bookId,
+        feedback_orderid: foundOrder.dataValues.order_id,
+        feedback_rating: JSON.stringify(rating),
+        feedback_content: comment,
+      });
+    }
 
     if (!feedback) throw new BadRequestError("Create feedback failed!");
 
     //update book rating
-    const newRating =
-      (foundBook.dataValues.book_avg_rating *
-        foundBook.dataValues.book_num_rating +
-        rating) /
-      (foundBook.dataValues.book_num_rating + 1);
-    await foundBook.set({
-      book_avg_rating: newRating.toFixed(1),
-      book_num_rating: foundBook.dataValues.book_num_rating + 1,
-    });
+    if (rating > 0) {
+      const newRating =
+        (foundBook.dataValues.book_avg_rating *
+          foundBook.dataValues.book_num_rating +
+          rating) /
+        (foundBook.dataValues.book_num_rating + 1);
+      await foundBook.set({
+        book_avg_rating: newRating.toFixed(1),
+        book_num_rating: foundBook.dataValues.book_num_rating + 1,
+      });
 
-    await foundBook.save();
+      await foundBook.save();
+    }
 
     return feedback;
   };

@@ -156,7 +156,7 @@ export const Navbar = () => {
       setUserId('');
       setToken('');
       // setSession('')
-      
+
       // navigate('/');
       window.location.assign('/')
       console.log('in logout success');
@@ -197,7 +197,8 @@ export const Navbar = () => {
 
   return (
     <nav className="max-w-screen-2xl font-inter flex flex-col ">
-      <div className=" mx-auto my-1  sm:max-w-screen-md md:max-w-screen-2xl flex justify-between items-center md:justify-around lg:grid lg:grid-cols-6 lg:gap-4 lg:justify-items-start container  relative ">
+      <div className=" mx-auto my-1  sm:max-w-screen-md md:max-w-screen-2xl flex justify-between items-center md:justify-around lg:grid lg:grid-cols-6 lg:gap-4 lg:justify-items-start container  relative">
+    
         <Link
           to="/"
           className="hidden lg:block text-xs sm:text-lg lg:text-xl lg:pl-6 lg:col-span-1"
@@ -205,12 +206,12 @@ export const Navbar = () => {
           <img src="/logo/logo_bookada_800x400.png" alt="Bookada-logo" />
         </Link>
 
-        <div className="block lg:hidden w-4 h-4 ml-2 mb-1 md:absolute md:left-0  ">
+        <div className="block lg:hidden w-[1.25rem] h-[1.25rem] ml-2 mb-1 md:absolute md:left-0  ">
           <button onClick={toggleMenu}>
             {isMenuOpen ? (
               ''
             ) : (
-              <FaBars className="w-5 h-5 sm:w-5 sm:h-5 text-red-500 " />
+              <FaBars className=" w-[1.25rem] h-[1.25rem] items-center  text-red-500 " />
             )}
           </button>
         </div>
@@ -232,10 +233,10 @@ export const Navbar = () => {
         {/* Vị trí thanh Search*/}
         <div className="search-bar-container relative inline-block w-[75%] mx-auto md:w-[55%] lg:col-span-2 lg:w-[120%] lg:ml-[-4.5rem] rounded-[5px] my-3 ">
           <Search />
-        </div>  
+        </div>
 
         {/* ACCOUNT: Guest/User*/}
-        <div className="hidden text-xl lg:text-lg ml-1  sm:inline-flex justify-between gap-1 mr-1 md:absolute  md:right-4 md:mr-0 lg:relative lg:mr-3 sm:my-auto sm:gap-4   text-black lg:col-span-2 lg:justify-self-center lg:gap-10 ">
+        <div className="hidden  text-xl lg:text-lg ml-1  sm:inline-flex justify-between gap-1 mr-1 md:absolute  md:right-4 md:mr-0 lg:relative lg:mr-3 sm:my-auto sm:gap-4   text-black lg:col-span-2 lg:justify-self-center lg:gap-2 xl:gap-10 ">
           <div className="flex items-center">
             {/* Chưa đăng nhập sẽ hiển thị popup Đăng ký/Đăng nhập */}
             <div
@@ -246,8 +247,8 @@ export const Navbar = () => {
                 setOpen={setOpen}
                 icon={
                   <div className=" flex items-center text-lg font-medium text-black ">
-                    <FaUser className="h-4 w-4 ml-1 sm:h-5 sm:w-5 text-red-500 text-xs " />
-                    <p className="hidden font-inter lg:block ml-2">
+                    <FaUser className="h-4 w-4 ml-4 sm:h-5 sm:w-5 text-red-500 text-xs " />
+                    <p className="hidden font-inter text-balance lg:block ml-3">
                       Đăng nhập/ Đăng ký{' '}
                     </p>
                   </div>
@@ -281,7 +282,7 @@ export const Navbar = () => {
               as="div"
               className={`${token ? 'block' : 'hidden'} relative inline-block text-left`}
             >
-              {({}) => (
+              {({ }) => (
                 <div>
                   <div
                     onClick={() => setOpenDropdown(!openDropdown)}
@@ -292,7 +293,7 @@ export const Navbar = () => {
                       className={`group flex items-center  text-lg font-medium text-gray-700 hover:text-gray-90`}
                     >
                       <FaUser className="h-4 w-4 sm:h-5 sm:w-5 text-red-500" />
-                      <p className="hidden lg:block truncate max-w-[10rem] ml-2">
+                      <p className="hidden lg:block truncate max-w-[10rem] ml-3 font-inter">
                         {' '}
                         {token ? username : 'Đăng nhập/ Đăng ký'}
                       </p>
@@ -368,7 +369,7 @@ export const Navbar = () => {
                 {numCart >= 100 ? '99+' : numCart >= 0 ? numCart : 0}{' '}
               </span>
             </div>
-            <p className="hidden lg:block ">Giỏ hàng</p>
+            <p className="hidden lg:block font-inter">Giỏ hàng</p>
             <ShoppingCartsPopup
               open={isOpenShoppingCarts}
               setOpen={setIsOpenShoppingCarts}
@@ -384,16 +385,18 @@ export const Navbar = () => {
       </div>
 
       <div
-        className={`block lg:hidden absolute inset-y-0 left-0 lg:mx-auto lg:mt-1 z-10  w-full ease-in-out duration-500 ${isMenuOpen ? 'translate-x-0' : '-translate-x-full '}`}
+        className={`block lg:hidden absolute inset-y-0 left-0 lg:mx-auto lg:mt-1 z-10  w-full ease-in-out duration-500    ${isMenuOpen ? 'translate-x-0' : '-translate-x-full '}`}
       >
-        <div className=" w-full  flex lg:hidden text-center  bg-red-500 py-5 text-white font-bold">
+     
+        <div className=" w-full flex flex-row  lg:hidden text-center  bg-red-500 py-5 text-white font-bold">
           <button
-            className=" ml-2 md:ml-5 text-white text-center"
+            className="basis-1/5  text-white text-center flex"
             onClick={() => setIsMenuOpen(false)}
           >
-            <FaTimes className="h-5 w-6  md:h-7 md:w-7 mx-auto" />
+            <FaTimes className="h-6 w-6 md:h-8 md:w-8 mx-auto" />
           </button>
-          <h1 className=" mx-auto text-sm md:text-lg"> DANH MỤC SẢN PHẨM</h1>
+          
+          <h1 className="basis-4/5 text-sm md:text-lg my-auto"> DANH MỤC SẢN PHẨM</h1>
         </div>
         <Category_dropdown />
       </div>

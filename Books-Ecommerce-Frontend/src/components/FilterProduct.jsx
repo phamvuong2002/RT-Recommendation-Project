@@ -347,7 +347,7 @@ export default function FilterProduct({ _userId, _cate, _limit, _query, _price, 
 
       {/* mobile */}
 
-      <main className=" flex lg:hidden   flex-col w-full">
+      <main className=" flex lg:hidden  flex-col w-full">
         <div className="flex w-full justify-between  border-b border-gray-200  ">
 
           <div className="flex items-center pl-3">
@@ -376,7 +376,7 @@ export default function FilterProduct({ _userId, _cate, _limit, _query, _price, 
                 leaveTo="transform opacity-0 scale-95"
               >
 
-                <Menu.Items className="absolute  z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <Menu.Items className="absolute z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
                   <div className="py-1">
                     {sortOptions.map((option) => (
                       <Menu.Item key={option.name}>
@@ -407,12 +407,12 @@ export default function FilterProduct({ _userId, _cate, _limit, _query, _price, 
           <div className="px-4 py-6 ">
             <PopupCenterPanel open={isMenuOpen} setOpen={setIsMenuOpen} icon={<HiFunnel />} title={'Bộ lọc'}
               content={
-                <form className={` ${isMenuOpen ? "" : "hidden"}  lg:block `}>
+                <form className={`${isMenuOpen ? "" : "hidden"}  lg:block `}>
                   {/* name */}
                   {/* TRUYỀN Ở ĐÂY */}
                   {isLoading && <p>Loading...</p>}
                   {!isLoading &&
-                    <ul className={``}>
+                    <ul className={`min-h-[4rem] max-h-[15rem] overflow-y-scroll no-scrollbar`}>
                       {cate.map((menu, index) => {
                         const depthLevel = 0;
                         return <MenuItems items={menu} key={index} depthLevel={depthLevel} />;
@@ -472,7 +472,7 @@ export default function FilterProduct({ _userId, _cate, _limit, _query, _price, 
                   ))}
                 </form>
               }
-
+              contentClassName={'max-h-[80%]'}
               titleClassName={'pt-0 pb-2 px-0 '}
             />
           </div>

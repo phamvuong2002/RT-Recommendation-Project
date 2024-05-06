@@ -14,47 +14,24 @@ const MenuItems = ({ items, depthLevel }) => {
   const navigate = useNavigate()
   let params = new URLSearchParams(document.location.search);
 
-  if (params.has('categories', 'all')) {
-    params.set('categories', '')
-  }
-
   let hasCate = params.has('categories')
-  const [dropdown, setDropdown] = useState(false);
-
   let cateParam = []
   if (!hasCate) {
     cateParam = ['all']
     params.set('categories', 'all')
-
+    console.log(cateParam)
   } else {
     cateParam = params.get('categories').split(',')
 
   }
 
-  useEffect(() => {
-    const handler = (event) => {
-      if (dropdown && ref.current && !ref.current.contains(event.target)) {
-        // console.log(ref.current)
-        setDropdown(false);
-      }
-    };
-
-  }, [dropdown]);
-
-
-  const [isMenuOpen, setIsMenuOpen] = useState(true);
-
 
   const handleSelectCategory = (event) => {
     // console.log(items)
-    // console.log(`${items.name_slug}-${depthLevel}`)
-    // console.log(`${items.parent}-${depthLevel}`)
-    // console.log(cateParam[depthLevel - 1])
-    // console.log(cateParam)
-    // console.log('true/false ', items.name_slug==cateParam[depthLevel] && items.parent==cateParam[depthLevel-1])
-    // console.log(event.target.id)
+    console.log(`${items.name_slug}-${depthLevel}`)
     if (!event.target.checked) {
       cateParam.splice(depthLevel)
+
     } else {
       // cateParam[depthLevel] = items.id
 
@@ -75,17 +52,16 @@ const MenuItems = ({ items, depthLevel }) => {
       }
 
     }
-    // console.log('true/false ', )
-    // console.log(cateParam)
-    // console.log(`${items.id}-${depthLevel}`)
-    if (cateParam.length > 0) {
-      // const searchParams = new URLSearchParams({ 'genre': cateParam });
-      params.set('categories', cateParam)
 
+    console.log(cateParam.length)
+    if (cateParam.length > 0) {
+      params.set('categories', cateParam)
       navigate(`/search?${params}`)
     } else {
+
       cateParam = ['all']
       params.set('categories', 'all')
+
       navigate(`/search?${params}`)
     }
   }
@@ -93,13 +69,18 @@ const MenuItems = ({ items, depthLevel }) => {
 
   return (
     <li
-      className={`menu-items  font-inter text-black text-left pl-1 pb-2 sm:text-black `}>
+      className={`menu-items  font-inter text-black text-left pl-1 pb-2 sm:text-black depth-${depthLevel} sub-${items.submenu}
+      ${cateParam[depthLevel - 1]}-${items.parent} ${cateParam[depthLevel]}-${items.name_slug}
+      ${cateParam[0] === 'all'
+          || ((cateParam[depthLevel - 1] == items.parent) &&
+            ((cateParam[depthLevel] === items.name_slug) || (cateParam[depthLevel] === undefined)))
+          || (depthLevel === 0 && (cateParam[0] === items.name_slug)) ? "" : "hidden"} `}>
 
       <div key={`${items.name_slug}-${depthLevel}`} className={`flex items-center `}>
         <input
           id={`filter-${items.name_slug}-${depthLevel}`}
           name={`${items.name_slug}`}
-          defaultValue={items.name_slug}
+         
           type="checkbox"
           aria-checked={true}
           onChange={handleSelectCategory}
@@ -112,6 +93,7 @@ const MenuItems = ({ items, depthLevel }) => {
         >
           {items.name}
         </label>
+
       </div>
 
       {items.submenu ? (
@@ -119,13 +101,13 @@ const MenuItems = ({ items, depthLevel }) => {
           <Dropdown
             depthLevel={depthLevel}
             submenus={items.submenu}
-            dropdown={items.name_slug==cateParam[depthLevel]}
+            dropdown={cateParam[depthLevel] === items.name_slug}
           />
         </>
       ) : ""}
 
     </li>
-    
+
 
   );
 };

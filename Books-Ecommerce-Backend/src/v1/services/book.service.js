@@ -70,45 +70,46 @@ class BookService {
     }
 
     //find categoriesid by name
-    for (let i = 0; i < categories.length; i++) {
-      //console.log("categories", categories[i])
-      if (i === 0) {
-        let categorData = await db.category_1.findOne({
-          where: {
-            cate1_sid: categories[i]
-          }
-        });
-        categoriesId.push(categorData.dataValues.cate1_id)
-      } else if (i === 1) {
-        let categorData = await db.category_2.findOne({
-          where: {
-            cate2_sid: categories[i]
-          }
-        });
-        categoriesId.push(categorData.dataValues.cate2_id)
+    if (categories && categories.length > 0) {
+      for (let i = 0; i < categories.length; i++) {
+        //console.log("categories", categories[i])
+        if (i === 0) {
+          let categorData = await db.category_1.findOne({
+            where: {
+              cate1_sid: categories[i]
+            }
+          });
+          categoriesId.push(categorData.dataValues.cate1_id)
+        } else if (i === 1) {
+          let categorData = await db.category_2.findOne({
+            where: {
+              cate2_sid: categories[i]
+            }
+          });
+          categoriesId.push(categorData.dataValues.cate2_id)
+        }
+        else if (i === 2) {
+          let categorData = await db.category_3.findOne({
+            where: {
+              cate3_sid: categories[i]
+            }
+          });
+          categoriesId.push(categorData.dataValues.cate3_id)
+        }
+        else {
+          let categorData = await db.category_4.findOne({
+            where: {
+              cate4_sid: categories[i]
+            }
+          });
+          categoriesId.push(categorData.dataValues.cate4_id)
+        }
       }
-      else if (i === 2) {
-        let categorData = await db.category_3.findOne({
-          where: {
-            cate3_sid: categories[i]
-          }
+      if (categoriesId && categoriesId.length > 0) {
+        whereClause[Op.and] = categoriesId.map((category, index) => {
+          return Sequelize.literal(`JSON_EXTRACT(book_categories, '$[${index}]') = ${category}`);
         });
-        categoriesId.push(categorData.dataValues.cate3_id)
       }
-      else {
-        let categorData = await db.category_4.findOne({
-          where: {
-            cate4_sid: categories[i]
-          }
-        });
-        categoriesId.push(categorData.dataValues.cate4_id)
-      }
-    }
-    if (categoriesId && categoriesId.length > 0) {
-
-      whereClause[Op.and] = categoriesId.map((category, index) => {
-        return Sequelize.literal(`JSON_EXTRACT(book_categories, '$[${index}]') = ${category}`);
-      });
     }
 
     if (publisher) {

@@ -4,7 +4,7 @@ import Bills from './Bills';
 import { ShoppingCartLoader } from './loaders/ShoppingCartLoader';
 import { SingleBill } from './SingleBill';
 import { fetchAPI } from '../helpers/fetch';
-import { getOrder } from '../apis/order';
+import { getorders } from '../apis/order';
 import { AppContext } from '../contexts/main';
 
 export const OrderInfo = () => {
@@ -18,22 +18,28 @@ export const OrderInfo = () => {
     //Fetch Bills Data
     useEffect(() => {
         const BillsData = async () => {
-            let billsData = await fetchAPI(`../${getOrder}`, 'POST', {
-                "userId": 1
+            setReloadBill(true)
+            const billlData = await fetchAPI(`../${getorders}`, 'POST', {
+                userId: userId,
+                page: 1,
+                limit: 10,
             });
-
-            setBills(billsData.metadata.order_book)
+            if (billlData.status === 200) {
+                setBills(billlData.metadata);
+            } else {
+                setBills([]);
+            }
+            setReloadBill(false);
         };
         BillsData()
-        setReloadBill(false)
-    }, [reloadBill])
+    }, [userId])
 
 
     // Return Grouped Bills (check by Status) To Show At Correct Tab
     const checkGroupedBillsStaus = (bills, activeTab) => {
         const groupBillByStatusAndID = bills.reduce((accumulator, bill) => {
-            if (bill.ob_status === activeTab) {
-                const billId = bill.ob_order_id; //tại rảnh nên thích gán như vậy, 
+            if (bill.status === activeTab) {
+                const billId = bill.billId; //tại rảnh nên thích gán như vậy, 
                 //mà nếu gán như vậy thì nó sẽ gọi 1 cái bill 1 lần thôi rồi chọn id ra, tối ưu hơn
                 if (!accumulator[billId]) {
                     accumulator[billId] = []; // Tạo một mảng mới nếu chưa có số hóa đơn
@@ -43,10 +49,10 @@ export const OrderInfo = () => {
 
             return accumulator;
         }, {});
-        console.log("BILLL", Object.keys(groupBillByStatusAndID))
+        //console.log("BILLL", Object.keys(groupBillByStatusAndID))
         const renderedBills = Object.keys(groupBillByStatusAndID).map(billId => {
             return (
-                <div className="" key={billId}>
+                <div key={billId}>
                     <div className="flex items-center text-xs justify-between xl:text-base gap-3 xl:py-2 xl:h-8 xl:rounded-full h-7 w-full text-white px-1 font-semibold bg-red-500">
                         <div className="flex gap-1">
                             <div className="xl:pl-1"> Số hoá đơn #{billId}</div>
@@ -55,7 +61,7 @@ export const OrderInfo = () => {
                     </div>
                     {/* Render Swiper here for each group of bills */}
                     {groupBillByStatusAndID[billId].map(bill => (
-                        <SingleBill key={bill.ob_order_id} bill={bill} setReload={setReloadBill} />
+                        <SingleBill key={bill.billId} bill={bill} setReload={setReloadBill} />
                     ))}
                 </div>
             );
@@ -129,15 +135,15 @@ export const OrderInfo = () => {
                 <div className="m-2">
                     {/*Tất cả đơn hàng*/}
                     <div className={activeTab === 'All' ? "block h-full overflow-y-auto" : "hidden"}>
-                        {
-                            reloadBill ? <ShoppingCartLoader items={5} /> :
-                                !bills.length ?
-                                    <div className="flex flex-col gap-1 items-center justify-center text-gray-300">
-                                        <img src="/img/empty-box.png" />
-                                        Bạn chưa có đơn hàng nào gần đây
-                                    </div>
-                                    :
-                                    <Bills className='' bills={bills} setReload={setReloadBill} />
+                        {reloadBill ? (
+                            <ShoppingCartLoader items={5} />
+                        ) : !bills.length ? (
+                            <div className="flex flex-col gap-1 items-center justify-center text-gray-300">
+                                <img src="/img/empty-box.png" />
+                                Bạn chưa có đơn hàng nào gần đây
+                            </div>
+                        ) : (
+                            <Bills className='' bills={bills} setReload={setReloadBill} />)
                         }
 
                     </div>

@@ -130,7 +130,7 @@ export const GeneralInfo = () => {
 
   //Load thông tin user
   useEffect(() => {
-    console.log('reload');
+    //console.log('reload');
     setPageLoading(true);
     const loadUserData = async () => {
       if (!userId) return;

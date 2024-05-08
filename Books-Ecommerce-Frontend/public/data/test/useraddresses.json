@@ -1,0 +1,47 @@
+[
+    {
+        "addressid": "1",
+        "userFullName": "Pham Vuong",
+        "userPhone": "0948908485",
+        "addressDetail": "700 Đường 3/2",
+        "proviceid": 202,
+        "distristid": 1452,
+        "wardid": "21015",
+        "proviceName": "Hồ Chí Minh",
+        "distristName": "Quận 10",
+        "wardName": "Phường 15",
+        "addressDefault": true,
+        "addressPayment": true,
+        "isHome": true
+    },
+    {
+        "addressid": "2",
+        "userFullName": "Nguyen Thi An",
+        "userPhone": "0937048463",
+        "addressDetail": "123 Nguyễn Văn Cừ",
+        "proviceid": 202,
+        "distristid": 1447,
+        "wardid": "20512",
+        "proviceName": "Hồ Chí Minh",
+        "distristName": "Quận 5",
+        "wardName": "Phường 12",
+        "addressDefault": false,
+        "addressPayment": false,
+        "isHome": false
+    },
+    {
+        "addressid": "3",
+        "userFullName": "Tran Van B",
+        "userPhone": "0925575426",
+        "addressDetail": "Lê Văn Lương 456",
+        "proviceid": 201,
+        "distristid": 3440,
+        "wardid": "907557",
+        "proviceName": "Hà Nội",
+        "distristName": "Quận Nam Từ Liêm",
+        "wardName": "Phường Mễ Trì",
+        "addressDefault": false,
+        "addressPayment": false,
+        "isHome": true
+    }
+]

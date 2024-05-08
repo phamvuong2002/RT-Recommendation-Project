@@ -1,0 +1,182 @@
+[
+    {
+        "commentId": "comment1",
+        "username": "HappyHiker23",
+        "avatar": "https://picsum.photos/300/300",
+        "date": "2024-03-20",
+        "rating": 5,
+        "certifiedPurchase": true,
+        "content": "This trail was amazing! The views were breathtaking."
+    },
+    {
+        "commentId": "comment2",
+        "username": "ArtLover88",
+        "avatar": "https://picsum.photos/300/300",
+        "date": "2024-03-19",
+        "rating": 4,
+        "certifiedPurchase": false,
+        "content": "The art exhibit was well-curated. I loved every piece!"
+    },
+    {
+        "commentId": "comment3",
+        "username": "FoodieFanatic",
+        "avatar": "https://picsum.photos/300/300",
+        "date": "2024-03-18",
+        "rating": 3,
+        "certifiedPurchase": true,
+        "content": "The restaurant had great ambiance, but the food was just okay."
+    },
+    {
+        "commentId": "comment4",
+        "username": "Bookworm101",
+        "avatar": "https://picsum.photos/300/300",
+        "date": "2024-03-17",
+        "rating": 2,
+        "certifiedPurchase": true,
+        "content": "I was disappointed by the ending. It felt rushed."
+    },
+    {
+        "commentId": "comment5",
+        "username": "TechGeek123",
+        "avatar": "https://picsum.photos/300/300",
+        "date": "2024-03-16",
+        "rating": 1,
+        "certifiedPurchase": false,
+        "content": "The product didn't live up to its hype. Very disappointed."
+    },
+    {
+        "commentId": "comment6",
+        "username": "AdventureSeeker",
+        "avatar": "https://picsum.photos/300/300",
+        "date": "2024-03-15",
+        "rating": 5,
+        "certifiedPurchase": true,
+        "content": "What an exhila rating experience! I can't wait to go again."
+    },
+    {
+        "commentId": "comment7",
+        "username": "NatureLover123",
+        "avatar": "https://picsum.photos/300/300",
+        "date": "2024-03-14",
+        "rating": 4,
+        "certifiedPurchase": true,
+        "content": "The park was stunning, especially during sunset."
+    },
+    {
+        "commentId": "comment8",
+        "username": "GourmetGuru",
+        "avatar": "https://picsum.photos/300/300",
+        "date": "2024-03-13",
+        "rating": 3,
+        "certifiedPurchase": false,
+        "content": "The restaurant had a unique menu, but the portions were small."
+    },
+    {
+        "commentId": "comment9",
+        "username": "MusicMaestro",
+        "avatar": "https://picsum.photos/300/300",
+        "date": "2024-03-12",
+        "rating": 2,
+        "certifiedPurchase": true,
+        "content": "The concert was disappointing. The sound quality was poor."
+    },
+    {
+        "commentId": "comment10",
+        "username": "Fashionista24",
+        "avatar": "https://picsum.photos/300/300",
+        "date": "2024-03-11",
+        "rating": 1,
+        "certifiedPurchase": false,
+        "content": "The clothing quality was subpar. Won't be shopping here again."
+    },
+    {
+        "commentId": "comment11",
+        "username": "PetLover99",
+        "avatar": "https://picsum.photos/300/300",
+        "date": "2024-03-10",
+        "rating": 5,
+        "certifiedPurchase": true,
+        "content": "The pet store had a great variety of products. My pet loves them!"
+    },
+    {
+        "commentId": "comment12",
+        "username": "FitnessFanatic",
+        "avatar": "https://picsum.photos/300/300",
+        "date": "2024-03-09",
+        "rating": 4,
+        "certifiedPurchase": true,
+        "content": "The gym has state-of-the-art equipment. A great workout!"
+    },
+    {
+        "commentId": "comment13",
+        "username": "MovieBuff456",
+        "avatar": "https://picsum.photos/300/300",
+        "date": "2024-03-08",
+        "rating": 3,
+        "certifiedPurchase": false,
+        "content": "The movie had an interesting plot but lacked character development."
+    },
+    {
+        "commentId": "comment14",
+        "username": "DIYEnthusiast",
+        "avatar": "https://picsum.photos/300/300",
+        "date": "2024-03-07",
+        "rating": 2,
+        "certifiedPurchase": true,
+        "content": "The DIY kit was missing essential parts. Very frust rating."
+    },
+    {
+        "commentId": "comment15",
+        "username": "TravelBug789",
+        "avatar": "https://picsum.photos/300/300",
+        "date": "2024-03-06",
+        "rating": 1,
+        "certifiedPurchase": false,
+        "content": "The hotel room was dirty and poorly maintained."
+    },
+    {
+        "commentId": "comment16",
+        "username": "PhotographyPro",
+        "avatar": "https://picsum.photos/300/300",
+        "date": "2024-03-05",
+        "rating": 5,
+        "certifiedPurchase": true,
+        "content": "The camera I bought exceeded my expectations. Great photos!"
+    },
+    {
+        "commentId": "comment17",
+        "username": "CoffeeConnoisseur",
+        "avatar": "https://picsum.photos/300/300",
+        "date": "2024-03-04",
+        "rating": 4,
+        "certifiedPurchase": true,
+        "content": "The coffee shop had a cozy atmosphere. Loved the espresso!"
+    },
+    {
+        "commentId": "comment18",
+        "username": "HistoryBuff123",
+        "avatar": "https://picsum.photos/300/300",
+        "date": "2024-03-03",
+        "rating": 3,
+        "certifiedPurchase": false,
+        "content": "The museum tour was informative, but some exhibits were out date."
+    },
+    {
+        "commentId": "comment19",
+        "username": "AnimalRightsActivist",
+        "avatar": "https://picsum.photos/300/300",
+        "date": "2024-03-02",
+        "rating": 2,
+        "certifiedPurchase": true,
+        "content": "The zoo enclosures were too small. Animals seemed distressed."
+    },
+    {
+        "commentId": "comment20",
+        "username": "GreenThumb456",
+        "avatar": "https://picsum.photos/300/300",
+        "date": "2024-03-01",
+        "rating": 1,
+        "certifiedPurchase": false,
+        "content": "The plant I ordered arrived damaged. Poor packaging."
+    }
+]

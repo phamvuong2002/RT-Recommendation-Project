@@ -1,0 +1,1 @@
+export const collectBehaviour = 'api/v1/api/collect/behaviour';

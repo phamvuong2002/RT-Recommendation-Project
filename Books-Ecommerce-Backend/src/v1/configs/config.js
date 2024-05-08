@@ -50,23 +50,23 @@ const production = {
     password: process.env.PRO_DB_PASSWORD || "vuong_dev2002",
   },
   mysql_db_1: {
-    alias: process.env.MYSQL_DB_ALIAS_MASTER || "mydb",
+    alias: process.env.MYSQL_DB_ALIAS_MASTER_PRO || "mydb",
     config: {
-      host: process.env.MYSQL_DB_HOST_MASTER || "localhost",
-      port: process.env.MYSQL_DB_PORT_MASTER || 3306,
-      database: process.env.MYSQL_DB_ALIAS_MASTER || "mydb",
-      user: process.env.MYSQL_DB_USERNAME_MASTER || "root",
-      password: process.env.MYSQL_DB_PASSWORD_MASTER || "vuong",
+      host: process.env.MYSQL_DB_HOST_MASTER_PRO || "localhost",
+      port: process.env.MYSQL_DB_PORT_MASTER_PRO || 3306,
+      database: process.env.MYSQL_DB_ALIAS_MASTER_PRO || "mydb",
+      user: process.env.MYSQL_DB_USERNAME_MASTER_PRO || "root",
+      password: process.env.MYSQL_DB_PASSWORD_MASTER_PRO || "vuong",
       connectionLimit: 10,
       multipleStatements: true,
     },
   },
   payment: {
-    paypal: {
+    paypal_data: {
       clientId: process.env.PRO_PAYMENT_PAYPAL_CLIENT_ID,
       clientSecret: process.env.PRO_PAYMENT_PAYPAL_CLIENT_SECRET,
     },
-    vnpay: {
+    vnpay_data: {
       clientId: process.env.PRO_PAYMENT_VNPAY_CLIENT_ID,
       clientSecret: process.env.PRO_PAYMENT_VNPAY_CLIENT_SECRET,
       apiHost: process.env.PRO_PAYMENT_VNPAY_API_HOST,

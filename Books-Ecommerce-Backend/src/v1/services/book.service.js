@@ -47,19 +47,28 @@ class BookService {
       where: {
         book_status: 1,
       },
+      limit: 5,
     });
   };
 
   static getBookById = async (bookId) => {
     let bookData = await db.book.findOne({
       where: {
-        book_id: bookId
-      }
+        book_id: bookId,
+      },
     });
-    return bookData
-  }
+    return bookData;
+  };
 
-  static getBookSearchFilterSort = async (search, categories, price, publisher, sortBy, page, limit) => {
+  static getBookSearchFilterSort = async (
+    search,
+    categories,
+    price,
+    publisher,
+    sortBy,
+    page,
+    limit
+  ) => {
     let whereClause = {};
     let include = [];
     let categoriesId = [];
@@ -76,38 +85,38 @@ class BookService {
         if (i === 0) {
           let categorData = await db.category_1.findOne({
             where: {
-              cate1_sid: categories[i]
-            }
+              cate1_sid: categories[i],
+            },
           });
-          categoriesId.push(categorData.dataValues.cate1_id)
+          categoriesId.push(categorData.dataValues.cate1_id);
         } else if (i === 1) {
           let categorData = await db.category_2.findOne({
             where: {
-              cate2_sid: categories[i]
-            }
+              cate2_sid: categories[i],
+            },
           });
-          categoriesId.push(categorData.dataValues.cate2_id)
-        }
-        else if (i === 2) {
+          categoriesId.push(categorData.dataValues.cate2_id);
+        } else if (i === 2) {
           let categorData = await db.category_3.findOne({
             where: {
-              cate3_sid: categories[i]
-            }
+              cate3_sid: categories[i],
+            },
           });
-          categoriesId.push(categorData.dataValues.cate3_id)
-        }
-        else {
+          categoriesId.push(categorData.dataValues.cate3_id);
+        } else {
           let categorData = await db.category_4.findOne({
             where: {
-              cate4_sid: categories[i]
-            }
+              cate4_sid: categories[i],
+            },
           });
-          categoriesId.push(categorData.dataValues.cate4_id)
+          categoriesId.push(categorData.dataValues.cate4_id);
         }
       }
       if (categoriesId && categoriesId.length > 0) {
         whereClause[Op.and] = categoriesId.map((category, index) => {
-          return Sequelize.literal(`JSON_EXTRACT(book_categories, '$[${index}]') = ${category}`);
+          return Sequelize.literal(
+            `JSON_EXTRACT(book_categories, '$[${index}]') = ${category}`
+          );
         });
       }
     }
@@ -115,15 +124,15 @@ class BookService {
     if (publisher) {
       include.push({
         model: db.publisher,
-        where: { pub_slug: publisher }
+        where: { pub_slug: publisher },
       });
     }
 
     if (price && price.length > 0) {
-      minPrice = parseFloat(price[0])
-      maxPrice = parseFloat(price[1])
+      minPrice = parseFloat(price[0]);
+      maxPrice = parseFloat(price[1]);
       whereClause.book_spe_price = {
-        [Op.between]: [minPrice, maxPrice]
+        [Op.between]: [minPrice, maxPrice],
       };
     }
 
@@ -132,7 +141,7 @@ class BookService {
       const [sortField, sortOrder] = sortBy.split("_");
       if (sortField === "price") {
         order.push(["book_spe_price", sortOrder === "desc" ? "DESC" : "ASC"]);
-      } else if (sortField === 'publishedDate') {
+      } else if (sortField === "publishedDate") {
         order.push(["create_time", sortOrder === "desc" ? "DESC" : "ASC"]);
       }
     }
@@ -154,9 +163,6 @@ class BookService {
       productData: books,
       pagination,
     };
-
-
-  }
-
+  };
 }
 module.exports = BookService;

@@ -153,7 +153,7 @@ export const SelectAddressPopup = ({
                       </div>
 
                       <div className="h-6">
-                        <div className="flex gap-1 text-[0.6rem] xl:text-xs xl:gap-2 md:text-xs md:gap-2 text-red-600 py-1 items-center">
+                        <div className="flex gap-1 text-[0.55rem] xl:text-xs xl:gap-2 md:text-xs md:gap-2 text-red-600 py-1 items-center">
                           {Boolean(address.address_default) === false ? (
                             ''
                           ) : (

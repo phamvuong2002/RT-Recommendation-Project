@@ -5,6 +5,7 @@ module.exports = {
     await queryInterface.createTable('inventory', {
       inven_book_id: {
         allowNull: false,
+        primaryKey: true,
         type: Sequelize.BIGINT.UNSIGNED,
         comment: 'id'
       },

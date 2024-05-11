@@ -36,7 +36,7 @@ const collectVector = async (userId, productId, score = 1) => {
   } else {
     await zaddAsync(redis_key, score, key_member);
   }
-  await pexpire(redis_key, expireTime);
+  // await pexpire(redis_key, expireTime);
 };
 
 module.exports = {

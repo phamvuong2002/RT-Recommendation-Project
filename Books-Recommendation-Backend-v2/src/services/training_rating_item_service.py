@@ -43,7 +43,7 @@ async def train_rating_item_model():
         books_df.groupby("Book-ID")["Book-Rating"].mean().reset_index()
     )
     avg_rating_df.rename(columns={"Book-Rating": "avg_rating"}, inplace=True)
-    # print(avg_rating_df)
+    #print(avg_rating_df)
 
     ### ## 1. POPULAR ITEMS ###############################
     popular_df = num_rating_df.merge(avg_rating_df, on="Book-ID")

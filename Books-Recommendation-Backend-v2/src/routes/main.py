@@ -4,6 +4,7 @@ from src.controllers import retrain_controller
 from src.controllers import rating_controller
 from src.controllers import behaviour_controller
 from src.controllers import get_recommendation_results_controller
+from src.controllers import contentbase_controller
 
 router = APIRouter()
 
@@ -20,6 +21,10 @@ async def get_results(userId: str, page: int = 1, limit: int = 10):
 @router.get("/retrain")
 async def retrain():
     return await retrain_controller.retrain()
+
+@router.get("/retrain/book")
+async def rating():
+    return await retrain_controller.retrain_content_base()
 
 @router.get("/retrain/behaviour")
 async def behaviour():
@@ -38,6 +43,14 @@ async def popular(limit: int):
 @router.get("/rating/search/{book_name}")
 async def search(book_name: str = ""):
     return await rating_controller.search_book_name(book_name)
+
+@router.get("/contentbase/recommend/book={book_id}&user={user_id}")
+async def recommend(book_id: int = 0, user_id: str = ""):
+    return await contentbase_controller.get_content_base_recommended_by_id(book_id, user_id)
+
+@router.get("/contentbase/recommend/key_word={book_name}&user={user_id}")
+async def recommend(book_name: str = "", user_id: str = ""):
+    return await contentbase_controller.get_content_base_recommended_by_keyword(book_name, user_id)
 
 @router.get("/rating/recommend/key_word={book_name}&user={user_id}")
 async def recommend(book_name: str = "", user_id: str = ""):

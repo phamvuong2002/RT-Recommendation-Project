@@ -21,6 +21,7 @@ const SCORE = {
   love: 3,
 };
 
+//Listening for kafka
 connectToKafka(TOPICS, handleMessage)
   .then(() => {
     console.log("Connected to Kafka and listening to topics:", TOPICS);

@@ -22,7 +22,8 @@ const collectPurchase = async (key, score = 1) => {
   const zscoreAsync = promisify(redisClient.zScore).bind(redisClient);
   const zincrbyAsync = promisify(redisClient.zIncrBy).bind(redisClient);
   const zaddAsync = promisify(redisClient.zAdd).bind(redisClient);
-  const expireTime = 1000 * 60 * 60;
+  // const publish = promisify(redisClient.publish).bind(redisClient);
+  const expireTime = 1000 * 60 * 60 * 24;
   const redis_key = "popular-products";
 
   const key_member = `product:${key}`;
@@ -37,6 +38,9 @@ const collectPurchase = async (key, score = 1) => {
     await zaddAsync(redis_key, score, key_member);
   }
   await pexpire(redis_key, expireTime);
+
+  //Publish a notification to the server
+  // await publish("most-purchase", JSON.stringify(key_member));
 };
 
 module.exports = {

@@ -19,7 +19,7 @@ const MenuItems = ({ items, depthLevel }) => {
   if (!hasCate) {
     cateParam = ['all']
     params.set('categories', 'all')
-    console.log(cateParam)
+    // console.log(cateParam)
   } else {
     cateParam = params.get('categories').split(',')
 

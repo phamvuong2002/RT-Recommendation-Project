@@ -5,6 +5,8 @@ from src.services.collaborative_rating_recommender import recommendFor
 from src.services.collaborative_rating_search import search_book
 from src.helpers.save_rec_books import save_rec_books
 
+from src.services.collaborative_rating_user import rating_user
+
 # Gợi ý sách được mua nhiều nhất
 async def get_popular(limit: int):
     try:
@@ -24,6 +26,17 @@ async def get_recommended(book: str = "", userId: str = ""):
     try:
         recommendation_on = await search_book(book, 1)
         books = await recommendFor(recommendation_on[0]['book_id'])
+        results = await save_rec_books(books, user_id=userId, key="book_id")
+        return SuccessResponse(metadata= {'recommendation': results})
+    except Exception as e:
+        raise BadRequestError(detail=str(e))
+
+
+# Goinw ý top n sản phẩm dựa trên User_based
+async def get_recommended_userbased(userId: str = ""):
+    try:
+        books =  rating_user(userId,10)
+        print(books)
         results = await save_rec_books(books, user_id=userId, key="book_id")
         return SuccessResponse(metadata= {'recommendation': results})
     except Exception as e:

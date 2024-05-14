@@ -1,5 +1,5 @@
-Books-Ecommerce-Backend/.env
-Books-Ecommerce-Backend/src/v1/configs/sequelize/config.json
+.env
+config.json
 
 logs
 *.log

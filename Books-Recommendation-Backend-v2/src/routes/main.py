@@ -34,6 +34,11 @@ async def behaviour():
 async def rating():
     return await retrain_controller.retrain_rating_item()
 
+@router.get("/retrain/rating-user")
+async def rating():
+    return await retrain_controller.retrain_rating_user()
+    
+
 
 #### RECOMMEND ##########
 @router.get("/rating/popular/{limit}",)
@@ -60,3 +65,11 @@ async def recommend(book_name: str = "", user_id: str = ""):
 async def recommend(book_id: int = 0, user_id: str = ""):
     return await behaviour_controller.get_implicit_content(book_id, user_id)
 
+
+@router.get("/rating/recommend/user={user_id}")
+async def recommend(user_id: str = ""):
+    return await rating_controller.get_recommended_userbased(user_id)
+
+@router.get("/implicit/recommend/user={user_id}")
+async def recommend(user_id: str = ""):
+    return await behaviour_controller.get_implicit_content_userbased(user_id)

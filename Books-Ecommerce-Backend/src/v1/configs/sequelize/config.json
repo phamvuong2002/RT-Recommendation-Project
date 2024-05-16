@@ -14,10 +14,11 @@
     "dialect": "mysql"
   },
   "production": {
-    "username": "root",
-    "password": null,
+    "username": "bookada",
+    "password": "bookada2002",
     "database": "books_db_v1",
-    "host": "127.0.0.1",
+    "host": "bookada-database-v1.crq4aco4chyf.ap-southeast-1.rds.amazonaws.com",
+    "port": "3306",
     "dialect": "mysql"
   }
 }

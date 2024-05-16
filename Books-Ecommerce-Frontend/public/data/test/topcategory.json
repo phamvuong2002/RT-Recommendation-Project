@@ -1,9 +1,22 @@
 [
     {
-        "top1": "Manga - Comic",
-        "top2": "Sách nước ngoài",
-        "top3": "Văn học Việt Nam",
-        "top4": "Sách giáo khoa",
-        "top5": "Tiểu thuyết"
+        "cate_top1": "Manga - Comic",
+        "cate_img": "https://cdn0.fahasa.com/media/wysiwyg/Thang-02-2024/CATE_Manga_266x156.jpg"
+    },
+    {
+        "cate_top2": "Văn học",
+        "cate_img": "https://cdn0.fahasa.com/media/wysiwyg/Thang-02-2024/CATE_ChuaLanh_266x156.jpg"
+    },
+    {
+        "cate_top3": "Sách học ngoại ngữ",
+        "cate_img": "https://cdn0.fahasa.com/media/wysiwyg/Thang-02-2024/CATE_NgoaiNgu_266x156.jpg"
+    },
+    {
+        "cate_top4": "Tâm lý - Kỹ năng sống",
+        "cate_img": "https://cdn0.fahasa.com/media/wysiwyg/Thang-02-2024/CATE_TKCuocDoi_266x156.jpg"
+    },
+    {
+        "cate_top5": "Thiếu nhi",
+        "cate_img": "https://cdn0.fahasa.com/media/wysiwyg/Thang-02-2024/CATE_SachTN_266x156.jpg"
     }
 ]

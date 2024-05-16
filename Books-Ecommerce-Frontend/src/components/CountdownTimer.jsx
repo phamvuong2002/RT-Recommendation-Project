@@ -30,22 +30,22 @@ export const CountDownTimer = ({ flashSaleDay }) => {
     return (
         <div className="countdown flex">
             <div className="font-semibold mx-2">
-                <p className="grid place-items-center text-[90%] md:text-[180%]">{days}</p>
+                <p className="grid place-items-center text-sm md:text-2xl">{days}</p>
             </div>
-            <span className="text-[90%] md:text-[180%] leading-[140%]">:</span>
+            <span className="text-sm md:text-2xl leading-[140%]">:</span>
 
             <div className="font-semibold mx-2">
-                <p className="grid place-items-center text-[90%] md:text-[180%]">{hours}</p>
+                <p className="grid place-items-center text-sm md:text-2xl">{hours}</p>
             </div>
-            <span className="text-[90%] md:text-[180%] leading-[140%]">:</span>
+            <span className="text-sm md:text-2xl leading-[140%]">:</span>
 
             <div className="font-semibold mx-2">
-                <p className="grid place-items-center text-[90%] md:text-[180%]">{minutes}</p>
+                <p className="grid place-items-center text-sm md:text-2xl">{minutes}</p>
             </div>
-            <span className="text-[90%] md:text-[180%] leading-[140%]">:</span>
+            <span className="text-sm md:text-2xl leading-[140%]">:</span>
 
             <div className="font-semibold mx-2">
-                <p className="grid place-items-center text-[90%] md:text-[180%]">{seconds}</p>
+                <p className="grid place-items-center text-sm md:text-2xl">{seconds}</p>
             </div>
         </div>
     )

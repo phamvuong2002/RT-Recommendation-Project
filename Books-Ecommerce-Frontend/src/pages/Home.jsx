@@ -47,7 +47,7 @@ export const Home = () => {
           <AllProducts
             isShowHeader={true}
             numOfProductsInRow={5}
-            _limit={isMobileDevice() ? 2 : 8}
+            _limit={isMobileDevice() ? 2 : 10}
             _choose={"all"}
           ></AllProducts>
         </div>

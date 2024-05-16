@@ -42,13 +42,13 @@ export const SliderProducts = ({ userId, productData }) => {
                 className="mySwiper h-full "
 
             >
-                {productData.map((product, index) => (
+                {/* {productData.map((product, index) => (
                     <SwiperSlide key={index} className="w-1/5 h-full ">
                         <ProductForSlider
                             userId={userId}
                             productData={product} />
                     </SwiperSlide>
-                ))}
+                ))} */}
             </Swiper>
         </div>
     );

@@ -68,7 +68,7 @@ class AccessController {
   };
 
   logout = async (req, res, next) => {
-    req.session.user =  null
+    req.session.user = null;
     new SuccessResponse({
       message: "Logout OK!",
       metadata: await AccessService.logout(req.keyStore),
@@ -85,12 +85,12 @@ class AccessController {
   //
   signup_user = async (req, res, next) => {
     //còn lỗi
-    console.log('session id: ', req.session.id)
+    console.log("session id: ", req.session.id);
     // console.log(guest_id)
     // const guest_id="RTmt8iNjrrpR1mn-onMBZ-HpT7Y-3xXA"
 
-    const user = await AccessService.signup_user(req.body, req)
-    console.log('user signup',user)
+    const user = await AccessService.signup_user(req.body, req);
+    console.log("user signup", user);
     if (user) {
       req.session.user = {
         user: user.user,
@@ -99,17 +99,17 @@ class AccessController {
       };
 
       new CREATED({
-        message: "Regiserted OK!", 
+        message: "Regiserted OK!",
         metadata: user,
       }).send(res);
-    };
-  }
+    }
+  };
 
   login_user = async (req, res, next) => {
     // const session = req.session.id
     // console.log(session)
     const user = await AccessService.login_user(req.body);
-    console.log(user);
+    // console.log(user);
     if (user) {
       req.session.user = {
         user: user.user,
@@ -129,7 +129,7 @@ class AccessController {
     // const session = req.session.id
     // console.log(session)
     const user = await AccessService.login_sms(req.body);
-    console.log(user);
+    // console.log(user);
     if (user) {
       req.session.user = {
         user: user.user,
@@ -144,7 +144,6 @@ class AccessController {
       metadata: user,
     }).send(res);
   };
-
 }
 
 module.exports = new AccessController();

@@ -2,6 +2,7 @@ const { connectToKafka } = require("./src/dbs/init.kafka");
 const { saveBehaviour } = require("./src/services/redis.behaviour.service");
 const { collectPurchase } = require("./src/services/redis.purchase.service");
 const { collectVector } = require("./src/services/redis.vector.service");
+const WebSocket = require("ws");
 
 const TOPICS = {
   VIEW: "view",
@@ -20,6 +21,13 @@ const SCORE = {
   "add-to-cart": 3,
   love: 3,
 };
+
+//Create socket connect to Ecommerce server
+const ws = new WebSocket("ws://localhost:3050");
+ws.on("open", function open() {
+  // Gửi một tin nhắn tới server khi kết nối thành công
+  ws.send("Server Kafka Started and Connected");
+});
 
 //Listening for kafka
 connectToKafka(TOPICS, handleMessage)
@@ -51,7 +59,11 @@ async function handleMessage({ topic, partition, message }) {
     );
     //collect purchase behavior
     if (topic === TOPICS.PLACEORDER) {
-      await collectPurchase(dataCollect.productId);
+      await collectPurchase(
+        dataCollect.productId,
+        parseInt(dataCollect.data) || 1
+      );
+      ws.send(message.value.toString());
     }
 
     console.log(`------------${result}-----------`);

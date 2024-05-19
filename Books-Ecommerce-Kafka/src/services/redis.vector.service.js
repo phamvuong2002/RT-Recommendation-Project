@@ -16,6 +16,7 @@ const collectVector = async (userId, productId, score = 1) => {
   if (!redisClient.isReady) {
     await redisClient.connect();
   }
+
   console.log("connectRedis::Most-Vector-Store:", redisClient.isReady);
 
   const pexpire = promisify(redisClient.pExpire).bind(redisClient);

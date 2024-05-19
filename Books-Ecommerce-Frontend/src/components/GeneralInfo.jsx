@@ -16,6 +16,7 @@ import { fetchAPI } from '../helpers/fetch';
 import { getorders } from '../apis/order';
 import { shortenString } from '../utils/shortenString';
 import { getaddresses } from '../apis/address';
+import { Link } from 'react-router-dom';
 
 export const GeneralInfo = () => {
   const [bills, setBills] = useState([]);
@@ -168,9 +169,12 @@ export const GeneralInfo = () => {
               <div className="flex">
                 <span className="font-semibold">Thông Tin Cá Nhân</span>
               </div>
-              <button className="text-red-500 xl:hover:text-red-700 hidden xl:block">
+              <Link
+                to="../account/profile-infomation"
+                className="text-red-500 xl:hover:text-red-700 hidden xl:block"
+              >
                 Chỉnh sửa
-              </button>
+              </Link>
             </div>
             {reloadUserData ? (
               <TextLoader items={1} />

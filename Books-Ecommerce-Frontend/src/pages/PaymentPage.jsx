@@ -11,7 +11,7 @@ export const PaymentPage = () => {
   const paths = [
     { path: '/', label: 'Trang Chủ' },
     { path: `/${'shoppingcarts'}`, label: `${'Giỏ hàng'}` },
-    { path: `/${'payment'}`, label: `${'Thanh Toán'}` },
+    { path: `#`, label: `${'Thanh Toán'}` },
   ];
   const {
     userId,

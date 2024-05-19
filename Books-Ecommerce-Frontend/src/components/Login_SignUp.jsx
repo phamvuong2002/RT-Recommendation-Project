@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { fetchAPI } from '../helpers/fetch';
 import { login } from '../apis/access';
 
-import { checkEmailnPhone, getUserInfo } from '../apis/user';
+import { checkEmailnPhone, getUserInfo, getID, updateUserInfo } from '../apis/user';
 import { signup_user, login_user, login_sms } from '../apis/access';
 import { TfiEmail } from 'react-icons/tfi';
 import { validateEmail } from '../utils/validateEmail';
@@ -101,6 +101,7 @@ export default function Login_SignUp({
     const isValidPhonenum = isValidPhoneNumber(accountLogin);
 
     let login_user_data = '';
+    setIsLoading(true)
     if (isValidEmail.status) {
       // console.log(isValidEmail)
       login_user_data = await fetchAPI(`../${login_user}`, 'POST', {
@@ -295,35 +296,47 @@ export default function Login_SignUp({
     // const email = 'vuongdaquen@gmail.com';
     // const phone = '0919489084';
     console.log('forgot account: ', accountForgot);
-    let email = '';
-    let phone = '';
+    let resetMethod=''
+    let email=''
+    let phone=''
     const isValidEmail = validateEmail(accountForgot);
     const isValidPhonenum = isValidPhoneNumber(accountForgot);
     let checkRegistered = '';
-
+    console.log(isValidEmail, isValidPhonenum)
     if (isValidEmail.status) {
+      resetMethod='email'
       checkRegistered = await fetchAPI(`../${checkEmailnPhone}`, 'POST', {
         method: 'email',
         methodValue: accountForgot,
       });
-
       email = accountForgot;
     } else if (isValidPhonenum) {
+      resetMethod='phone'
       checkRegistered = await fetchAPI(`../${checkEmailnPhone}`, 'POST', {
         method: 'phone',
         methodValue: accountForgot,
       });
       phone = accountForgot;
-    } else {
+    } else {  
       setMessage('Email hoặc Số điện thoại không hợp lệ');
+      return;
     }
 
     console.log('phone', phone);
     if (checkRegistered.status === 200) {
-      if (checkRegistered.metadata.isUsed && email) {
+      console.log(resetMethod)
+      const userID = await fetchAPI(`../${getID}`, 'POST', {
+        method: resetMethod,
+        methodValue: accountForgot,
+      });
+   
+      if (checkRegistered.metadata.isUsed && resetMethod=='email' && userID.status==200 && userID.metadata.user_id) {
+        // console.log(userID.metadata.user_id._id)
+        setUserId(userID.metadata.user_id._id)
         setEmailInput(email);
         setIsShowAuthenPopup(true);
-      } else if (checkRegistered.metadata.isUsed && phone) {
+      } else if (checkRegistered.metadata.isUsed && resetMethod=='phone' && userID.status==200 && userID.metadata.user_id) {
+        setUserId(userID.metadata.user_id._id)
         setPhoneInput(phone);
         setIsShowAuthenPopup(true);
       } else {
@@ -352,6 +365,7 @@ export default function Login_SignUp({
       // nếu login = sms và Nhận mã otp thành công
       if (isSMSLogin) {
         const login_by_sms = async () => {
+          setIsLoading(true)
           const login_result = await fetchAPI(`../${login_sms}`, 'POST', {
             phone: phoneInput,
           });
@@ -371,12 +385,13 @@ export default function Login_SignUp({
             );
             return;
           }
+          setIsLoading(false)
           // setOpen(false);
           // console.log('set token, userid after Signup')
         };
         login_by_sms();
       }
-
+      setIsLoading(false)
       // console.log('login success');
       setOpen(false);
     }
@@ -384,6 +399,7 @@ export default function Login_SignUp({
     if (authenStatus === 'success' && isSignUp && isCreatedPassSuccess) {
       // console.log('register')
       const signup_for_user = async () => {
+        setIsLoading(true)
         //Đăng ký
         let method = '';
         let methodValue = '';
@@ -412,6 +428,7 @@ export default function Login_SignUp({
         // setSession(loginuser.metadata.sessionid);
         setToken(signup_.metadata.tokens.accessToken);
         setUserId(signup_.metadata.user._id);
+        setIsLoading(false)
         // setOpen(false);
         // console.log('set token, userid after Signup');
       };
@@ -426,9 +443,29 @@ export default function Login_SignUp({
       isOpenForgetPass &&
       isCreatedPassSuccess
     ) {
-      // setUser(sampleUser)
-      setReload(true);
-      setOpen(false);
+      const reset_pw_user = async () => {
+        setIsLoading(true)
+        const updatePW = await fetchAPI(`../${updateUserInfo}`, 'POST', {
+          updatedField: 'pw',
+          updatedValue: passwordSignUp,
+          userId: userId,
+        });
+  
+        if (updatePW.status === 200) {
+          setOpen(false);
+          setReload(true);
+        } else {
+          //update thất bại
+          setMessages([
+            { code: '400', message: 'Lỗi cập nhật! vui lòng thử lại sau.' },
+          ]);
+          setOpen(false);
+         
+        }
+        setIsLoading(false)
+      };
+      console.log('change pw')
+      reset_pw_user();
     }
 
     setMessage('');

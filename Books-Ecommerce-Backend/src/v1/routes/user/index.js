@@ -13,6 +13,7 @@ router.post("/getInfo", asyncHandler(userController.getUserInfo));
 router.post("/updateInfo", asyncHandler(userController.updateProfile));
 router.post("/getEmailnPhone", asyncHandler(userController.getEmailnPhone));
 router.post("/checkEmailnPhone", asyncHandler(userController.checkEmailnPhone));
+router.post("/getID", asyncHandler(userController.getUserID));
 
 router.post("/", asyncHandler(userController.addUserDB));
 

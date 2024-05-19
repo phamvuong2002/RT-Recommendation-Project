@@ -42,6 +42,20 @@ class UserService {
     return await userModel.findOne({ email }).select(select).lean();
   };
 
+  static getUserID = async ({ method, methodValue })=> {
+    let userID=''
+    if (method == "email") {
+      userID = await userModel.findOne({ email: methodValue },'_id');
+    } else if (method == "phone") {
+      userID = await userModel.findOne({ phone: methodValue },'_id');
+    }
+
+
+    return {
+      user_id: userID,
+    };
+  }
+
   // Get: User information
   static getUserInfo = async ({ userId }) => {
     console.log(userId);

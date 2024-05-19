@@ -5,11 +5,13 @@ import NavigationPath from '../components/NavigationPath';
 import { SliderProducts } from '../components/SliderProducts';
 import { useNavigate, useParams } from 'react-router-dom';
 import { fetchAPI } from '../helpers/fetch';
-import { getAllBook, getonebook } from '../apis/book';
+import { getonebook } from '../apis/book';
 import { getCateFromText } from '../utils/getCateFromText';
 import { shortenString } from '../utils/shortenString';
 import { AppContext } from '../contexts/main';
 import { collectBehaviour } from '../apis/collectBehaviour';
+import { slugify } from '../utils/slugify';
+import { isMobileDevice } from '../utils/isMobileDevice';
 
 export const ProductDetailPage = () => {
   const { userId, setIsShowFooter, token } = useContext(AppContext);
@@ -63,32 +65,47 @@ export const ProductDetailPage = () => {
 
   //Xử ký sau khi lấy được bookid
   useEffect(() => {
-    //get book ..
-    //set navpath
-    setPaths([
-      { path: '/', label: 'Trang Chủ' },
-      {
-        path: `/${'search'}`,
-        label: `${getCateFromText(book?.book_detail?.book_categories_name, 0)}`,
-      },
-      {
+    function createPaths(categories) {
+      if (!categories) return [];
+      const cateArr = categories?.split(', ').filter((item) => item !== 'null');
+      const pathArr = [{ path: '/', label: 'Trang Chủ' }];
+      let source = '';
+      if (!isMobileDevice()) {
+        for (let i = 0; i < cateArr.length; i++) {
+          if (cateArr[i] === 'null') break;
+          const cateSlug = slugify(cateArr[i]);
+          source += `${i === 0 ? 'search_v2?categories=' : ','}${cateSlug}`;
+          const sourceObj = {
+            path: `/${source}&sort=create_time_desc&limit=24&page=1&search_type=normal`,
+            label: shortenString(cateArr[i]),
+          };
+          pathArr.push(sourceObj);
+        }
+      } else {
+        source = '';
+        for (let i = 0; i < cateArr.length; i++) {
+          if (cateArr[i] === 'null') break;
+          const cateSlug = slugify(cateArr[i]);
+          source += `${i === 0 ? 'search_v2?categories=' : ','}${cateSlug}`;
+        }
+        const sourceObj = {
+          path: `/${source}&sort=create_time_desc&limit=24&page=1&search_type=normal`,
+          label: shortenString(cateArr[cateArr.length - 1], 20),
+        };
+        pathArr.push(sourceObj);
+      }
+      pathArr.push({
         path: `/books/${bookid}`,
-        label: `${shortenString(book?.book?.book_title || '', 14)}`,
-      },
-    ]);
-  }, [book]);
+        label: `${shortenString(book?.book?.book_title || '', isMobileDevice() ? 15 : 14)}`,
+      });
+      return pathArr;
+    }
 
-  //Fetch Product Data
-  // useEffect(() => {
-  //   const loadProductData = async () => {
-  //     const productData = await fetchAPI(`../${getAllBook}`, 'POST');
-  //     setProducts(productData.metadata);
-  //   };
-  //   loadProductData();
-  // }, []);
-
-  useEffect(() => {
-    console.log('book:::', book);
+    if (book) {
+      const categories = book?.book_detail?.book_categories_name;
+      const pathArr = createPaths(categories);
+      setPaths(pathArr);
+    }
   }, [book]);
 
   return (

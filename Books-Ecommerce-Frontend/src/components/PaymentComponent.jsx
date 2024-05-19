@@ -612,12 +612,12 @@ export const Payment = () => {
                 <div
                   className={`w-2/5 xl:w-1/5 ${isAddrLoading ? 'h-2 bg-slate-200 rounded col-span-2' : ''}`}
                 >
-                  {defaultAddress.address_user_name}
+                  {isAddrLoading ? '' : defaultAddress.address_user_name}
                 </div>
                 <div
                   className={`w-full ${isAddrLoading ? 'h-2 bg-slate-200 rounded col-span-2' : ''}`}
                 >
-                  {defaultAddress.address_user_phone}
+                  {isAddrLoading ? '' : defaultAddress.address_user_phone}
                 </div>
               </div>
               <div

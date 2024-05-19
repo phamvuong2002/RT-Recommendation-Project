@@ -524,15 +524,27 @@ export const DetailCart = ({ book }) => {
                   </div>
                   <div className="flex justify-between">
                     <div className="font-semibold">Tác giả:</div>
-                    <div>{product?.book_detail?.book_authors_name}</div>
+                    <div>
+                      {product?.book_detail?.book_authors_name === 'null'
+                        ? 'Chưa xác định'
+                        : product?.book_detail?.book_authors_name}
+                    </div>
                   </div>
                   <div className="flex justify-between">
                     <div className="font-semibold">Năm xuất bản:</div>
-                    <div>{product?.book_detail?.book_publish_year}</div>
+                    <div>
+                      {product?.book_detail?.book_publish_year === 'null'
+                        ? 'Chưa xác định'
+                        : product?.book_detail?.book_publish_year}
+                    </div>
                   </div>
                   <div className="flex justify-between">
                     <div className="font-semibold">Nhà xuất bản:</div>
-                    <div>{product?.book_detail?.book_pulisherName}</div>
+                    <div>
+                      {product?.book_detail?.book_pulisherName === 'null'
+                        ? 'Chưa xác định'
+                        : product?.book_detail?.book_pulisherName}
+                    </div>
                   </div>
                   <div className="flex justify-between">
                     <div className="font-semibold">Hình thức:</div>

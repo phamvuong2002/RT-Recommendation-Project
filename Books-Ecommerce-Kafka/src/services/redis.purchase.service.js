@@ -23,7 +23,7 @@ const collectPurchase = async (key, score = 1) => {
   const zincrbyAsync = promisify(redisClient.zIncrBy).bind(redisClient);
   const zaddAsync = promisify(redisClient.zAdd).bind(redisClient);
   // const publish = promisify(redisClient.publish).bind(redisClient);
-  const expireTime = 1000 * 60 * 60 * 24;
+  const expireTime = 1000 * 60 * 60 * 24 * 7;
   const redis_key = "popular-products";
 
   const key_member = `product:${key}`;

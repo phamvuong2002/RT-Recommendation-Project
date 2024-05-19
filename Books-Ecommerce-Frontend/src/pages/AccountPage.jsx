@@ -64,7 +64,7 @@ export const AccountPage = () => {
   useEffect(() => {
     setPaths([
       { path: '/', label: 'Trang Chủ' },
-      { path: `/${'account'}`, label: `${'Tài khoản'}` },
+      { path: `#`, label: `${'Tài khoản'}` },
       {
         path: `/${'account'}/${selectedPageId}`,
         label: `${TAB[selectedPageId]}`,
@@ -81,7 +81,7 @@ export const AccountPage = () => {
     <div className="mb-4">
       <NavigationPath components={paths} />
       <div className="grid-cols-1 sm:flex sm:align-top h-lvh w-full justify-around overflow-hidden py-4">
-        <SideBarNav 
+        <SideBarNav
           setSelectedPage={setSelectedPage}
           setSelectedPageId={setSelectedPageId}
         />

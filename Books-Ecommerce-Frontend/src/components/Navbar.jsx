@@ -132,7 +132,7 @@ export const Navbar = () => {
 
   // LOGOUT
   const handleLogout = async () => {
-    console.log(token.accessToken);
+    // console.log(token.accessToken);
     let access_token = '';
     if (token.accessToken) {
       access_token = token.accessToken;
@@ -140,7 +140,7 @@ export const Navbar = () => {
       access_token = token;
     }
 
-    console.log(userId);
+    // console.log(userId);
     const logout_result = await fetchAPI(
       `../${logout}`,
       'POST',
@@ -151,17 +151,17 @@ export const Navbar = () => {
       },
     );
 
-    console.log(logout_result);
+    // console.log(logout_result);
     if (logout_result.status === 200) {
       setUserId('');
       setToken('');
       // setSession('')
 
       // navigate('/');
-      window.location.assign('/')
-      console.log('in logout success');
+      window.location.assign('/');
+      // console.log('in logout success');
     }
-    console.log('in logout');
+    // console.log('in logout');
 
     //nhận lại kết quả, xem Logout có thành công
   };
@@ -185,7 +185,7 @@ export const Navbar = () => {
       const userData = await fetchAPI(`../${getUserInfo}`, 'POST', {
         userId: userId,
       });
-      console.log(userData);
+      // console.log(userData);
       //   console.log(userData)
       setUser(userData.metadata.user_data);
     };
@@ -198,7 +198,6 @@ export const Navbar = () => {
   return (
     <nav className="max-w-screen-2xl font-inter flex flex-col ">
       <div className=" mx-auto my-1  sm:max-w-screen-md md:max-w-screen-2xl flex justify-between items-center md:justify-around lg:grid lg:grid-cols-6 lg:gap-4 lg:justify-items-start container  relative">
-    
         <Link
           to="/"
           className="hidden lg:block text-xs sm:text-lg lg:text-xl lg:pl-6 lg:col-span-1"
@@ -215,7 +214,6 @@ export const Navbar = () => {
             )}
           </button>
         </div>
-
 
         <div className="hidden lg:block cate_drop_down group relative mx-auto lg:col-span-1 ">
           <button
@@ -282,7 +280,7 @@ export const Navbar = () => {
               as="div"
               className={`${token ? 'block' : 'hidden'} relative inline-block text-left`}
             >
-              {({ }) => (
+              {({}) => (
                 <div>
                   <div
                     onClick={() => setOpenDropdown(!openDropdown)}
@@ -387,7 +385,6 @@ export const Navbar = () => {
       <div
         className={`block lg:hidden absolute inset-y-0 left-0 lg:mx-auto lg:mt-1 z-10  w-full ease-in-out duration-500    ${isMenuOpen ? 'translate-x-0' : '-translate-x-full '}`}
       >
-     
         <div className=" w-full flex flex-row  lg:hidden text-center  bg-red-500 py-5 text-white font-bold">
           <button
             className="basis-1/5  text-white text-center flex"
@@ -395,8 +392,11 @@ export const Navbar = () => {
           >
             <FaTimes className="h-6 w-6 md:h-8 md:w-8 mx-auto" />
           </button>
-          
-          <h1 className="basis-4/5 text-sm md:text-lg my-auto"> DANH MỤC SẢN PHẨM</h1>
+
+          <h1 className="basis-4/5 text-sm md:text-lg my-auto">
+            {' '}
+            DANH MỤC SẢN PHẨM
+          </h1>
         </div>
         <Category_dropdown />
       </div>

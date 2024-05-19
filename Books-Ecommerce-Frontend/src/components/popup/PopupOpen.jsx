@@ -46,7 +46,7 @@ export const PopupOpen = ({
   const handleYesClick = async () => {
     setLoading(true);
     const result = await onYesClick();
-    console.log(result);
+    // console.log(result);
     //Success
     if (result === 'success') {
       if (SuccessHandling) setCustomContent(handleSuccess);

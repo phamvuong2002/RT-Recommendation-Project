@@ -45,14 +45,14 @@ export const OrderDetailPage = () => {
   const paths = [
     { path: '/', label: 'Trang Chủ' },
     { path: `/${'shoppingcarts'}`, label: `${shortenString('Giỏ Hàng', 5)}` },
-    { path: `/${'payment'}`, label: `${shortenString('Thanh Toán', 5)}` },
+    { path: `#`, label: `${shortenString('Thanh Toán', 5)}` },
     {
-      path: `/${'order-detail'}`,
+      path: `/${'account/orders-infomation'}`,
       label: `${shortenString('Chi Tiết Đơn Hàng', 10)}`,
     },
     {
-      path: `/${'order-detail/'} ${parseInt(orderId)}`,
-      label: `${shortenString(`Đơn hàng # ${orderId}`, 11)}`,
+      path: `/${'order-detail/'}${parseInt(orderId)}`,
+      label: `${shortenString(`Đơn hàng #${orderId}`, 11)}`,
     },
   ];
 
@@ -178,7 +178,7 @@ export const OrderDetailPage = () => {
       });
       if (result.status !== 200) {
         // navigate('/notfound');
-        console.log('ERROR REMOVE CART :::::', result);
+        // console.log('ERROR REMOVE CART :::::', result);
       } else {
         setNumCart(0);
         return;
@@ -195,7 +195,7 @@ export const OrderDetailPage = () => {
       });
       if (result.status !== 200) {
         // navigate('/notfound');
-        console.log('ERROR ROLLBACK ORDER :::::', result);
+        // console.log('ERROR ROLLBACK ORDER :::::', result);
       } else {
         return;
       }
@@ -212,7 +212,7 @@ export const OrderDetailPage = () => {
       });
       if (result.status !== 200) {
         // navigate('/notfound');
-        console.log('ERROR UPDATE ORDER :::::', result);
+        // console.log('ERROR UPDATE ORDER :::::', result);
       } else {
         return;
       }
@@ -249,7 +249,7 @@ export const OrderDetailPage = () => {
       });
       if (data.status !== 200) {
         // navigate('/notfound');
-        console.log('ERROR:::::', data);
+        // console.log('ERROR:::::', data);
         return;
       } else {
         setOneOrder(data.metadata);

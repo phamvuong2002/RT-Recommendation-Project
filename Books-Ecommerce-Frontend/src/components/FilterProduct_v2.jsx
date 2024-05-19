@@ -14,7 +14,7 @@ import {
   Link,
   createSearchParams,
 } from 'react-router-dom';
-import { AllProducts } from '../components/AllProducts';
+import { AllProducts } from './AllProducts_v2';
 import { fetchAPI } from '../helpers/fetch';
 import MenuItems from './MenuItems';
 import { PopupCenterPanel } from './popup/PopupCenterPanel';
@@ -23,22 +23,22 @@ import PropTypes from 'prop-types';
 import { getallcategories } from '../apis/category';
 
 export default function FilterProduct({
-  _userId,
-  _cate,
-  _limit,
-  _query,
-  _price,
-  _publisher,
+  productsData = [],
+  _totalPages = 0,
+  _source = 'search_v2',
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [all_categories, setCategoriess] = useState([]);
   const [cate, setCate] = useState();
   const [isLoading, setIsLoading] = useState(true);
+  const [products, setProducts] = useState([]);
+  const [source, setSource] = useState(_source);
+  const [numPage, setNumPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(_totalPages);
 
   const navigate = useNavigate();
   const location = useLocation();
   //console.log('newest search ' + (window.location.search))
-  //console.log(location.search)
   const params = new URLSearchParams(location.search);
   let hasPublisher = params.has('publisher');
 
@@ -66,7 +66,7 @@ export default function FilterProduct({
       setCate(categoriesData.metadata.categoryData);
       setIsLoading(false);
     };
-    //ví dụ tải các sản phẩm trong giỏ hàng của khách
+    //tải categories
     loadCategoriesData();
   }, []);
 
@@ -75,19 +75,21 @@ export default function FilterProduct({
     name_desc: 'Tên: Z-A',
     price_asc: 'Giá: Thấp đến Cao',
     price_desc: 'Giá: Cao đến Thấp',
-    publishedDate_desc: 'Mới nhất',
-    publishedDate_asc: 'Cũ nhất',
-    num_order_desc: 'Bán chạy nhất',
+    create_time_desc: 'Mới nhất',
+    // publishedDate_desc: 'Mới nhất',
+    // publishedDate_asc: 'Cũ nhất',
+    // num_order_desc: 'Bán chạy nhất',
   };
 
   const sortOptions = [
+    { name: 'Mới nhất', value: 'create_time_desc' },
     { name: 'Tên: A-Z', value: 'name_asc' },
     { name: 'Tên: Z-A', value: 'name_desc' },
     { name: 'Giá: Thấp đến Cao', value: 'price_asc' },
     { name: 'Giá: Cao đến Thấp', value: 'price_desc' },
-    { name: 'Mới nhất', value: 'publishedDate_desc' },
-    { name: 'Cũ nhất', value: 'publishedDate_asc' },
-    { name: 'Bán chạy nhất', value: 'num_order_desc' },
+    // { name: 'Mới nhất', value: 'publishedDate_desc' },
+    // { name: 'Cũ nhất', value: 'publishedDate_asc' },
+    // { name: 'Bán chạy nhất', value: 'num_order_desc' },
   ];
 
   const filters = [
@@ -134,7 +136,7 @@ export default function FilterProduct({
     const filter_target = event.target.name;
     const filter_target_value = event.target.id;
     //Price
-    // console.log(event)
+    // console.log(event);
     // console.log(filter_target_value)
     if (event.target.name == 'price') {
       // console.log(params)
@@ -142,10 +144,10 @@ export default function FilterProduct({
         // console.log('in price')
         price_filter = filter_target_value;
         if (params.has('price')) {
-          // console.log('in price navigate set ' + price_filter)
+          // console.log('in price navigate set ' + price_filter);
           params.set('price', price_filter);
         } else {
-          // console.log('in price navigate append' + price_filter)
+          // console.log('in price navigate append' + price_filter);
           params.append('price', price_filter);
         }
       } else {
@@ -195,12 +197,30 @@ export default function FilterProduct({
     navigate(location.pathname + '?' + params);
   }, [sortOption]);
 
+  //Change page
+  useEffect(() => {
+    params.set('page', numPage);
+    navigate(location.pathname + '?' + params);
+  }, [numPage]);
+
+  useEffect(() => {
+    setProducts(productsData);
+  }, [productsData]);
+
+  useEffect(() => {
+    setSource(_source);
+  }, [cate, sortOption]);
+
+  useEffect(() => {
+    setTotalPages(_totalPages);
+  }, [_totalPages]);
+
   return (
     <div className="bg-white">
       {/* desktop */}
       <div>
         <main className="hidden lg:block mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-24">
+          <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-24 xl:pt-10my">
             <button
               className="text-[17px] font-bold tracking-tight text-gray-900"
               onClick={handlClickAllCategory}
@@ -275,16 +295,14 @@ export default function FilterProduct({
                   <ul
                     className={`max-h-screen h-fit overflow-y-scroll no-scrollbar`}
                   >
-                    {cate.map((menu, index) => {
-                      const depthLevel = 0;
-                      return (
-                        <MenuItems
-                          items={menu}
-                          key={index}
-                          depthLevel={depthLevel}
-                        />
-                      );
-                    })}
+                    {cate.map((menu) => (
+                      <MenuItems
+                        items={menu}
+                        key={menu?.id}
+                        depthLevel={0}
+                        _source="search_v2"
+                      />
+                    ))}
                   </ul>
                 )}
 
@@ -358,16 +376,19 @@ export default function FilterProduct({
               {/* Product grid */}
               <div className="lg:col-span-4">
                 {/* Your content */}
-                <AllProducts
-                  numOfProductsInRow={4}
-                  _cate={_cate}
-                  _sort={sortOption}
-                  _limit={parseInt(_limit)}
-                  _query={_query}
-                  _price={_price}
-                  _publisher={_publisher}
-                  _choose={'all'}
-                ></AllProducts>
+                {products.length === 0 ? (
+                  <div className="flex flex-col gap-1 items-center justify-center text-gray-300">
+                    <img src="/img/empty-box.png" />
+                  </div>
+                ) : (
+                  <AllProducts
+                    productsData={products}
+                    numOfProductsInRow={4}
+                    _totalPages={totalPages}
+                    setPage={setNumPage}
+                    page={numPage}
+                  ></AllProducts>
+                )}
               </div>
             </div>
           </section>
@@ -452,6 +473,7 @@ export default function FilterProduct({
                             items={menu}
                             key={index}
                             depthLevel={depthLevel}
+                            _source="search_v2"
                           />
                         );
                       })}
@@ -540,16 +562,19 @@ export default function FilterProduct({
             {/* Product grid */}
             <div className="lg:col-span-4 bg-gray-100">
               {/* Your content */}
-              <AllProducts
-                numOfProductsInRow={4}
-                _cate={_cate}
-                _sort={sortOption}
-                _limit={parseInt(_limit)}
-                _query={_query}
-                _price={_price}
-                _publisher={_publisher}
-                _choose={'all'}
-              ></AllProducts>
+              {products.length === 0 ? (
+                <div className="flex flex-col gap-1 items-center justify-center text-gray-300">
+                  <img src="/img/empty-box.png" />
+                </div>
+              ) : (
+                <AllProducts
+                  productsData={products}
+                  numOfProductsInRow={4}
+                  _totalPages={totalPages}
+                  setPage={setNumPage}
+                  page={numPage}
+                ></AllProducts>
+              )}
             </div>
           </div>
         </section>
@@ -557,12 +582,3 @@ export default function FilterProduct({
     </div>
   );
 }
-
-FilterProduct.propTypes = {
-  _userId: PropTypes.string.isRequired,
-  _cate: PropTypes.string,
-  _limit: PropTypes.number,
-  _query: PropTypes.string,
-  _price: PropTypes.string,
-  _publisher: PropTypes.string,
-};

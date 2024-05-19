@@ -87,6 +87,10 @@ export const ProductDetailPage = () => {
   //   loadProductData();
   // }, []);
 
+  useEffect(() => {
+    console.log('book:::', book);
+  }, [book]);
+
   return (
     <div className="flex flex-col mb-14">
       <NavigationPath components={paths} />

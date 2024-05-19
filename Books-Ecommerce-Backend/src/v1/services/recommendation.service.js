@@ -12,6 +12,7 @@ const redisClient = redis.createClient({
 });
 
 class RecommendationService {
+  //get popular Books
   static async getPopularBooks({ pageNumber, pageSize }) {
     if (!redisClient.isReady) {
       await redisClient.connect();
@@ -56,4 +57,5 @@ class RecommendationService {
     return result;
   }
 }
+
 module.exports = RecommendationService;

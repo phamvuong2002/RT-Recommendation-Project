@@ -4,6 +4,13 @@ const { SuccessResponse } = require("../core/success.response");
 const BookService = require("../services/book.service");
 
 class BookController {
+  searchBooks = async (req, res, next) => {
+    const data = await BookService.searchBooks(req.body);
+    new SuccessResponse({
+      metadata: data,
+    }).send(res);
+  };
+
   getOneBook = async (req, res, next) => {
     const data = await BookService.getOneBook(req.body);
     new SuccessResponse({
@@ -34,14 +41,35 @@ class BookController {
   };
 
   getBookBySearchFilterSort = async (req, res) => {
-    const { search, categories, sort, price, publisher, page = 1, limit = 1 } = req.query;
+    const {
+      search,
+      categories,
+      sort,
+      price,
+      publisher,
+      page = 1,
+      limit = 1,
+    } = req.query;
     try {
       const sortBy = sort ? sort : null;
-      const filterCate = categories !== "all" && categories ? categories.split(',').map(cat => encodeURIComponent(cat)) : null;
+      const filterCate =
+        categories !== "all" && categories
+          ? categories.split(",").map((cat) => encodeURIComponent(cat))
+          : null;
       //console.log("categories", filterCate)
-      const filterPrice = price ? price.split(',').map(p => encodeURIComponent(p)) : null;
+      const filterPrice = price
+        ? price.split(",").map((p) => encodeURIComponent(p))
+        : null;
       const filterPublisher = publisher ? publisher : null;
-      const books = await BookService.getBookSearchFilterSort(search, filterCate, filterPrice, filterPublisher, sortBy, parseInt(page - 1), parseInt(limit));
+      const books = await BookService.getBookSearchFilterSort(
+        search,
+        filterCate,
+        filterPrice,
+        filterPublisher,
+        sortBy,
+        parseInt(page - 1),
+        parseInt(limit)
+      );
       new SuccessResponse({
         metadata: books,
       }).send(res);

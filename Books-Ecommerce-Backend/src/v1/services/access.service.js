@@ -15,10 +15,9 @@ const {
 
 /// services ///
 const { findByEmail } = require("./user.service");
-const userService = require("./user.service")
-const db = require("../models/sequelize/models")
-const Op = require("sequelize")
-
+const userService = require("./user.service");
+const db = require("../models/sequelize/models");
+const Op = require("sequelize");
 
 class AccessService {
   static loginGuest = async (data, req) => {
@@ -50,9 +49,14 @@ class AccessService {
         if (!newUser) throw new BadRequestError("create guest user failed");
 
         // console.log('MY SQLLLLLLLLLLLLLLLLLLL');
-        const user_id = newUser._id.toString()
-        await userService.addUserDB(user_id, `user-${sessionid}`, '', `user-${sessionid}@email.com`, sessionid)
-
+        const user_id = newUser._id.toString();
+        await userService.addUserDB(
+          user_id,
+          `user-${sessionid}`,
+          "",
+          `user-${sessionid}@email.com`,
+          sessionid
+        );
 
         return {
           user: getInfoData({
@@ -311,57 +315,59 @@ class AccessService {
     };
   };
 
-
-
   //SignUp
-  static signup_user = async ({ signupMethod, signupMethodValue, password }, req) => {
+  static signup_user = async (
+    { signupMethod, signupMethodValue, password },
+    req
+  ) => {
     //Kiểm tra tham số có null
     if (!(signupMethod && signupMethodValue && password)) {
       throw new BadRequestError(`Signup method and password cannot be null`);
     }
-    console.log(signupMethod, signupMethodValue, password)
+    console.log(signupMethod, signupMethodValue, password);
 
-    let guest_id = ''
-    let guest = ''
+    let guest_id = "";
+    let guest = "";
     // console.log(req.session)
     // Kiểm tra xem Session có user chưa (trường hợp loginGuest không kịp tạo user --> Gọi để tạo và trả về User --> Lấy userid để Đăng ký mới)
     if (!req.session.user) {
-      console.log('in red session user')
-      guest = await AccessService.loginGuest(req.session, req)
-      guest_id = guest.user._id
+      console.log("in red session user");
+      guest = await AccessService.loginGuest(req.session, req);
+      guest_id = guest.user._id;
     }
     // Trường hợp đã có User nhưng session đó có Tokens --> đang có phiên đăng nhập --> Lỗi tạo (lỗi này do session chưa hết và chưa xử lý Logout) --> Kiểm tra nếu chưa có Token thì gán guest_id = user_id của session và lấy id này đi đăng ký
     else if (!req.session.user.token) {
-      console.log('no token')
-      guest_id = req.session.user.user._id
-
+      console.log("no token");
+      guest_id = req.session.user.user._id;
     } else {
       throw new BadRequestError(`Signup failed. Please try again later`);
     }
-  
-    const new_user_name =  `user-${guest_id}`;
 
-    console.log(guest)
+    const new_user_name = `user-${guest_id}`;
+
+    // console.log(guest)
     //check Email/Phone number
-    let email_value = ''
-    let phone_value = ''
+    let email_value = "";
+    let phone_value = "";
     switch (signupMethod) {
-      case 'email':
-        email_value = signupMethodValue
-        break
-      case 'phone':
-        phone_value = signupMethodValue
-        break
+      case "email":
+        email_value = signupMethodValue;
+        break;
+      case "phone":
+        phone_value = signupMethodValue;
+        break;
       default:
-        throw new BadRequestError('Invalid Signup method')
+        throw new BadRequestError("Invalid Signup method");
     }
 
-    //điều kiện Or 
-    let isUsed = await userModel.find({
-      where: { [Op.or]: [{ email: email_value }, { phone: phone_value }] }
-    }).exec();
+    //điều kiện Or
+    let isUsed = await userModel
+      .find({
+        where: { [Op.or]: [{ email: email_value }, { phone: phone_value }] },
+      })
+      .exec();
 
-    console.log('isused', isUsed)
+    console.log("isused", isUsed);
 
     if (isUsed.length > 0) {
       throw new BadRequestError(`${signupMethod} already Registered!`);
@@ -373,47 +379,46 @@ class AccessService {
     const passwordHash = await bcrypt.hash(password, 10);
     // console.log("passwordHash::", passwordHash);
 
-    let registered_user = ''
+    let registered_user = "";
     // xem người dung Đăng ký bằng Email/Đt --> Cập nhật email/phone + pw (MONGO DB)
-    if (email_value !== '') {
-      registered_user = await userModel.findOneAndUpdate({ _id: guest_id },
+    if (email_value !== "") {
+      registered_user = await userModel.findOneAndUpdate(
+        { _id: guest_id },
         {
           username: new_user_name,
           email: email_value,
           password: passwordHash,
-        },
-      )
-    } else if (phone_value !== '') {
-      registered_user = await userModel.findOneAndUpdate({ _id: guest_id },
+        }
+      );
+    } else if (phone_value !== "") {
+      registered_user = await userModel.findOneAndUpdate(
+        { _id: guest_id },
         {
           username: new_user_name,
           phone: phone_value,
           password: passwordHash,
-        },
-      )
+        }
+      );
     }
 
-
-    console.log(registered_user)
+    // console.log(registered_user)
     //cập nhật vào mysql db
     if (registered_user) {
       let foundUser = await db.user.findOne({
-        where: { user_sid: guest_id.toString() }
+        where: { user_sid: guest_id.toString() },
       });
 
-      console.log('found user in Mysql ', foundUser)
+      console.log("found user in Mysql ", foundUser);
       if (foundUser) {
-        await foundUser.set(
-          {
-            user_username: new_user_name,
-            user_slug: new_user_name,
-            user_email: email_value,
-            user_phone: phone_value,
-            user_password: passwordHash
-          },
-        );
+        await foundUser.set({
+          user_username: new_user_name,
+          user_slug: new_user_name,
+          user_email: email_value,
+          user_phone: phone_value,
+          user_password: passwordHash,
+        });
       }
-      foundUser.save()
+      foundUser.save();
 
       //create private key, public key (private key used for syncing a token
       //and public key used for validation that token)
@@ -448,7 +453,12 @@ class AccessService {
 
       // Create token pair
       const tokens = await createTokenPair(
-        { userId: registered_user._id, username: foundUser.username, user_email: email_value, user_phone: phone_value },
+        {
+          userId: registered_user._id,
+          username: foundUser.username,
+          user_email: email_value,
+          user_phone: phone_value,
+        },
         publicKeyString,
         privateKey
       );
@@ -461,25 +471,28 @@ class AccessService {
         }),
         tokens,
       };
-
-    }
-    else { // User không được add vào db thành công --> xóa record trong Mongo
-      throw new BadRequestError('Fail to signup. Please try again later')
+    } else {
+      // User không được add vào db thành công --> xóa record trong Mongo
+      throw new BadRequestError("Fail to signup. Please try again later");
     }
   };
 
-  static login_user = async ({ loginMethod, loginMethodValue, password, refreshToken = null }) => {
+  static login_user = async ({
+    loginMethod,
+    loginMethodValue,
+    password,
+    refreshToken = null,
+  }) => {
     // 1 Kiểm tra user đăng nhập = Email/sđt
     // console.log('in login user')
     // console.log(loginMethod, loginMethodValue, password)
 
-    let foundUser = '';
-    if (loginMethod == 'email') {
-      let email = loginMethodValue
+    let foundUser = "";
+    if (loginMethod == "email") {
+      let email = loginMethodValue;
       foundUser = await userModel.findOne({ email: email }).lean();
-    }
-    else if (loginMethod == 'phone') {
-      let phone = loginMethodValue
+    } else if (loginMethod == "phone") {
+      let phone = loginMethodValue;
       foundUser = await userModel.findOne({ phone: phone }).lean();
     }
 
@@ -489,7 +502,7 @@ class AccessService {
     //2 Kiểm tra mật khẩu
     // console.log(foundUser._id)
     const match = await bcrypt.compare(password, foundUser.password);
-    console.log(match)
+    // console.log(match)
 
     if (!match) throw new AuthFailureError("Authentication failed");
 
@@ -530,7 +543,7 @@ class AccessService {
       refreshToken: tokens.refreshToken,
     });
 
-    const foundUserDB = await db.user.findOne({ user_sid: foundUser._id })
+    const foundUserDB = await db.user.findOne({ user_sid: foundUser._id });
     return {
       user: getInfoData({
         fileds: ["_id", "username", loginMethod, "roles"],
@@ -546,7 +559,6 @@ class AccessService {
     // console.log(loginMethod, loginMethodValue, password)
 
     let foundUser = await userModel.findOne({ phone: phone }).lean();
-
 
     //Không tìm thấy --> Lỗi
     if (!foundUser) throw new BadRequestError("Authentication failed");
@@ -591,7 +603,7 @@ class AccessService {
     // const foundUserDB = await db.user.findOne({ user_sid: foundUser._id })
     return {
       user: getInfoData({
-        fileds: ["_id", "username", 'phone', "roles"],
+        fileds: ["_id", "username", "phone", "roles"],
         object: foundUser,
       }),
       tokens,

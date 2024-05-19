@@ -111,6 +111,7 @@ export const Product = ({ userId, productData }) => {
           <div className="relative group object-cover flex justify-center items-center ">
             <div className="">
               <img
+                loading="lazy"
                 className=" max-h-48 "
                 src={productData.book_img}
                 alt="Product Image"

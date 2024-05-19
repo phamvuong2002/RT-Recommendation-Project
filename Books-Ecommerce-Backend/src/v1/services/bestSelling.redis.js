@@ -13,29 +13,6 @@ const redisClient = redis.createClient({
 
 class BestSellingService {
   //get best selling books from redis
-  // static async getBestSellingBooksRedis({ pageNumber, pageSize }) {
-  //   if (!redisClient.isReady) {
-  //     await redisClient.connect();
-  //   }
-  //   console.log("connectRedis::Most-Purchase-Store:", redisClient.isReady);
-
-  //   if (pageNumber < 0 || pageSize < 0) {
-  //     throw new BadRequestError("Invalid page number");
-  //   }
-  //   const start = (pageNumber - 1) * pageSize;
-  //   const end = start + pageSize - 1;
-
-  //   const zrevrangeAsync = promisify(redisClient.zRange).bind(redisClient);
-
-  //   const keysInRange = await zrevrangeAsync(
-  //     "popular-products",
-  //     start,
-  //     end,
-  //     "WITHSCORES",
-  //     "REV"
-  //   );
-  //   return keysInRange;
-  // }
   static async getBestSellingBooksRedis({ pageNumber = -1, pageSize = -1 }) {
     if (!redisClient.isReady) {
       await redisClient.connect();
@@ -113,46 +90,14 @@ class BestSellingService {
     return result;
   }
 
-  //get best selling Books from mysql with query parameters
-  // static async searchBestSellingBooks({
-  //   categories,
-  //   price,
-  //   pageNumber,
-  //   pageSize,
-  // }) {
-  //   const keysInRange = await BestSellingService.getBestSellingBooksRedis({
-  //     pageNumber: -1,
-  //     pageSize: -1,
-  //   });
-
-  //   //Collect book data
-  //   const result = [];
-  //   for (let i = 0; i < keysInRange.length; i += 2) {
-  //     const productId = parseInt(keysInRange[i].split(":")[1]);
-  //     const sold = parseInt(keysInRange[i + 1]);
-  //     //getBook
-  //     const book = await db.book.findByPk(productId);
-  //     if (book && book.book_status === 1) {
-  //       result.push({
-  //         book: {
-  //           book_id: book.book_id,
-  //           book_img: book.book_img,
-  //           book_title: book.book_title,
-  //           book_categories: book.book_categories,
-  //           book_spe_price: book.book_spe_price,
-  //           book_old_price: book.book_old_price,
-  //         },
-  //         sold,
-  //       });
-  //     }
-  //   }
-  //   return result;
-  // }
+  //search best selling Books from mysql with query parameters
   static async searchBestSellingBooks({
     categories,
     price,
+    query,
     pageNumber,
     pageSize,
+    sortBy,
   }) {
     // Lấy tất cả sách từ Redis
     const keysInRange = await BestSellingService.getBestSellingBooksRedis({
@@ -179,38 +124,45 @@ class BestSellingService {
       }
     }
 
+    //Điều kiện thể loại
+    const categoryConditions = cateIds.map((cateId, index) =>
+      db.Sequelize.literal(
+        `JSON_EXTRACT(book_categories, '$[${index}]') = ${cateId}`
+      )
+    );
+
+    // Xây dựng điều kiện tìm kiếm cơ bản
+    const searchConditions = {
+      book_status: 1,
+      [db.Sequelize.Op.and]: categoryConditions,
+    };
+
+    // Thêm điều kiện tìm kiếm theo query nếu có
+    if (query) {
+      searchConditions.book_title = { [db.Sequelize.Op.like]: `%${query}%` };
+    }
+
+    // Thêm điều kiện tìm kiếm theo price nếu có
+    if (price) {
+      const [minPrice, maxPrice] = price.split(",").map(Number);
+      searchConditions.book_spe_price = {
+        [db.Sequelize.Op.between]: [minPrice, maxPrice],
+      };
+    }
+
     // Thu thập dữ liệu sách
     const books = [];
     for (let i = 0; i < keysInRange.length; i += 2) {
       const productId = parseInt(keysInRange[i].split(":")[1]);
       const sold = parseInt(keysInRange[i + 1]);
-      // Lấy thông tin sách từ MySQL
-      // const book = await db.book.findByPk(productId);
-      // if (book && book.book_status === 1) {
-      //   books.push({
-      //     book: {
-      //       book_id: book.book_id,
-      //       book_img: book.book_img,
-      //       book_title: book.book_title,
-      //       book_categories: book.book_categories,
-      //       book_spe_price: book.book_spe_price,
-      //       book_old_price: book.book_old_price,
-      //     },
-      //     sold,
-      //   });
-      // }
-      // Xây dựng điều kiện JSON_EXTRACT động cho n phần tử đầu tiên
-      const categoryConditions = cateIds.map((cateId, index) =>
-        db.Sequelize.literal(
-          `JSON_EXTRACT(book_categories, '$[${index}]') = ${cateId}`
-        )
-      );
+      searchConditions.book_id = productId;
       const book = await db.book.findOne({
-        where: {
-          book_id: productId,
-          book_status: 1,
-          [db.Sequelize.Op.and]: categoryConditions,
-        },
+        where: searchConditions,
+        // where: {
+        //   book_id: productId,
+        //   book_status: 1,
+        //   [db.Sequelize.Op.and]: categoryConditions,
+        // },
       });
       if (book) {
         books.push({
@@ -227,16 +179,23 @@ class BestSellingService {
       }
     }
 
-    // Lọc sách theo danh mục và giá
-    // const filteredBooks = books.filter(({ book }) => {
-    //   const matchesCategory = categories
-    //     ? categories.includes(book.book_categories)
-    //     : true;
-    //   const matchesPrice = price
-    //     ? book.book_spe_price >= price.min && book.book_spe_price <= price.max
-    //     : true;
-    //   return matchesCategory && matchesPrice;
-    // });
+    // Lọc sách theo điều kiện sortBy
+    if (sortBy) {
+      books.sort((a, b) => {
+        switch (sortBy) {
+          case "name_asc":
+            return a.book.book_title.localeCompare(b.book.book_title);
+          case "name_desc":
+            return b.book.book_title.localeCompare(a.book.book_title);
+          case "price_asc":
+            return a.book.book_spe_price - b.book.book_spe_price;
+          case "price_desc":
+            return b.book.book_spe_price - a.book.book_spe_price;
+          default:
+            return 0;
+        }
+      });
+    }
 
     // Phân trang kết quả
     const totalBooks = books.length;
@@ -251,6 +210,10 @@ class BestSellingService {
       totalBooks,
       books: paginatedBooks,
       categories: cateIds,
+      start,
+      end,
+      pageNumber,
+      pageSize,
     };
   }
 }

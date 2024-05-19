@@ -6,10 +6,16 @@ import { searchbestselling } from '../apis/recommendation';
 import { fetchAPI } from '../helpers/fetch';
 import NavigationPath from '../components/NavigationPath';
 import { searchBooks } from '../apis/book';
+import { shortenString } from '../utils/shortenString';
 
 const QUERY_TYPE = {
   NORMAL: 'normal',
   BEST_SELLER_SUGGEST: 'best_seller_suggest',
+};
+
+const QUERY_TYPE_NAME = {
+  NORMAL: 'normal',
+  BEST_SELLER_SUGGEST: 'Sách Bán Chạy',
 };
 
 export const SearchPage_v2 = () => {
@@ -23,10 +29,6 @@ export const SearchPage_v2 = () => {
   const query = searchParams.get('search');
   const [source, setSource] = useState('search_v2');
   const [totalPages, setTotalPages] = useState(0);
-  const paths = [
-    { path: '/', label: 'Trang Chủ' },
-    { path: `#`, label: 'Kết Quả Tìm kiếm' },
-  ];
 
   // lấy Param: Page & Limit
   const page = searchParams.get('page');
@@ -37,6 +39,22 @@ export const SearchPage_v2 = () => {
   const publisher = searchParams.get('publisher');
   const search_type = searchParams.get('search_type');
 
+  const paths = [
+    { path: '/', label: 'Trang Chủ' },
+    { path: `#`, label: 'Kết Quả Tìm kiếm' },
+    ...(search_type !== QUERY_TYPE.NORMAL
+      ? [
+          {
+            path: `#`,
+            label: shortenString(
+              `${QUERY_TYPE_NAME[search_type.toUpperCase()]}`,
+              15,
+            ),
+          },
+        ]
+      : []),
+  ];
+
   useEffect(() => {
     setActivePage('Home');
     setIsShowFooter(true);
@@ -44,20 +62,22 @@ export const SearchPage_v2 = () => {
 
   useEffect(() => {
     //best selling
-    const loadCategoriesData = async () => {
+    const loadSearchBestSellerData = async () => {
       setIsLoading(true);
       const data = await fetchAPI(`../${searchbestselling}`, 'POST', {
-        pageNumber: page,
-        pageSize: limit,
+        pageNumber: parseInt(page),
+        pageSize: parseInt(limit),
         categories,
         price,
-        publisher,
+        sortBy,
+        query,
       });
       if (data.status != 200) {
         setProductsSearch([]);
         setIsLoading(false);
         return;
       }
+      console.log('metadata:::', data?.metadata);
       setProductsSearch(data?.metadata?.books);
       setTotalPages(data.metadata?.totalPages);
       setIsLoading(false);
@@ -87,7 +107,7 @@ export const SearchPage_v2 = () => {
 
     //ví dụ tải các sản phẩm trong giỏ hàng của khách
     if (search_type === QUERY_TYPE.BEST_SELLER_SUGGEST) {
-      loadCategoriesData();
+      loadSearchBestSellerData();
     } else if (search_type === QUERY_TYPE.NORMAL) {
       loadSearchNormalData();
       // setProductsSearch([]);

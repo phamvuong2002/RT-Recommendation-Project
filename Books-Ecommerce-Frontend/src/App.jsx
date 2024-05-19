@@ -42,6 +42,7 @@ function App() {
             const userData = await fetchAPI(loginGuest, 'POST');
             if (userData.status !== 200) {
               setIsLoading(false);
+              localStorage.setItem('session-id', '');
               window.location.reload();
               return;
             }

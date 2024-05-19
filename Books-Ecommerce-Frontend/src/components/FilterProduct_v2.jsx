@@ -562,19 +562,13 @@ export default function FilterProduct({
             {/* Product grid */}
             <div className="lg:col-span-4 bg-gray-100">
               {/* Your content */}
-              {products.length === 0 ? (
-                <div className="flex flex-col gap-1 items-center justify-center text-gray-300">
-                  <img src="/img/empty-box.png" />
-                </div>
-              ) : (
-                <AllProducts
-                  productsData={products}
-                  numOfProductsInRow={4}
-                  _totalPages={totalPages}
-                  setPage={setNumPage}
-                  page={numPage}
-                ></AllProducts>
-              )}
+              <AllProducts
+                productsData={products}
+                numOfProductsInRow={4}
+                _totalPages={totalPages}
+                setPage={setNumPage}
+                page={numPage}
+              ></AllProducts>
             </div>
           </div>
         </section>

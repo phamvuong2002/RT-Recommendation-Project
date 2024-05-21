@@ -5,8 +5,15 @@ from src.controllers import rating_controller
 from src.controllers import behaviour_controller
 from src.controllers import get_recommendation_results_controller
 from src.controllers import contentbase_controller
+from src.controllers import get_offline_models_controller
+from pydantic import BaseModel
 
 router = APIRouter()
+
+# Định nghĩa một model Pydantic cho dữ liệu body
+class ModelRequest(BaseModel):
+    model_name: str
+    model_type: str
 
 @router.get("/hello")
 async def hello():
@@ -37,7 +44,12 @@ async def rating():
 @router.get("/retrain/rating-user")
 async def rating():
     return await retrain_controller.retrain_rating_user()
-    
+
+
+#### GET OFFLINE MODEL ##########
+@router.post("/offline/get-models")
+async def get_models(request: ModelRequest):
+    return await get_offline_models_controller.get_models_from_S3(model_file_name = request.model_name, model_type=request.model_type)
 
 
 #### RECOMMEND ##########
@@ -73,3 +85,8 @@ async def recommend(user_id: str = ""):
 @router.get("/implicit/recommend/user={user_id}")
 async def recommend(user_id: str = ""):
     return await behaviour_controller.get_implicit_content_userbased(user_id)
+
+###Offline###
+@router.get("/implicit/offline/content/book={book_id}&user={user_id}")
+async def recommend(book_id: int = 0, user_id: str = ""):
+    return await behaviour_controller.get_implicit_offline_content(book_id, user_id)

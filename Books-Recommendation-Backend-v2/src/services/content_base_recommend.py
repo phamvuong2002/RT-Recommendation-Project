@@ -37,7 +37,7 @@ def get_content_recommendations_by_id(book_id):
     tfidf_matrix = tfidf.fit_transform(data['book_title'].astype('U').values + ' ' + data['genres'].astype('U').values)
     cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
 
-     # Kiểm tra xem ID có tồn tại trong dataframe không
+    # Kiểm tra xem ID có tồn tại trong dataframe không
     if book_id not in data['book_id'].values:
         print("ID không tồn tại trong dataframe!")
         return

@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { fetchData } from '../helpers/fetch';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Category_dropdown from './Category_Dropdown';
 import { FadeInYDirection } from '../helpers/animationFramerMotion'
 import { motion } from 'framer-motion'
@@ -16,6 +16,7 @@ export const Category = () => {
     const { ref: topRef, animate: topAnimate, initial: topInitial } = FadeInYDirection("top", 0.3);
     const [category, setCategory] = useState([])
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const navigate = useNavigate();
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -60,9 +61,16 @@ export const Category = () => {
 
     for (let i = 1; i < category.length; i++) {
         combinedElements.push(
-            <Link className="md:text-black font-semibold bg-white rounded-md shadow-lg">
+            <Link className="md:text-black font-semibold bg-white rounded-md shadow-lg"
+                onClick={() =>
+                    //console.log("hell")
+                    navigate(
+                        'search_v2?categories=sach-tieng-viet%2Cmanga-comic&sort=create_time_desc&limit=24&page=1&search_type=normal'
+                    )
+                }>
                 <p className="hidden md:block text-[18px] font-bold p-2">{category[i][`cate_top${i + 1}`]}</p>
                 <img className="hidden md:block w-full rounded-b-md" src={category[i].cate_img}></img>
+
             </Link>
         );
     }

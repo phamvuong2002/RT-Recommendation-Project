@@ -44,14 +44,14 @@ export const SearchPage_v2 = () => {
     { path: `#`, label: 'Kết Quả Tìm kiếm' },
     ...(search_type !== QUERY_TYPE.NORMAL
       ? [
-          {
-            path: `#`,
-            label: shortenString(
-              `${QUERY_TYPE_NAME[search_type.toUpperCase()]}`,
-              15,
-            ),
-          },
-        ]
+        {
+          path: `#`,
+          label: shortenString(
+            `${QUERY_TYPE_NAME[search_type.toUpperCase()]}`,
+            15,
+          ),
+        },
+      ]
       : []),
   ];
 
@@ -112,15 +112,6 @@ export const SearchPage_v2 = () => {
       loadSearchNormalData();
       // setProductsSearch([]);
     } else setProductsSearch([]);
-    // console.log('search:::', {
-    //   limit,
-    //   categories,
-    //   query,
-    //   price,
-    //   publisher,
-    //   search_type,
-    //   page,
-    // });
   }, [limit, userId, categories, query, price, search_type, page, sortBy]);
 
   useEffect(() => {

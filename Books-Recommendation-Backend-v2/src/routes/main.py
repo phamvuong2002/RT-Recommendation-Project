@@ -46,6 +46,14 @@ async def rating():
     return await retrain_controller.retrain_rating_user()
 
 
+@router.get("/retrain/rating-svdpp")
+async def rating():
+    return await retrain_controller.retrain_rating_svdpp()
+
+@router.get("/retrain/behaviour-svdpp")
+async def behaviour():
+    return await retrain_controller.retrain_implicit_svdpp()
+
 #### GET OFFLINE MODEL ##########
 @router.post("/offline/get-models")
 async def get_models(request: ModelRequest):
@@ -82,9 +90,20 @@ async def recommend(book_id: int = 0, user_id: str = ""):
 async def recommend(user_id: str = ""):
     return await rating_controller.get_recommended_userbased(user_id)
 
+
 @router.get("/implicit/recommend/user={user_id}")
 async def recommend(user_id: str = ""):
     return await behaviour_controller.get_implicit_content_userbased(user_id)
+
+
+# SVDpp
+@router.get("/implicit/svdpp/recommend/user={user_id}")
+async def recommend(user_id: str = ""):
+    return await behaviour_controller.get_implicit_svdpp(user_id)
+
+@router.get("/rating/svdpp/recommend/user={user_id}")
+async def recommend(user_id: str = ""):
+    return await rating_controller.get_recommended_rating_svdpp(user_id)
 
 ###Offline###
 @router.get("/implicit/offline/content/book={book_id}&user={user_id}")

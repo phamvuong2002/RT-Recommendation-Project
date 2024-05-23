@@ -8,7 +8,7 @@ import operator
 ## 
 
 k=2
-def implicit_user(user_id, n_similar):
+def implicit_user(user_id, n_similar): 
     model = load_model("current/behaviour/implicit_model")
     grouped_df = load_model("current/behaviour/grouped_df")
     # print(n_similar)

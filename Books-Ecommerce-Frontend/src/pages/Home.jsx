@@ -88,15 +88,18 @@ export const Home = () => {
 
   return (
     <div className="pb-10 sm:pb-0">
-      <Slider></Slider>
       <div className="mx-2 md:mx-16">
-        {/* <FlashSale userId={userId} productData={products}></FlashSale> */}
-        {/* Sách bán chạy */}
+        {/* Main banner */}
+        <div className="xl:bg-white flex flex-col py-2 xl:gap-4 xl:my-2 xl:p-2 rounded-lg">
+          <Slider />
+        </div>
 
+        {/* Sách bán chạy */}
+        {/* <FlashSale userId={userId} productData={products}></FlashSale> */}
         {!bestSellerData ? (
           ''
         ) : (
-          <div className="bg-white flex flex-col gap-4 my-5 py-4 px-2">
+          <div className="bg-white flex flex-col gap-4 xl:my-5 py-4 px-2 rounded-lg">
             <div className="flex justify-between">
               <div className="flex items-center gap-2 w-full">
                 <svg
@@ -115,17 +118,31 @@ export const Home = () => {
                   Xu hướng mua sắm
                 </div>
               </div>
-              <div className="font-inter w-[10rem] xl:[w-8rem] items-center px-4">
-                <button
-                  className="items-center text-sm xl:text-base font-normal hover:text-red-500"
-                  onClick={() =>
-                    navigate(
-                      `search_v2?search=&sort=create_time_desc&page=1&limit=24&search_type=${'best_seller_suggest'}`,
-                    )
-                  }
-                >
+              <div
+                className="flex gap-2 font-inter w-[12rem] xl:[w-8rem] items-center px-4 cursor-pointer hover:text-red-500"
+                onClick={() =>
+                  navigate(
+                    `search_v2?search=&sort=create_time_desc&page=1&limit=24&search_type=${'best_seller_suggest'}`,
+                  )
+                }
+              >
+                <div className="xl:ml-7 items-center text-sm xl:text-base font-normal ">
                   Xem Thêm
-                </button>
+                </div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className="size-4 xl:size-5"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="m8.25 4.5 7.5 7.5-7.5 7.5"
+                  />
+                </svg>
               </div>
             </div>
             <SliderProducts
@@ -135,7 +152,59 @@ export const Home = () => {
             />
           </div>
         )}
+
+        {/* Banner Đăng Ký cho GUEST*/}
         {token ? '' : <InfoForGuest></InfoForGuest>}
+
+        {/* Thể loại ưa chuộng */}
+        <div className="bg-gradient-to-r from-red-200 via-purple-100 to-pink-100 flex flex-col gap-4 xl:my-5 my-1 py-4 px-2 rounded-lg">
+          <div className="flex justify-between">
+            <div className="flex items-center gap-2 w-full">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="text-[#ffbe98] w-[5%] md:w-[2%]"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M4.5 7.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <div className="text-[90%] text-red-600 md:text-[150%] font-semibold font-['Inter'] tracking-wider">
+                Thể loại ưa chuộng
+              </div>
+            </div>
+            <div
+              className="flex gap-2 font-inter text-red-400 w-[12rem] xl:[w-8rem] items-center px-4 cursor-pointer hover:text-red-500"
+              onClick={() =>
+                navigate(
+                  `search_v2?search=&sort=create_time_desc&page=1&limit=24&search_type=${'best_seller_suggest'}`,
+                )
+              }
+            >
+              <div className="xl:ml-7 items-center text-sm xl:text-base font-normal ">
+                Xem Thêm
+              </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="size-4 xl:size-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m8.25 4.5 7.5 7.5-7.5 7.5"
+                />
+              </svg>
+            </div>
+          </div>
+          <Category />
+        </div>
 
         {/*Sản phẩm bán chạy*/}
         <div className="h-full">
@@ -148,11 +217,8 @@ export const Home = () => {
           ></AllProducts>
         </div>
 
-        {/* Top 5 thể loại ưa chuộng */}
-        <Category></Category>
-
         {/* Xu hướng mua sắm */}
-        <div className="my-5">
+        {/* <div className="my-5">
           <div className="flex items-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -170,11 +236,8 @@ export const Home = () => {
               Xu hướng mua sắm
             </div>
           </div>
-          {/* <SliderProducts
-            userId={userId}
-            productData={products}
-          ></SliderProducts> */}
-        </div>
+          
+        </div> */}
       </div>
     </div>
   );

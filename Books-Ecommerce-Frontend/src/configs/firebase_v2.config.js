@@ -1,5 +1,7 @@
 import { initializeApp, getApps, deleteApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
+import { fetchAPI } from '../helpers/fetch';
+import { getFirebaseCfg, increaseVerify } from '../apis/access';
 
 /***
  * @V2.0
@@ -46,10 +48,41 @@ const firebaseConfigs = [
 
 export async function initializeFirebaseAuth() {
   // Chọn cấu hình ngẫu nhiên từ mảng
-  const randomIndex = Math.floor(Math.random() * firebaseConfigs.length);
-  const firebaseConfig = firebaseConfigs[randomIndex];
+  // const randomIndex = Math.floor(Math.random() * firebaseConfigs.length);
+  // const firebaseConfig = firebaseConfigs[randomIndex];
+  const requestFibaAcc = await fetchAPI(`../${getFirebaseCfg}`, 'POST');
+  if (requestFibaAcc.status !== 200) {
+    return null;
+  }
+  const firebaseAcc = requestFibaAcc?.metadata;
+  if (!firebaseAcc) {
+    return null;
+  }
+
+  console.log('firebaseAcc::', firebaseAcc);
+  const firebaseConfig = {
+    apiKey: firebaseAcc?.apiKey,
+    authDomain: firebaseAcc?.authDomain,
+    projectId: firebaseAcc?.projectId,
+    storageBucket: firebaseAcc?.storageBucket,
+    messagingSenderId: firebaseAcc?.messagingSenderId,
+    appId: firebaseAcc?.appId,
+    measurementId: firebaseAcc?.measurementId,
+  };
 
   // Khởi tạo ứng dụng mới
-  let app = initializeApp(firebaseConfig, firebaseConfig.projectId);
-  return getAuth(app);
+  let app = null;
+  try {
+    app = initializeApp(firebaseConfig, firebaseConfig.projectId);
+  } catch (error) {
+    return null;
+  }
+  if (app !== null) {
+    await fetchAPI(`../${increaseVerify}`, 'POST', {
+      email: firebaseAcc.email,
+    });
+    return getAuth(app);
+  } else {
+    return null;
+  }
 }

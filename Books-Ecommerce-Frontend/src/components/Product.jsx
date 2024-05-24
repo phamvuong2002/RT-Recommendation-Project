@@ -10,7 +10,16 @@ import { popupContent } from '../helpers/popupContent';
 import { AppContext } from '../contexts/main';
 import { formatNumberToText } from '../utils/formatNumberToText';
 
-export const Product = ({ userId, productData }) => {
+const OPTION_TYPES = {
+  BEST_SELLER: 'sold',
+};
+
+export const Product = ({
+  userId,
+  productData,
+  optionData = null,
+  optionType = OPTION_TYPES.BEST_SELLER,
+}) => {
   const { setNumCart } = useContext(AppContext);
   const [openAddToCartsPopup, setOpenAddToCartsPopup] = useState(false);
 
@@ -179,8 +188,29 @@ export const Product = ({ userId, productData }) => {
                 {/* <span className="text-[0.8rem] md:text-[1rem]">đ</span> */}
               </p>
             </div>
+            <div>
+              {optionData && optionType === OPTION_TYPES.BEST_SELLER ? (
+                <div className="w-full h-4 bg-gray-300 rounded-full dark:bg-gray-700 relative">
+                  <div className="absolute z-10 inset-0 flex justify-center items-center">
+                    <span className="text-xs font-medium text-white">
+                      {optionData} sản phẩm đã bán
+                    </span>
+                  </div>
+                  {/* Thanh tiến độ */}
+                  <div
+                    className="h-4 bg-red-500 text-xs font-medium text-white text-center p-0.5 leading-none rounded-full relative"
+                    style={{
+                      width: `${optionData < 10 ? 5 : Math.min(optionData, 100)}%`,
+                    }}
+                  ></div>
+                </div>
+              ) : (
+                ''
+              )}
+            </div>
           </div>
         </div>
+        {/* Option data */}
       </Link>
     </div>
   );

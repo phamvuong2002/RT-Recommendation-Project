@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef , useContext} from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import { fetchData } from '../helpers/fetch';
 import { motion } from 'framer-motion';
 import { FadeInXDirection } from '../helpers/animationFramerMotion';
@@ -9,9 +9,7 @@ import { AppContext } from '../contexts/main';
 export const InfoForGuest = () => {
   const [reloadLoginSignup, setReloadLoginSignup] = useState(false);
   const [open, setOpen] = useState(false);
-  const {
-    token,
-  } = useContext(AppContext);
+  const { token } = useContext(AppContext);
 
   const {
     ref: leftRef,
@@ -24,7 +22,6 @@ export const InfoForGuest = () => {
     initial: rightInitial,
   } = FadeInXDirection('right', 0.5);
 
-
   useEffect(() => {
     //console.log('reloadLoginSignup::', reloadLoginSignup);
     if (reloadLoginSignup) {
@@ -34,7 +31,7 @@ export const InfoForGuest = () => {
   }, [reloadLoginSignup]);
 
   return (
-    <div className="my-5">
+    <div className="xl:my-5 my-2">
       <div className="w-full overflow-hidden md:h-full flex bg-gradient-to-r from-rose-100 to-slate-100 rounded-md">
         <div className="w-full hidden sm:block">
           <motion.img
@@ -49,7 +46,7 @@ export const InfoForGuest = () => {
           ref={rightRef}
           animate={rightAnimate}
           initial={rightInitial}
-          className={`w-full font-['Inter'] p-4 md:p-8 ${token?'my-auto':''}`}
+          className={`w-full font-['Inter'] p-4 md:p-8 ${token ? 'my-auto' : ''}`}
         >
           <div className={`flex flex-col `}>
             <div className="mb-3">
@@ -68,13 +65,16 @@ export const InfoForGuest = () => {
               </h1>
             </div>
             <div>
-              <h3 className={`md:my-3 text-[#1a2055] text-opacity-70 text-xs md:text-lg font-medium ${token?'hidden':''}`}>
+              <h3
+                className={`md:my-3 text-[#1a2055] text-opacity-70 text-xs md:text-lg font-medium ${token ? 'hidden' : ''}`}
+              >
                 Để có thể tìm thấy và theo dõi những quyển sách hữu ích, hãy
                 đăng ký tài khoản ngay bạn nhé!
               </h3>
             </div>
-            <div className={`bg-red-500 lg:hover:bg-[#47d873] rounded-lg text-center mx-auto mt-3 md:mt-5 px-6 py-2 ${token ? 'hidden' : ''}`}>
-
+            <div
+              className={`bg-red-500 lg:hover:bg-[#47d873] rounded-lg text-center mx-auto mt-3 md:mt-5 px-6 py-2 ${token ? 'hidden' : ''}`}
+            >
               {/* <button className=" text-white text-lg font-bold tracking-tight">
                 Đăng ký ngay
               </button> */}
@@ -88,7 +88,6 @@ export const InfoForGuest = () => {
                     <button className=" text-white text-lg font-bold tracking-tight hover:cursor-pointer">
                       Đăng ký ngay
                     </button>
-
                   }
                   title={''}
                   titleClassName="p-2 hidden"

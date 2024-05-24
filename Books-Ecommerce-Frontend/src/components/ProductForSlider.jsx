@@ -8,6 +8,7 @@ import { fetchAPI } from '../helpers/fetch';
 import { PopupOpen } from './popup/PopupOpen';
 import { popupContent } from '../helpers/popupContent';
 import { AppContext } from '../contexts/main';
+import { formatNumberToText } from '../utils/formatNumberToText';
 
 export const ProductForSlider = ({ userId, productData }) => {
   const { setNumCart } = useContext(AppContext);
@@ -123,11 +124,12 @@ export const ProductForSlider = ({ userId, productData }) => {
                 <p className="hidden"> </p>
               ) : (
                 <p className="line-through leading-[1.6rem] sm:leading-8 text-[0.6rem] text-gray-400 sm:text-xs tracking-wide font-['Inter']">
-                  {productData.book_old_price}đ {/*Giá bỏ/ giá cũ */}
+                  {formatNumberToText(productData.book_old_price)}đ{' '}
+                  {/*Giá bỏ/ giá cũ */}
                 </p>
               )}
               <p className="text-[0.9rem] text-red-500 sm:text-[1.15rem] font-semibold tracking-wide font-['Inter']">
-                {productData.book_spe_price}đ {/*giá mới*/}
+                {formatNumberToText(productData.book_spe_price)}đ {/*giá mới*/}
                 {/* <span className="text-[0.8rem] md:text-[1rem]">đ</span> */}
               </p>
             </div>

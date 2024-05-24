@@ -171,7 +171,7 @@ class BookService {
       where: {
         book_status: 1,
       },
-      limit: 5,
+      //limit: 5,
     });
   };
 

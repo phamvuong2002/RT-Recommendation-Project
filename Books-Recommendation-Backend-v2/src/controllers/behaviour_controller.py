@@ -5,9 +5,9 @@ from src.helpers.save_rec_books import save_rec_books
 from src.services.collaborative_implicit_user import implicit_user
 
 #online-content
-async def get_implicit_content(book_id: int, user_id: str):
+async def get_implicit_content(book_id: int, user_id: str, quantity = 10):
     try:
-        books = implicit_content(book_id, 10)
+        books = implicit_content(book_id, quantity)
         # result = await save_rec_books(books= books, user_id= user_id, model_type="behaviour")
         return SuccessResponse(metadata= {'recommendations': books})
     except Exception as e:
@@ -23,9 +23,9 @@ async def get_implicit_content_userbased(user_id: str):
         raise BadRequestError(detail=str(e))
     
 #offline-content
-async def get_implicit_offline_content(book_id: int, user_id: str):
+async def get_implicit_offline_content(book_id: int, user_id: str, quantity = 10):
     try:
-        books = implicit_offline_content(book_id, 10)
+        books = implicit_offline_content(book_id, quantity)
         return SuccessResponse(metadata= {'recommendations': books})
     except Exception as e:
         raise BadRequestError(detail=str(e))

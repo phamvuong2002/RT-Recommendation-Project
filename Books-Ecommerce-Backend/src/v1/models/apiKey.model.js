@@ -1,30 +1,33 @@
-'use strict'
+"use strict";
 
-const {model, Schema, Types} = require('mongoose'); // Erase if already required
+const { model, Schema, Types } = require("mongoose"); // Erase if already required
 
-const DOCUMENT_NAME = 'ApiKey';
-const COLLECTION_NAME = 'ApiKeys' 
+const DOCUMENT_NAME = "ApiKey";
+const COLLECTION_NAME = "ApiKeys";
 
 // Declare the Schema of the Mongo model
-var apiKeySchema = new Schema({
-    key:{
-        type:String,
-        required:true,
-        unique:true,
+var apiKeySchema = new Schema(
+  {
+    key: {
+      type: String,
+      required: true,
+      unique: true,
     },
-    status:{
-        type:Boolean,
-        default:true,
+    status: {
+      type: Boolean,
+      default: true,
     },
-    permissions:{
-        type:[String],
-        required:true,
-        enum: ['0000', '1111', '2222']
+    permissions: {
+      type: [String],
+      required: true,
+      enum: ["0000", "0030", "0104"],
     },
-},{
+  },
+  {
     timestamps: true,
-    collection: COLLECTION_NAME
-});
+    collection: COLLECTION_NAME,
+  }
+);
 
 //Export the model
 module.exports = model(DOCUMENT_NAME, apiKeySchema);

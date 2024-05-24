@@ -59,7 +59,11 @@ export const AllProducts = ({
         {/* Hiển thị các sản phẩm của trang hiện tại*/}
         {products.map((product, index) => (
           <div key={index} className="">
-            <Product userId={userId} productData={product?.book} />
+            <Product
+              userId={userId}
+              productData={product?.book}
+              optionData={product?.sold}
+            />
           </div>
         ))}
       </div>

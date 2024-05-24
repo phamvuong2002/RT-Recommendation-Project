@@ -46,10 +46,19 @@ export const SliderProducts = ({
           <SwiperSlide key={index} className="w-1/5 h-full ">
             <ProductForSlider userId={userId} productData={product.book} />
             {isShowProgress ? (
-              <div className="w-full bg-gray-200 rounded-full dark:bg-gray-700">
-                <div className="bg-red-500 text-xs w-[80%] font-medium text-white text-center p-0.5 leading-none rounded-full">
-                  {product.sold} sản phẩm đã bán
+              <div className="w-full h-4 bg-gray-300 rounded-full dark:bg-gray-700 relative">
+                <div className="absolute z-10 inset-0 flex justify-center items-center">
+                  <span className="text-xs font-medium text-white">
+                    {product.sold} sản phẩm đã bán
+                  </span>
                 </div>
+                {/* Thanh tiến độ */}
+                <div
+                  className="h-4 bg-red-500 text-xs font-medium text-white text-center p-0.5 leading-none rounded-full relative"
+                  style={{
+                    width: `${product.sold < 10 ? 5 : Math.min(product.sold, 100)}%`,
+                  }}
+                ></div>
               </div>
             ) : (
               ''

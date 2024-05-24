@@ -15,6 +15,7 @@ import { CircleLoader } from '../components/loaders/CircleLoader';
 import { sendEmailOTP, verifyEmailOTP } from '../apis/emailOTP';
 import { fetchAPI } from './fetch';
 import { initializeFirebaseAuth } from '../configs/firebase_v2.config';
+import { AppContext } from '../contexts/main';
 
 export const AuthenticationPopup = ({
   open,
@@ -28,6 +29,7 @@ export const AuthenticationPopup = ({
   handleError,
 }) => {
   // const handleAuthenEmail = async (user) => {
+  const { setIsLoading } = useContext(AppContext);
   const [reload, setReload] = useState(false);
   const [sendOtpStatus, setSendOtpStatus] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -105,7 +107,15 @@ export const AuthenticationPopup = ({
       setPhonenumber(phoneInput);
       // setSendOtpStatus(true);
       const auth_v2 = await initializeFirebaseAuth();
-
+      if (auth_v2 === null) {
+        setSendOTPMessage(
+          'Dịch vụ xác thực bằng OTP đang bảo trì. Vui lòng sử dụng các dịch vụ khác để xác thực!',
+        );
+        setTimeout(() => {
+          handleReturn();
+        }, 2000);
+        return false;
+      }
       await authenFunction(phonenumber, auth_v2);
     }
     // setPhonenumber(phoneInput);
@@ -131,14 +141,17 @@ export const AuthenticationPopup = ({
         setOtp('');
       }
     } else if (phonenumber) {
+      setIsLoading(true);
       window.confirmationResult
         .confirm(otp)
         .then(async (res) => {
           setAuthenStatus('success');
           setVaildOtpMessage('');
+          setIsLoading(false);
         })
         .catch((err) => {
           setVaildOtpMessage('Mã OTP không khớp. Vui lòng thử lại!');
+          setIsLoading(false);
           setAuthenStatus('falied');
           setOtp('');
         });

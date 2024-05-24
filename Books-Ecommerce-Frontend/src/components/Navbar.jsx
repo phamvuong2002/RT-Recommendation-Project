@@ -197,7 +197,7 @@ export const Navbar = () => {
 
   return (
     <nav className="max-w-screen-2xl font-inter flex flex-col ">
-      <div className=" mx-auto my-1  sm:max-w-screen-md md:max-w-screen-2xl flex justify-between items-center md:justify-around lg:grid lg:grid-cols-6 lg:gap-4 lg:justify-items-start container  relative">
+      <div className="xl:px-10 mx-auto my-1  sm:max-w-screen-md md:max-w-screen-2xl flex justify-between items-center md:justify-around lg:grid lg:grid-cols-6 lg:gap-4 lg:justify-items-start container  relative">
         <Link
           to="/"
           className="hidden lg:block text-xs sm:text-lg lg:text-xl lg:pl-6 lg:col-span-1"
@@ -234,7 +234,7 @@ export const Navbar = () => {
         </div>
 
         {/* ACCOUNT: Guest/User*/}
-        <div className="hidden  text-xl lg:text-lg ml-1  sm:inline-flex justify-between gap-1 mr-1 md:absolute  md:right-4 md:mr-0 lg:relative lg:mr-3 sm:my-auto sm:gap-4   text-black lg:col-span-2 lg:justify-self-center lg:gap-2 xl:gap-10 ">
+        <div className="hidden text-xl lg:text-lg ml-1  sm:inline-flex justify-between gap-1 mr-1 md:absolute  md:right-4 md:mr-0 lg:relative lg:mr-3 sm:my-auto sm:gap-4   text-black lg:col-span-2 lg:justify-self-center lg:gap-2 xl:gap-10 ">
           <div className="flex items-center">
             {/* Chưa đăng nhập sẽ hiển thị popup Đăng ký/Đăng nhập */}
             <div
@@ -278,9 +278,9 @@ export const Navbar = () => {
                             + Đăng xuất */}
             <Menu
               as="div"
-              className={`${token ? 'block' : 'hidden'} relative inline-block text-left`}
+              className={`${token ? 'block' : 'hidden'} relative inline-block text-left xl:ml-20`}
             >
-              {({}) => (
+              {() => (
                 <div>
                   <div
                     onClick={() => setOpenDropdown(!openDropdown)}
@@ -313,7 +313,7 @@ export const Navbar = () => {
                       onMouseEnter={onMouseEnterMenu}
                       onMouseLeave={onMouseLeaveMenu}
                       className={
-                        'absolute right-0 z-10 mt-2 w-[11rem] rounded-md bg-white shadow-2xl focus:outline-none'
+                        'absolute right-0 z-10 left-0 mt-2 w-[11rem] rounded-md bg-white shadow-2xl focus:outline-none'
                       }
                     >
                       <div className="py-1">

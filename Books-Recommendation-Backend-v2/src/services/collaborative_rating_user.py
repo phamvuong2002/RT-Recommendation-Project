@@ -1,9 +1,10 @@
 import pickle
 import numpy as np
-from src.helpers.load_model import load_model
 from src.helpers.predict_rating import predict
 import pandas as pd
 
+from src.helpers.load_model import load_model
+from src.helpers.load_offline_model import get_latest_model_file
 
 ## recommendations based on user_id
 # RATING?
@@ -17,17 +18,6 @@ def rating_user(user_id, n_similar):
     # Đổi id thực của user sang id của model
     # converted_user_id = books_df.loc[books_df['User-ID'] == user_id,["User-ID"]].drop_duplicates().values[0]
     converted_user_id = books_df.loc[books_df['User-ID'] == user_id,["User_ID"]].drop_duplicates().values[0]
-
-    # print('id: ',converted_user_id[0])
-    # print(books_df.sort_values('User_ID'))
-    #Sách user đã đánh giá
-    # u_rated = books_df.loc[books_df['User_ID'] == converted_user_id[0],"Book_ID"].unique()
-    # print('rated ',u_rated  )
-    #Tất cả sách trong feedback
-    # all_books = books_df["Book_ID"].unique()
-    # print('nei: ',distances)
-    # print('nnnei',neighbors)
-    # items_not_rated_by_u = books_df[ids, 1].tolist()
 
     recommended_items = []
     #find candidates book - get top 30
@@ -77,5 +67,55 @@ def rating_user(user_id, n_similar):
   
     return recommended_items[:n_similar]
 
+
+
+def rating_offline_user(user_id, n_similar):
+    model_name = get_latest_model_file(folder_path="src/models/offline/rating_user", model_name="knn", model_type="rating_user")
+    grouped_df_name = get_latest_model_file(folder_path="src/models/offline/rating_user", model_name="grouped_df", model_type="rating_user")
+    
+    model_name = model_name.split('.')[0]
+    grouped_df_name = grouped_df_name.split('.')[0]
+
+    recommendations = []
+    algo_knn = load_model(f"offline/rating_user/{model_name}")
+    grouped_df = load_model(f"offline/rating_user/{grouped_df_name}")
+    # Creating an user item interactions matrix 
+    # user_item_interactions_matrix = grouped_df.pivot(index = 'User-ID', columns = 'Book-ID', values = 'Book-Rating')
+    
+    # # Extracting those product ids which the user_id has not interacted yet
+    # non_interacted_products = user_item_interactions_matrix.loc[user_id][user_item_interactions_matrix.loc[user_id].isnull()].index.tolist()
+    
+    # # Looping through each of the product ids which user_id has not interacted yet
+    # for item_id in non_interacted_products:
+        
+    #     # Predicting the ratings for those non interacted product ids by this user
+    #     est = algo_knn.predict(user_id, item_id).est
+        
+    #     # Appending the predicted ratings
+    #     recommendations.append((item_id, est))
+
+    # # Sorting the predicted ratings in descending order
+    # recommendations.sort(key = lambda x: x[1], reverse = True)
+    rated_book = grouped_df.loc[grouped_df['User-ID']==user_id,'Book-ID'].unique()
+
+    list_of_unrated_book = grouped_df.loc[(grouped_df['User-ID']==user_id,['Book-ID']) and (~grouped_df['Book-ID'].isin(rated_book)),'Book-ID']
+
+    # set up user set with unrated books
+    # print('unrated ',list_of_unrated_book) 
+    user_set = [[user_id, item_id, 0] for item_id in list_of_unrated_book]
+
+
+    # generate predictions based on user set
+    predictions_pp= algo_knn.test(user_set)
+    
+    df = pd.DataFrame(predictions_pp, columns=['uid', 'iid', 'rui', 'est', 'details'])
+    # print('PRE',df.sort_values('est',ascending=False).drop_duplicates('iid'),['iid','est'])
+    df=df.rename(columns={'iid': 'book_id', 'est': 'score'})
+    top_n_recommendations = df[['book_id','score']].sort_values('score',ascending=False).drop_duplicates('book_id')[:n_similar]
+    
+
+    final = top_n_recommendations.to_dict('records')
+
+    return final # Returing top n highest predicted rating products for this user
 
     

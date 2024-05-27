@@ -86,26 +86,41 @@ async def recommend(book_id: int = 0, user_id: str = "", quantity: int = 10):
     return await behaviour_controller.get_implicit_content(book_id, user_id, quantity)
 
 
-@router.get("/rating/recommend/user={user_id}")
-async def recommend(user_id: str = ""):
-    return await rating_controller.get_recommended_userbased(user_id)
+@router.get("/rating/user/user={user_id}&quantity={quantity}")
+async def recommend(user_id: str = "", quantity: int = 10):
+    return await rating_controller.get_recommended_userbased(user_id,quantity)
 
 
-@router.get("/implicit/recommend/user={user_id}")
-async def recommend(user_id: str = ""):
-    return await behaviour_controller.get_implicit_content_userbased(user_id)
+@router.get("/implicit/user/user={user_id}&quantity={quantity}")
+async def recommend(user_id: str = "", quantity: int = 10):
+    return await behaviour_controller.get_implicit_userbased(user_id,quantity)
 
 
 # SVDpp
-@router.get("/implicit/svdpp/recommend/user={user_id}")
-async def recommend(user_id: str = ""):
-    return await behaviour_controller.get_implicit_svdpp(user_id)
+@router.get("/implicit/svdpp/user={user_id}&quantity={quantity}")
+async def recommend(user_id: str = "", quantity: int = 10):
+    return await behaviour_controller.get_implicit_svdpp(user_id, quantity)
 
-@router.get("/rating/svdpp/recommend/user={user_id}")
-async def recommend(user_id: str = ""):
-    return await rating_controller.get_recommended_rating_svdpp(user_id)
+@router.get("/rating/svdpp/user={user_id}&quantity={quantity}")
+async def recommend(user_id: str = "", quantity: int = 10):
+    return await rating_controller.get_recommended_rating_svdpp(user_id, quantity)
 
 ###Offline###
 @router.get("/implicit/offline/content/book={book_id}&user={user_id}&quantity={quantity}")
 async def recommend(book_id: int = 0, user_id: str = "", quantity: int = 10):
     return await behaviour_controller.get_implicit_offline_content(book_id, user_id, quantity)
+
+
+@router.get("/implicit/offline/svdpp/user={user_id}&quantity={quantity}")
+async def recommend(user_id: str = "", quantity: int = 10):
+    return await behaviour_controller.get_implicit_offline_svd( user_id, quantity)
+
+
+@router.get("/rating/offline/svdpp/user={user_id}&quantity={quantity}")
+async def recommend( user_id: str = "", quantity: int = 10):
+    return await rating_controller.get_rating_offline_svd( user_id, quantity)
+
+
+@router.get("/rating/offline/user/user={user_id}&quantity={quantity}")
+async def recommend( user_id: str = "", quantity: int = 10):
+    return await rating_controller.get_rating_offline_userbased( user_id, quantity)

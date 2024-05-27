@@ -5,8 +5,8 @@ from src.services.collaborative_rating_recommender import recommendFor
 from src.services.collaborative_rating_search import search_book
 from src.helpers.save_rec_books import save_rec_books
 
-from src.services.collaborative_rating_user import rating_user
-from src.services.collaborative_rating_svdpp import rating_svdpp
+from src.services.collaborative_rating_user import rating_user, rating_offline_user
+from src.services.collaborative_rating_svdpp import rating_svdpp, rating_offline_svdpp
 
 # Gợi ý sách được mua nhiều nhất
 async def get_popular(limit: int):
@@ -34,21 +34,40 @@ async def get_recommended(book: str = "", userId: str = ""):
 
 
 # Goi ý top n sản phẩm dựa trên User_based
-async def get_recommended_userbased(userId: str = ""):
+async def get_recommended_userbased(userId: str = "", quantity = 10):
     try:
-        books =  rating_user(userId,10)
+        books =  rating_user(userId,quantity)
         print(books)
-        results = await save_rec_books(books, user_id=userId, key="book_id")
+        results = await save_rec_books(books, user_id=userId, model_type="rating_user",key="book_id")
         return SuccessResponse(metadata= {'recommendation': results})
     except Exception as e:
         raise BadRequestError(detail=str(e))
 
 # Rating SVDpp
-async def get_recommended_rating_svdpp(userId: str = ""):
+async def get_recommended_rating_svdpp(userId: str = "", quantity = 10):
     try:
-        books =  rating_svdpp(userId,10)
+        books =  rating_svdpp(userId,quantity)
         # print(books)
-        results = await save_rec_books(books, user_id=userId, key="book_id")
+        results = await save_rec_books(books, user_id=userId,  model_type="rating_svd",key="book_id")
         return SuccessResponse(metadata= {'recommendation': results})
+    except Exception as e:
+        raise BadRequestError(detail=str(e))
+
+# OFFLINE
+async def get_rating_offline_svd(userId: str = "",quantity=10):
+    try:
+        books =  rating_offline_svdpp(userId,quantity)
+        # print(books)
+        # results = await save_rec_books(books, user_id=userId, key="book_id")
+        return SuccessResponse(metadata= {'recommendation': books})
+    except Exception as e:
+        raise BadRequestError(detail=str(e))
+
+async def get_rating_offline_userbased(userId: str = "", quantity=10):
+    try:
+        books =  rating_offline_user(userId,quantity)
+        # print(books)
+        # results = await save_rec_books(books, user_id=userId, key="book_id")
+        return SuccessResponse(metadata= {'recommendation': books})
     except Exception as e:
         raise BadRequestError(detail=str(e))

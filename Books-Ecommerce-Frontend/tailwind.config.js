@@ -7,6 +7,9 @@ export default {
         popi: 'Poppins',
         inter: 'Inter',
       },
+      backgroundImage: {
+        'category-main': "url('/img/category_template/template_main.png')",
+      },
     },
   },
   plugins: [
@@ -32,19 +35,17 @@ export default {
             display: 'none',
           },
 
-
           /* Hide scrollbar for IE, Edge and Firefox */
           '.no-scrollbar': {
-            '-ms-overflow-style': 'none',  /* IE and Edge */
-          'scrollbar - width': 'none',/* Firefox */
-      }
-
-    },
+            '-ms-overflow-style': 'none' /* IE and Edge */,
+            'scrollbar - width': 'none' /* Firefox */,
+          },
+        },
       };
-addUtilities(newUtilities, ['responsive', 'hover']);
+      addUtilities(newUtilities, ['responsive', 'hover']);
     },
-require('tailwindcss/plugin')(({ addVariant }) => {
-  addVariant('search-cancel', '&::-webkit-search-cancel-button');
-}),
+    require('tailwindcss/plugin')(({ addVariant }) => {
+      addVariant('search-cancel', '&::-webkit-search-cancel-button');
+    }),
   ],
 };

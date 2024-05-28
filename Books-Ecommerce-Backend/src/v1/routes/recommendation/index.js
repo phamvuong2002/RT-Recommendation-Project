@@ -10,7 +10,7 @@ const { asyncHandler } = require("../../auth/checkAuth");
 //Get popular items
 router.post("/popular", asyncHandler(recommendationController.getPopularBooks));
 router.post(
-  "/best-selling",
+  "/best-selling/books",
   asyncHandler(bestSellingController.getBestSellingBooks)
 );
 router.post(
@@ -22,6 +22,12 @@ router.post(
 router.post(
   "/behaviour/content",
   asyncHandler(recBehaviourController.getBehaviourContentBooks)
+);
+
+//Category
+router.post(
+  "/best-selling/categories",
+  asyncHandler(bestSellingController.getBestSellingCategories)
 );
 
 module.exports = router;

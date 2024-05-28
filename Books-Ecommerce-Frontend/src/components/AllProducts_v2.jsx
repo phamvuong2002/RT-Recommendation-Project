@@ -51,11 +51,9 @@ export const AllProducts = ({
   }, [productsData]);
 
   return (
-    <div ref={topRef} className="w-full">
+    <div ref={topRef} className="w-full bg-white">
       {showHeader}
-      <div
-        className={`grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-${numOfProductsInRow} lg:gap-x-6 lg:gap-y-4`}
-      >
+      <div className={`grid grid-cols-${numOfProductsInRow} gap-2`}>
         {/* Hiển thị các sản phẩm của trang hiện tại*/}
         {products.map((product, index) => (
           <div key={index} className="">
@@ -68,62 +66,67 @@ export const AllProducts = ({
         ))}
       </div>
 
-      <ReactPaginate
-        breakLabel={<span className="mr-4">...</span>}
-        nextLabel={
-          //   showNextButton ? null : (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="1.5"
-            stroke="currentColor"
-            className="w-8 h-8 text-[#ff4e4e]"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-            />
-          </svg>
-          //   )
-        }
-        // forcePage={currentPage - 1}
-        // onPageChange={handlePageChange}
-        onPageChange={(event) => {
-          setPage(
-            event.selected === 0
-              ? 1
-              : event.selected === totalPages
-                ? totalPages
-                : event.selected + 1,
-          );
-          topRef.current.scrollIntoView({ behavior: 'smooth', scroll: 'auto' });
-        }}
-        pageRangeDisplayed={2}
-        pageCount={Math.ceil(totalPages)}
-        previousLabel={
-          //   showPrevButton ? null : (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="1.5"
-            stroke="currentColor"
-            className="w-8 h-8 text-[#ff4e4e]"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-            />
-          </svg>
-          //   )
-        }
-        containerClassName="flex items-center justify-center mt-2 pb-9 sm:mt-8 sm:mb-4"
-        pageClassName="w-8 h-8 flex items-center justify-center sm:mr-4"
-        activeClassName="rounded-[50%] w-8 h-8 leading-8 text-center font-bold cursor-pointer bg-red-500 text-white"
-      />
+      <div className="bg-white">
+        <ReactPaginate
+          breakLabel={<span className="mr-4">...</span>}
+          nextLabel={
+            //   showNextButton ? null : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="currentColor"
+              className="w-8 h-8 text-[#ff4e4e]"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+              />
+            </svg>
+            //   )
+          }
+          // forcePage={currentPage - 1}
+          // onPageChange={handlePageChange}
+          onPageChange={(event) => {
+            setPage(
+              event.selected === 0
+                ? 1
+                : event.selected === totalPages
+                  ? totalPages
+                  : event.selected + 1,
+            );
+            topRef.current.scrollIntoView({
+              behavior: 'smooth',
+              scroll: 'auto',
+            });
+          }}
+          pageRangeDisplayed={2}
+          pageCount={Math.ceil(totalPages)}
+          previousLabel={
+            //   showPrevButton ? null : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="currentColor"
+              className="w-8 h-8 text-[#ff4e4e]"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+              />
+            </svg>
+            //   )
+          }
+          containerClassName="flex items-center justify-center mt-2 pb-9 sm:mt-8 "
+          pageClassName="w-8 h-8 flex items-center justify-center sm:mr-4 "
+          activeClassName="rounded-[50%] w-8 h-8 leading-8 text-center font-bold cursor-pointer bg-red-500 text-white"
+        />
+      </div>
     </div>
   );
 };

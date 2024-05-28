@@ -6,11 +6,13 @@ import { FaBook } from 'react-icons/fa6';
 import { HiChevronUp } from 'react-icons/hi2';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { fetchAPI } from '../helpers/fetch';
+import { motion } from 'framer-motion';
 
 import PropTypes from 'prop-types';
 
 import axios from 'axios';
 import { mergeObject } from '../utils/mergeObject';
+import { FadeInYDirection } from '../helpers/animationFramerMotion';
 
 import { gettop3cate } from '../apis/category';
 
@@ -19,7 +21,7 @@ function classNames(...classes) {
 }
 
 export default function Category_dropdown({
-  isShowCloseIcon,
+  isShowCloseIcon = true,
   isMenuOpen,
   toggleMenu,
 }) {
@@ -27,9 +29,14 @@ export default function Category_dropdown({
   const [isLoading, setIsLoading] = useState(true);
   const [cate, setCate] = useState([{}]);
   const [all_categories, setCategoriess] = useState([]);
+  const {
+    ref: topRef,
+    animate: topAnimate,
+    initial: topInitial,
+  } = FadeInYDirection('top', 0.3);
 
   const handleClose = () => {
-    toggleMenu();
+    toggleMenu(false);
   };
 
   useEffect(() => {
@@ -64,140 +71,151 @@ export default function Category_dropdown({
   return (
     // Desktop
     <div>
-      <div className="hidden sm:px-0 max-w-screen-xl lg:grid grid-cols-5 overflow-y-auto rounded-l-[6px] rounded-r-[6px] border-2 shadow-md relative ">
-        {isLoading && <p>Loading...</p>}
-        {!isLoading && (
-          <Tab.Group vertical>
-            <Tab.List className="flex flex-col py-1 border-r-2 bg-red-500 rounded-l-[6px]">
-              <h1 className="text-center text-[1rem] py-3 text-slate-100">
-                DANH MỤC SẢN PHẨM
-              </h1>
-              {cate.map((main_category) => (
-                <Tab
-                  key={main_category.id}
-                  className={({ selected }) =>
-                    classNames(
-                      'w-full py-4 text-[1rem] font-semibold uppercase font-inter border-none outline-none ',
-                      selected
-                        ? 'bg-rose-50 text-red-500 border-none '
-                        : 'text-white hover:bg-white/[0.12] border-none',
-                    )
-                  }
-                >
-                  {main_category.name}
-                </Tab>
-              ))}
-            </Tab.List>
+      <div
+        className={`bg-black/30 flex fixed  top-0 bottom-0 left-0 right-0 justify-center items-center z-30 ${
+          isMenuOpen ? '' : 'hidden'
+        }`}
+      >
+        <motion.div ref={topRef} animate={topAnimate} initial={topInitial}>
+          <div className="hidden sm:px-0 max-w-screen-xl lg:grid grid-cols-5 overflow-y-auto rounded-l-[6px] rounded-r-[6px] border-2 shadow-md relative ">
+            {isLoading && <p>Loading...</p>}
+            {!isLoading && (
+              <Tab.Group vertical>
+                <Tab.List className="flex flex-col py-1 border-r-2 bg-red-500 rounded-l-[6px]">
+                  <h1 className="text-center text-[1rem] py-3 text-slate-100">
+                    DANH MỤC SẢN PHẨM
+                  </h1>
+                  {cate.map((main_category) => (
+                    <Tab
+                      key={main_category.id}
+                      className={({ selected }) =>
+                        classNames(
+                          'w-full py-4 text-[1rem] font-semibold uppercase font-inter border-none outline-none ',
+                          selected
+                            ? 'bg-rose-50 text-red-500 border-none '
+                            : 'text-white hover:bg-white/[0.12] border-none',
+                        )
+                      }
+                    >
+                      {main_category.name}
+                    </Tab>
+                  ))}
+                </Tab.List>
 
-            <Tab.Panels className=" col-span-4">
-              {cate.map((main_cates, idx) => (
-                <Tab.Panel
-                  key={idx}
-                  className={classNames(
-                    'rounded-r-[6px] bg-white p-3 outline-none',
-                  )}
-                >
-                  {isShowCloseIcon ? (
-                    <div>
-                      {isMenuOpen && (
-                        <button onClick={handleClose} className="float-right">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="red"
-                            class="w-7 h-7 stroke-red-500"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z"
-                              clip-rule="evenodd"
-                            />
-                          </svg>
-                        </button>
+                <Tab.Panels className=" col-span-4">
+                  {cate.map((main_cates, idx) => (
+                    <Tab.Panel
+                      key={idx}
+                      className={classNames(
+                        'rounded-r-[6px] bg-white p-3 outline-none',
                       )}
-                    </div>
-                  ) : (
-                    <div className="hidden"></div>
-                  )}
+                    >
+                      {isShowCloseIcon ? (
+                        <div>
+                          {isMenuOpen && (
+                            <button
+                              onClick={handleClose}
+                              className="float-right"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="red"
+                                class="w-7 h-7 stroke-red-500"
+                              >
+                                <path
+                                  fill-rule="evenodd"
+                                  d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z"
+                                  clip-rule="evenodd"
+                                />
+                              </svg>
+                            </button>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="hidden"></div>
+                      )}
 
-                  <div
-                    value={main_cates.name_slug}
-                    className="text-xl uppercase py-3 font-semibold flex gap-2 items-center hover:cursor-pointer"
-                    onClick={() => handleOnClick(main_cates.name_slug)}
-                  >
-                    {main_cates.id == '1' ? (
-                      <FaBook className="text-red-500" />
-                    ) : (
-                      <BiWorld className="text-indigo-500" />
-                    )}
-                    {main_cates.name}
-                  </div>
-                  {/* Thể loại */}
+                      <div
+                        value={main_cates.name_slug}
+                        className="text-xl uppercase py-3 font-semibold flex gap-2 items-center hover:cursor-pointer"
+                        onClick={() => handleOnClick(main_cates.name_slug)}
+                      >
+                        {main_cates.id == '1' ? (
+                          <FaBook className="text-red-500" />
+                        ) : (
+                          <BiWorld className="text-indigo-500" />
+                        )}
+                        {main_cates.name}
+                      </div>
+                      {/* Thể loại */}
 
-                  <ul className="grid grid-cols-4  font-bold font-inter ">
-                    {main_cates.submenu
-                      .filter((single_submenu, idx) => idx < 8)
-                      .map((main_cate) => (
-                        <li
-                          key={main_cate.id}
-                          className="flex flex-col p-3 uppercase hover:cursor-pointer hover:text-red-500 "
-                        >
-                          <div
-                            value={`${main_cates.name_slug},${main_cate.name_slug}`}
-                            onClick={() =>
-                              handleOnClick(
-                                `${main_cates.name_slug},${main_cate.name_slug}`,
-                              )
-                            }
-                          >
-                            <h3 className="text-sm font-semibold font-inter truncate">
-                              {main_cate.name}
-                            </h3>
-                          </div>
-                          {/* Submenu */}
-                          <ul className="mt-1 flex flex-col   text-xs font-normal leading-4 text-gray-500">
-                            {main_cate.submenu
-                              .filter((single_submenu, idx) => idx < 5)
-                              .map((single_submenu, idx) => (
-                                <li
-                                  key={single_submenu.id}
-                                  className="relative py-2 hover:text-red-400 text-sm normal-case truncate hover:cursor-pointer  "
+                      <ul className="grid grid-cols-4  font-bold font-inter ">
+                        {main_cates.submenu
+                          .filter((single_submenu, idx) => idx < 8)
+                          .map((main_cate) => (
+                            <li
+                              key={main_cate.id}
+                              className="flex flex-col p-3 uppercase hover:cursor-pointer hover:text-red-500 "
+                            >
+                              <div
+                                value={`${main_cates.name_slug},${main_cate.name_slug}`}
+                                onClick={() =>
+                                  handleOnClick(
+                                    `${main_cates.name_slug},${main_cate.name_slug}`,
+                                  )
+                                }
+                              >
+                                <h3 className="text-sm font-semibold font-inter truncate">
+                                  {main_cate.name}
+                                </h3>
+                              </div>
+                              {/* Submenu */}
+                              <ul className="mt-1 flex flex-col   text-xs font-normal leading-4 text-gray-500">
+                                {main_cate.submenu
+                                  .filter((single_submenu, idx) => idx < 5)
+                                  .map((single_submenu, idx) => (
+                                    <li
+                                      key={single_submenu.id}
+                                      className="relative py-2 hover:text-red-400 text-sm normal-case truncate hover:cursor-pointer  "
+                                    >
+                                      {' '}
+                                      {single_submenu.name}
+                                      <div
+                                        value={`${main_cates.name_slug},${main_cate.name_slug},${single_submenu.name_slug}`}
+                                        onClick={() =>
+                                          handleOnClick(
+                                            `${main_cates.name_slug},${main_cate.name_slug},${single_submenu.name_slug}`,
+                                          )
+                                        }
+                                        className={classNames(
+                                          'absolute inset-0 rounded-md',
+                                        )}
+                                      />
+                                    </li>
+                                  ))}
+                                <button
+                                  className={`${main_cate.submenu.length >= 5 ? '' : 'hidden'} text-[15px] font-normal leading-4 text-left text-blue-400`}
+                                  onClick={() =>
+                                    handleOnClick(
+                                      `${main_cates.name_slug},${main_cate.name_slug}`,
+                                    )
+                                  }
                                 >
                                   {' '}
-                                  {single_submenu.name}
-                                  <div
-                                    value={`${main_cates.name_slug},${main_cate.name_slug},${single_submenu.name_slug}`}
-                                    onClick={() =>
-                                      handleOnClick(
-                                        `${main_cates.name_slug},${main_cate.name_slug},${single_submenu.name_slug}`,
-                                      )
-                                    }
-                                    className={classNames(
-                                      'absolute inset-0 rounded-md',
-                                    )}
-                                  />
-                                </li>
-                              ))}
-                            <button
-                              className={`${main_cate.submenu.length >= 5 ? '' : 'hidden'} text-[15px] font-normal leading-4 text-left text-blue-400`}
-                              onClick={() =>
-                                handleOnClick(
-                                  `${main_cates.name_slug},${main_cate.name_slug}`,
-                                )
-                              }
-                            >
-                              {' '}
-                              Xem tất cả
-                            </button>
-                          </ul>
-                        </li>
-                      ))}
-                  </ul>
-                </Tab.Panel>
-              ))}
-            </Tab.Panels>
-          </Tab.Group>
-        )}
+                                  Xem tất cả
+                                </button>
+                              </ul>
+                            </li>
+                          ))}
+                      </ul>
+                    </Tab.Panel>
+                  ))}
+                </Tab.Panels>
+              </Tab.Group>
+            )}
+          </div>
+        </motion.div>
       </div>
 
       {/* mobile */}

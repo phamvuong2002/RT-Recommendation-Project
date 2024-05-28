@@ -42,22 +42,20 @@ const StaggeredDropDownDiscount = ({ icon, setChosenDiscount, className }) => {
   }, [userId, open]);
 
   return (
-    <div
-      className={`${className} flex w-full items-center bg-white font-inter`}
-    >
+    <div className={`${className} flex items-center bg-white font-inter`}>
       <motion.div
         animate={open ? 'open' : 'closed'}
         className="relative w-full"
       >
         <button
           onClick={() => setOpen((pv) => !pv)}
-          className="flex items-center rounded-md transition-colors"
+          className="flex w-full items-center rounded-md transition-colors"
         >
           <div className="w-full">{icon}</div>
           {/* <span className="font-medium text-sm">Post actions</span>
           <motion.span variants={iconVariants}>
-            <FiChevronDown />
-          </motion.span> */}
+          <FiChevronDown />
+        </motion.span> */}
         </button>
 
         <motion.ul

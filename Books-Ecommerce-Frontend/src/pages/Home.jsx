@@ -10,8 +10,13 @@ import { fetchAPI } from '../helpers/fetch';
 import { getAllBook } from '../apis/book';
 import { AppContext } from '../contexts/main';
 import { isMobileDevice } from '../utils/isMobileDevice';
-import { searchbestselling } from '../apis/recommendation';
+import {
+  categorybestselling,
+  getbestselling,
+  searchbestselling,
+} from '../apis/recommendation';
 import { useNavigate } from 'react-router-dom';
+import { TemplateC_1 } from '../components/category/TemplateC_1';
 
 export const Home = () => {
   const { userId, numCart, setNumCart, token, setIsLoading } =
@@ -20,6 +25,7 @@ export const Home = () => {
   const [user, setUser] = useState(userId);
   const [products, setProducts] = useState([]);
   const [bestSellerData, setBestSellerData] = useState([]);
+  const [bestSellerCates, setBestSellercates] = useState([]);
   const { setActivePage, setIsShowFooter } = useContext(AppContext);
 
   //set active page
@@ -32,7 +38,7 @@ export const Home = () => {
   useEffect(() => {
     const loadBestSellerData = async () => {
       setIsLoading(true);
-      const data = await fetchAPI(`../${searchbestselling}`, 'POST', {
+      const data = await fetchAPI(`../${getbestselling}`, 'POST', {
         pageNumber: 1,
         pageSize: 12,
       });
@@ -44,12 +50,30 @@ export const Home = () => {
       setBestSellerData(data?.metadata?.books);
       setIsLoading(false);
     };
+    const loadBestSellerCate = async () => {
+      setIsLoading(true);
+      const data = await fetchAPI(`../${categorybestselling}`, 'POST', {
+        top: 5,
+      });
+      if (data.status != 200) {
+        setBestSellercates([]);
+        setIsLoading(false);
+        return;
+      }
+      setBestSellercates(data?.metadata);
+      setIsLoading(false);
+    };
+
+    //get best seller data
     loadBestSellerData();
+    loadBestSellerCate();
   }, [userId]);
 
   //get message --- Để đây để làm update sản phẩm bestseller realtime
   useEffect(() => {
-    const client = new W3CWebSocket('ws://localhost:3050');
+    const client = new W3CWebSocket(
+      `ws://${import.meta.env.VITE_BACKEND_SERVER_URI}`,
+    );
     // Lắng nghe sự kiện mở kết nối
     client.onopen = () => {
       console.log('WebSocket Client Connected');
@@ -203,7 +227,7 @@ export const Home = () => {
               </svg>
             </div>
           </div>
-          <Category />
+          <Category categoryData={bestSellerCates} />
         </div>
 
         {/*Sản phẩm bán chạy*/}

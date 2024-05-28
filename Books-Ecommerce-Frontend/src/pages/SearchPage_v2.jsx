@@ -29,6 +29,7 @@ export const SearchPage_v2 = () => {
   const query = searchParams.get('search');
   const [source, setSource] = useState('search_v2');
   const [totalPages, setTotalPages] = useState(0);
+  const [totalResults, setTotalResults] = useState(0);
 
   // lấy Param: Page & Limit
   const page = searchParams.get('page');
@@ -44,14 +45,14 @@ export const SearchPage_v2 = () => {
     { path: `#`, label: 'Kết Quả Tìm kiếm' },
     ...(search_type !== QUERY_TYPE.NORMAL
       ? [
-        {
-          path: `#`,
-          label: shortenString(
-            `${QUERY_TYPE_NAME[search_type.toUpperCase()]}`,
-            15,
-          ),
-        },
-      ]
+          {
+            path: `#`,
+            label: shortenString(
+              `${QUERY_TYPE_NAME[search_type.toUpperCase()]}`,
+              15,
+            ),
+          },
+        ]
       : []),
   ];
 
@@ -77,9 +78,10 @@ export const SearchPage_v2 = () => {
         setIsLoading(false);
         return;
       }
-      console.log('metadata:::', data?.metadata);
+      // console.log('metadata:::', data?.metadata);
       setProductsSearch(data?.metadata?.books);
       setTotalPages(data.metadata?.totalPages);
+      setTotalResults(data.metadata?.totalBooks);
       setIsLoading(false);
     };
 
@@ -100,8 +102,10 @@ export const SearchPage_v2 = () => {
         setIsLoading(false);
         return;
       }
+      // console.log('metadata:::', data?.metadata);
       setProductsSearch(data?.metadata?.books);
       setTotalPages(data.metadata?.totalPages);
+      setTotalResults(data.metadata?.totalBooks);
       setIsLoading(false);
     };
 
@@ -132,6 +136,7 @@ export const SearchPage_v2 = () => {
         productsData={productsSearch}
         _source={source}
         _totalPages={totalPages}
+        _totalResults={totalResults}
       />
     </div>
   );

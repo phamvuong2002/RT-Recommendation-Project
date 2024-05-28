@@ -17,7 +17,7 @@ class RecommendationBehaviourService {
     const convertedbooks = await recBooksHelper.convertRecBooksHelper(
       contentBooks.recommendations,
       "bookID",
-      "behavior-online"
+      `behavior-${model_type}`
     );
     return convertedbooks;
   }

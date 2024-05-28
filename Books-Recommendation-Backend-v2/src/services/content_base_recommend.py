@@ -2,6 +2,7 @@ import pandas as pd
 from src.helpers.load_model import load_model
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
+from fuzzywuzzy import process
 
 # Hàm để gợi ý sách, input là tiêu đề
 def get_content_recommendations_by_keyword(title):
@@ -12,7 +13,10 @@ def get_content_recommendations_by_keyword(title):
     cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
 
     # Tìm kiếm sách dựa trên một phần của tiêu đề
-    selected_books = data[data['book_title'].str.contains(title, case=False, na=False)]
+    matches = process.extract(title, data['name'], limit=10)
+    matched_indices = [match[2] for match in matches]
+    selected_books = data.iloc[matched_indices]
+    
     if selected_books.empty:
         selected_books = pd.DataFrame(columns=data.columns) 
     else:

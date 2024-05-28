@@ -970,23 +970,27 @@ export const Payment = () => {
           </div>
 
           {/* coupon code desktop*/}
-          <div className="ml-2 w-full hidden xl:block">
+          <div className="ml-2 hidden xl:block">
             <div className="flex gap-2 pr-3">
-              <StaggeredDropDownDiscount
-                icon={
-                  <input
-                    type="text"
-                    className="h-12 w-[20rem] bg-gray-100 text-sm outline outline-1 outline-red-300 px-3"
-                    placeholder="Nhập mã giảm giá (mã chỉ áp dụng một lần)"
-                    value={couponCode}
-                    onChange={handleCouponChange}
-                  />
-                }
-                setChosenDiscount={setCouponDiscount}
-              />
+              <div className="w-[75%]">
+                <StaggeredDropDownDiscount
+                  icon={
+                    <div className="w-full">
+                      <input
+                        type="text"
+                        className="h-12 w-full bg-gray-100 text-sm outline outline-1 outline-red-300 px-3"
+                        placeholder="Nhập mã giảm giá (mã chỉ áp dụng một lần)"
+                        value={couponCode}
+                        onChange={handleCouponChange}
+                      />
+                    </div>
+                  }
+                  setChosenDiscount={setCouponDiscount}
+                />
+              </div>
 
               <button
-                className="text-sm bg-red-600 text-white w-[6rem] font-semibold hover:bg-red-500"
+                className="text-sm bg-red-600 text-white w-[25%] font-semibold hover:bg-red-500"
                 onClick={handleApplyCouponCode}
               >
                 Áp Dụng

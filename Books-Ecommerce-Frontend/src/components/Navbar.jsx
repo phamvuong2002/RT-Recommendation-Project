@@ -196,7 +196,7 @@ export const Navbar = () => {
   }, [userId, token]);
 
   return (
-    <nav className="max-w-screen-2xl font-inter flex flex-col ">
+    <nav className="max-w-screen-2xl font-inter flex flex-col bg-white">
       <div className="xl:px-10 mx-auto my-1  sm:max-w-screen-md md:max-w-screen-2xl flex justify-between items-center md:justify-around lg:grid lg:grid-cols-6 lg:gap-4 lg:justify-items-start container  relative">
         <Link
           to="/"
@@ -376,10 +376,12 @@ export const Navbar = () => {
         </div>
       </div>
 
-      <div
-        className={`hidden desktop_menu absolute lg:mt-[4rem] lg:mx-[7rem]  z-10  ${isMenuOpen ? 'lg:block' : 'hidden'}`}
-      >
-        <Category_dropdown />
+      <div className="hidden xl:block">
+        <Category_dropdown
+          isShowCloseIcon={true}
+          isMenuOpen={isMenuOpen}
+          toggleMenu={toggleMenu}
+        />
       </div>
 
       <div

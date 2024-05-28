@@ -8,7 +8,7 @@ from src.helpers.move_files import move_files
 import os
 from surprise import Dataset, SVD, Reader
 from surprise import SVDpp, accuracy
-# from surprise.model_selection import GridSearchCV, train_test_split
+from surprise.model_selection import GridSearchCV, train_test_split
 
 
 
@@ -64,25 +64,17 @@ async def train_implicit_model_SVDpp():
     # data = Dataset.load_from_df(df_new[['person_id', 'content_id', 'eventStrength']], reader)
     data = Dataset.load_from_df(grouped_df[['personId', 'contentId', 'eventStrength']], reader)
 
-    # param_grid = {"n_epochs": [5, 20], "lr_all": [0.002, 0.008], "reg_all": [0.02, 0.4]}
-    # gs = GridSearchCV(SVD, param_grid, measures=["rmse", "mae"], cv=3)
-    # gs.fit(data)
-    # # best RMSE score
-    # print(gs.best_score["rmse"])
-    # # combination of parameters that gave the best RMSE score
-    # print(gs.best_params["rmse"])
-    # trainset, testset = train_test_split(data, test_size=0.2)  
-    # algo = gs.best_estimator["rmse"]
-    # predictions = algo.fit(trainset).test(testset)
-    # # print(predictions)
-    # accuracy.rmse(predictions)
-    # df = pd.DataFrame(predictions, columns=['uid', 'iid', 'rui', 'est', 'details'])
-    # # #cài đặt mô hình
-    # final_prediction = df.rename(columns={'uid':'userId', 'iid': 'bookid', 
-    #                         'r_ui':'actual', 'est':'prediction'})
 
+    # trainset, testset = train_test_split(data, test_size=0.2)  
     algo_pp=SVDpp()
     algo_pp.fit(data.build_full_trainset())
+    # algo_pp_test=SVDpp()
+    # algo_pp_test.fit(trainset)
+    # predictions_pp = algo_pp.fit(trainset).test(testset)
+    # df_ = pd.DataFrame(predictions_pp, columns=['uid', 'iid', 'rui', 'est', 'details'])
+    # print(df_.loc[df_['uid']=='664efb0dc37d38effd9eb59b'])
+
+    # algo_pp.fit(trainset)
 
     # Lưu thông tin model
     model_id = f"model_{int(time.time())}"
@@ -95,7 +87,7 @@ async def train_implicit_model_SVDpp():
     connection = db_connection.connect()  # Tạo đối tượng Connection từ Engine
     result = connection.execute(text(insert_query))  # Thực hiện truy vấn
 
-    connection.commit()
+    # connection.commit()
     connection.close()
 
     #backup model hiện tại

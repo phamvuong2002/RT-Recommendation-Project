@@ -43,7 +43,10 @@ export const SliderProducts = ({
         className="mySwiper h-full "
       >
         {productData.map((product, index) => (
-          <SwiperSlide key={index} className="w-1/5 h-full ">
+          <SwiperSlide
+            key={index}
+            className="w-1/5 h-full flex flex-col rounded-lg gap-[0.1rem]"
+          >
             <ProductForSlider userId={userId} productData={product.book} />
             {isShowProgress ? (
               <div className="w-full h-4 bg-gray-300 rounded-full dark:bg-gray-700 relative">

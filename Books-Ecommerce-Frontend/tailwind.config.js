@@ -9,6 +9,10 @@ export default {
       },
       backgroundImage: {
         'category-main': "url('/img/category_template/template_main.png')",
+        welcome: "url('/img/welcome.png')",
+        'welcome-gilf': "url('/img/welcome2.png')",
+        'flash-sale':
+          "url('https://res.cloudinary.com/datpm13gx/image/upload/v1717065876/flash_sale_bg_bgeubb.png')",
       },
     },
   },

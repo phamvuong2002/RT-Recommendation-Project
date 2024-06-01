@@ -4,6 +4,10 @@ export const searchbestselling =
 export const categorybestselling =
   'api/v1/api/recommendation/best-selling/categories';
 
+export const categorypopularrec =
+  'api/v1/api/recommendation/popular/rec-categories';
+
+
 
 export const getRecommendByContentBase =
   'api/v1/api/recommendation/related-book/related-search';

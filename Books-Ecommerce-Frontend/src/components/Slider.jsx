@@ -26,7 +26,7 @@ export const Slider = () => {
     },
   ];
   return (
-    <div className="hero-section slider w-full ">
+    <div className="hero-section slider w-full rounded-lg">
       <Swiper
         // install Swiper modules
         modules={[Navigation, Pagination, Autoplay]}

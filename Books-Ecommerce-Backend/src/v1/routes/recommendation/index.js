@@ -66,9 +66,15 @@ router.post(
 
 
 //Category
+// bestelling category
 router.post(
   "/best-selling/categories",
   asyncHandler(bestSellingController.getBestSellingCategories)
+);
+// popular recommendations category
+router.post(
+  "/popular/rec-categories",
+  asyncHandler(recommendationController.getPopularRecCategories)
 );
 
 //ContentBase

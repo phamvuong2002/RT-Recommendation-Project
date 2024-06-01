@@ -24,7 +24,7 @@ export const TemplateC_2 = ({ categoryData }) => {
 
   return (
     <div
-      className="font-inter text-red-400 font-semibold bg-gradient-to-r from-red-200 via-purple-100 to-pink-100  hover:from-pink-200 hover:via-purple-100 hover:to-red-100 hover:text-[#8967AC] rounded-md shadow-lg cursor-pointer w-full xl:h-[19rem]"
+      className="font-inter text-[#8967AC] font-semibold bg-gradient-to-r from-red-200 via-purple-100 to-pink-100  hover:from-pink-200 hover:via-purple-100 hover:to-red-100 hover:text-red-400 rounded-md shadow-lg cursor-pointer w-full xl:h-[19rem]"
       onClick={handleNavigate}
     >
       {/* Desktop */}
@@ -95,19 +95,19 @@ export const TemplateC_2 = ({ categoryData }) => {
               <img
                 src={category?.images[0]}
                 alt="image1"
-                className="w-[1.9rem] h-[2.6rem] rounded-sm border border-pink-400"
+                className="w-[2rem] h-[2.6rem] rounded-sm border border-pink-400"
               />
               <img
                 src={category?.images[1]}
                 alt="image2"
-                className="w-[1.9rem] h-[2.6rem] rounded-sm border border-pink-400"
+                className="w-[2rem] h-[2.6rem] rounded-sm border border-pink-400"
               />
             </div>
             <div className="flex items-center pl-[2.5rem]">
               <img
                 src={category?.images[2]}
                 alt="image3"
-                className="w-[1.9rem] h-[2.6rem] rounded-sm border border-pink-400"
+                className="w-[2rem] h-[2.6rem] rounded-sm border border-pink-400"
               />
             </div>
           </div>

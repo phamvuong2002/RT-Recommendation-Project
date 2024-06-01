@@ -22,8 +22,10 @@ class SocketServices {
         const data = JSON.parse(message);
         if (!data) {
           return;
+        } else if (data.message === "retrain") {
+          console.log("message::::retrain::::::::::::", data);
         } else if (data.behaviour === BEHAVIOUR.PLACEORDER) {
-          console.log("PlaceOrder:::::::::::", data);
+          // console.log("PlaceOrder:::::::::::", data);
           const isSendRequest = await BestSellingService.isTopSelling({
             bookId: data.productId,
             top: 24,

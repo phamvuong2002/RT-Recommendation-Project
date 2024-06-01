@@ -9,8 +9,8 @@ import time
 from src.helpers.move_files import move_files
 import os
 
-POPULAR_RANGE = 2
-COLLAB_RANGE = 0
+POPULAR_RANGE = 15
+COLLAB_RANGE = 5
 
 async def train_rating_item_model():
     mysql_host = os.environ.get("BACKEND_MYSQL_HOST")

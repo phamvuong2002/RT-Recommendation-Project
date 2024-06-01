@@ -32,7 +32,7 @@ export const InfoForGuest = () => {
 
   return (
     <div className="xl:my-5 my-2">
-      <div className="w-full overflow-hidden md:h-full flex bg-gradient-to-r from-rose-100 to-slate-100 rounded-md">
+      <div className="w-full overflow-hidden md:h-full flex bg-gradient-to-r from-red-200 via-purple-100 to-red-200 rounded-md">
         <div className="w-full hidden sm:block">
           <motion.img
             ref={leftRef}
@@ -72,12 +72,14 @@ export const InfoForGuest = () => {
                 đăng ký tài khoản ngay bạn nhé!
               </h3>
             </div>
+
             <div
-              className={`bg-red-500 lg:hover:bg-[#47d873] rounded-lg text-center mx-auto mt-3 md:mt-5 px-6 py-2 ${token ? 'hidden' : ''}`}
+              className={`bg-red-500 lg:hover:bg-[#B795D1] rounded-lg text-center mx-auto mt-3 md:mt-5 px-6 py-2 ${token ? 'hidden' : ''}`}
             >
               {/* <button className=" text-white text-lg font-bold tracking-tight">
                 Đăng ký ngay
               </button> */}
+
               <div
                 className={`group flex items-center text-lg font-medium text-black `}
               >
@@ -108,6 +110,18 @@ export const InfoForGuest = () => {
                   }
                 />
               </div>
+            </div>
+            {/* logo */}
+            <div className="items-end xl:items-center flex xl:justify-end justify-between xl:mt-2 gap-4 xl:gap-0">
+              <div className="text-red-600 font-semibold xl:hidden">
+                <div className="text-xs">UNLOCKING WORLDS THROUGH WORDS</div>
+                <hr className="border border-red-500" />
+              </div>
+              <img
+                src="/logo/logo_home.png"
+                alt="logo"
+                className="xl:w-28 w-10"
+              />
             </div>
           </div>
         </motion.div>

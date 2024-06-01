@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { addtocart } from '../apis/cart';
 import { collectBehaviour } from '../apis/collectBehaviour';
@@ -12,6 +12,7 @@ import { formatNumberToText } from '../utils/formatNumberToText';
 
 export const ProductForSlider = ({ userId, productData }) => {
   const { setNumCart } = useContext(AppContext);
+  const navigate = useNavigate();
   const [openAddToCartsPopup, setOpenAddToCartsPopup] = useState(false);
 
   const AddToCart = async (e) => {
@@ -52,15 +53,18 @@ export const ProductForSlider = ({ userId, productData }) => {
         productId: productData.book_id,
       },
     });
+    if (collectClickProduct.status === 200) {
+      navigate(`../books/${productData.book_id}`);
+    } else {
+      setTimeout(() => {
+        navigate(`../books/${productData.book_id}`);
+      }, [200]);
+    }
   };
 
   return (
     <div className="block p-2 sm:p-0 bg-white min-h-full md:hover:shadow-2xl md:rounded-md md:shadow-md overflow-hidden">
-      <Link
-        to={`../books/${productData.book_id}`}
-        onClick={handleClickProduct}
-        className="h-full block"
-      >
+      <div className="h-full block cursor-pointer">
         <div className="">
           {/**Product Image */}
           <div className="relative group object-cover flex justify-center items-center ">
@@ -113,7 +117,10 @@ export const ProductForSlider = ({ userId, productData }) => {
           </div>
 
           {/**Product Detail */}
-          <div className="flex flex-col px-[0.3rem] mt-1 md:px-3 md:py-2 justify-end">
+          <div
+            className="flex flex-col px-[0.3rem] mt-1 md:px-3 md:py-2 justify-end"
+            onClick={handleClickProduct}
+          >
             {/**Title */}
             <h3 className="font-medium text-sm sm:text-base font-['Inter'] min-h-10 md:min-h-12 md:max-h-12 capitalize line-clamp-2 ">
               {productData.book_title}
@@ -135,7 +142,7 @@ export const ProductForSlider = ({ userId, productData }) => {
             </div>
           </div>
         </div>
-      </Link>
+      </div>
     </div>
   );
 };

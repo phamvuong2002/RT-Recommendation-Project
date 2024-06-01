@@ -78,18 +78,18 @@ class FavoriteBookService {
     static addFavoriteBook = async ({ userId, book = {} }) => {
         let favBookStatus = false
         //check book exists
-        const foundBook = await db.book.findByPk(book.book_id);
+        let foundBook = await db.book.findByPk(book.book_id);
         if (!foundBook) throw new NotFoundError("Book not found");
 
         //check Favorite Book existed
-        const foundUser = await db.user.findOne({
+        let foundUser = await db.user.findOne({
             where: {
                 user_sid: userId,
             },
         });
         if (!foundUser) throw new NotFoundError("User not found");
 
-        const userFavoriteBook = await db.favorite_book.findOne({
+        let userFavoriteBook = await db.favorite_book.findOne({
             where: {
                 fav_userid: foundUser.dataValues.user_id,
             }
@@ -102,7 +102,7 @@ class FavoriteBookService {
         }
 
         // check book existed
-        const existBook = await db.favorite_book_detail.findOne({
+        let existBook = await db.favorite_book_detail.findOne({
             where: {
                 fb_fav_id: userFavoriteBook.dataValues.fav_id,
                 fb_book_id: book.book_id,

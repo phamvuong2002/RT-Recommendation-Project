@@ -121,7 +121,7 @@ export const Product = ({
             <div className="">
               <img
                 loading="lazy"
-                className=" max-h-48 "
+                className="max-h-40 min-h-40 sm:max-h-48 sm:min-h-48 object-contain "
                 src={productData.book_img}
                 alt="Product Image"
               />

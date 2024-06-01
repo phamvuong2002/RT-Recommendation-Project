@@ -12,31 +12,8 @@ const redisClient = redis.createClient({
   legacyMode: true,
 });
 
-// const getTopCate = (categories, top) => {
-//   const categorySoldMap = new Map(); // Sử dụng Map thay vì object để tối ưu hiệu suất
-
-//   // Tính tổng số lượng sold cho từng danh mục
-//   categories.forEach((item) => {
-//     const { category, sold, book_img } = item;
-//     const categoryKey = category.join("|"); // Tạo key từ mảng category
-//     const totalSold = categorySoldMap.get(categoryKey) || 0;
-//     categorySoldMap.set(categoryKey, totalSold + sold);
-//   });
-
-//   // Sắp xếp danh sách các danh mục theo tổng số sold giảm dần
-//   const sortedCategories = Array.from(
-//     categorySoldMap,
-//     ([categoryKey, totalSold]) => ({
-//       category: categoryKey.split("|"), // Chuyển key thành mảng
-//       totalSold,
-//     })
-//   ).sort((a, b) => b.totalSold - a.totalSold);
-
-//   // Chọn ra top n danh mục
-//   return sortedCategories.slice(0, top);
-// };
-
-const getTopCate = (categories, top) => {
+//V1_getTopCate
+const getTopCate_v1 = (categories, top) => {
   const categorySoldMap = new Map(); // Sử dụng Map thay vì object để tối ưu hiệu suất
 
   categories.forEach((item) => {
@@ -68,9 +45,44 @@ const getTopCate = (categories, top) => {
   return sortedCategories.slice(0, top);
 };
 
+//V2_getTopCate
+const getTopCate = async (categories, top) => {
+  const categorySoldMap = new Map(); // Sử dụng Map thay vì object để tối ưu hiệu suất
+
+  await Promise.all(
+    categories.map(async (item) => {
+      const { category, sold, book_img } = item;
+      const categoryKey = category.join("|");
+
+      // Kiểm tra xem categoryKey đã tồn tại trong Map chưa
+      if (!categorySoldMap.has(categoryKey)) {
+        categorySoldMap.set(categoryKey, { totalSold: 0, images: [] });
+      }
+
+      // Lấy giá trị hiện tại và cập nhật
+      const categoryData = categorySoldMap.get(categoryKey);
+      categoryData.totalSold += sold;
+      categoryData.images.push(book_img);
+    })
+  );
+
+  // Chuyển đổi Map thành mảng và sắp xếp danh sách các danh mục theo tổng số sold giảm dần
+  const sortedCategories = Array.from(
+    categorySoldMap,
+    ([categoryKey, value]) => ({
+      category: categoryKey.split("|"),
+      totalSold: value.totalSold,
+      images: value.images.slice(0, 3),
+    })
+  ).sort((a, b) => b.totalSold - a.totalSold);
+
+  // Chọn ra top n danh mục
+  return sortedCategories.slice(0, top);
+};
+
 class BestSellingService {
   //get best selling categories
-  static async getBestSellingCategories({ top = 5 }) {
+  static async getBestSellingCategories_v1({ top = 5 }) {
     const keysInRange = await BestSellingService.getBestSellingBooksRedis({
       pageNumber: -1,
       pageSize: -1,
@@ -102,6 +114,50 @@ class BestSellingService {
       }
       cate_sorted[top].category = cate;
     }
+
+    return cate_sorted;
+  }
+  static async getBestSellingCategories({ top = 5 }) {
+    const keysInRange = await BestSellingService.getBestSellingBooksRedis({
+      pageNumber: -1,
+      pageSize: -1,
+    });
+
+    //Collect cate data
+    const cate_ids = [];
+    for (let i = 0; i < keysInRange.length; i += 2) {
+      const productId = parseInt(keysInRange[i].split(":")[1]);
+      const sold = parseInt(keysInRange[i + 1]);
+      const bookPromise = db.book.findByPk(productId); // Tạo promise cho việc lấy sách
+      cate_ids.push({ bookPromise, sold });
+    }
+
+    // Đợi tất cả các truy vấn đồng thời
+    const books = await Promise.all(
+      cate_ids.map(async ({ bookPromise, sold }) => {
+        const book = await bookPromise;
+        return book
+          ? { category: book.book_categories, book_img: book.book_img, sold }
+          : null;
+      })
+    );
+
+    // Lọc ra các phần tử không null
+    const validBooks = books.filter((book) => book !== null);
+
+    // Lấy top categories
+    let cate_sorted = await getTopCate(validBooks, top);
+
+    // Thực hiện các truy vấn song song cho từng category
+    cate_sorted = await Promise.all(
+      cate_sorted.map(async (category) => {
+        const subCatePromises = category.category.map(async (cateId, index) => {
+          return CategoryService.getCateById(cateId, index + 1);
+        });
+        category.category = await Promise.all(subCatePromises);
+        return category;
+      })
+    );
 
     return cate_sorted;
   }

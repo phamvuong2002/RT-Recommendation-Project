@@ -1,7 +1,7 @@
 import { React, useContext, useState } from 'react';
 import { FaMapMarkerAlt, FaPhoneAlt, FaUser } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { HiOutlineHome } from 'react-icons/hi2';
 import { IoCartOutline } from 'react-icons/io5';
@@ -12,6 +12,7 @@ import Login_SignUp from './Login_SignUp';
 import { AppContext } from '../contexts/main';
 
 export const Footer = () => {
+  const navigate = useNavigate();
   const mobileNavOption = [
     {
       name: 'Home',
@@ -48,8 +49,15 @@ export const Footer = () => {
   const [reloadLoginSignup, setReloadLoginSignup] = useState(false);
   const [open, setOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { activePage, setActivePage, numCart, isShowFooter } =
-    useContext(AppContext);
+  const {
+    activePage,
+    setActivePage,
+    numCart,
+    isShowFooter,
+    setRequestAuth,
+    token,
+    requestAuth,
+  } = useContext(AppContext);
 
   return (
     <div className="">
@@ -502,79 +510,74 @@ export const Footer = () => {
           {/* Đơn hàng - Tài khoản: Nếu chưa đăng nhập thì hiển thị popup Đăng nhập/Đăng ký */}
           {mobileNavOption_02.map((menu) => (
             <li key={menu.name}>
-              {
-                user.id.length > 0 ? (
-                  <Link
-                    to={menu.path}
-                    className={` flex flex-col text-center pt-3 items-center  duration-500  px-auto py-2`}
-                    onClick={() => setActivePage(menu.name)}
-                  >
-                    {/* Order - Account  */}
-                    <div
-                      className={`flex flex-col gap-[0.2rem] justify-center duration-100 ${
-                        menu.name === activePage
-                          ? 'text-red-500'
-                          : 'text-gray-500'
-                      }`}
-                    >
-                      <span className={`flex justify-center items-center`}>
-                        {menu.icon}
-                      </span>
-                      <div className="text-xs">{menu.text}</div>
-                    </div>
-                  </Link>
-                ) : (
+              {user.id.length > 0 ? (
+                <div
+                  // to={menu.path}
+                  className={` flex flex-col text-center pt-3 items-center  duration-500  px-auto py-2`}
+                  onClick={() => {
+                    if (
+                      (!token || token === 'unknow' || token === null) &&
+                      requestAuth === false
+                    ) {
+                      setRequestAuth(true);
+                    } else {
+                      setActivePage(menu.name);
+                      navigate(menu.path);
+                    }
+                  }}
+                >
+                  {/* Order - Account  */}
                   <div
-                    onClick={() => setActivePage(menu.name)}
-                    className={`flex flex-col text-center pt-3 items-center duration-500  px-auto py-2 ${user.id.length <= 0 ? 'block' : 'hidden'}`}
+                    className={`flex flex-col gap-[0.2rem] justify-center duration-100 ${
+                      menu.name === activePage
+                        ? 'text-red-500'
+                        : 'text-gray-500'
+                    }`}
                   >
-                    <span
-                      onClick={() => setOpen(true)}
-                      className={`items-center  text-gray-200 duration-500  ${
-                        menu.name === activePage
-                          ? '-mt-4 bg-gradient-to-r from-pink-500 to-red-500 d px-2 py-2 rounded-full text-white'
-                          : 'text-gray-400'
-                      }`}
-                    >
+                    <span className={`flex justify-center items-center`}>
                       {menu.icon}
                     </span>
-                    <PopupCenterPanel
-                      open={open}
-                      setOpen={setOpen}
-                      // icon={
-                      //   <span onClick={() => setActivePage(i)}
-                      //     className={`items-center  text-gray-200 duration-500   ${menu.name === activePage ? "text-red-500 bg-red-300" : "text-gray-400"
-                      //       }`}
-                      //   >
-                      //     {menu.icon}
-                      //   </span>
-
-                      // }
-                      title={''}
-                      titleClassName="p-2 hidden"
-                      content={
-                        <>
-                          {reloadLoginSignup ? (
-                            <div></div>
-                          ) : (
-                            <Login_SignUp
-                              reload={reloadLoginSignup}
-                              setReload={setReloadLoginSignup}
-                              setUser={setUser}
-                              setOpen={setOpen}
-                            />
-                          )}
-                        </>
-                      }
-                    />
-                    <div></div>
+                    <div className="text-xs">{menu.text}</div>
                   </div>
-                )
-
-                // </div>
-
-                // </div>
-              }
+                </div>
+              ) : (
+                <div
+                  onClick={() => setActivePage(menu.name)}
+                  className={`flex flex-col text-center pt-3 items-center duration-500  px-auto py-2 ${user.id.length <= 0 ? 'block' : 'hidden'}`}
+                >
+                  <span
+                    onClick={() => setOpen(true)}
+                    className={`items-center  text-gray-200 duration-500  ${
+                      menu.name === activePage
+                        ? '-mt-4 bg-gradient-to-r from-pink-500 to-red-500 d px-2 py-2 rounded-full text-white'
+                        : 'text-gray-400'
+                    }`}
+                  >
+                    {menu.icon}
+                  </span>
+                  <PopupCenterPanel
+                    open={open}
+                    setOpen={setOpen}
+                    title={''}
+                    titleClassName="p-2 hidden"
+                    content={
+                      <>
+                        {reloadLoginSignup ? (
+                          <div></div>
+                        ) : (
+                          <Login_SignUp
+                            reload={reloadLoginSignup}
+                            setReload={setReloadLoginSignup}
+                            setUser={setUser}
+                            setOpen={setOpen}
+                          />
+                        )}
+                      </>
+                    }
+                  />
+                  <div></div>
+                </div>
+              )}
             </li>
           ))}
         </ul>

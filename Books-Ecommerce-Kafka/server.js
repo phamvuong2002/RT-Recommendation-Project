@@ -52,13 +52,17 @@ async function handleMessage({ topic, partition, message }) {
       message.value.toString()
     );
     //collect vector behavior
-    await collectVector(
+    const result_vector = await collectVector(
       dataCollect.userId,
       dataCollect.productId,
       SCORE[topic]
     );
-    //collect purchase behavior
+    if (result_vector?.message === "retrain") {
+      ws.send(JSON.stringify(result_vector));
+    }
+
     if (topic === TOPICS.PLACEORDER) {
+      //collect purchase behavior
       await collectPurchase(
         dataCollect.productId,
         parseInt(dataCollect.data) || 1

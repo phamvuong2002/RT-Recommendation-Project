@@ -405,7 +405,7 @@ export const Payment = () => {
     };
 
     const reviewCheckout = async () => {
-      if (!userId || !data || !quantity) {
+      if (!userId) {
         return;
       }
       setIsLoading(true);

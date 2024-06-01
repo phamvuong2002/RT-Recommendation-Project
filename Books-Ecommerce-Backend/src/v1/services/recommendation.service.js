@@ -2,6 +2,8 @@ const { BadRequestError } = require("../core/error.response");
 const { promisify } = require("util");
 const redis = require("redis");
 const db = require("../models/sequelize/models");
+const { orderBy } = require("lodash");
+const CategoryService = require("./category.service");
 const redisClient = redis.createClient({
   password: "KYsW4siAdfAUVq6hfzrIojRT0uU9h0M1",
   socket: {
@@ -55,6 +57,57 @@ class RecommendationService {
       }
     }
     return result;
+  }
+
+  //get popular Rec_book category
+
+  static async getPopularRecCategories({ top = 5 }) {
+    const topCategories = await db.rec_book.findAll({
+      attributes: [
+        "rec_book_categories",
+        [
+          db.Sequelize.fn("COUNT", db.Sequelize.col("rec_book_categories")),
+          "count",
+        ],
+      ],
+      group: "rec_book_categories",
+      order: [[db.Sequelize.literal("count"), "DESC"]],
+      limit: top,
+      raw: true,
+    });
+    if (!topCategories) return [];
+
+    // get books data for category
+    const results = [];
+    for (const category of topCategories) {
+      const images = await db.rec_book.findAll({
+        attributes: ["rec_book_img"],
+        where: db.Sequelize.literal(
+          `JSON_EXTRACT(rec_book_categories, '$[0]') = "${category.rec_book_categories}"`
+        ),
+        limit: 3,
+        raw: true,
+      });
+      results.push({
+        category: category.rec_book_categories,
+        rec_times: category.count,
+        images: images.map((image) => image.rec_book_img),
+      });
+    }
+
+    // get categories slug
+    for (let top = 0; top < results.length; top++) {
+      let cate_list = JSON.parse(results[top]?.category);
+      const cate = [];
+      for (let i = 0; i < cate_list.length; i++) {
+        const sub_cate = await CategoryService.getCateById(cate_list[i], i + 1);
+        if (sub_cate) {
+          cate.push(sub_cate);
+        }
+      }
+      results[top].category = cate;
+    }
+    return results;
   }
 }
 

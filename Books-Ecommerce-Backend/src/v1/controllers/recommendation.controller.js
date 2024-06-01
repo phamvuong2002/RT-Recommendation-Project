@@ -11,6 +11,13 @@ class RecommendationPopularController {
       metadata: data,
     }).send(res);
   };
+
+  getPopularRecCategories = async (req, res, next) => {
+    const data = await RecommendationService.getPopularRecCategories(req.body);
+    new SuccessResponse({
+      metadata: data,
+    }).send(res);
+  };
 }
 
 module.exports = new RecommendationPopularController();

@@ -19,7 +19,8 @@ async def get_implicit_svdpp(user_id: str, quantity = 10):
     try:
         books = implicit_svdpp(user_id, quantity)
         result = await save_rec_books(books= books, user_id= user_id, model_type="behaviour_svd", key='book_id')
-        return SuccessResponse(metadata= {'recommendations': result})
+        # print(books)
+        return SuccessResponse(metadata= {'recommendations': books})
     except Exception as e:
         raise BadRequestError(detail=str(e))
 
@@ -28,7 +29,7 @@ async def get_implicit_userbased(user_id: str, quantity = 10):
     try:
         books = implicit_user(user_id, quantity)
         result = await save_rec_books(books= books, user_id= user_id, model_type="behaviour", key='book_id')
-        return SuccessResponse(metadata= {'recommendations': result})
+        return SuccessResponse(metadata= {'recommendations': books})
     except Exception as e:
         raise BadRequestError(detail=str(e))
     

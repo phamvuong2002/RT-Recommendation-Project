@@ -40,7 +40,7 @@ async def train_rating_user_model():
     books_df = pd.read_sql(books_query, con=db_connection.raw_connection())
 
 
-    print(books_df.shape)
+    # print(books_df.shape)
     ### ## 0. DATA CLEANING ###############################
     # Chuyển đổi kiểu dữ liệu của cột "Book-Rating" sang số
     books_df['Book-Rating'] = books_df['Book-Rating'].astype(int)
@@ -94,7 +94,7 @@ async def train_rating_user_model():
     # Lưu thông tin model
     model_id = f"model_{int(time.time())}" 
     #model type: "content", "rating", "behaviour"
-    model_type = "rating"
+    model_type = "rating_user"
     # lưu thông tin vào db
     insert_query = f"INSERT INTO rec_model (rec_model_id, rec_model_type, create_time) VALUES ('{model_id}', '{model_type}', CURRENT_TIMESTAMP)"
 
@@ -107,7 +107,7 @@ async def train_rating_user_model():
 
     connection = db_connection.connect()  # Tạo đối tượng Connection từ Engine
     result = connection.execute(text(insert_query))  # Thực hiện truy vấn
-    # connection.commit()
+    connection.commit()
     connection.close()
 
 

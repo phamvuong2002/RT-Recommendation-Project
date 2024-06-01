@@ -9,7 +9,6 @@ import { InfoForGuest } from '../components/infoForGuest';
 import { fetchAPI } from '../helpers/fetch';
 import { getAllBook } from '../apis/book';
 import { AppContext } from '../contexts/main';
-import { isMobileDevice } from '../utils/isMobileDevice';
 import {
   categorybestselling,
   categorypopularrec,

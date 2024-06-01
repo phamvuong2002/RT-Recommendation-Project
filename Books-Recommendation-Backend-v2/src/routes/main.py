@@ -29,7 +29,7 @@ async def get_results(userId: str, page: int = 1, limit: int = 10):
 async def retrain():
     return await retrain_controller.retrain()
 
-@router.get("/retrain/book")
+@router.get("/retrain/content-base")
 async def rating():
     return await retrain_controller.retrain_content_base()
 

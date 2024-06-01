@@ -43,6 +43,8 @@ router.post(
   asyncHandler(recBehaviourSVDUserController.getRecBooks)
 );
 
+//router.post("/recLatestBook", asyncHandler(recBehaviourSVDUserController.getRecBooks));
+
 router.post(
   "/recRandomBook",
   asyncHandler(recBehaviourSVDUserController.getRandomRecBooks)

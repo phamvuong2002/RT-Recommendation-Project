@@ -6,6 +6,7 @@ import { SliderProducts } from '../components/SliderProducts';
 import { useNavigate, useParams } from 'react-router-dom';
 import { fetchAPI } from '../helpers/fetch';
 import { getonebook } from '../apis/book';
+import { getRecommendByContentBaseID } from '../apis/recommendation';
 import { getCateFromText } from '../utils/getCateFromText';
 import { shortenString } from '../utils/shortenString';
 import { AppContext } from '../contexts/main';
@@ -14,7 +15,7 @@ import { slugify } from '../utils/slugify';
 import { isMobileDevice } from '../utils/isMobileDevice';
 
 export const ProductDetailPage = () => {
-  const { userId, setIsShowFooter, token } = useContext(AppContext);
+  const { userId, setIsShowFooter, token, setIsLoading } = useContext(AppContext);
   const { bookid } = useParams();
   const [id, setId] = useState('');
   const [paths, setPaths] = useState([]);
@@ -49,18 +50,23 @@ export const ProductDetailPage = () => {
 
   //Get bookid from url
   useEffect(() => {
+
     setId(bookid);
     const getBook = async () => {
+      setIsLoading(true)
       const book = await fetchAPI(`../${getonebook}`, 'POST', {
         bookId: bookid,
       });
       if (book.status !== 200) {
         navigate('/notfound');
+        setIsLoading(false)
       } else {
         setBook(book.metadata);
+        setIsLoading(false)
       }
     };
     getBook();
+
   }, [bookid]);
 
   //Xử ký sau khi lấy được bookid
@@ -108,6 +114,23 @@ export const ProductDetailPage = () => {
     }
   }, [book]);
 
+  useEffect(() => {
+    const loadData = async () => {
+      const data = await fetchAPI(`../${getRecommendByContentBaseID}`, 'POST', {
+        bookId: bookid,
+        userId: userId.toString(),
+        quantity: 24,
+        model_type: "online",
+      });
+      if (data.status != 200) {
+        setProducts([]);
+        return;
+      }
+      setProducts(data?.metadata);
+    };
+    loadData()
+  }, [bookid, userId]);
+
   return (
     <div className="flex flex-col mb-14">
       <NavigationPath components={paths} />
@@ -115,7 +138,7 @@ export const ProductDetailPage = () => {
         <DetailCart book={book} />
         <DescriptionFeedback book={book} />
 
-        {/*Gợi ý cho bạn*/}
+        {/*Gợi ý Có thể bạn sẽ thích*/}
         <div className="flex flex-col mt-2 px-1 xl:px-28">
           <div className="flex items-center mb-[0.1rem] xl:mb-1 pl-2 h-14 bg-gradient-to-t from-red-50 to-gray-50 rounded-t-lg border border-red-100">
             <svg
@@ -132,7 +155,7 @@ export const ProductDetailPage = () => {
             </svg>
             <div className="flex px-4 text-sm items-center">
               <div className="text-sm md:text-[150%] font-bold text-red-500  font-['Inter'] tracking-wider">
-                Dành Cho Bạn
+                Có thể bạn sẽ thích
               </div>
             </div>
           </div>
@@ -144,7 +167,7 @@ export const ProductDetailPage = () => {
           </div>
         </div>
 
-        {/*Sản phẩm bán chạy*/}
+        {/*Gợi ý Sản phẩm liên quan*/}
         <div className="flex flex-col mt-1 px-1 xl:px-28">
           <div className="flex items-center mb-[0.1rem] xl:mb-1 pl-2 h-14 bg-gradient-to-t from-red-50 to-gray-50 rounded-t-lg border border-red-100">
             <svg
@@ -161,15 +184,15 @@ export const ProductDetailPage = () => {
             </svg>
             <div className="flex px-4 text-sm items-center ">
               <div className="text-sm md:text-[150%] font-bold text-red-500 font-['Inter'] tracking-wider">
-                Sản phẩm bán chạy
+                Sản phẩm liên quan
               </div>
             </div>
           </div>
           <div className="bg-white border-x border-b xl:border border-red-50">
-            {/* <SliderProducts
-              userId={userId?.toString()}
+            <SliderProducts
+              userId={userId.toString()}
               productData={products}
-            ></SliderProducts> */}
+            ></SliderProducts>
           </div>
         </div>
       </div>

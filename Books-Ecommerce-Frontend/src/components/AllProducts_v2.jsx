@@ -53,7 +53,7 @@ export const AllProducts = ({
   return (
     <div ref={topRef} className="w-full bg-white">
       {showHeader}
-      <div className={`grid grid-cols-${numOfProductsInRow} gap-2`}>
+      <div className={`grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-${numOfProductsInRow} lg:gap-x-6 lg:gap-y-4`}>
         {/* Hiển thị các sản phẩm của trang hiện tại*/}
         {products.map((product, index) => (
           <div key={index} className="">

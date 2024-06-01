@@ -1,12 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useState, useEffect } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { getAllBook } from '../apis/book';
 import { fetchAPI } from '../helpers/fetch';
+import { AllProducts } from '../components/AllProducts';
+import { Product } from '../components/Product';
+import { AppContext } from '../contexts/main';
 
 // Thanh Tìm Kiếm được đặt trong Navbar
 const Search = () => {
+  const { userId } = useContext(AppContext);
   const location = useLocation();
   const navigate = useNavigate();
   const [input, setInput] = useState('');
@@ -55,22 +59,23 @@ const Search = () => {
     setInput(value);
 
     if (value) {
-      const bookTitles = products.map(book => book.book_title);
-      console.log("book", products);
+      const bookTitles = products.map(book => ({ book_id: book.book_id, book_title: book.book_title, book_img: book.book_img }));
       const filteredSuggestions = bookTitles.filter(item =>
-        item.toLowerCase().includes(value.toLowerCase())
+        item.book_title.toLowerCase().includes(value.toLowerCase())
       );
       setSuggestions(filteredSuggestions);
+
       setShowDropdown(true);
     } else {
       setShowDropdown(false);
     }
   };
 
-  const handleSuggestionClick = (suggestion, e) => {
+  const handleSuggestionClick = (suggestion, e, id) => {
     setInput(suggestion);
     setShowDropdown(false);
     searchFunction(e, suggestion);
+    navigate('/books/' + id);
   };
 
   useEffect(() => {
@@ -104,16 +109,62 @@ const Search = () => {
       </div>
       {showDropdown && (
         <div className="dropdown-content absolute top-10 bg-white z-10 w-full shadow-xl rounded-b-md">
-          {suggestions.slice(0, 5).map((suggestion, index) => (
-            <div
-              key={index}
-              onClick={(e) => handleSuggestionClick(suggestion, e)}
-              className="dropdown-item p-2 hover:bg-slate-100 hover:rounded-md"
-            >
-              {suggestion}
+          <div className="">
+            {suggestions.slice(0, 4).map((suggestion) => (
+              <div
+                key={suggestion.book_id}
+                onClick={(e) => handleSuggestionClick(suggestion.book_title, e, suggestion.book_id)}
+                className="dropdown-item p-1 hover:bg-slate-100 hover:rounded-md"
+              >
+                <div className="relative flex items-center">
+                  <img
+                    className="max-h-10"
+                    src={suggestion.book_img}
+                    alt="Product Image"
+                  />
+                  <p className="absolute top-1/2 w-4/5 transform -translate-y-1/2 left-12 whitespace-nowrap overflow-hidden text-ellipsis">
+                    {suggestion.book_title}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Đặt kết quả thuật toán collab ở đây */}
+          <div className="">
+            <p className='font-semibold px-2'>Có thể bạn sẽ thích</p>
+            <div className="grid grid-cols-4 gap-4">
+              {suggestions.slice(0, 4).map((suggestion) => (
+                <div
+                  key={suggestion.book_id}
+                  onClick={(e) => handleSuggestionClick(suggestion.book_title, e, suggestion.book_id)}
+                  className="dropdown-item p-2 hover:bg-slate-100 hover:rounded-md text-center"
+                >
+                  <div className="flex flex-col items-center">
+                    <img
+                      className="w-full h-auto"
+                      src={suggestion.book_img}
+                      alt="Product Image"
+                    />
+                    <p className="my-2 w-full text-center text-xs line-clamp-2">
+                      {suggestion.book_title}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+
+          {/* <div className="">
+            <AllProducts
+              isShowHeader={false}
+              numOfProductsInRow={2}
+              // _limit={isMobileDevice() ? 2 : 10}
+              _limit={4}
+              _choose={'all'}></AllProducts>
+          </div> */}
         </div>
+
       )}
     </div>
   );

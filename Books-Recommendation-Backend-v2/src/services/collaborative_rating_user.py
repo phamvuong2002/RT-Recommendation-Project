@@ -5,7 +5,7 @@ import pandas as pd
 
 from src.helpers.load_model import load_model
 from src.helpers.load_offline_model import get_latest_model_file
-
+import operator
 ## recommendations based on user_id
 # RATING?
 def rating_user(user_id, n_similar):
@@ -19,7 +19,7 @@ def rating_user(user_id, n_similar):
     # converted_user_id = books_df.loc[books_df['User-ID'] == user_id,["User-ID"]].drop_duplicates().values[0]
     converted_user_id = books_df.loc[books_df['User-ID'] == user_id,["User_ID"]].drop_duplicates().values[0]
 
-    recommended_items = []
+   
     #find candidates book - get top 30
     # user_neighbors = neighbors[converted_user_id[0]]
     # top 5 neighbor --> get top 30 item
@@ -48,24 +48,28 @@ def rating_user(user_id, n_similar):
     #             item['book_id']=raw_id
     #             item['score']=rating
     #             recommended_items.append(item)
+    # recommended_items = pd.DataFrame(columns=['book_id','score'])
+    recommended_items=[]
     for i in range(len(candidates)):
-        print(candidates[i])
+        # print(candidates[i])
         item={}
         users_rated_i=books_df.loc[(books_df['Book_ID'] == candidates[i]) & (books_df['Book-Rating']>0),"User_ID"].unique()
-        print('u',users_rated_i)
+        # print('u',users_rated_i)
         if(users_rated_i is None or len(users_rated_i)==0): 
-            print('none',users_rated_i)
+            # print('none',users_rated_i)
             continue
         else:
             rating = predict(users_rated_i,pivot_table,similarity_scores,converted_user_id, candidates[i])
             if rating > 0:  
-                raw_id=books_df.loc[books_df['Book_ID']==candidates[i],'Book-ID'].drop_duplicates().iloc[0]
-                item['book_id']=raw_id
+                raw_id=books_df.loc[books_df['Book_ID']==candidates[i],'Book-ID'].iloc[0]
+                item['book_id']=str(raw_id)
                 item['score']=rating
                 recommended_items.append(item)
 
-  
-    return recommended_items[:n_similar]
+    
+    result = sorted(recommended_items, key=operator.itemgetter('score'), reverse=True)
+    print(result)
+    return result[:n_similar]
 
 
 
@@ -76,7 +80,6 @@ def rating_offline_user(user_id, n_similar):
     model_name = model_name.split('.')[0]
     grouped_df_name = grouped_df_name.split('.')[0]
 
-    recommendations = []
     algo_knn = load_model(f"offline/rating_user/{model_name}")
     grouped_df = load_model(f"offline/rating_user/{grouped_df_name}")
     # Creating an user item interactions matrix 

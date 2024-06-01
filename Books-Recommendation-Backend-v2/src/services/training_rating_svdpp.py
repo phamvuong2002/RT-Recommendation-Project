@@ -40,7 +40,7 @@ async def train_rating_model_SVDpp():
     # Lưu thông tin model
     model_id = f"model_{int(time.time())}"
     #model type: "content", "rating", "behaviour"
-    model_type = "behaviour"
+    model_type = "rating_svd"
 
     # lưu thông tin vào db
     insert_query = f"INSERT INTO rec_model (rec_model_id, rec_model_type, create_time) VALUES ('{model_id}', '{model_type}', CURRENT_TIMESTAMP)"

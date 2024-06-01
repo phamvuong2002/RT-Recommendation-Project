@@ -6,20 +6,29 @@ import { SliderProducts } from '../components/SliderProducts';
 import { useNavigate, useParams } from 'react-router-dom';
 import { fetchAPI } from '../helpers/fetch';
 import { getonebook } from '../apis/book';
+import { getRecommendByContentBaseID } from '../apis/recommendation';
 import { getCateFromText } from '../utils/getCateFromText';
 import { shortenString } from '../utils/shortenString';
 import { AppContext } from '../contexts/main';
 import { collectBehaviour } from '../apis/collectBehaviour';
 import { slugify } from '../utils/slugify';
 import { isMobileDevice } from '../utils/isMobileDevice';
+import {behaviour_retrain, recRandomBook} from '../apis/recommendation';
 
 export const ProductDetailPage = () => {
-  const { userId, setIsShowFooter, token } = useContext(AppContext);
+  const { userId, setIsShowFooter, token, setIsLoading } = useContext(AppContext);
   const { bookid } = useParams();
   const [id, setId] = useState('');
   const [paths, setPaths] = useState([]);
   const [products, setProducts] = useState([]);
+
   const [book, setBook] = useState('');
+  
+  const [startTime, setStartTime] = useState(new Date());
+  const [endTime, setEndTime] = useState(new Date());
+  const [collabProducts, setCollabProducts] = useState([]);
+  
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,18 +58,23 @@ export const ProductDetailPage = () => {
 
   //Get bookid from url
   useEffect(() => {
+
     setId(bookid);
     const getBook = async () => {
+      setIsLoading(true)
       const book = await fetchAPI(`../${getonebook}`, 'POST', {
         bookId: bookid,
       });
       if (book.status !== 200) {
         navigate('/notfound');
+        setIsLoading(false)
       } else {
         setBook(book.metadata);
+        setIsLoading(false)
       }
     };
     getBook();
+
   }, [bookid]);
 
   //Xử ký sau khi lấy được bookid
@@ -108,6 +122,87 @@ export const ProductDetailPage = () => {
     }
   }, [book]);
 
+
+  // CONTENT-BASED FILTERING 
+  useEffect(() => {
+    const loadData = async () => {
+      const data = await fetchAPI(`../${getRecommendByContentBaseID}`, 'POST', {
+        bookId: bookid,
+        userId: userId.toString(),
+        quantity: 24,
+        model_type: "online",
+      });
+      if (data.status != 200) {
+        setProducts([]);
+        return;
+      }
+      setProducts(data?.metadata);
+    };
+    loadData()
+  }, [bookid, userId]);
+
+  // COLLABORATIVE FILTERING 
+  // Có thể bạn sẽ thích: Random 15 cuốn từ các đề xuất có trong ngày 
+  useEffect(() => {
+    const collabBook = async () => {
+      const rec_book = await fetchAPI(`../${recRandomBook}`, 'POST', {
+        userId: userId,
+        quantity: 15,
+        model_type: "online"
+      });
+      if (rec_book.status == 200) {
+        console.log(rec_book.metadata)
+        setCollabProducts(rec_book.metadata)
+      }
+    }
+    // console.log('in rec svd')
+    collabBook();
+  }, [userId, paths])
+
+  // retrain mỗi 5'?
+  const MINUTE_MS = 300000;
+
+  //Dự định retrain mỗi 5'
+  useEffect(() => {
+    const interval = setInterval(() => {
+      //Khi nào chốt thì sẽ gỡ điều kiện 1==0 ra
+      if(endTime-startTime==0 && 1==0){ 
+        const retrainSVDpp=async()=>{
+          const retrainResult = await fetchAPI(`../${behaviour_retrain}`, 'POST', {
+            userId: userId,
+            quantity: 30,
+            model_type: "online"
+          });
+          console.log(retrainResult)
+          if (retrainResult.status == 200) {
+            console.log('success')
+          }
+        }
+        retrainSVDpp();
+        console.log('Logs every minute');
+      }
+    console.log('in retrain ')
+    }, MINUTE_MS);
+
+    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+  }, [])
+  //Kiểm tra xem người dùng có đang mở trang web không
+  // useEffect(() => {
+  //   document.onvisibilitychange = () => {
+  //     if (document.visibilityState == 'visible') {
+  //       // this.setState({ startTime: new Date() });
+  //       setIsVisible(true)
+  //       // console.log(startTime==endTime, startTime,endTime)
+  //       console.log('on')
+  //     } else {
+  //       console.log('hidden')
+  //       setIsVisible(false)
+  //       setEndTime(new Date())
+  //       setStartTime(new Date())
+  //     }
+  //   }
+  // }, [document.onvisibilitychange])
+
   return (
     <div className="flex flex-col mb-14">
       <NavigationPath components={paths} />
@@ -115,7 +210,7 @@ export const ProductDetailPage = () => {
         <DetailCart book={book} />
         <DescriptionFeedback book={book} />
 
-        {/*Gợi ý cho bạn*/}
+        {/*Gợi ý Có thể bạn sẽ thích*/}
         <div className="flex flex-col mt-2 px-1 xl:px-28">
           <div className="flex items-center mb-[0.1rem] xl:mb-1 pl-2 h-14 bg-gradient-to-t from-red-50 to-gray-50 rounded-t-lg border border-red-100">
             <svg
@@ -132,19 +227,19 @@ export const ProductDetailPage = () => {
             </svg>
             <div className="flex px-4 text-sm items-center">
               <div className="text-sm md:text-[150%] font-bold text-red-500  font-['Inter'] tracking-wider">
-                Dành Cho Bạn
+                Có thể bạn sẽ thích
               </div>
             </div>
           </div>
           <div className="bg-white border-x border-b xl:border border-red-100">
-            {/* <SliderProducts
+            <SliderProducts
               userId={userId?.toString()}
-              productData={products}
-            ></SliderProducts> */}
+              productData={collabProducts}
+            ></SliderProducts>
           </div>
         </div>
 
-        {/*Sản phẩm bán chạy*/}
+        {/*Gợi ý Sản phẩm liên quan*/}
         <div className="flex flex-col mt-1 px-1 xl:px-28">
           <div className="flex items-center mb-[0.1rem] xl:mb-1 pl-2 h-14 bg-gradient-to-t from-red-50 to-gray-50 rounded-t-lg border border-red-100">
             <svg
@@ -161,15 +256,15 @@ export const ProductDetailPage = () => {
             </svg>
             <div className="flex px-4 text-sm items-center ">
               <div className="text-sm md:text-[150%] font-bold text-red-500 font-['Inter'] tracking-wider">
-                Sản phẩm bán chạy
+                Sản phẩm liên quan
               </div>
             </div>
           </div>
           <div className="bg-white border-x border-b xl:border border-red-50">
-            {/* <SliderProducts
-              userId={userId?.toString()}
+            <SliderProducts
+              userId={userId.toString()}
               productData={products}
-            ></SliderProducts> */}
+            ></SliderProducts>
           </div>
         </div>
       </div>

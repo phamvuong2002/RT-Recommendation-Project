@@ -22,17 +22,15 @@ async def train_content_base_model():
     # db_connection_str = 'mysql+pymysql://root:vuong@localhost/books_db_v1'
     # db_connection_str = "mysql+pymysql://bookada:bookada2002@bookada-database-v1.crq4aco4chyf.ap-southeast-1.rds.amazonaws.com/books_db_v1"
     db_connection_str = f"mysql+pymysql://{mysql_username}:{mysql_pass}@{mysql_host}/{mysql_dbname}"
-    db_engine = create_engine(db_connection_str)
-
+    # print("db_connection_str: ", db_connection_str)
+    db_connection = create_engine(db_connection_str)
+    connection = db_connection.connect()
     # Đọc dữ liệu từ MySQL và lưu vào DataFrame
     books_query = "select book_id, book_title, book_categories, cate1_name, cate2_name, cate3_name, cate4_name from book join category_1 on cate1_id = JSON_EXTRACT(book_categories, '$[0]') join category_2 on cate2_id = JSON_EXTRACT(book_categories, '$[1]') join category_3 on cate3_id = JSON_EXTRACT(book_categories, '$[2]') join category_4 on cate4_id = JSON_EXTRACT(book_categories, '$[3]')"
     
-    with db_engine.connect() as db_connection:
-        books_df = pd.read_sql(books_query, con=db_connection)
-    
-    # Thực thi query và lấy dữ liệu vào DataFrame
-    # books_df = pd.read_sql(books_query, con=db_connection)
-
+    # with db_engine.connect() as db_connection:
+        # books_df = pd.read_sql(books_query, con=db_connection)
+    books_df = pd.read_sql(books_query, con=db_connection)
     # Gom các cột cate lại thành 1 cột duy nhất
     books_df['genres'] = books_df.apply(lambda row: ', '.join([row['cate1_name'], row['cate2_name'], row['cate3_name'], row['cate4_name']]), axis=1)
 
@@ -46,7 +44,7 @@ async def train_content_base_model():
     model_type = "content"
     # lưu thông tin vào db
     insert_query = f"INSERT INTO rec_model (rec_model_id, rec_model_type, create_time) VALUES ('{model_id}', '{model_type}', CURRENT_TIMESTAMP)"
-    connection = db_connection.connect()  # Tạo đối tượng Connection từ Engine
+      # Tạo đối tượng Connection từ Engine
     result = connection.execute(text(insert_query))  # Thực hiện truy vấn
     connection.commit()
     connection.close()

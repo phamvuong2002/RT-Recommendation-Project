@@ -1,8 +1,8 @@
-import React, { useContext } from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { getAllBook } from '../apis/book';
+import { recLatestBook } from '../apis/recommendation';
 import { fetchAPI } from '../helpers/fetch';
 import { AllProducts } from '../components/AllProducts';
 import { Product } from '../components/Product';
@@ -14,6 +14,7 @@ const Search = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [input, setInput] = useState('');
+  const dropdownRef = useRef(null);
 
   const [products, setProducts] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
@@ -32,6 +33,19 @@ const Search = () => {
 
 
   }, [input]);
+
+  useEffect(() => {
+    const loadProductData = async () => {
+      const rec_book = await fetchAPI(`../${recLatestBook}`, 'POST', {
+        userId: userId.toString(),
+        quantity: 24,
+        model_type: "online",
+      });
+      console.log("TỚI ĐÂY RA CHƯA", rec_book);
+    };
+
+    loadProductData();
+  }, [input, userId]);
 
   const searchFunction = (event, inputValue) => {
     event.preventDefault();
@@ -84,6 +98,19 @@ const Search = () => {
     }
   }, [location]);
 
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setShowDropdown(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
     <div
       id="search-bar"
@@ -109,7 +136,7 @@ const Search = () => {
       </div>
       {showDropdown && (
         <div className="dropdown-content absolute top-10 bg-white z-10 w-full shadow-xl rounded-b-md">
-          <div className="">
+          <div ref={dropdownRef}>
             {suggestions.slice(0, 4).map((suggestion) => (
               <div
                 key={suggestion.book_id}

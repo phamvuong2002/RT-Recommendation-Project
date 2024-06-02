@@ -27,6 +27,7 @@ const collectVector = async (userId, productId, score = 1) => {
   const expireTime = 1000 * 60 * 60;
   const redis_key = "vector-score";
   const redis_user_key = "user-score";
+  const redis_product_key = "product-score";
 
   //Tính điểm vector
   const key_member = `${userId}:${productId}`;
@@ -47,6 +48,24 @@ const collectVector = async (userId, productId, score = 1) => {
     await zaddAsync(redis_user_key, score, user_key_member);
   }
 
+  // Tính điểm tương tác cho mỗi sản phẩm
+  const product_key_member = `${productId}`;
+  const procduct_existingScore = await zscoreAsync(
+    redis_product_key,
+    product_key_member
+  );
+  let newProductScore;
+  if (procduct_existingScore !== null) {
+    newProductScore = await zincrbyAsync(
+      redis_product_key,
+      score,
+      product_key_member
+    );
+  } else {
+    await zaddAsync(redis_product_key, score, product_key_member);
+  }
+
+  //Schedule
   //Gọi retrain khi user đủ kiền kiện
   if (newScore >= REQUEST_REC_SCORE) {
     return { message: "retrain", userId: userId };

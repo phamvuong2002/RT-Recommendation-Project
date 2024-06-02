@@ -112,7 +112,8 @@ export const SearchPage_v2 = () => {
     //ví dụ tải các sản phẩm trong giỏ hàng của khách
     if (search_type === QUERY_TYPE.BEST_SELLER_SUGGEST) {
       loadSearchBestSellerData();
-    } else if (search_type === QUERY_TYPE.NORMAL) {
+    } else if (search_type === QUERY_TYPE.NORMAL && !query) {
+      console.log('Please select');
       loadSearchNormalData();
       // setProductsSearch([]);
     } else setProductsSearch([]);

@@ -7,6 +7,7 @@ import { fetchAPI } from '../helpers/fetch';
 import { AllProducts } from '../components/AllProducts';
 import { Product } from '../components/Product';
 import { AppContext } from '../contexts/main';
+import { popularrating } from '../apis/recommendation';
 
 // Thanh Tìm Kiếm được đặt trong Navbar
 const Search = () => {
@@ -18,20 +19,18 @@ const Search = () => {
 
   const [products, setProducts] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
+  const [popularSuggestions, setPopularSuggestions] = useState([]);
+  const [userSuggestions, setUserSuggestions] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
-    if (input !== "") {
+    if (input !== '') {
       const loadProductData = async () => {
         const productData = await fetchAPI(`../${getAllBook}`, 'POST');
         setProducts(productData.metadata);
       };
-      setTimeout(() => {
-        loadProductData();
-      }, 1000);
-    };
-
-
+      loadProductData();
+    }
   }, [input]);
 
   useEffect(() => {
@@ -71,11 +70,15 @@ const Search = () => {
 
   const handleChange = (value) => {
     setInput(value);
-
+    console.log('value change::', input);
     if (value) {
-      const bookTitles = products.map(book => ({ book_id: book.book_id, book_title: book.book_title, book_img: book.book_img }));
-      const filteredSuggestions = bookTitles.filter(item =>
-        item.book_title.toLowerCase().includes(value.toLowerCase())
+      const bookTitles = products.map((book) => ({
+        book_id: book.book_id,
+        book_title: book.book_title,
+        book_img: book.book_img,
+      }));
+      const filteredSuggestions = bookTitles.filter((item) =>
+        item.book_title.toLowerCase().includes(value.toLowerCase()),
       );
       setSuggestions(filteredSuggestions);
 
@@ -92,8 +95,21 @@ const Search = () => {
     navigate('/books/' + id);
   };
 
+  const handelLoadPopularRec = async () => {
+    setPopularSuggestions([]);
+    const productData = await fetchAPI(`../${popularrating}`, 'POST', {
+      quantity: 4,
+    });
+    if (productData.status === 200) {
+      setPopularSuggestions(productData.metadata);
+    } else {
+      setPopularSuggestions([]);
+    }
+    setShowDropdown(true);
+  };
+
   useEffect(() => {
-    if (!location.pathname.includes('/search') && input) {
+    if (!location.pathname.includes('/search_v2') && input) {
       setInput('');
     }
   }, [location]);
@@ -112,11 +128,11 @@ const Search = () => {
   }, []);
 
   return (
-    <div
-      id="search-bar"
-      className="min-h-[2.5rem] sm:h-0.8 rounded-[5px] grid"
-    >
-      <div className="relative flex items-stretch">
+    <div id="search-bar" className="min-h-[2.5rem] sm:h-0.8 rounded-[5px] grid">
+      <div
+        className="relative flex items-stretch"
+        onClick={handelLoadPopularRec}
+      >
         <input
           type="search"
           className={`w-full relative m-0 block flex-auto pr-14 border-[1px] rounded-md bg-white bg-clip-padding-x px-3 py-[0.1rem] text-[1rem] sm:text-base lg:text-lg font-normal  text-neutral-700 outline-none transition duration-200 ease-in-out focus:z-[3] 
@@ -140,7 +156,13 @@ const Search = () => {
             {suggestions.slice(0, 4).map((suggestion) => (
               <div
                 key={suggestion.book_id}
-                onClick={(e) => handleSuggestionClick(suggestion.book_title, e, suggestion.book_id)}
+                onClick={(e) =>
+                  handleSuggestionClick(
+                    suggestion.book_title,
+                    e,
+                    suggestion.book_id,
+                  )
+                }
                 className="dropdown-item p-1 hover:bg-slate-100 hover:rounded-md"
               >
                 <div className="relative flex items-center">
@@ -158,13 +180,23 @@ const Search = () => {
           </div>
 
           {/* Đặt kết quả thuật toán collab ở đây */}
-          <div className="">
-            <p className='font-semibold px-2'>Có thể bạn sẽ thích</p>
+          <div
+            className={
+              userSuggestions.length === 0 ? 'hidden' : 'cursor-pointer'
+            }
+          >
+            <p className="font-semibold px-2">Có thể bạn sẽ thích</p>
             <div className="grid grid-cols-4 gap-4">
-              {suggestions.slice(0, 4).map((suggestion) => (
+              {userSuggestions.slice(0, 4).map((suggestion) => (
                 <div
                   key={suggestion.book_id}
-                  onClick={(e) => handleSuggestionClick(suggestion.book_title, e, suggestion.book_id)}
+                  onClick={(e) =>
+                    handleSuggestionClick(
+                      suggestion.book_title,
+                      e,
+                      suggestion.book_id,
+                    )
+                  }
                   className="dropdown-item p-2 hover:bg-slate-100 hover:rounded-md text-center"
                 >
                   <div className="flex flex-col items-center">
@@ -182,6 +214,41 @@ const Search = () => {
             </div>
           </div>
 
+          {/* Popular rating */}
+          <div
+            className={
+              popularSuggestions.length === 0 ? 'hidden' : 'cursor-pointer'
+            }
+          >
+            <p className="font-semibold px-2">Sách được ưa chuộng</p>
+            <div className="grid grid-cols-4 gap-4">
+              {popularSuggestions.slice(0, 4).map((suggestion) => (
+                <div
+                  key={suggestion.book.book_id}
+                  onClick={(e) =>
+                    handleSuggestionClick(
+                      suggestion.book.book_title,
+                      e,
+                      suggestion.book.book_id,
+                    )
+                  }
+                  className="dropdown-item p-2 hover:bg-slate-100 hover:rounded-md text-center"
+                >
+                  <div className="flex flex-col items-center">
+                    <img
+                      className="w-full h-auto"
+                      src={suggestion.book.book_img}
+                      alt="Product Image"
+                    />
+                    <p className="my-2 w-full text-center text-xs line-clamp-2">
+                      {suggestion.book.book_title}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* <div className="">
             <AllProducts
               isShowHeader={false}
@@ -191,7 +258,6 @@ const Search = () => {
               _choose={'all'}></AllProducts>
           </div> */}
         </div>
-
       )}
     </div>
   );

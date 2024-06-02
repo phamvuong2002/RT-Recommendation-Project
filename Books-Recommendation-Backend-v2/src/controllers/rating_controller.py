@@ -7,6 +7,7 @@ from src.helpers.save_rec_books import save_rec_books
 
 from src.services.collaborative_rating_user import rating_user, rating_offline_user
 from src.services.collaborative_rating_svdpp import rating_svdpp, rating_offline_svdpp
+import itertools
 
 # Gợi ý sách được mua nhiều nhất
 async def get_popular(limit: int):
@@ -23,12 +24,24 @@ async def search_book_name(book_name: str = ""):
         raise BadRequestError(detail=str(e))
 
 #Gợi ý sách liên quan
-async def get_recommended(book: str = "", userId: str = ""):
+async def get_recommended(book: str = "", userId: str = "", quantity: int = 10):
     try:
-        recommendation_on = await search_book(book, 1)
-        books = await recommendFor(recommendation_on[0]['book_id'])
-        results = await save_rec_books(books, user_id=userId, key="book_id")
-        return SuccessResponse(metadata= {'recommendation': results})
+        recommendation_on = await search_book(book)
+        rec_books_lists = []
+        for book in recommendation_on:
+            rec_book = await recommendFor(book['book_id'], quantity)
+            rec_books_lists.append(rec_book)
+
+        all_books = list(itertools.chain(*rec_books_lists)) 
+        # Loại bỏ trùng lặp
+        seen_book_ids = set()
+        unique_books = []
+        for book in all_books:
+            if book['book_id'] not in seen_book_ids:
+                unique_books.append(book)
+                seen_book_ids.add(book['book_id'])
+        # results = await save_rec_books(books, user_id=userId, key="book_id")
+        return SuccessResponse(metadata= {'recommendations': unique_books[:quantity]})
     except Exception as e:
         raise BadRequestError(detail=str(e))
 

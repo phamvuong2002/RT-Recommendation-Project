@@ -77,9 +77,9 @@ async def recommend(book_id: int = 0, user_id: str = "", quantity: int = 10):
 async def recommend(book_name: str = "", user_id: str = "", quantity: int = 10):
     return await contentbase_controller.get_content_base_recommended_by_keyword(book_name, user_id, quantity)
 
-@router.get("/rating/recommend/key_word={book_name}&user={user_id}")
-async def recommend(book_name: str = "", user_id: str = ""):
-    return await rating_controller.get_recommended(book_name, user_id)
+@router.get("/rating/content/key_word={book_name}&user={user_id}&quantity={quantity}")
+async def recommend(book_name: str = "", user_id: str = "", quantity: int = 10):
+    return await rating_controller.get_recommended(book_name, user_id, quantity)
 
 @router.get("/implicit/content/book={book_id}&user={user_id}&quantity={quantity}")
 async def recommend(book_id: int = 0, user_id: str = "", quantity: int = 10):

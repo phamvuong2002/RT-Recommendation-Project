@@ -7,9 +7,7 @@ const { SuccessResponse } = require("../core/success.response");
 class RecommendationRatingController {
   getRatingSVDBooks = async (req, res, next) => {
     // console.log('a')
-    const data = await RecommendationRatingService.getRatingSVDBooks(
-      req.body
-    );
+    const data = await RecommendationRatingService.getRatingSVDBooks(req.body);
     new SuccessResponse({
       metadata: data,
     }).send(res);
@@ -17,15 +15,31 @@ class RecommendationRatingController {
 
   getRatingUserBooks = async (req, res, next) => {
     // console.log('a')
-    const data = await RecommendationRatingService.getRatingUserBooks(
+    const data = await RecommendationRatingService.getRatingUserBooks(req.body);
+    new SuccessResponse({
+      metadata: data,
+    }).send(res);
+  };
+
+  getRatingContentBooks = async (req, res, next) => {
+    // console.log('a')
+    const data = await RecommendationRatingService.getRatingContentBooks(
       req.body
     );
     new SuccessResponse({
       metadata: data,
     }).send(res);
   };
-  
- 
+
+  getRatingPopularBooks = async (req, res, next) => {
+    // console.log('a')
+    const data = await RecommendationRatingService.getRatingPopularBooks(
+      req.body
+    );
+    new SuccessResponse({
+      metadata: data,
+    }).send(res);
+  };
 }
 
 module.exports = new RecommendationRatingController();

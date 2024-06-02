@@ -6,10 +6,9 @@ const recommendationController = require("../../controllers/recommendation.contr
 const bestSellingController = require("../../controllers/bestSelling.controller");
 const recBehaviourController = require("../../controllers/recommendation.behaviour.controller");
 const ContentBaseController = require("../../controllers/recommendation.contentbase.controller");
-const recBehaviourSVDUserController = require("../../controllers/recommendation.behaviour_svd_user.controller")
-const recRatingController = require("../../controllers/recommendation.rating.controller")
+const recBehaviourSVDUserController = require("../../controllers/recommendation.behaviour_svd_user.controller");
+const recRatingController = require("../../controllers/recommendation.rating.controller");
 const { asyncHandler } = require("../../auth/checkAuth");
-
 
 //Get popular items
 router.post("/popular", asyncHandler(recommendationController.getPopularBooks));
@@ -54,16 +53,22 @@ router.post(
 );
 
 //Rating
-router.post(
-  "/rating/svd",
-  asyncHandler(recRatingController.getRatingSVDBooks)
-);
+router.post("/rating/svd", asyncHandler(recRatingController.getRatingSVDBooks));
 
 router.post(
   "/rating/user",
   asyncHandler(recRatingController.getRatingUserBooks)
 );
 
+router.post(
+  "/rating/content",
+  asyncHandler(recRatingController.getRatingContentBooks)
+);
+
+router.post(
+  "/rating/popular",
+  asyncHandler(recRatingController.getRatingPopularBooks)
+);
 
 //Category
 // bestelling category
@@ -88,14 +93,9 @@ router.post(
   asyncHandler(ContentBaseController.getRecommendByContentBaseID)
 );
 
-
 router.post(
   "/related-book/suggestion",
   asyncHandler(ContentBaseController.getSuggestedBook)
 );
-
-
-
-
 
 module.exports = router;

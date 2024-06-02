@@ -9,8 +9,8 @@ import time
 from src.helpers.move_files import move_files
 import os
 
-POPULAR_RANGE = 15
-COLLAB_RANGE = 5
+POPULAR_RANGE = 5
+COLLAB_RANGE = 2
 
 async def train_rating_item_model():
     mysql_host = os.environ.get("BACKEND_MYSQL_HOST")
@@ -67,7 +67,7 @@ async def train_rating_item_model():
     # Lưu thông tin model
     model_id = f"model_{int(time.time())}"
     #model type: "content", "rating", "behaviour"
-    model_type = "rating"
+    model_type = "rating-item"
     # lưu thông tin vào db
     insert_query = f"INSERT INTO rec_model (rec_model_id, rec_model_type, create_time) VALUES ('{model_id}', '{model_type}', CURRENT_TIMESTAMP)"
     connection = db_connection.connect()  # Tạo đối tượng Connection từ Engine

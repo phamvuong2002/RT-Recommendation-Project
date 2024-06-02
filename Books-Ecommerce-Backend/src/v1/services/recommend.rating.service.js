@@ -1,5 +1,6 @@
 "use strict";
 
+const { BadRequestError } = require("../core/error.response");
 const { fetchData } = require("../helpers/fetchData");
 const recBooksHelper = require("../helpers/recommendationBooks.helper");
 

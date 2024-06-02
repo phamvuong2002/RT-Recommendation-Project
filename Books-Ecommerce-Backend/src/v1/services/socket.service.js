@@ -23,8 +23,10 @@ class SocketServices {
         if (!data) {
           return;
         } else if (data.message === "retrain") {
+          //Bắt sự kiện yêu cầu đào tạo lại
           console.log("message::::retrain::::::::::::", data);
         } else if (data.behaviour === BEHAVIOUR.PLACEORDER) {
+          //Bắt hành vi mua hàng và kiểm tra sản phẩm có nằm trong top seller
           // console.log("PlaceOrder:::::::::::", data);
           const isSendRequest = await BestSellingService.isTopSelling({
             bookId: data.productId,

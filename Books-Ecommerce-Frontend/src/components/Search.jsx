@@ -24,14 +24,33 @@ const Search = () => {
   const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
-    if (input !== '') {
-      const loadProductData = async () => {
-        const productData = await fetchAPI(`../${getAllBook}`, 'POST');
-        setProducts(productData.metadata);
-      };
-      loadProductData();
+    const loadProductData = async () => {
+      const productData = await fetchAPI(`../${getAllBook}`, 'POST');
+      ///hiện chỗ này đang gọi đỡ là load all book từ db
+      setProducts(productData.metadata);
+    };
+    loadProductData();
+  }, []); ////Gọi api để load book từ model gán dô state product
+  ///thì coi coi nhớ để biến phụ thuộc khi thay đổi là gì để gắn dô []
+  /// cái lần đầu render ra mấy dòng tìm kiếm hay ko phụ thuộc chỗ này
+
+  useEffect(() => {
+    if (input) {
+      setShowDropdown(true);
+      const bookTitles = products.map((book) => ({
+        book_id: book.book_id,
+        book_title: book.book_title,
+        book_img: book.book_img,
+      }));
+      let filteredSuggestions = bookTitles.filter((item) =>
+        item.book_title.toLowerCase().includes(input.toLowerCase()),
+      );
+      setSuggestions(filteredSuggestions);
+      //console.log("TỚI ĐÂY RA CHƯA", products);
+    } else {
+      setShowDropdown(false);
     }
-  }, [input]);
+  }, [input, products]);
 
   useEffect(() => {
     const loadProductData = async () => {
@@ -40,7 +59,7 @@ const Search = () => {
         quantity: 24,
         model_type: "online",
       });
-      console.log("TỚI ĐÂY RA CHƯA", rec_book);
+      // console.log("TỚI ĐÂY RA CHƯA", rec_book);
     };
 
     loadProductData();
@@ -49,43 +68,20 @@ const Search = () => {
   const searchFunction = (event, inputValue) => {
     event.preventDefault();
     let path = '';
-    //event.preventDefault();
     let page = 1;
-    //console.log("INPUT: ", input)
     let params = new URLSearchParams({ search: inputValue });
-    // console.log(params)
 
-    //params.append("limit", '24')
-    //params.append("page", page)
     params.append('sort', 'create_time_desc');
     params.append('page', '1');
     params.append('limit', '24');
     params.append('search_type', 'normal');
 
-    // path = '/search?q=' + input
-    //navigate('/search?' + params)
-    //console.log(params)
     navigate('/search_v2?' + params);
   };
 
   const handleChange = (value) => {
     setInput(value);
-    console.log('value change::', input);
-    if (value) {
-      const bookTitles = products.map((book) => ({
-        book_id: book.book_id,
-        book_title: book.book_title,
-        book_img: book.book_img,
-      }));
-      const filteredSuggestions = bookTitles.filter((item) =>
-        item.book_title.toLowerCase().includes(value.toLowerCase()),
-      );
-      setSuggestions(filteredSuggestions);
 
-      setShowDropdown(true);
-    } else {
-      setShowDropdown(false);
-    }
   };
 
   const handleSuggestionClick = (suggestion, e, id) => {

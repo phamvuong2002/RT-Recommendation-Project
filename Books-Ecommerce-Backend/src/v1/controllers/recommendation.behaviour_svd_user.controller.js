@@ -40,15 +40,6 @@ class RecommendationBehaviour_SVD_UserController {
       metadata: data,
     }).send(res);
   };
-
-  retrainBehaviourSVDpp = async (req, res, next) => {
-    const data = await RecommendationBehaviourSVDUserService.retrainBehaviourSVD(
-      req.body
-    );
-    new SuccessResponse({
-      metadata: data,
-    }).send(res);
-  };
  
 }
 

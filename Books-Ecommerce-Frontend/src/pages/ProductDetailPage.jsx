@@ -13,7 +13,7 @@ import { AppContext } from '../contexts/main';
 import { collectBehaviour } from '../apis/collectBehaviour';
 import { slugify } from '../utils/slugify';
 import { isMobileDevice } from '../utils/isMobileDevice';
-import { behaviour_retrain, recRandomBook } from '../apis/recommendation';
+import {  recRandomBook } from '../apis/recommendation';
 
 export const ProductDetailPage = () => {
   const { userId, setIsShowFooter, token, setIsLoading } = useContext(AppContext);
@@ -159,49 +159,7 @@ export const ProductDetailPage = () => {
     collabBook();
   }, [userId, paths])
 
-  // retrain mỗi 5'?
-  const MINUTE_MS = 300000;
 
-  //Dự định retrain mỗi 5'
-  useEffect(() => {
-    const interval = setInterval(() => {
-      //Khi nào chốt thì sẽ gỡ điều kiện 1==0 ra
-      if (endTime - startTime == 0 && 1 == 0) {
-        const retrainSVDpp = async () => {
-          const retrainResult = await fetchAPI(`../${behaviour_retrain}`, 'POST', {
-            userId: userId,
-            quantity: 30,
-            model_type: "online"
-          });
-          console.log(retrainResult)
-          if (retrainResult.status == 200) {
-            console.log('success')
-          }
-        }
-        retrainSVDpp();
-        console.log('Logs every minute');
-      }
-      console.log('in retrain ')
-    }, MINUTE_MS);
-
-    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
-  }, [])
-  //Kiểm tra xem người dùng có đang mở trang web không
-  // useEffect(() => {
-  //   document.onvisibilitychange = () => {
-  //     if (document.visibilityState == 'visible') {
-  //       // this.setState({ startTime: new Date() });
-  //       setIsVisible(true)
-  //       // console.log(startTime==endTime, startTime,endTime)
-  //       console.log('on')
-  //     } else {
-  //       console.log('hidden')
-  //       setIsVisible(false)
-  //       setEndTime(new Date())
-  //       setStartTime(new Date())
-  //     }
-  //   }
-  // }, [document.onvisibilitychange])
 
   return (
     <div className="flex flex-col mb-14">
@@ -209,38 +167,9 @@ export const ProductDetailPage = () => {
       <div className="flex flex-col gap-[0.2rem]">
         <DetailCart book={book} />
         <DescriptionFeedback book={book} />
-
-        {/*Gợi ý Có thể bạn sẽ thích*/}
-        <div className="flex flex-col mt-2 px-1 xl:px-28">
-          <div className="flex items-center mb-[0.1rem] xl:mb-1 pl-2 h-14 bg-gradient-to-t from-red-50 to-gray-50 rounded-t-lg border border-red-100">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="text-[#ffbe98] w-[5%] md:w-[2%]"
-            >
-              <path
-                fillRule="evenodd"
-                d="M4.5 7.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9Z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <div className="flex px-4 text-sm items-center">
-              <div className="text-sm md:text-[150%] font-bold text-red-500  font-['Inter'] tracking-wider">
-                Có thể bạn sẽ thích
-              </div>
-            </div>
-          </div>
-          <div className="bg-white border-x border-b xl:border border-red-100">
-            <SliderProducts
-              userId={userId?.toString()}
-              productData={collabProducts}
-            ></SliderProducts>
-          </div>
-        </div>
-
+        
         {/*Gợi ý Sản phẩm liên quan*/}
-        <div className="flex flex-col mt-1 px-1 xl:px-28">
+        <div className={`flex flex-col mt-1 px-1 xl:px-28 ${products.length===0?'hidden':''}`}>
           <div className="flex items-center mb-[0.1rem] xl:mb-1 pl-2 h-14 bg-gradient-to-t from-red-50 to-gray-50 rounded-t-lg border border-red-100">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -264,6 +193,35 @@ export const ProductDetailPage = () => {
             <SliderProducts
               userId={userId.toString()}
               productData={products}
+            ></SliderProducts>
+          </div>
+        </div>
+
+         {/*Gợi ý Có thể bạn sẽ thích*/}
+         <div className={`flex flex-col mt-2 px-1 xl:px-28 ${collabProducts.length===0?'hidden':''}`}>
+          <div className="flex items-center mb-[0.1rem] xl:mb-1 pl-2 h-14 bg-gradient-to-t from-red-50 to-gray-50 rounded-t-lg border border-red-100">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="text-[#ffbe98] w-[5%] md:w-[2%]"
+            >
+              <path
+                fillRule="evenodd"
+                d="M4.5 7.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9Z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <div className="flex px-4 text-sm items-center">
+              <div className="text-sm md:text-[150%] font-bold text-red-500  font-['Inter'] tracking-wider">
+                Có thể bạn sẽ thích
+              </div>
+            </div>
+          </div>
+          <div className="bg-white border-x border-b xl:border border-red-100">
+            <SliderProducts
+              userId={userId?.toString()}
+              productData={collabProducts}
             ></SliderProducts>
           </div>
         </div>

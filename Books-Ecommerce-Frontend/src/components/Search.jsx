@@ -12,7 +12,7 @@ import { popularrating } from '../apis/recommendation';
 // Thanh Tìm Kiếm được đặt trong Navbar
 const Search = () => {
   const { userId } = useContext(AppContext);
-  const location = useLocation();
+  const location = useLocation(); 
   const navigate = useNavigate();
   const [input, setInput] = useState('');
   const dropdownRef = useRef(null);
@@ -52,20 +52,23 @@ const Search = () => {
     }
   }, [input, products]);
 
-  useEffect(() => {
-    const loadProductData = async () => {
-      const rec_book = await fetchAPI(`../${recLatestBook}`, 'POST', {
-        userId: userId.toString(),
-        quantity: 24,
-        model_type: "online",
-      });
-      // console.log("TỚI ĐÂY RA CHƯA", rec_book);
-    };
+  // useEffect(() => {
+  //   const loadProductData = async () => {
+  //     const rec_book = await fetchAPI(`../${recLatestBook}`, 'POST', {
+  //       userId: userId.toString(), 
+  //       quantity: 24,
+  //       model_type: "online",
+  //     });
+  //     // console.log("TỚI ĐÂY RA CHƯA", rec_book);
+  //   };
 
-    loadProductData();
-  }, [input, userId]);
+  //   loadProductData();
+  // }, [input, userId]);
 
   const searchFunction = (event, inputValue) => {
+      // console.log(event.code)
+      // alert(event.code)
+      // alert(event.key)
     event.preventDefault();
     let path = '';
     let page = 1;
@@ -85,9 +88,11 @@ const Search = () => {
   };
 
   const handleSuggestionClick = (suggestion, e, id) => {
+  
     setInput(suggestion);
     setShowDropdown(false);
     searchFunction(e, suggestion);
+    
     navigate('/books/' + id);
   };
 
@@ -100,6 +105,21 @@ const Search = () => {
       setPopularSuggestions(productData.metadata);
     } else {
       setPopularSuggestions([]);
+    }
+    setShowDropdown(true);
+  };
+
+  const handleLoadCollabRec = async () => {
+    setUserSuggestions([]);
+    const productData = await fetchAPI(`../${recLatestBook}`, 'POST', {
+      userId: userId.toString(),
+      quantity: 4,
+      model_type: "online",
+    });
+    if (productData.status === 200) {
+      setUserSuggestions(productData.metadata);
+    } else {
+      setUserSuggestions([]);
     }
     setShowDropdown(true);
   };
@@ -127,7 +147,7 @@ const Search = () => {
     <div id="search-bar" className="min-h-[2.5rem] sm:h-0.8 rounded-[5px] grid">
       <div
         className="relative flex items-stretch"
-        onClick={handelLoadPopularRec}
+        onClick={() => { handelLoadPopularRec(); handleLoadCollabRec(); }}
       >
         <input
           type="search"
@@ -136,12 +156,13 @@ const Search = () => {
           placeholder="Tìm kiếm"
           value={input}
           onChange={(e) => handleChange(e.target.value)}
-          onKeyDown={(e) => (e.code == 'Enter' ? searchFunction(e, input) : '')}
+          onKeyDown={(e) => ((e.code == 'Enter') ||(e.key=='Enter') ? searchFunction(e, input) : '')}
+         
         />
         <button
           className="flex absolute right-0 h-full px-3 input-group-text items-center white space-nowrap rounded-r-md text-center text-sm lg:text-base font-normal text-white z-10 bg-red-500"
           id="basic-addon2"
-          onClick={(e) => searchFunction(e, input)}
+          onClick={(e) => searchFunction(e, input)} 
         >
           <FaSearch className=" w-4 h-4 block cursor-pointer text-white" />
         </button>
@@ -185,12 +206,12 @@ const Search = () => {
             <div className="grid grid-cols-4 gap-4">
               {userSuggestions.slice(0, 4).map((suggestion) => (
                 <div
-                  key={suggestion.book_id}
+                  key={suggestion.book.book_id}
                   onClick={(e) =>
                     handleSuggestionClick(
-                      suggestion.book_title,
-                      e,
-                      suggestion.book_id,
+                      suggestion.book.book_title,
+                      e, 
+                      suggestion.book.book_id,
                     )
                   }
                   className="dropdown-item p-2 hover:bg-slate-100 hover:rounded-md text-center"
@@ -198,11 +219,11 @@ const Search = () => {
                   <div className="flex flex-col items-center">
                     <img
                       className="w-full h-auto"
-                      src={suggestion.book_img}
+                      src={suggestion.book.book_img}
                       alt="Product Image"
                     />
                     <p className="my-2 w-full text-center text-xs line-clamp-2">
-                      {suggestion.book_title}
+                      {suggestion.book.book_title}
                     </p>
                   </div>
                 </div>

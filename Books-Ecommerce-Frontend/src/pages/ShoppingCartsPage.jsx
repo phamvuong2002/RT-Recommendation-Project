@@ -7,10 +7,14 @@ import { SliderProducts } from '../components/SliderProducts';
 import { fetchAPI, fetchData } from '../helpers/fetch';
 import { FectchPaging } from '../helpers/fectchPaging';
 import { AppContext } from '../contexts/main';
+import {  recRandomBook, getbestselling } from '../apis/recommendation';
 
 export const ShoppingCartsPage = () => {
   const [products, setProducts] = useState([]);
-  const { userId, setActivePage, setIsShowFooter } = useContext(AppContext);
+  const { userId, setActivePage, setIsShowFooter, setIsLoading } = useContext(AppContext);
+
+  const [collabProducts, setCollabProducts] = useState([]);
+  const [bestSellerData, setBestSellerData] = useState([]);
 
   //set active page
   useEffect(() => {
@@ -36,6 +40,45 @@ export const ShoppingCartsPage = () => {
   //   loadProductData();
   // }, []);
 
+  // COLLABORATIVE FILTERING 
+  // Có thể bạn sẽ thích: Random 15 cuốn từ các đề xuất có trong ngày 
+  useEffect(() => {
+    const collabBook = async () => {
+      const rec_book = await fetchAPI(`../${recRandomBook}`, 'POST', {
+        userId: userId,
+        quantity: 15,
+        model_type: "online"
+      });
+      if (rec_book.status == 200) {
+        //console.log(rec_book.metadata)
+        setCollabProducts(rec_book.metadata)
+      }
+    }
+    // console.log('in rec svd')
+    collabBook();
+  }, [userId])
+
+  //BEST SELLER
+  //load best seller books
+  useEffect(() => {
+    const loadBestSellerData = async () => {
+      setIsLoading(true);
+      const data = await fetchAPI(`../${getbestselling}`, 'POST', {
+        pageNumber: 1,
+        pageSize: 12,
+      });
+      if (data.status != 200) {
+        setBestSellerData([]);
+        setIsLoading(false);
+        return;
+      }
+      setBestSellerData(data?.metadata?.books);
+      setIsLoading(false);
+    };
+    //get best seller data
+    loadBestSellerData();
+  }, [userId]);
+
   return (
     <div className="">
       <NavigationPath components={paths} />
@@ -44,7 +87,7 @@ export const ShoppingCartsPage = () => {
           <ShoppingCarts />
         </div>
         {/*Gợi ý cho bạn*/}
-        <div className="flex flex-col mt-1 px-1 xl:px-0">
+        <div className={`flex flex-col mt-1 px-1 xl:px-0 ${collabProducts.length===0?'hidden':''}`}>
           <div className="flex items-center mb-[0.1rem] xl:mb-1 pl-2 h-14 bg-white rounded-t-lg border border-red-50">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -65,11 +108,11 @@ export const ShoppingCartsPage = () => {
             </div>
           </div>
           <div className="py-8 bg-white border-x border-b xl:border border-red-50">
-            {/* <SliderProducts productData={products} /> */}
+            <SliderProducts productData={collabProducts} />
           </div>
         </div>
 
-        {/*Sản phẩm bán chạy*/}
+        {/* Sản phẩm bán chạy*/}
         <div className="flex flex-col mt-1 px-1 xl:px-0">
           <div className="flex items-center mb-[0.1rem] xl:mb-1 pl-2 h-14 bg-white rounded-t-lg border border-red-50">
             <svg
@@ -91,7 +134,10 @@ export const ShoppingCartsPage = () => {
             </div>
           </div>
           <div className="bg-white border-x p-1 border-b xl:border border-red-50">
-            {/* <SliderProducts productData={products} /> */}
+          <SliderProducts
+              userId={userId?.toString()}
+              productData={bestSellerData}>
+            </SliderProducts>
           </div>
         </div>
       </div>

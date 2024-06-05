@@ -9,11 +9,14 @@ import { useParams } from 'react-router-dom';
 import { ProfileAccount } from '../components/ProfileAccount';
 import { AppContext } from '../contexts/main';
 
+import { SliderProducts } from '../components/SliderProducts';
+import { recRandomBook } from '../apis/recommendation';
+import { fetchAPI } from '../helpers/fetch';
 const TAB = {
   'general-infomation': 'Tổng Quan',
   'profile-infomation': 'Thông Tin Tài Khoản',
   'orders-infomation': 'Thông Tin Đơn Hàng',
-  'following-infomation': 'Theo Dõi Sách',
+  'following-infomation': 'Mục yêu thích',
 };
 
 export const AccountPage = () => {
@@ -28,6 +31,8 @@ export const AccountPage = () => {
   const [selectedPage, setSelectedPage] = useState(TAB['general-infomation']);
   const [selectedPageId, setSelectedPageId] = useState('general-infomation');
   const [paths, setPaths] = useState([]);
+  const [collabProducts, setCollabProducts] = useState([]);
+
   const { tab } = useParams();
 
   //Check Authen
@@ -77,21 +82,73 @@ export const AccountPage = () => {
     //console.log(selectedPage, TAB[selectedPageId]);
   }, [selectedPageId]);
 
+  //COLLABORATIVE FILTERING
+  //15 cuốn random được train trong ngày
+  useEffect(() => {
+    const collabBook = async () => {
+      const rec_book = await fetchAPI(`../${recRandomBook}`, 'POST', {
+        userId: userId,
+        quantity: 15,
+        model_type: "online"
+      });
+      if (rec_book.status == 200) {
+        //console.log(rec_book.metadata)
+        setCollabProducts(rec_book.metadata)
+      }
+    }
+    // console.log('in rec svd')
+    collabBook();
+  }, [userId])
+
+
   return (
-    <div className="mb-4">
+    <div className="mb-4 ">
       <NavigationPath components={paths} />
-      <div className="grid-cols-1 sm:flex sm:align-top h-lvh w-full justify-around overflow-hidden py-4">
+      <div className="grid grid-cols-1 sm:flex sm:align-top h-lvh w-full justify-around overflow-hidden py-4">
         <SideBarNav
           setSelectedPage={setSelectedPage}
           setSelectedPageId={setSelectedPageId}
         />
+        {/* <div className='w-2/3'> */}
+        {/* <div className='flex flex-col'> */}
         {selectedPageId === 'general-infomation' && <GeneralInfo />}
         {selectedPageId === 'profile-infomation' && <ProfileAccount />}
         {selectedPageId === 'orders-infomation' && <OrderInfo />}
         {selectedPageId === 'following-infomation' && (
           <ProductListStatus _userId={userId} />
         )}
+
       </div>
+        {/*Gợi ý Có thể bạn sẽ thích*/}
+        <div className={`flex flex-col mt-[-5rem] px-1 xl:px-[3rem] ${collabProducts.length===0 ||selectedPageId!=='following-infomation' ?'hidden':''}`}>
+          <div className="flex items-center mb-[0.1rem] xl:mb-1 pl-2 h-14 bg-gradient-to-t from-red-50 to-gray-50 rounded-t-lg border border-red-100">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="text-[#ffbe98] w-[5%] md:w-[2%]"
+            >
+              <path
+                fillRule="evenodd"
+                d="M4.5 7.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9Z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <div className="flex px-4 text-sm items-center">
+              <div className="text-sm md:text-[150%] font-bold text-red-500  font-['Inter'] tracking-wider">
+                Dành cho bạn
+              </div>
+            </div>
+          </div>
+          <div className="bg-white border-x border-b xl:border border-red-100">
+            <SliderProducts
+              userId={userId?.toString()}
+              productData={collabProducts}
+            ></SliderProducts>
+          </div>
+        </div>
     </div>
+    // </div>
+    // </div>
   );
 };

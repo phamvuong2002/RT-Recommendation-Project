@@ -5,9 +5,9 @@ export const CartLoader = ({ items }) => {
   const loaders = Array.from({ length: items }, (_, index) => index);
 
   return (
-    <div className="flex gap-8 p-2 mx-auto bg-white">
+    <div className="grid grid-cols-2 xl:grid-cols-5 gap-10 p-2 mx-auto">
       {loaders.map((index) => (
-        <div key={index} className="shadow rounded-md px-6 py-4">
+        <div key={index} className="shadow rounded-md px-6 py-4 bg-white">
           <div className="animate-pulse flex flex-col">
             <div className="h-48 w-48 flex-shrink-0 overflow-hidden rounded-md border border-red-300">
               <img

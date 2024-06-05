@@ -26,7 +26,12 @@ const SCORE = {
 const ws = new WebSocket("ws://localhost:3050");
 ws.on("open", function open() {
   // Gửi một tin nhắn tới server khi kết nối thành công
-  ws.send("Server Kafka Started and Connected");
+  ws.send(
+    JSON.stringify({
+      message: "hello",
+      content: "Server Kafka Started and Connected on Socket",
+    })
+  );
 });
 
 //Listening for kafka

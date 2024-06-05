@@ -2,16 +2,31 @@
 const { Op, Sequelize } = require("sequelize");
 const { fetchData } = require("../helpers/fetchData");
 const recBooksHelper = require("../helpers/recommendationBooks.helper");
-const db = require("../models/sequelize/models")
+const db = require("../models/sequelize/models");
 class RecommendationBehaviour_SVD_UserService {
+  //call SVD model generate Books
+  static async callBehaviourSVDBooks({
+    userId,
+    quantity,
+    model_type = "online",
+  }) {
+    const url = `${process.env.RECOMMENDATION_SERVER_URL}/implicit/${
+      model_type === "online" ? "" : "offline/"
+    }svdpp/user=${userId}&quantity=${quantity}`;
+    const result = await fetchData(url);
+
+    return result;
+  }
+
   static async getBehaviourSVDBooks({
     userId,
     quantity, 
     model_type = "online",
   }) { 
     // console.log('in', contentBooks)
-    const url = `${process.env.RECOMMENDATION_SERVER_URL}/implicit/${model_type === "online" ? "" : "offline/"
-      }svdpp/user=${userId}&quantity=${quantity}`;
+    const url = `${process.env.RECOMMENDATION_SERVER_URL}/implicit/${
+      model_type === "online" ? "" : "offline/"
+    }svdpp/user=${userId}&quantity=${quantity}`;
     const contentBooks = await fetchData(url);
 
     // console.log(contentBooks)
@@ -28,9 +43,9 @@ class RecommendationBehaviour_SVD_UserService {
     quantity,
     model_type = "online",
   }) {
-
-    const url = `${process.env.RECOMMENDATION_SERVER_URL}/implicit/${model_type === "online" ? "" : "offline/"
-      }user/user=${userId}&quantity=${quantity}`;
+    const url = `${process.env.RECOMMENDATION_SERVER_URL}/implicit/${
+      model_type === "online" ? "" : "offline/"
+    }user/user=${userId}&quantity=${quantity}`;
     const contentBooks = await fetchData(url);
 
     // console.log(contentBooks)
@@ -42,12 +57,7 @@ class RecommendationBehaviour_SVD_UserService {
     return convertedbooks;
   }
 
-  static async getLatestRecBooks({
-    userId,
-    quantity,
-    model_type = "online",
-  }) {
-
+  static async getLatestRecBooks({ userId, quantity, model_type = "online" }) {
     const recBooks = await db.rec_book.findAll({
       attributes: [
         ["rec_book_id", "book_id"],
@@ -64,6 +74,7 @@ class RecommendationBehaviour_SVD_UserService {
     })
 
     // console.log(recBooks)
+
     const formattedBooks = recBooks.map((recbook) => ({
       book: {
         book_id: recbook.dataValues.book_id,
@@ -85,6 +96,7 @@ class RecommendationBehaviour_SVD_UserService {
     // };
     // console.log(userId)
     // console.log(recBooks)
+
     return formattedBooks;
   } 
 
@@ -98,6 +110,7 @@ class RecommendationBehaviour_SVD_UserService {
     const recBooks = await db.rec_book.findAll({ 
       attributes: [ 
         [Sequelize.fn('DISTINCT', Sequelize.col('rec_book_id')) ,'book_id'],
+
         ["rec_book_title", "book_title"],
         ["rec_book_img", "book_img"],
         ["rec_book_categories", "book_categories"],
@@ -108,10 +121,11 @@ class RecommendationBehaviour_SVD_UserService {
       where: {
         [Op.and]: [Sequelize.where(Sequelize.fn('datediff', Sequelize.fn("NOW"), Sequelize.col('create_time')),0), { rec_user_sid: userId }],
       rec_user_sid: userId 
+
       },
-      order: Sequelize.literal('rand()'),
-      limit: quantity
-    })
+      order: Sequelize.literal("rand()"),
+      limit: quantity,
+    });
 
     // console.log(recBooks, userId)
     const formattedBooks = recBooks.map((recbook) => ({
@@ -149,8 +163,9 @@ class RecommendationBehaviour_SVD_UserService {
 
     const result_svd = await RecommendationBehaviour_SVD_UserService.getBehaviourSVDBooks({ userId, quantity })
     const result_user = await RecommendationBehaviour_SVD_UserService.getBehaviourUserBooks({ userId, quantity })
+
     // console.log(result)
-    return 'result'
+    return "result";
   }
   // static async callMakeSuggestionFromOfflineModel({
   //   userId,

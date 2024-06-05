@@ -28,7 +28,7 @@ export default function SideBarNav({ setSelectedPage, setSelectedPageId }) {
         "general-infomation": "Tổng Quan",
         "profile-infomation": "Thông Tin Tài Khoản",
         "orders-infomation": "Thông Tin Đơn Hàng",
-        "following-infomation": "Theo Dõi Sách"
+        "following-infomation": "Mục yêu thích"
     }
 
     const menuData = [

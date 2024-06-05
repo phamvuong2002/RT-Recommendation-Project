@@ -65,9 +65,9 @@ async def train_implicit_model_SVDpp():
     data = Dataset.load_from_df(grouped_df[['personId', 'contentId', 'eventStrength']], reader)
 
 
-    # trainset, testset = train_test_split(data, test_size=0.2)  
+    trainset, testset = train_test_split(data, test_size=0.2)  
     algo_pp=SVDpp()
-    algo_pp.fit(data.build_full_trainset())
+    algo_pp.fit(trainset)
     # algo_pp_test=SVDpp()
     # algo_pp_test.fit(trainset)
     # predictions_pp = algo_pp.fit(trainset).test(testset)

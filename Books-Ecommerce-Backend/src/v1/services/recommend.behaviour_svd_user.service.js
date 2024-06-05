@@ -20,9 +20,9 @@ class RecommendationBehaviour_SVD_UserService {
 
   static async getBehaviourSVDBooks({
     userId,
-    quantity,
+    quantity, 
     model_type = "online",
-  }) {
+  }) { 
     // console.log('in', contentBooks)
     const url = `${process.env.RECOMMENDATION_SERVER_URL}/implicit/${
       model_type === "online" ? "" : "offline/"
@@ -67,13 +67,14 @@ class RecommendationBehaviour_SVD_UserService {
         ["rec_book_spe_price", "book_spe_price"],
         ["rec_book_old_price", "book_old_price"],
         // ["rec_book_is_recommadation", "book_is_recommendation"],
-      ],
+      ], 
       where: { rec_user_sid: userId },
-      order: [["create_time", "DESC"]],
-      limit: quantity,
-    });
+      order: [['rec_session_id', 'DESC']],
+      limit: quantity
+    })
 
-    console.log(recBooks);
+    // console.log(recBooks)
+
     const formattedBooks = recBooks.map((recbook) => ({
       book: {
         book_id: recbook.dataValues.book_id,
@@ -82,7 +83,7 @@ class RecommendationBehaviour_SVD_UserService {
         book_img: recbook.dataValues.book_img,
         book_spe_price: recbook.dataValues.book_spe_price,
         book_old_price: recbook.dataValues.book_old_price,
-      },
+      }, 
     }));
 
     // Tính toán tổng số trang
@@ -93,20 +94,23 @@ class RecommendationBehaviour_SVD_UserService {
     //   totalBooks,
     //   totalPages,
     // };
-    console.log(userId);
-    console.log(recBooks);
-    return formattedBooks;
-  }
+    // console.log(userId)
+    // console.log(recBooks)
 
-  //sửa tiếp ở đây
+    return formattedBooks;
+  } 
+
+  //sửa tiếp ở đây 
   static async getRandomCollabRecBooks({
-    userId,
-    quantity,
+    userId, 
+    quantity, 
     model_type = "online",
   }) {
-    const recBooks = await db.rec_book.findAll({
-      attributes: [
-        [Sequelize.fn("DISTINCT", Sequelize.col("rec_book_id")), "book_id"],
+    console.log('random ')
+    const recBooks = await db.rec_book.findAll({ 
+      attributes: [ 
+        [Sequelize.fn('DISTINCT', Sequelize.col('rec_book_id')) ,'book_id'],
+
         ["rec_book_title", "book_title"],
         ["rec_book_img", "book_img"],
         ["rec_book_categories", "book_categories"],
@@ -115,25 +119,15 @@ class RecommendationBehaviour_SVD_UserService {
         // ["rec_book_is_recommadation", "book_is_recommendation"],
       ],
       where: {
-        [Op.and]: [
-          Sequelize.where(
-            Sequelize.fn(
-              "datediff",
-              Sequelize.fn("NOW"),
-              Sequelize.col("create_time")
-            ),
-            {
-              [Op.gt]: 0,
-            }
-          ),
-          { rec_user_sid: userId },
-        ],
+        [Op.and]: [Sequelize.where(Sequelize.fn('datediff', Sequelize.fn("NOW"), Sequelize.col('create_time')),0), { rec_user_sid: userId }],
+      rec_user_sid: userId 
+
       },
       order: Sequelize.literal("rand()"),
       limit: quantity,
     });
 
-    // console.log(recBooks)
+    // console.log(recBooks, userId)
     const formattedBooks = recBooks.map((recbook) => ({
       book: {
         book_id: recbook.dataValues.book_id,
@@ -154,32 +148,39 @@ class RecommendationBehaviour_SVD_UserService {
     //   totalPages,
     // };
     // console.log(userId)
-    // console.log(formattedBooks)
+
     return formattedBooks;
   }
 
   static async retrainBehaviourSVD({
     userId,
-    quantity,
+    quantity, 
     model_type = "online",
   }) {
-    const url = `${process.env.RECOMMENDATION_SERVER_URL}/retrain/behaviour-svdpp`;
-    const contentBooks = await fetchData(url);
-    console.log(contentBooks);
+    // const url = `${process.env.RECOMMENDATION_SERVER_URL}/retrain/behaviour-svdpp`;
+    // const contentBooks = await fetchData(url);
+    // console.log(contentBooks)
 
-    const result_svd =
-      await RecommendationBehaviour_SVD_UserService.getBehaviourSVDBooks({
-        userId,
-        quantity,
-      });
-    const result_user =
-      await RecommendationBehaviour_SVD_UserService.getBehaviourUserBooks({
-        userId,
-        quantity,
-      });
+    const result_svd = await RecommendationBehaviour_SVD_UserService.getBehaviourSVDBooks({ userId, quantity })
+    const result_user = await RecommendationBehaviour_SVD_UserService.getBehaviourUserBooks({ userId, quantity })
+
     // console.log(result)
     return "result";
   }
+  // static async callMakeSuggestionFromOfflineModel({
+  //   userId,
+  //   quantity, 
+  //   model_type = "offline",
+  // }) {
+  //   // const url = `${process.env.RECOMMENDATION_SERVER_URL}/retrain/behaviour-svdpp`;
+  //   // const contentBooks = await fetchData(url);
+  //   // console.log(contentBooks)
+
+  //   const result_svd = await RecommendationBehaviour_SVD_UserService.getBehaviourSVDBooks({ userId, quantity, model_type })
+  //   const result_user = await RecommendationBehaviour_SVD_UserService.getBehaviourUserBooks({ userId, quantity, model_type })
+  //   // console.log(result)
+  //   return 'result'
+  // } 
 }
 
 module.exports = RecommendationBehaviour_SVD_UserService;

@@ -36,13 +36,11 @@ router.post(
   "/behaviour/user",
   asyncHandler(recBehaviourSVDUserController.getBehaviourALSUserBooks)
 );
-
+ 
 router.post(
-  "/recBook",
+  "/recLatestBook", 
   asyncHandler(recBehaviourSVDUserController.getRecBooks)
 );
-
-//router.post("/recLatestBook", asyncHandler(recBehaviourSVDUserController.getRecBooks));
 
 router.post(
   "/recRandomBook",

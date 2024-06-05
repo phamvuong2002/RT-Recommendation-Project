@@ -1,6 +1,7 @@
 "use strict";
 const { BEHAVIOUR, TOPIC } = require("../const/collect/index");
 const BestSellingService = require("./bestSelling.redis");
+const RetrainModelService = require("./retrainModel.service");
 
 const connections = [];
 class SocketServices {
@@ -22,9 +23,12 @@ class SocketServices {
         const data = JSON.parse(message);
         if (!data) {
           return;
+        } else if (data?.message === "hello") {
+          console.log(data?.content);
         } else if (data.message === "retrain") {
+          console.log("Retraining......");
           //Bắt sự kiện yêu cầu đào tạo lại
-          console.log("message::::retrain::::::::::::", data);
+          await RetrainModelService.callBehaviourRecommend();
         } else if (data.behaviour === BEHAVIOUR.PLACEORDER) {
           //Bắt hành vi mua hàng và kiểm tra sản phẩm có nằm trong top seller
           // console.log("PlaceOrder:::::::::::", data);
@@ -39,7 +43,7 @@ class SocketServices {
           }
         }
       } catch (error) {
-        console.log("MESSAGE RECIVED:", message);
+        console.log("MESSAGE ERROR:", error);
       }
     });
 

@@ -54,6 +54,7 @@ export const Home = () => {
   const [bestSellerData, setBestSellerData] = useState([]);
   const [bestSellerCates, setBestSellercates] = useState([]);
   const [typeCate, setTypeCate] = useState(CATE_TYPE.BEST_SELLER);
+  const [reloadBestSelling, setReloadBestSelling] = useState(true);
 
   //set active page
   useEffect(() => {
@@ -64,7 +65,8 @@ export const Home = () => {
   //load best seller books
   useEffect(() => {
     const loadBestSellerData = async () => {
-      setIsLoading(true);
+      if (!reloadBestSelling) return;
+      if (!userId) setIsLoading(true);
       const data = await fetchAPI(`../${getbestselling}`, 'POST', {
         pageNumber: 1,
         pageSize: 12,
@@ -72,14 +74,16 @@ export const Home = () => {
       if (data.status != 200) {
         setBestSellerData([]);
         setIsLoading(false);
+        setReloadBestSelling(false);
         return;
       }
       setBestSellerData(data?.metadata?.books);
       setIsLoading(false);
+      setReloadBestSelling(false);
     };
     //get best seller data
     loadBestSellerData();
-  }, [userId]);
+  }, [userId, reloadBestSelling]);
 
   //get Cate
   useEffect(() => {
@@ -111,7 +115,9 @@ export const Home = () => {
     client.onmessage = (message) => {
       try {
         const data = JSON.parse(message.data);
-        alert('Received message::' + data?.key);
+        if (data.key === 'best-selling') {
+          setReloadBestSelling(true);
+        }
       } catch (error) {
         console.log('Received error::' + error.message);
         return;

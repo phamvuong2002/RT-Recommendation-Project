@@ -15,16 +15,21 @@ const redisClient = redis.createClient({
   legacyMode: true,
 });
 
-// const { getRedis } = require('../dbs/init.redis')
-
-// const {
-//     instanceConnect: redisClient
-// } = getRedis()
+//vector-user-score
+const redisVectorUserScore = redis.createClient({
+  password: "BPCJVK6TcHKjsliR97SBnFp3BtsZcGWB",
+  socket: {
+    host: "redis-18188.c292.ap-southeast-1-1.ec2.redns.redis-cloud.com",
+    port: 18188,
+  },
+  legacyMode: true,
+});
 
 const { promisify } = require("util");
 const db = require("../models/sequelize/models");
 const { BadRequestError, NotFoundError } = require("../core/error.response");
 
+//lock for purchase
 const acquireLock = async (productId, quantity) => {
   if (!redisClient.isReady) {
     await redisClient.connect();
@@ -82,7 +87,68 @@ const releaselock = async (keylock) => {
   return await delAsync(keylock);
 };
 
+//Lock for online training
+const acquireLockOnlineReTrain = async (model = "behavior") => {
+  //1.Tạo và kiểm tra khoá trong cache ecommerce
+  if (!redisClient.isReady) {
+    await redisClient.connect();
+  }
+
+  const pexpire = promisify(redisClient.pExpire).bind(redisClient);
+  const setnxAsync = promisify(redisClient.setNX).bind(redisClient);
+
+  const key = `lock_v2024_online_retrain_${model}`;
+  const expireTime = 1000 * 60 * 5;
+  //kiểm tra khoá đã có hay chưa nếu có rồi thì trả về 0 chưa thì tạo và trả về 1
+  const result = await setnxAsync(key, expireTime);
+  console.log("result online:::::::", result);
+  if (result === 1) {
+    //Nếu tạo khoá thành công thì tìm tất cả user hợp lệ
+    const key_user_vector = "user-score";
+    const min_score = 50;
+    //check user score
+    //connect to redis vector
+    if (!redisVectorUserScore.isReady) {
+      await redisVectorUserScore.connect();
+    }
+    // Lấy các khóa có điểm số lớn hơn hoặc bằng 50 từ sorted set
+    const zrangebyscoreAsync = promisify(
+      redisVectorUserScore.zRangeByScore
+    ).bind(redisVectorUserScore);
+    const listUsers = await zrangebyscoreAsync(
+      key_user_vector,
+      min_score,
+      "+inf"
+    );
+
+    if (listUsers.length === 0) {
+      //Nếu không có user nào hợp lệ thì trả về null
+      return null;
+    } else {
+      // Nếu user đủ điều kiện tất cả user hợp lệ
+      return { listUsers, key };
+    }
+  } else {
+    //Nếu khoá đã có thì trả về null
+    return null;
+  }
+};
+
+//reset user score
+const resetUserScore = async (userId, key_user_vector = "user-score") => {
+  const resetScore = 0;
+  if (!redisVectorUserScore.isReady) {
+    await redisVectorUserScore.connect();
+  }
+  const zAddAsync = promisify(redisVectorUserScore.ZADD).bind(
+    redisVectorUserScore
+  );
+  const result = await zAddAsync(key_user_vector, resetScore, userId);
+};
+
 module.exports = {
   acquireLock,
   releaselock,
+  acquireLockOnlineReTrain,
+  resetUserScore,
 };

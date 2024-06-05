@@ -87,7 +87,7 @@ async def train_implicit_model_SVDpp():
     connection = db_connection.connect()  # Tạo đối tượng Connection từ Engine
     result = connection.execute(text(insert_query))  # Thực hiện truy vấn
 
-    # connection.commit()
+    connection.commit()
     connection.close()
 
     #backup model hiện tại

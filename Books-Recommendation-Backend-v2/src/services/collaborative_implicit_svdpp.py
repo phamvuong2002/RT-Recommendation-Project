@@ -8,7 +8,7 @@ from src.helpers.load_model import load_model
 from src.helpers.load_offline_model import get_latest_model_file
 
 k=2
-def implicit_svdpp(user_id, n_similar): 
+def implicit_svdpp(user_id, n_similar):
     grouped_df=load_model("current/behaviour-svd/grouped_df")
     algo_pp=load_model("current/behaviour-svd/algo_pp")
     # data = Dataset.load_from_df(grouped_df[['personId', 'contentId', 'eventStrength']], reader)
@@ -17,7 +17,7 @@ def implicit_svdpp(user_id, n_similar):
     list_of_unrated_book = grouped_df.loc[(grouped_df['personId']==user_id,['contentId']) and (~grouped_df['contentId'].isin(interacted_book)),'contentId']
 
     # set up user set with unrated books
-    print('unrated ',list_of_unrated_book)
+    # print('unrated ',list_of_unrated_book)
     user_set = [[user_id, item_id, 0] for item_id in list_of_unrated_book]
 
 
@@ -25,13 +25,13 @@ def implicit_svdpp(user_id, n_similar):
     predictions_pp= algo_pp.test(user_set)
     
     df = pd.DataFrame(predictions_pp, columns=['uid', 'iid', 'rui', 'est', 'details'])
-    print('PRE',df.sort_values('est',ascending=False).drop_duplicates('iid'),['iid','est'])
+    # print('PRE',df.sort_values('est',ascending=False).drop_duplicates('iid'),['iid','est'])
     df=df.rename(columns={'iid': 'book_id', 'est': 'score'})
     top_n_recommendations = df[['book_id','score']].sort_values('score',ascending=False).drop_duplicates()[:n_similar]
     
 
     final = top_n_recommendations.to_dict('records')
-    print(final)
+    # print("final:::", final)
     return final
 
 def implicit_offline_svdpp(user_id, n_similar): 

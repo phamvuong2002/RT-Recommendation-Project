@@ -39,8 +39,6 @@ async def train_rating_user_model():
     # books_df = pd.read_sql(books_query, db_connection)
     books_df = pd.read_sql(books_query, con=db_connection.raw_connection())
 
-
-    # print(books_df.shape)
     ### ## 0. DATA CLEANING ###############################
     # Chuyển đổi kiểu dữ liệu của cột "Book-Rating" sang số
     books_df['Book-Rating'] = books_df['Book-Rating'].astype(int)
@@ -48,43 +46,9 @@ async def train_rating_user_model():
     books_df['Book-ID'] = books_df['Book-ID'].astype("category")
     books_df['User_ID'] = books_df['User-ID'].cat.codes
     books_df['Book_ID'] = books_df['Book-ID'].cat.codes
-   
-    # print(books_df.sort_values(['User_ID','Book_ID']))
-    # User-based: User-Item matrix (row: user, col: item)
-    # print(books_df.sort_values('User_ID'))
+
 
     pivot_table = books_df.pivot_table(index='User_ID',columns='Book_ID',values='Book-Rating')
-    # pivot_table.fillna(0,inplace=True)
-
-    # reader = Reader(rating_scale=(0, 5))
-    # data = Dataset.load_from_df(books_df[['User-ID', 'Book-ID', 'Book-Rating']], reader)
-    # sim_options = {'name': 'cosine', 'user_based': True}
-    # param_grid = {
-    # 'k': [10, 20],
-    # 'sim_options': {
-    #     'name': ['msd', 'cosine'],
-    #     'min_support': [1, 5],
-    #     'user_based': [False],
-    # },
-    # }
-    # algo = KNNBasic(k = kk, sim_options = sim_options, verbose = True)
-    # gs = GridSearchCV(KNNBasic, param_grid, measures=["rmse", "mae"], cv=3)
-    # gs.fit(data)
-    # kk = 1
-    # sim_options = {'name': 'cosine', 'user_based': True}
-    # algo = KNNBasic(k = kk, sim_options = sim_options, verbose = True)
-    # # cv = cross_validate(algo, data, measures = ['RMSE', 'MAE'], cv = 5, verbose = True)
-    # print('in')
-    # train_set = data.build_full_trainset()
-    # test_set = train_set.build_anti_testset()
-
-    # algo.fit(data.build_full_trainset())
-    # predictions = algo.test(test_set)
-    # print(predictions)
-    # user_rating_matrix_sparse=sparse.csr_matrix(pivot_table.values)
-    # print('csr_ma',user_rating_matrix_sparse)
-
-
     
     normalize_data=pivot_table.subtract(pivot_table.mean(axis=1),axis='rows')
     # # print(normalize_data)

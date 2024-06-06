@@ -26,17 +26,31 @@ async def train_content_base_model():
     db_connection = create_engine(db_connection_str)
     connection = db_connection.connect()
     # Đọc dữ liệu từ MySQL và lưu vào DataFrame
-    books_query = "select book_id, book_title, book_categories, cate1_name, cate2_name, cate3_name, cate4_name from book join category_1 on cate1_id = JSON_EXTRACT(book_categories, '$[0]') join category_2 on cate2_id = JSON_EXTRACT(book_categories, '$[1]') join category_3 on cate3_id = JSON_EXTRACT(book_categories, '$[2]') join category_4 on cate4_id = JSON_EXTRACT(book_categories, '$[3]')"
+    books_query = """SELECT 
+                        book_id, book_title, book_categories, cate1_name, cate2_name, cate3_name, cate4_name
+                      FROM 
+                          book 
+                      LEFT JOIN 
+                          category_1 ON category_1.cate1_id = JSON_UNQUOTE(JSON_EXTRACT(book.book_categories, '$[0]'))
+                      LEFT JOIN 
+                          category_2 ON category_2.cate2_id = JSON_UNQUOTE(JSON_EXTRACT(book.book_categories, '$[1]'))
+                      LEFT JOIN 
+                          category_3 ON category_3.cate3_id = JSON_UNQUOTE(JSON_EXTRACT(book.book_categories, '$[2]'))
+                      LEFT JOIN 
+                          category_4 ON category_4.cate4_id = JSON_UNQUOTE(JSON_EXTRACT(book.book_categories, '$[3]'));"""
     
     # with db_engine.connect() as db_connection:
         # books_df = pd.read_sql(books_query, con=db_connection)
     books_df = pd.read_sql(books_query, con=db_connection)
+    
     # Gom các cột cate lại thành 1 cột duy nhất
-    books_df['genres'] = books_df.apply(lambda row: ', '.join([row['cate1_name'], row['cate2_name'], row['cate3_name'], row['cate4_name']]), axis=1)
+    # books_df['genres'] = books_df.apply(lambda row: ', '.join([row['cate1_name'], row['cate2_name'], row['cate3_name'], row['cate4_name']]), axis=1)
+    books_df['genres'] = books_df.apply(lambda row: ', '.join(filter(None, [row['cate1_name'], row['cate2_name'], row['cate3_name'], row['cate4_name']])), axis=1)
 
+    # print("books_df", books_df)
     # Loại bỏ các cột
     books_df.drop(['book_categories','cate1_name', 'cate2_name', 'cate3_name', 'cate4_name'], axis=1, inplace=True)
-
+    
     # ## 3.SAVE MODEL INFO
     # Lưu thông tin model
     model_id = f"model_{int(time.time())}"
@@ -57,7 +71,7 @@ async def train_content_base_model():
     # content-base model
     books_df.drop_duplicates('book_id')
     pickle.dump(books_df,open('src/models/current/content/books_df.pkl','wb'))
-
+    
     print("Content base model trained successfully!!!")
     return str(model_id)
 

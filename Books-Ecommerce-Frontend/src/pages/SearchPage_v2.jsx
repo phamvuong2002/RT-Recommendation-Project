@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import FilterProduct from '../components/FilterProduct_v2';
 import { AppContext } from '../contexts/main';
-import { searchbestselling } from '../apis/recommendation';
+import { searchbestselling, getRecommendByContentBase } from '../apis/recommendation';
 import { fetchAPI } from '../helpers/fetch';
 import NavigationPath from '../components/NavigationPath';
 import { searchBooks } from '../apis/book';
@@ -11,11 +11,13 @@ import { shortenString } from '../utils/shortenString';
 const QUERY_TYPE = {
   NORMAL: 'normal',
   BEST_SELLER_SUGGEST: 'best_seller_suggest',
+  RELATED_BOOK: 'related_book',
 };
 
 const QUERY_TYPE_NAME = {
   NORMAL: 'normal',
   BEST_SELLER_SUGGEST: 'Sách Bán Chạy',
+  RELATED_BOOK: 'Sách liên quan',
 };
 
 export const SearchPage_v2 = () => {
@@ -45,14 +47,14 @@ export const SearchPage_v2 = () => {
     { path: `#`, label: 'Kết Quả Tìm kiếm' },
     ...(search_type !== QUERY_TYPE.NORMAL
       ? [
-          {
-            path: `#`,
-            label: shortenString(
-              `${QUERY_TYPE_NAME[search_type.toUpperCase()]}`,
-              15,
-            ),
-          },
-        ]
+        {
+          path: `#`,
+          label: shortenString(
+            `${QUERY_TYPE_NAME[search_type.toUpperCase()]}`,
+            15,
+          ),
+        },
+      ]
       : []),
   ];
 
@@ -78,6 +80,29 @@ export const SearchPage_v2 = () => {
         setIsLoading(false);
         return;
       }
+      // console.log('metadata:::', data?.metadata);
+      setProductsSearch(data?.metadata?.books);
+      setTotalPages(data.metadata?.totalPages);
+      setTotalResults(data.metadata?.totalBooks);
+      setIsLoading(false);
+    };
+
+    const loadSearchContentBase = async () => {
+      setIsLoading(true);
+      console.log("query: ", query)
+      const data = await fetchAPI(`../${getRecommendByContentBase}`, 'POST', {
+        bookTitle: query,
+        userId: userId.toString(),
+        pageSize: parseInt(limit),
+        pageNumber: parseInt(page),
+        model_type: "online",
+      });
+      // console.log("data: ", data)
+      // if (data.status != 200) {
+      //   setProductsSearch([]);
+      //   setIsLoading(false);
+      //   return;
+      // }
       // console.log('metadata:::', data?.metadata);
       setProductsSearch(data?.metadata?.books);
       setTotalPages(data.metadata?.totalPages);
@@ -112,8 +137,11 @@ export const SearchPage_v2 = () => {
     //ví dụ tải các sản phẩm trong giỏ hàng của khách
     if (search_type === QUERY_TYPE.BEST_SELLER_SUGGEST) {
       loadSearchBestSellerData();
-    } else if (search_type === QUERY_TYPE.NORMAL && !query) {
-      console.log('Please select');
+    } else if (search_type === QUERY_TYPE.RELATED_BOOK && query) {
+      loadSearchContentBase();
+    }
+    else if (search_type === QUERY_TYPE.NORMAL && !query) {
+      // 
       loadSearchNormalData();
       // setProductsSearch([]);
     } else setProductsSearch([]);

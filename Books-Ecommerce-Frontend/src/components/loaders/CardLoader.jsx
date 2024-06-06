@@ -9,7 +9,7 @@ export const CartLoader = ({ items }) => {
       {loaders.map((index) => (
         <div key={index} className="shadow rounded-md px-6 py-4 bg-white">
           <div className="animate-pulse flex flex-col">
-            <div className="h-48 w-48 flex-shrink-0 overflow-hidden rounded-md border border-red-300">
+            <div className=" flex-shrink-0 overflow-hidden rounded-md border border-red-300">
               <img
                 src="https://res.cloudinary.com/datpm13gx/image/upload/v1717062072/bookada_pattern_ln2orl.png"
                 alt="pattern"

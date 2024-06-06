@@ -36,9 +36,9 @@ router.post(
   "/behaviour/user",
   asyncHandler(recBehaviourSVDUserController.getBehaviourALSUserBooks)
 );
- 
+
 router.post(
-  "/recLatestBook", 
+  "/recLatestBook",
   asyncHandler(recBehaviourSVDUserController.getRecBooks)
 );
 
@@ -81,6 +81,11 @@ router.post(
   "/popular/rec-categories",
   asyncHandler(recommendationController.getPopularRecCategories)
 );
+// top personal rec category
+router.post(
+  "/personal/categories",
+  asyncHandler(recommendationController.getPersonalCategory)
+);
 
 //ContentBase
 router.post(
@@ -96,6 +101,12 @@ router.post(
 router.post(
   "/related-book/suggestion",
   asyncHandler(ContentBaseController.getSuggestedBook)
+);
+
+//search recommendations results
+router.post(
+  "/search/rec-books",
+  asyncHandler(recommendationController.searchRecBooks)
 );
 
 module.exports = router;

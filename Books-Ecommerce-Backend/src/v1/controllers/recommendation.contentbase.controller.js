@@ -6,9 +6,11 @@ const { SuccessResponse } = require("../core/success.response");
 
 class ContentBaseRecommendationController {
     getRecommendByContentBase = async (req, res, next) => {
+        // console.log("BODY: ", req.body)
         const data = await ContentBaseRecommendationService.getRecommendByContentBase(
             req.body
         );
+
         new SuccessResponse({
             metadata: data,
         }).send(res);

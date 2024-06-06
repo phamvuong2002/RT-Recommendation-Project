@@ -12,7 +12,7 @@ import { popularrating } from '../apis/recommendation';
 // Thanh Tìm Kiếm được đặt trong Navbar
 const Search = () => {
   const { userId } = useContext(AppContext);
-  const location = useLocation(); 
+  const location = useLocation();
   const navigate = useNavigate();
   const [input, setInput] = useState('');
   const dropdownRef = useRef(null);
@@ -66,18 +66,24 @@ const Search = () => {
   // }, [input, userId]);
 
   const searchFunction = (event, inputValue) => {
-      // console.log(event.code)
-      // alert(event.code)
-      // alert(event.key)
+    // console.log(event.code)
+    // alert(event.code)
+    // alert(event.key)
     event.preventDefault();
     let path = '';
     let page = 1;
     let params = new URLSearchParams({ search: inputValue });
 
+    if (inputValue) {
+      params.append('search_type', 'related_book');
+    } else {
+      params.append('search_type', 'normal');
+    }
+
     params.append('sort', 'create_time_desc');
     params.append('page', '1');
     params.append('limit', '24');
-    params.append('search_type', 'normal');
+
 
     navigate('/search_v2?' + params);
   };
@@ -88,11 +94,11 @@ const Search = () => {
   };
 
   const handleSuggestionClick = (suggestion, e, id) => {
-  
+
     setInput(suggestion);
     setShowDropdown(false);
     searchFunction(e, suggestion);
-    
+
     navigate('/books/' + id);
   };
 
@@ -156,13 +162,13 @@ const Search = () => {
           placeholder="Tìm kiếm"
           value={input}
           onChange={(e) => handleChange(e.target.value)}
-          onKeyDown={(e) => ((e.code == 'Enter') ||(e.key=='Enter') ? searchFunction(e, input) : '')}
-         
+          onKeyDown={(e) => ((e.code == 'Enter') || (e.key == 'Enter') ? searchFunction(e, input) : '')}
+
         />
         <button
           className="flex absolute right-0 h-full px-3 input-group-text items-center white space-nowrap rounded-r-md text-center text-sm lg:text-base font-normal text-white z-10 bg-red-500"
           id="basic-addon2"
-          onClick={(e) => searchFunction(e, input)} 
+          onClick={(e) => searchFunction(e, input)}
         >
           <FaSearch className=" w-4 h-4 block cursor-pointer text-white" />
         </button>
@@ -210,7 +216,7 @@ const Search = () => {
                   onClick={(e) =>
                     handleSuggestionClick(
                       suggestion.book.book_title,
-                      e, 
+                      e,
                       suggestion.book.book_id,
                     )
                   }

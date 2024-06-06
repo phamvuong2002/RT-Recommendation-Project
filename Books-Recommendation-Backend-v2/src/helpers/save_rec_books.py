@@ -65,6 +65,12 @@ async def save_rec_books(books: list = [], user_id: str = "", model_type: str = 
                 #return recommended book data
                 rec_books.append(book_data)
                
+                #xử lý thể loai
+                book_category_str = book_data['bookCategory']
+                book_category_str = book_category_str.strip('[]')
+                book_category_list = book_category_str.split(',')
+                book_category_list = [int(x) for x in book_category_list]
+
                 #lưu thông tin vừa tìm được vào bảng rec_book
                 if(book_data["bookStatus"] == 1):
                     #lưu vào mysql 
@@ -76,7 +82,7 @@ async def save_rec_books(books: list = [], user_id: str = "", model_type: str = 
                         rec_book_img = book_data['bookImg'],
                         rec_book_spe_price = book_data['bookSpePrice'],
                         rec_book_old_price = book_data['bookOldPrice'],
-                        rec_book_categories = book_data['bookCategory']
+                        rec_book_categories = book_category_list #book_data['bookCategory'] #book_data['bookCategory']
                     ))
 
                     #lưu vào redis

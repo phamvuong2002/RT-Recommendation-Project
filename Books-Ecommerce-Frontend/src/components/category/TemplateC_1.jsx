@@ -73,7 +73,7 @@ export const TemplateC_1 = ({
               className="w-full max-h-[10rem] object-cover border border-white"
             />
           </div>
-          <div className="flex py-1 h-[40%] bg-white items-center justify-center">
+          <div className="flex gap-[0.2rem] py-1 h-[40%] bg-white items-center justify-center">
             {category?.images?.length === 0
               ? ''
               : category?.images
@@ -83,35 +83,12 @@ export const TemplateC_1 = ({
                       <img
                         src={book_img}
                         alt={`image${index + 1}`}
-                        className="w-24"
+                        className="max-w-20 max-h-20"
                       />
                     </div>
                   ))}
           </div>
         </div>
-
-        {/* Book Images */}
-        {/* <div className="relative z-10 flex flex-col top-1 left-3 gap-[0.9rem] justify-center items-center w-[50%]">
-          <div className="flex gap-1 pt-1 pl-6">
-            <img
-              src={category?.images[0]}
-              alt="image1"
-              className="w-[4.5rem] h-[7rem] rounded-sm"
-            />
-          </div>
-          <div className="flex gap-7 ml-8">
-            <img
-              src={category?.images[1]}
-              alt="image2"
-              className="w-[4.5rem] h-[7rem] rounded-sm"
-            />
-            <img
-              src={category?.images[2]}
-              alt="image3"
-              className="w-[4.5rem] h-[7rem] rounded-sm"
-            />
-          </div>
-        </div> */}
       </div>
 
       {/* Mobile */}

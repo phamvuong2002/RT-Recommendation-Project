@@ -7,6 +7,9 @@ export const categorybestselling =
 export const categorypopularrec =
   'api/v1/api/recommendation/popular/rec-categories';
 
+export const categorypersonalrec =
+  'api/v1/api/recommendation/personal/categories';
+
 export const popularrating = 'api/v1/api/recommendation/rating/popular';
 
 export const getRecommendByContentBase =
@@ -20,4 +23,4 @@ export const searchNormalResultsByContentBase =
 
 export const recLatestBook = 'api/v1/api/recommendation/recLatestBook';
 export const recRandomBook = 'api/v1/api/recommendation/recRandomBook';
-
+export const searchrecbook = 'api/v1/api/recommendation/search/rec-books';

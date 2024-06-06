@@ -4,21 +4,24 @@ import { Slider } from '../components/Slider';
 import { FlashSale } from '../components/FlashSale';
 import { Category } from '../components/Category';
 import { SliderProducts } from '../components/SliderProducts';
-import { AllProducts } from '../components/AllProducts';
+import { AllProducts } from '../components/AllProducts_v2';
 import { InfoForGuest } from '../components/infoForGuest';
 import { fetchAPI } from '../helpers/fetch';
 import { getAllBook } from '../apis/book';
 import { AppContext } from '../contexts/main';
 import {
   categorybestselling,
+  categorypersonalrec,
   categorypopularrec,
   getbestselling,
   searchbestselling,
+  searchrecbook,
 } from '../apis/recommendation';
 import { useNavigate } from 'react-router-dom';
 import { CircleLoader } from '../components/loaders/CircleLoader';
 import { ShoppingCartLoader } from '../components/loaders/ShoppingCartLoader';
 import { CartLoader } from '../components/loaders/CardLoader';
+import { SaleBanner } from '../components/banners/SaleBanner';
 
 const CATE_TYPE = {
   BEST_SELLER: {
@@ -33,7 +36,7 @@ const CATE_TYPE = {
   },
   PERSONAL_RECOMMENDATION: {
     name: 'personal_recommendation',
-    url: '',
+    url: categorypersonalrec,
     search: 'personal_recommendation_suggest',
   },
 };
@@ -49,12 +52,13 @@ export const Home = () => {
     setIsShowFooter,
   } = useContext(AppContext);
   const navigate = useNavigate();
-  const [user, setUser] = useState(userId);
-  const [products, setProducts] = useState([]);
   const [bestSellerData, setBestSellerData] = useState([]);
   const [bestSellerCates, setBestSellercates] = useState([]);
   const [typeCate, setTypeCate] = useState(CATE_TYPE.BEST_SELLER);
   const [reloadBestSelling, setReloadBestSelling] = useState(true);
+  const [personalRecBooks, setPersonalRecBooks] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
+  const [page, setPage] = useState(1);
 
   //set active page
   useEffect(() => {
@@ -91,6 +95,7 @@ export const Home = () => {
       setBestSellercates([]);
       const data = await fetchAPI(`../${type?.url}`, 'POST', {
         top: 5,
+        userId,
       });
       if (data.status != 200) {
         setBestSellercates([]);
@@ -135,18 +140,36 @@ export const Home = () => {
     };
   }, []);
 
+  //Lấy danh sách sản phẩm đề xuất
   useEffect(() => {
     const loadProductData = async () => {
-      const productData = await fetchAPI(`../${getAllBook}`, 'POST');
-      setProducts(productData.metadata);
+      if (!userId) return;
+      const data = await fetchAPI(`../${searchrecbook}`, 'POST', {
+        page: parseInt(page),
+        limit: 24,
+        categories: 'sach-tieng-viet',
+        userId,
+      });
+      if (data.status != 200) {
+        setPersonalRecBooks([]);
+        setTotalPages(0);
+        return;
+      }
+      // console.log('metadata:::', data?.metadata);
+      setPersonalRecBooks(data?.metadata?.books);
+      setTotalPages(data.metadata?.totalPages);
     };
-    setTimeout(() => {
-      loadProductData();
-    }, 1000);
-  }, []);
+
+    loadProductData();
+  }, [page, userId]);
 
   return (
     <div className="pb-10 sm:pb-0">
+      {/* TEst */}
+      {/* <div className="">
+        <SaleBanner />
+      </div> */}
+
       <div className="">
         {/* Main banner */}
         <div className="flex flex-col py-2 xl:gap-4 rounded-lg md:mx-16">
@@ -154,7 +177,6 @@ export const Home = () => {
         </div>
 
         {/* Sách bán chạy */}
-        {/* <FlashSale userId={userId} productData={products}></FlashSale> */}
         {!bestSellerData ? (
           ''
         ) : (
@@ -338,12 +360,20 @@ export const Home = () => {
             </div>
           </div>
           <div className=" bg-gradient-to-r from-red-50 via-purple-100 to-pink-50 xl:from-white xl:via-white xl:to-white p-2 xl:px-4 ">
-            <AllProducts
+            {/* <AllProducts
               isShowHeader={false}
               numOfProductsInRow={5}
               // _limit={isMobileDevice() ? 2 : 10}
               _limit={24}
               _choose={'all'}
+            ></AllProducts> */}
+
+            <AllProducts
+              productsData={personalRecBooks}
+              numOfProductsInRow={5}
+              _totalPages={totalPages}
+              setPage={setPage}
+              page={page}
             ></AllProducts>
           </div>
         </div>

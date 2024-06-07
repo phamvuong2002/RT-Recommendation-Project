@@ -1,46 +1,64 @@
 import React from 'react';
-import { Fragment, useState, useEffect, useRef } from 'react'
-import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { HiPlus, HiMinus, HiChevronDown, HiFunnel, HiMiniXMark } from "react-icons/hi2";
-import { useLocation, useNavigate, Link, createSearchParams } from 'react-router-dom';
-import { AllProducts } from '../components/AllProducts'
+import { Fragment, useState, useEffect, useRef } from 'react';
+import { Disclosure, Menu, Transition } from '@headlessui/react';
+import {
+  HiPlus,
+  HiMinus,
+  HiChevronDown,
+  HiFunnel,
+  HiMiniXMark,
+} from 'react-icons/hi2';
+import {
+  useLocation,
+  useNavigate,
+  Link,
+  createSearchParams,
+} from 'react-router-dom';
+import { AllProducts } from '../components/AllProducts';
 import { fetchAPI } from '../helpers/fetch';
 import MenuItems from './MenuItems';
 import { PopupCenterPanel } from './popup/PopupCenterPanel';
 import { useInsertionEffect } from 'react';
 import PropTypes from 'prop-types';
-import { getallcategories } from "../apis/category"
+import { getallcategories } from '../apis/category';
 
-export default function FilterProduct({ _userId, _cate, _limit, _query, _price, _publisher }) {
+export default function FilterProduct({
+  _userId,
+  _cate,
+  _limit,
+  _query,
+  _price,
+  _publisher,
+}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [all_categories, setCategoriess] = useState([])
-  const [cate, setCate] = useState()
-  const [isLoading, setIsLoading] = useState(true)
+  const [all_categories, setCategoriess] = useState([]);
+  const [cate, setCate] = useState();
+  const [isLoading, setIsLoading] = useState(true);
 
   const navigate = useNavigate();
-  const location = useLocation()
+  const location = useLocation();
   //console.log('newest search ' + (window.location.search))
   //console.log(location.search)
   const params = new URLSearchParams(location.search);
-  let hasPublisher = params.has('publisher')
+  let hasPublisher = params.has('publisher');
 
-  let publisher_filter = ['']
+  let publisher_filter = [''];
   if (!hasPublisher) {
     //
   } else {
-    publisher_filter = params.get('publisher').split(',')
+    publisher_filter = params.get('publisher').split(',');
   }
 
-  let price_filter = ''
+  let price_filter = '';
   if (!params.has('price')) {
     //
   } else {
-    price_filter = params.get('price')
+    price_filter = params.get('price');
   }
 
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
-  }
+    setIsMenuOpen(!isMenuOpen);
+  };
   useEffect(() => {
     setIsLoading(true);
     const loadCategoriesData = async () => {
@@ -52,17 +70,15 @@ export default function FilterProduct({ _userId, _cate, _limit, _query, _price, 
     loadCategoriesData();
   }, []);
 
-
   const sortOptions_dict = {
-    name_asc: "Tên: A-Z",
-    name_desc: "Tên: Z-A",
-    price_asc: "Giá: Thấp đến Cao",
-    price_desc: "Giá: Cao đến Thấp",
-    publishedDate_desc: "Mới nhất",
-    publishedDate_asc: "Cũ nhất",
-    num_order_desc: "Bán chạy nhất",
-  }
-
+    name_asc: 'Tên: A-Z',
+    name_desc: 'Tên: Z-A',
+    price_asc: 'Giá: Thấp đến Cao',
+    price_desc: 'Giá: Cao đến Thấp',
+    publishedDate_desc: 'Mới nhất',
+    publishedDate_asc: 'Cũ nhất',
+    num_order_desc: 'Bán chạy nhất',
+  };
 
   const sortOptions = [
     { name: 'Tên: A-Z', value: 'name_asc' },
@@ -72,8 +88,7 @@ export default function FilterProduct({ _userId, _cate, _limit, _query, _price, 
     { name: 'Mới nhất', value: 'publishedDate_desc' },
     { name: 'Cũ nhất', value: 'publishedDate_asc' },
     { name: 'Bán chạy nhất', value: 'num_order_desc' },
-
-  ]
+  ];
 
   const filters = [
     {
@@ -83,8 +98,11 @@ export default function FilterProduct({ _userId, _cate, _limit, _query, _price, 
         { value: '0,150000', label: '0-150.000đ', checked: false },
         { value: '150000,300000', label: '150.000đ-300.000đ', checked: false },
         { value: '300000,500000', label: '300.000đ-500.000đ', checked: false },
-        { value: '500000,1000000', label: '500.000đ-1.000.000đ', checked: false },
-
+        {
+          value: '500000,1000000',
+          label: '500.000đ-1.000.000đ',
+          checked: false,
+        },
       ],
     },
 
@@ -94,96 +112,88 @@ export default function FilterProduct({ _userId, _cate, _limit, _query, _price, 
       options: [
         { value: 'nxb-van-hoc', label: 'NXB Văn Học', checked: false },
         { value: 'nxb-dan-tri', label: 'NXB Dân Trí', checked: false },
-        { value: 'nxb-dai-hoc-su-pham', label: 'NXB Đại học sư phạm', checked: false },
+        {
+          value: 'nxb-dai-hoc-su-pham',
+          label: 'NXB Đại học sư phạm',
+          checked: false,
+        },
         { value: 'NXB-phunuvn', label: 'NXB Phụ nữ Việt Nam', checked: false },
-
       ],
     },
+  ];
 
-  ]
-
-
-  const [sortOption, setSortOption] = useState(
-    params.get('sort')
-  )
-
+  const [sortOption, setSortOption] = useState(params.get('sort'));
 
   const [filterOptions, setFiterOption] = useState(filters);
 
-
   const sortProduct = (event) => {
-    setSortOption(event.target.value)
-
-  }
+    setSortOption(event.target.value);
+  };
 
   const handleClickFilter = (event) => {
     const filter_target = event.target.name;
-    const filter_target_value = event.target.id
+    const filter_target_value = event.target.id;
     //Price
-    console.log(event)
+    // console.log(event)
     // console.log(filter_target_value)
     if (event.target.name == 'price') {
-
       // console.log(params)
       if (event.target.checked) {
         // console.log('in price')
-        price_filter = filter_target_value
+        price_filter = filter_target_value;
         if (params.has('price')) {
-          console.log('in price navigate set ' + price_filter)
-          params.set('price', price_filter)
+          // console.log('in price navigate set ' + price_filter)
+          params.set('price', price_filter);
         } else {
-          console.log('in price navigate append' + price_filter)
-          params.append('price', price_filter)
+          // console.log('in price navigate append' + price_filter)
+          params.append('price', price_filter);
         }
+      } else {
+        price_filter = false;
+        params.delete('price');
       }
-      else {
-        price_filter = false
-        params.delete('price')
-      }
-
-    }
-    else if (filter_target == 'publisher') {
+    } else if (filter_target == 'publisher') {
       if (event.target.checked) {
         if (publisher_filter[0] == '') {
-          publisher_filter[0] = filter_target_value
+          publisher_filter[0] = filter_target_value;
+        } else {
+          publisher_filter.push(filter_target_value);
         }
-        else { publisher_filter.push(filter_target_value) }
 
         if (params.has('publisher')) {
-          params.set('publisher', publisher_filter)
+          params.set('publisher', publisher_filter);
         } else {
-          params.append('publisher', publisher_filter)
+          params.append('publisher', publisher_filter);
         }
-
       } else {
-        const newPublisher = publisher_filter.filter((p) => p !== filter_target_value)
+        const newPublisher = publisher_filter.filter(
+          (p) => p !== filter_target_value,
+        );
         if (newPublisher.length < 1) {
-          params.delete('publisher')
-        }
-        else {
-          params.set('publisher', newPublisher)
+          params.delete('publisher');
+        } else {
+          params.set('publisher', newPublisher);
         }
       }
     }
-    navigate(location.pathname + '?' + params)
-  }
+    navigate(location.pathname + '?' + params);
+  };
 
   const handlClickAllCategory = () => {
     params.set('categories', 'all');
-    navigate(location.pathname + '?' + params)
-  }
+    navigate(location.pathname + '?' + params);
+  };
 
   // Sort
   useEffect(() => {
     // console.log(sortOption)
     if (sortOption.length > 0) {
-      params.set('sort', sortOption)
+      params.set('sort', sortOption);
+    } else {
+      //
     }
-    else {
-      //    
-    }
-    navigate(location.pathname + '?' + params)
-  }, [sortOption])
+    navigate(location.pathname + '?' + params);
+  }, [sortOption]);
 
   return (
     <div className="bg-white">
@@ -191,7 +201,12 @@ export default function FilterProduct({ _userId, _cate, _limit, _query, _price, 
       <div>
         <main className="hidden lg:block mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-24">
-            <button className="text-[17px] font-bold tracking-tight text-gray-900" onClick={handlClickAllCategory}>TẤT CẢ NHÓM SẢN PHẨM</button>
+            <button
+              className="text-[17px] font-bold tracking-tight text-gray-900"
+              onClick={handlClickAllCategory}
+            >
+              TẤT CẢ NHÓM SẢN PHẨM
+            </button>
 
             <div className="flex items-center">
               <Menu as="div" className="relative inline-block text-left">
@@ -203,9 +218,7 @@ export default function FilterProduct({ _userId, _cate, _limit, _query, _price, 
                       aria-hidden="true"
                     />
                   </Menu.Button>
-                  <span>
-                    {sortOptions_dict[sortOption]}
-                  </span>
+                  <span>{sortOptions_dict[sortOption]}</span>
                 </div>
 
                 <Transition
@@ -224,18 +237,18 @@ export default function FilterProduct({ _userId, _cate, _limit, _query, _price, 
                           {({ active }) => (
                             <button
                               name={option.name}
-                              className={(
-                                option.current ? 'font-medium text-gray-900' : 'text-gray-500',
+                              className={
+                                (option.current
+                                  ? 'font-medium text-gray-900'
+                                  : 'text-gray-500',
                                 active ? 'bg-gray-100' : '',
-                                'block px-4 py-2 text-sm'
-                              )}
+                                'block px-4 py-2 text-sm')
+                              }
                               value={`${option.value}`}
                               onClick={(e) => sortProduct(e)}
                             >
                               {option.name}
-
                             </button>
-
                           )}
                         </Menu.Item>
                       ))}
@@ -243,8 +256,6 @@ export default function FilterProduct({ _userId, _cate, _limit, _query, _price, 
                   </Menu.Items>
                 </Transition>
               </Menu>
-
-
             </div>
           </div>
 
@@ -256,31 +267,51 @@ export default function FilterProduct({ _userId, _cate, _limit, _query, _price, 
             <div className=" mt-1 border-t border-gray-200 sm:border-none sm:grid  sm:grid-cols-1 sm:gap-x-8  lg:grid-cols-5">
               {/* Filters */}
 
-              <form className={` ${isMenuOpen ? "" : "hidden"}  lg:block `}>
+              <form className={` ${isMenuOpen ? '' : 'hidden'}  lg:block `}>
                 {/* name */}
                 {/* TRUYỀN Ở ĐÂY */}
                 {isLoading && <p>Loading...</p>}
-                {!isLoading &&
-                  <ul className={`max-h-screen h-fit overflow-y-scroll no-scrollbar`}>
+                {!isLoading && (
+                  <ul
+                    className={`max-h-screen h-fit overflow-y-scroll no-scrollbar`}
+                  >
                     {cate.map((menu, index) => {
                       const depthLevel = 0;
-                      return <MenuItems items={menu} key={index} depthLevel={depthLevel} />;
+                      return (
+                        <MenuItems
+                          items={menu}
+                          key={index}
+                          depthLevel={depthLevel}
+                        />
+                      );
                     })}
                   </ul>
-                }
+                )}
 
                 {filters.map((section) => (
-                  <Disclosure as="div" key={section.id} className="sm:z-10 border-b border-gray-200 py-6">
+                  <Disclosure
+                    as="div"
+                    key={section.id}
+                    className="sm:z-10 border-b border-gray-200 py-6"
+                  >
                     {({ open }) => (
                       <>
                         <h3 className="mx-2 -my-3 flow-root">
                           <Disclosure.Button className="flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
-                            <span className="font-medium text-gray-900">{section.name}</span>
+                            <span className="font-medium text-gray-900">
+                              {section.name}
+                            </span>
                             <span className="ml-6 flex items-center">
                               {open ? (
-                                <HiMinus className="h-5 w-5" aria-hidden="true" />
+                                <HiMinus
+                                  className="h-5 w-5"
+                                  aria-hidden="true"
+                                />
                               ) : (
-                                <HiPlus className="h-5 w-5" aria-hidden="true" />
+                                <HiPlus
+                                  className="h-5 w-5"
+                                  aria-hidden="true"
+                                />
                               )}
                             </span>
                           </Disclosure.Button>
@@ -289,7 +320,10 @@ export default function FilterProduct({ _userId, _cate, _limit, _query, _price, 
                         <Disclosure.Panel className="pt-6">
                           <div className="space-y-6 sm:space-y-6">
                             {section.options.map((option, optionIdx) => (
-                              <div key={`${option.id}-${optionIdx}`} className="flex items-center ">
+                              <div
+                                key={`${option.id}-${optionIdx}`}
+                                className="flex items-center "
+                              >
                                 <input
                                   id={option.value}
                                   name={`${section.id}`}
@@ -298,11 +332,11 @@ export default function FilterProduct({ _userId, _cate, _limit, _query, _price, 
                                   type="checkbox"
                                   aria-checked={true}
                                   onChange={handleClickFilter}
-
-
-                                  checked={(section.id === 'price' ? price_filter === option.value
-                                    : publisher_filter.includes(option.value))}
-
+                                  checked={
+                                    section.id === 'price'
+                                      ? price_filter === option.value
+                                      : publisher_filter.includes(option.value)
+                                  }
                                   className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 accent-red-300"
                                 />
                                 <label
@@ -319,9 +353,7 @@ export default function FilterProduct({ _userId, _cate, _limit, _query, _price, 
                     )}
                   </Disclosure>
                 ))}
-
               </form>
-
 
               {/* Product grid */}
               <div className="lg:col-span-4">
@@ -334,22 +366,18 @@ export default function FilterProduct({ _userId, _cate, _limit, _query, _price, 
                   _query={_query}
                   _price={_price}
                   _publisher={_publisher}
-                  _choose={"all"}
-                >
-                </AllProducts>
-
+                  _choose={'all'}
+                ></AllProducts>
               </div>
             </div>
           </section>
         </main>
       </div>
 
-
       {/* mobile */}
 
       <main className=" flex lg:hidden  flex-col w-full">
         <div className="flex w-full justify-between  border-b border-gray-200  ">
-
           <div className="flex items-center pl-3">
             <Menu as="div" className="relative inline-block text-left">
               <div>
@@ -375,7 +403,6 @@ export default function FilterProduct({ _userId, _cate, _limit, _query, _price, 
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-
                 <Menu.Items className="absolute z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
                   <div className="py-1">
                     {sortOptions.map((option) => (
@@ -383,18 +410,18 @@ export default function FilterProduct({ _userId, _cate, _limit, _query, _price, 
                         {({ active }) => (
                           <button
                             name={option.name}
-                            className={(
-                              option.current ? 'font-medium text-gray-900' : 'text-gray-500',
+                            className={
+                              (option.current
+                                ? 'font-medium text-gray-900'
+                                : 'text-gray-500',
                               active ? 'bg-gray-100' : '',
-                              'block px-4 py-2 text-sm'
-                            )}
+                              'block px-4 py-2 text-sm')
+                            }
                             value={`${option.value}`}
                             onClick={(e) => sortProduct(e)}
                           >
                             {option.name}
-
                           </button>
-
                         )}
                       </Menu.Item>
                     ))}
@@ -402,35 +429,59 @@ export default function FilterProduct({ _userId, _cate, _limit, _query, _price, 
                 </Menu.Items>
               </Transition>
             </Menu>
-
           </div>
           <div className="px-4 py-6 ">
-            <PopupCenterPanel open={isMenuOpen} setOpen={setIsMenuOpen} icon={<HiFunnel />} title={'Bộ lọc'}
+            <PopupCenterPanel
+              open={isMenuOpen}
+              setOpen={setIsMenuOpen}
+              icon={<HiFunnel />}
+              title={'Bộ lọc'}
               content={
-                <form className={`${isMenuOpen ? "" : "hidden"}  lg:block `}>
+                <form className={`${isMenuOpen ? '' : 'hidden'}  lg:block `}>
                   {/* name */}
                   {/* TRUYỀN Ở ĐÂY */}
                   {isLoading && <p>Loading...</p>}
-                  {!isLoading &&
-                    <ul className={`min-h-[4rem] max-h-[15rem] overflow-y-scroll no-scrollbar`}>
+                  {!isLoading && (
+                    <ul
+                      className={`min-h-[4rem] max-h-[15rem] overflow-y-scroll no-scrollbar`}
+                    >
                       {cate.map((menu, index) => {
                         const depthLevel = 0;
-                        return <MenuItems items={menu} key={index} depthLevel={depthLevel} />;
+                        return (
+                          <MenuItems
+                            items={menu}
+                            key={index}
+                            depthLevel={depthLevel}
+                          />
+                        );
                       })}
-                    </ul>}
+                    </ul>
+                  )}
 
                   {filters.map((section) => (
-                    <Disclosure as="div" key={section.id} className="sm:z-10 border-b border-gray-200 py-6">
+                    <Disclosure
+                      as="div"
+                      key={section.id}
+                      className="sm:z-10 border-b border-gray-200 py-6"
+                    >
                       {({ open }) => (
                         <>
                           <h3 className="mx-2 -my-3 flow-root">
                             <Disclosure.Button className="flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
-                              <span className="font-medium text-gray-900">{section.name}</span>
+                              <span className="font-medium text-gray-900">
+                                {section.name}
+                              </span>
                               <span className="ml-6 flex items-center">
                                 {open ? (
-                                  <HiMinus className="h-5 w-5" aria-hidden="true" />
+                                  <HiMinus
+                                    className="h-5 w-5"
+                                    aria-hidden="true"
+                                  />
                                 ) : (
-                                  <HiPlus className="h-5 w-5" aria-hidden="true" />
+                                  <HiPlus
+                                    className="h-5 w-5"
+                                    aria-hidden="true"
+                                  />
                                 )}
                               </span>
                             </Disclosure.Button>
@@ -438,9 +489,11 @@ export default function FilterProduct({ _userId, _cate, _limit, _query, _price, 
 
                           <Disclosure.Panel className="pt-6">
                             <div className="space-y-6 sm:space-y-6">
-
                               {section.options.map((option, optionIdx) => (
-                                <div key={option.value} className="flex items-center ">
+                                <div
+                                  key={option.value}
+                                  className="flex items-center "
+                                >
                                   <input
                                     id={option.value}
                                     name={`${section.id}`}
@@ -449,11 +502,13 @@ export default function FilterProduct({ _userId, _cate, _limit, _query, _price, 
                                     type="checkbox"
                                     aria-checked={true}
                                     onChange={handleClickFilter}
-
-
-                                    checked={(section.id === 'price' ? price_filter == option.value
-                                      : publisher_filter.includes(option.value))}
-
+                                    checked={
+                                      section.id === 'price'
+                                        ? price_filter == option.value
+                                        : publisher_filter.includes(
+                                            option.value,
+                                          )
+                                    }
                                     className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 accent-red-300"
                                   />
                                   <label
@@ -493,16 +548,14 @@ export default function FilterProduct({ _userId, _cate, _limit, _query, _price, 
                 _query={_query}
                 _price={_price}
                 _publisher={_publisher}
-                _choose={"all"}
-              >
-              </AllProducts>
-
+                _choose={'all'}
+              ></AllProducts>
             </div>
           </div>
         </section>
       </main>
     </div>
-  )
+  );
 }
 
 FilterProduct.propTypes = {

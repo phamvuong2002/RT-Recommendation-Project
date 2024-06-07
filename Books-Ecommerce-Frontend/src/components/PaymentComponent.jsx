@@ -405,7 +405,7 @@ export const Payment = () => {
     };
 
     const reviewCheckout = async () => {
-      if (!userId || !data || !quantity) {
+      if (!userId) {
         return;
       }
       setIsLoading(true);
@@ -476,8 +476,6 @@ export const Payment = () => {
       url: getBaseUrl(window.location),
     };
 
-    console.log('dataCheckout::', dataCheckout);
-
     const createOrder = async () => {
       setIsLoading(true);
       const result = await fetchAPI(`../${placeorder}`, 'POST', dataCheckout);
@@ -487,9 +485,15 @@ export const Payment = () => {
         setMessageAlert('Đặt hàng thất bại! Vui lòng thử lại sau.');
         return;
       } else {
-        await collectBehaviourFunction();
+        const getBehavior = await collectBehaviourFunction();
         setIsLoading(false);
-        window.location.href = result.metadata.payment_data.paymentUrl;
+        if (getBehavior) {
+          window.location.href = result.metadata.payment_data.paymentUrl;
+        } else {
+          setTimeout(() => {
+            window.location.href = result.metadata.payment_data.paymentUrl;
+          }, 1000);
+        }
       }
     };
 
@@ -502,21 +506,48 @@ export const Payment = () => {
   };
 
   //collect behavior
+  // const collectBehaviourFunction = async () => {
+  //   //collect behavior add to cart
+  //   if (products.length > 0 && userId) {
+  //     products.map(async (product) => {
+  //       const dataCollect = {
+  //         topic: 'place-order',
+  //         message: {
+  //           userId,
+  //           behaviour: 'place-order',
+  //           productId: product.cb_book_id,
+  //           data: product.cb_book_num,
+  //         },
+  //       };
+  //       await fetchAPI(`../${collectBehaviour}`, 'POST', dataCollect);
+  //     });
+  //   }
+  // };
   const collectBehaviourFunction = async () => {
-    //collect behavior add to cart
+    // Collect behavior add to cart
     if (products.length > 0 && userId) {
-      products.map(async (product) => {
+      for (let i = 0; i < products.length; i++) {
+        const product = products[i];
         const dataCollect = {
           topic: 'place-order',
           message: {
             userId,
             behaviour: 'place-order',
             productId: product.cb_book_id,
+            data: product.cb_book_num,
           },
         };
+
         await fetchAPI(`../${collectBehaviour}`, 'POST', dataCollect);
-      });
+
+        // Delay next request by 0.2 seconds
+        if (i < products.length - 1) {
+          await new Promise((resolve) => setTimeout(resolve, 50));
+        }
+      }
+      return true;
     }
+    return false;
   };
 
   //Handle Error
@@ -581,12 +612,12 @@ export const Payment = () => {
                 <div
                   className={`w-2/5 xl:w-1/5 ${isAddrLoading ? 'h-2 bg-slate-200 rounded col-span-2' : ''}`}
                 >
-                  {defaultAddress.userFullName}
+                  {isAddrLoading ? '' : defaultAddress.address_user_name}
                 </div>
                 <div
                   className={`w-full ${isAddrLoading ? 'h-2 bg-slate-200 rounded col-span-2' : ''}`}
                 >
-                  {defaultAddress.userPhone}
+                  {isAddrLoading ? '' : defaultAddress.address_user_phone}
                 </div>
               </div>
               <div
@@ -668,12 +699,14 @@ export const Payment = () => {
                   ref={shippingMethodsContainerRef}
                   className="flex gap-1 overflow-x-auto xl:grid xl:grid-cols-3 xl:gap-2 pb-1 scroll-smooth no-scrollbar"
                 >
+                  {/*w-[14rem] xl:w-[17rem] */}
                   {shippingMethods.map((service) => (
                     <div
                       key={service.serviceid}
-                      className={`flex-shrink-0 w-[14rem] xl:w-[17rem] flex gap-2 border rounded-lg p-2 xl:cursor-pointer ${serviceID === service.serviceid ? 'border-red-500' : 'border-gray-300'}`}
+                      className={`flex-shrink-0 flex gap-2 border rounded-lg p-2 xl:cursor-pointer ${serviceID === service.serviceid ? 'border-red-500' : 'border-gray-300'}`}
                       onClick={() => choiceService(service.serviceid)}
                     >
+                      {/* check box */}
                       <div className="w-8 flex mb-12">
                         <input
                           type="checkbox"
@@ -682,6 +715,7 @@ export const Payment = () => {
                           readOnly
                         />
                       </div>
+
                       <div className="w-full">
                         <div className="flex flex-col gap-4">
                           <div className="flex font-medium">
@@ -936,23 +970,27 @@ export const Payment = () => {
           </div>
 
           {/* coupon code desktop*/}
-          <div className="ml-2 w-full hidden xl:block">
+          <div className="ml-2 hidden xl:block">
             <div className="flex gap-2 pr-3">
-              <StaggeredDropDownDiscount
-                icon={
-                  <input
-                    type="text"
-                    className="h-12 w-[20rem] bg-gray-100 text-sm outline outline-1 outline-red-300 px-3"
-                    placeholder="Nhập mã giảm giá (mã chỉ áp dụng một lần)"
-                    value={couponCode}
-                    onChange={handleCouponChange}
-                  />
-                }
-                setChosenDiscount={setCouponDiscount}
-              />
+              <div className="w-[75%]">
+                <StaggeredDropDownDiscount
+                  icon={
+                    <div className="w-full">
+                      <input
+                        type="text"
+                        className="h-12 w-full bg-gray-100 text-sm outline outline-1 outline-red-300 px-3"
+                        placeholder="Nhập mã giảm giá (mã chỉ áp dụng một lần)"
+                        value={couponCode}
+                        onChange={handleCouponChange}
+                      />
+                    </div>
+                  }
+                  setChosenDiscount={setCouponDiscount}
+                />
+              </div>
 
               <button
-                className="text-sm bg-red-600 text-white w-[6rem] font-semibold hover:bg-red-500"
+                className="text-sm bg-red-600 text-white w-[25%] font-semibold hover:bg-red-500"
                 onClick={handleApplyCouponCode}
               >
                 Áp Dụng

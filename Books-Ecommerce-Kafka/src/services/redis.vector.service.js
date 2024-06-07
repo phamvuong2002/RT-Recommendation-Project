@@ -9,6 +9,7 @@ const redisClient = redis.createClient({
   },
   legacyMode: true,
 });
+const REQUEST_REC_SCORE = 50;
 
 const { promisify } = require("util");
 
@@ -16,6 +17,7 @@ const collectVector = async (userId, productId, score = 1) => {
   if (!redisClient.isReady) {
     await redisClient.connect();
   }
+
   console.log("connectRedis::Most-Vector-Store:", redisClient.isReady);
 
   const pexpire = promisify(redisClient.pExpire).bind(redisClient);
@@ -24,19 +26,51 @@ const collectVector = async (userId, productId, score = 1) => {
   const zaddAsync = promisify(redisClient.zAdd).bind(redisClient);
   const expireTime = 1000 * 60 * 60;
   const redis_key = "vector-score";
+  const redis_user_key = "user-score";
+  const redis_product_key = "product-score";
 
+  //Tính điểm vector
   const key_member = `${userId}:${productId}`;
-  console.log("key:", key_member);
-
-  // Kiểm tra xem phần tử có tồn tại trong sorted set không
   const existingScore = await zscoreAsync(redis_key, key_member);
-
   if (existingScore !== null) {
     await zincrbyAsync(redis_key, score, key_member);
   } else {
     await zaddAsync(redis_key, score, key_member);
   }
-  await pexpire(redis_key, expireTime);
+
+  // Tính điểm tương tác của mỗi user
+  const user_key_member = `${userId}`;
+  const user_existingScore = await zscoreAsync(redis_user_key, user_key_member);
+  let newScore;
+  if (user_existingScore !== null) {
+    newScore = await zincrbyAsync(redis_user_key, score, user_key_member);
+  } else {
+    await zaddAsync(redis_user_key, score, user_key_member);
+  }
+
+  // Tính điểm tương tác cho mỗi sản phẩm
+  const product_key_member = `${productId}`;
+  const procduct_existingScore = await zscoreAsync(
+    redis_product_key,
+    product_key_member
+  );
+  let newProductScore;
+  if (procduct_existingScore !== null) {
+    newProductScore = await zincrbyAsync(
+      redis_product_key,
+      score,
+      product_key_member
+    );
+  } else {
+    await zaddAsync(redis_product_key, score, product_key_member);
+  }
+
+  //Schedule
+  //Gọi retrain khi user đủ kiền kiện
+  if (newScore >= REQUEST_REC_SCORE) {
+    return { message: "retrain", userId: userId };
+  }
+  // await pexpire(redis_key, expireTime);
 };
 
 module.exports = {

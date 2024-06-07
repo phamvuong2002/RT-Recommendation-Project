@@ -72,6 +72,9 @@ app.use(
 
 //init db
 require("./v1/dbs/init.mongo");
+//cron-jobs
+require("./v1/cron-jobs/resetVerifyNumFirebase");
+
 /* Kafka */
 // Connect Kafka producer when the server starts
 connectProducer()

@@ -4,13 +4,18 @@ import { TextLoader } from '../components/loaders/TextLoader';
 import OtpInput from 'react-otp-input';
 import { fetchData } from './fetch';
 import { auth } from '../configs/firebase.config';
-import { EmailAuthCredential, RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
+import {
+  EmailAuthCredential,
+  RecaptchaVerifier,
+  signInWithPhoneNumber,
+} from 'firebase/auth';
 import { CircleLoader } from '../components/loaders/CircleLoader';
 
 //USER SERVICE
 import { sendEmailOTP, verifyEmailOTP } from '../apis/emailOTP';
 import { fetchAPI } from './fetch';
-
+import { initializeFirebaseAuth } from '../configs/firebase_v2.config';
+import { AppContext } from '../contexts/main';
 
 export const AuthenticationPopup = ({
   open,
@@ -24,6 +29,7 @@ export const AuthenticationPopup = ({
   handleError,
 }) => {
   // const handleAuthenEmail = async (user) => {
+  const { setIsLoading } = useContext(AppContext);
   const [reload, setReload] = useState(false);
   const [sendOtpStatus, setSendOtpStatus] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -49,7 +55,7 @@ export const AuthenticationPopup = ({
   };
 
   const handleChooseEmail = async () => {
-    setVerifybyEmail(true)
+    setVerifybyEmail(true);
 
     //Xử lý gửi mã OTP tới Email
     // setLoading(true);
@@ -59,7 +65,6 @@ export const AuthenticationPopup = ({
       }, 1000);
       // setEmail('girfler@gmail.com');
     } else {
-
       setEmail(emailInput);
       setSendOtpStatus(true);
       const sendOTP = await fetchAPI(`../${sendEmailOTP}`, 'POST', {
@@ -81,17 +86,15 @@ export const AuthenticationPopup = ({
         }, 3000);
         // }
       }
-    };
+    }
     // setTimeLeft(RESENDOTPTIME);
     // setSendOtpStatus(true);
     // setLoading(false);
-  }
-
+  };
 
   //Xử lý gửi mã OTP tới số điện thoại
   const handleChooseSMS = async () => {
-
-    setVerifybyEmail(false)
+    setVerifybyEmail(false);
     setIsPending(true);
     if (!phoneInput) {
       setSendOtpStatus(false);
@@ -103,7 +106,17 @@ export const AuthenticationPopup = ({
     } else {
       setPhonenumber(phoneInput);
       // setSendOtpStatus(true);
-      authenFunction(phonenumber);
+      const auth_v2 = await initializeFirebaseAuth();
+      if (auth_v2 === null) {
+        setSendOTPMessage(
+          'Dịch vụ xác thực bằng OTP đang bảo trì. Vui lòng sử dụng các dịch vụ khác để xác thực!',
+        );
+        setTimeout(() => {
+          handleReturn();
+        }, 2000);
+        return false;
+      }
+      await authenFunction(phonenumber, auth_v2);
     }
     // setPhonenumber(phoneInput);
     // setSendOtpStatus(true);
@@ -122,21 +135,23 @@ export const AuthenticationPopup = ({
         console.log('sucess');
         setAuthenStatus('success');
         setVaildOtpMessage('');
-       
       } else {
         setVaildOtpMessage('Mã OTP không khớp. Vui lòng thử lại!');
         setAuthenStatus('falied');
         setOtp('');
       }
     } else if (phonenumber) {
+      setIsLoading(true);
       window.confirmationResult
         .confirm(otp)
         .then(async (res) => {
           setAuthenStatus('success');
           setVaildOtpMessage('');
+          setIsLoading(false);
         })
         .catch((err) => {
           setVaildOtpMessage('Mã OTP không khớp. Vui lòng thử lại!');
+          setIsLoading(false);
           setAuthenStatus('falied');
           setOtp('');
         });
@@ -148,8 +163,6 @@ export const AuthenticationPopup = ({
     // setVaildOtpMessage('');
     // handleReturn();
     // setOtp('');
-
-
   };
 
   //Xử lý gửi lại mã OTP
@@ -169,49 +182,52 @@ export const AuthenticationPopup = ({
   };
 
   //Xử lý authen với dịch vụ của firebase
-  const onCaptchaVerify = () => {
+  const onCaptchaVerify = (auth_v2) => {
     if (!window.recaptchaVerifier) {
       window.recaptchaVerifier = new RecaptchaVerifier(
-        auth,
+        auth_v2,
+        // auth,
         'recaptcha-container',
         {
           size: 'invisible',
           callback: (response) => {
             if (!response) return;
-            authenFunction(phonenumber);
+            authenFunction(phonenumber, auth_v2);
             window.recaptchaVerifier = null;
           },
-          'expired-callback': () => { },
+          'expired-callback': () => {},
         },
       );
     }
   };
 
   //Xử lý authen với firebase
-  const authenFunction = (phonenumber) => {
+  const authenFunction = async (phonenumber, auth_v2) => {
+    if (!auth_v2) return;
     setSendOTPMessage('');
-    onCaptchaVerify();
+    onCaptchaVerify(auth);
     const appVerifier = window.recaptchaVerifier;
 
     const formatedPhone = `+84${phonenumber.slice(1) || phoneInput.slice(1)}`;
 
-    signInWithPhoneNumber(auth, formatedPhone, appVerifier)
+    // signInWithPhoneNumber(auth, formatedPhone, appVerifier)
+    signInWithPhoneNumber(auth_v2, formatedPhone, appVerifier)
       .then((confirmationResult) => {
         window.confirmationResult = confirmationResult;
         setTimeLeft(RESENDOTPTIME);
         setSendOtpStatus(true);
       })
       .catch((error) => {
-        if (error.message === 'Firebase: Error (auth/too-many-requests).') {
-          setSendOtpStatus(false);
-          setSendOTPMessage(
-            'OTP đã không được gửi, vui lòng kiểm tra lại SĐT và thử lại!',
-          );
-          //auto return
-          setTimeout(() => {
-            handleReturn();
-          }, 3000);
-        }
+        // if (error.message === 'Firebase: Error (auth/too-many-requests).') {
+        //   setSendOtpStatus(false);
+        //   setSendOTPMessage(
+        //     'OTP đã không được gửi, vui lòng kiểm tra lại SĐT và thử lại!',
+        //   );
+        //   //auto return
+        //   setTimeout(() => {
+        //     handleReturn();
+        //   }, 3000);
+        // }
         console.log('Firebase Error::', error);
       });
   };
@@ -248,20 +264,18 @@ export const AuthenticationPopup = ({
   }, [timeLeft]);
 
   useEffect(() => {
-
     if (emailInput && !phoneInput) {
       setEmail(emailInput);
-      setVerifybyEmail(true)
+      setVerifybyEmail(true);
     } else if (!emailInput && phoneInput) {
-      setPhonenumber(phoneInput)
-      setVerifybyEmail(false)
+      setPhonenumber(phoneInput);
+      setVerifybyEmail(false);
     } else if (emailInput && phoneInput) {
       setPhonenumber(phoneInput);
       setEmail(emailInput);
     }
     // console.log('email phone input received', email, emailInput, phonenumber, phoneInput)
   }, [emailInput, phoneInput]);
-
 
   return (
     <div>

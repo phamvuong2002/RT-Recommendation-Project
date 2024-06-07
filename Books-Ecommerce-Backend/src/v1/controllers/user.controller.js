@@ -13,6 +13,13 @@ class UserController {
     }).send(res);
   }
 
+  getUserID = async (req, res, next) => {
+    const data = await UserService.getUserID(req.body);
+    new SuccessResponse({
+      metadata: data, 
+    }).send(res);
+  }
+
   getUserInfo = async (req, res, next) => {
     const data = await UserService.getUserInfo(req.body);
     new SuccessResponse({

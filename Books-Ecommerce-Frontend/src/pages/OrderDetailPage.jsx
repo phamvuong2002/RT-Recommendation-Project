@@ -23,6 +23,8 @@ import {
 import { removeallcarts } from '../apis/cart';
 import { getoneorder } from '../apis/order';
 
+import { recRandomBook, getbestselling } from '../apis/recommendation';
+
 export const OrderDetailPage = () => {
   const {
     userId,
@@ -41,18 +43,22 @@ export const OrderDetailPage = () => {
   const [paymentData, setPaymentData] = useState('');
   const [products, setProducts] = useState([]);
   const [oneOrder, setOneOrder] = useState('');
+
+  const [collabProducts, setCollabProducts] = useState([]);
+  const [bestSellerData, setBestSellerData] = useState([]);
+
   const navigate = useNavigate();
   const paths = [
     { path: '/', label: 'Trang Chủ' },
     { path: `/${'shoppingcarts'}`, label: `${shortenString('Giỏ Hàng', 5)}` },
-    { path: `/${'payment'}`, label: `${shortenString('Thanh Toán', 5)}` },
+    { path: `#`, label: `${shortenString('Thanh Toán', 5)}` },
     {
-      path: `/${'order-detail'}`,
+      path: `/${'account/orders-infomation'}`,
       label: `${shortenString('Chi Tiết Đơn Hàng', 10)}`,
     },
     {
-      path: `/${'order-detail/'} ${parseInt(orderId)}`,
-      label: `${shortenString(`Đơn hàng # ${orderId}`, 11)}`,
+      path: `/${'order-detail/'}${parseInt(orderId)}`,
+      label: `${shortenString(`Đơn hàng #${orderId}`, 11)}`,
     },
   ];
 
@@ -178,7 +184,7 @@ export const OrderDetailPage = () => {
       });
       if (result.status !== 200) {
         // navigate('/notfound');
-        console.log('ERROR REMOVE CART :::::', result);
+        // console.log('ERROR REMOVE CART :::::', result);
       } else {
         setNumCart(0);
         return;
@@ -195,7 +201,7 @@ export const OrderDetailPage = () => {
       });
       if (result.status !== 200) {
         // navigate('/notfound');
-        console.log('ERROR ROLLBACK ORDER :::::', result);
+        // console.log('ERROR ROLLBACK ORDER :::::', result);
       } else {
         return;
       }
@@ -212,7 +218,7 @@ export const OrderDetailPage = () => {
       });
       if (result.status !== 200) {
         // navigate('/notfound');
-        console.log('ERROR UPDATE ORDER :::::', result);
+        // console.log('ERROR UPDATE ORDER :::::', result);
       } else {
         return;
       }
@@ -249,7 +255,7 @@ export const OrderDetailPage = () => {
       });
       if (data.status !== 200) {
         // navigate('/notfound');
-        console.log('ERROR:::::', data);
+        // console.log('ERROR:::::', data);
         return;
       } else {
         setOneOrder(data.metadata);
@@ -258,6 +264,46 @@ export const OrderDetailPage = () => {
     };
     getOneOrder();
   }, [orderId, userId]);
+
+
+  //Collaborative filtering
+  //15 cuốn random được train trong ngày
+  useEffect(() => {
+    const collabBook = async () => {
+      const rec_book = await fetchAPI(`../${recRandomBook}`, 'POST', {
+        userId: userId,
+        quantity: 15,
+        model_type: "online"
+      });
+      if (rec_book.status == 200) {
+        //console.log(rec_book.metadata)
+        setCollabProducts(rec_book.metadata)
+      }
+    }
+    // console.log('in rec svd')
+    collabBook();
+  }, [userId])
+
+  //Best seller
+  //load best seller books
+  useEffect(() => {
+    const loadBestSellerData = async () => {
+      setIsLoading(true);
+      const data = await fetchAPI(`../${getbestselling}`, 'POST', {
+        pageNumber: 1,
+        pageSize: 12,
+      });
+      if (data.status != 200) {
+        setBestSellerData([]);
+        setIsLoading(false);
+        return;
+      }
+      setBestSellerData(data?.metadata?.books);
+      setIsLoading(false);
+    };
+    //get best seller data
+    loadBestSellerData();
+  }, [userId]);
 
   return (
     <div>
@@ -269,7 +315,7 @@ export const OrderDetailPage = () => {
           status={paymentStatus}
         />
         {/*Gợi ý cho bạn*/}
-        <div className="flex flex-col mt-1 px-1 xl:px-0">
+        <div className={`flex flex-col mt-1 px-1 xl:px-0 ${collabProducts.length===0?'hidden':''}`}>
           <div className="flex items-center mb-[0.1rem] xl:mb-1 pl-2 h-14 bg-white rounded-t-lg border border-red-100">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -290,7 +336,10 @@ export const OrderDetailPage = () => {
             </div>
           </div>
           <div className="bg-white border-x border-b xl:border border-red-100">
-            {/* <SliderProducts productData={products}></SliderProducts> */}
+            <SliderProducts
+              userId={userId?.toString()}
+              productData={collabProducts}>
+            </SliderProducts>
           </div>
         </div>
 
@@ -316,12 +365,10 @@ export const OrderDetailPage = () => {
             </div>
           </div>
           <div className="bg-white border-x border-b xl:border border-red-100">
-            {/* <AllProducts
-              pages={pages}
-              totalPages={totalPages}
-              currentPage={currentPage}
-              setCurrentPage={setCurrentPage}
-            ></AllProducts> */}
+          <SliderProducts
+              userId={userId?.toString()}
+              productData={bestSellerData}>
+            </SliderProducts>
           </div>
         </div>
       </div>

@@ -8,11 +8,19 @@ import { AppContext } from './contexts/main';
 import { fetchAPI } from './helpers/fetch';
 import { getnumcart } from './apis/cart';
 import { getsession, loginGuest } from './apis/access';
-import { getUserInfo } from './apis/user'
+import { getUserInfo } from './apis/user';
 
 function App() {
-  const { userId, setUserId, session, setSession, setNumCart, setToken, setUsername ,setIsLoading} =
-    useContext(AppContext);
+  const {
+    userId,
+    setUserId,
+    session,
+    setSession,
+    setNumCart,
+    setToken,
+    setUsername,
+    setIsLoading,
+  } = useContext(AppContext);
 
   // Update Local Variables
   //Session
@@ -34,18 +42,24 @@ function App() {
             const userData = await fetchAPI(loginGuest, 'POST');
             if (userData.status !== 200) {
               setIsLoading(false);
+              localStorage.setItem('session-id', '');
               window.location.reload();
               return;
             }
           }
           setSession(currentSession);
-          setUserId(userData.metadata?.user?._id);
-         
+          if (!userData.metadata?.user?._id) {
+            localStorage.setItem('session-id', '');
+            window.location.reload();
+          } else {
+            setUserId(userData.metadata?.user?._id);
+          }
+
           console.log('data session::', userData);
-          if(userData.metadata.token){
+          if (userData.metadata.token) {
             setToken(userData.metadata?.token);
-          }else{
-            setToken('')
+          } else {
+            setToken('');
           }
           setIsLoading(false);
           return;
@@ -58,7 +72,6 @@ function App() {
     };
     fetchUserAuth();
   }, []);
-
 
   //Num Cart
   useEffect(() => {
@@ -76,7 +89,7 @@ function App() {
     getNumCart();
   }, [userId]);
 
-  // 
+  //
   useEffect(() => {
     const getUsername = async () => {
       if (!userId || userId?.length <= 0) return;
@@ -88,7 +101,7 @@ function App() {
       } else {
         setUsername(data?.metadata?.user_data?.fullname || '');
       }
-      console.log('in call getUsername')
+      console.log('in call getUsername');
     };
 
     getUsername();

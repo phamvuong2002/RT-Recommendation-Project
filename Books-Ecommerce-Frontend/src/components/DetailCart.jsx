@@ -57,6 +57,19 @@ export const DetailCart = ({ book }) => {
     getStatusFavBook();
   }, [product, userId]);
 
+  //Xử lý thay đổi số lượng cần mua
+  const handleInputQuantity = (e) => {
+    const value = e.target.value;
+    // Chỉ cho phép nhập số
+    if (/^\d*$/.test(value)) {
+      if (Number(value) <= 30) {
+        setNumCarts(Number(value));
+      } else {
+        setNumCarts(Number(30));
+      }
+    }
+  };
+
   //Xử lý khách hàng thêm sản phẩm vào giỏ
   const handleAddToCarts = async (e) => {
     e.preventDefault();
@@ -113,12 +126,26 @@ export const DetailCart = ({ book }) => {
     }
     const isLoved = result.metadata.favoriteBookStatus;
     setIsClicked(isLoved);
+
     if (isLoved) {
       setMessage('Đã thêm vào danh sách yêu thích');
     } else {
       setMessage('Đã loại bỏ sách khỏi danh sách yêu thích');
     }
     setOpenLovePopup(true);
+
+    if (isLoved) {
+      //collect behavior add to cart
+      const dataCollect = {
+        topic: 'love',
+        message: {
+          userId,
+          behaviour: 'love',
+          productId: product.book.book_id,
+        },
+      };
+      await fetchAPI(`../${collectBehaviour}`, 'POST', dataCollect);
+    }
   };
 
   //Xử lý nút chia sẻ
@@ -316,16 +343,18 @@ export const DetailCart = ({ book }) => {
                           id="quantity-input"
                           data-input-counter
                           aria-describedby="helper-text-explanation"
-                          placeholder="Chọn số lượng cần mua"
                           required
-                          readOnly
+                          // readOnly
+                          onChange={handleInputQuantity}
                         />
                         <button
                           type="button"
                           id="increment-button"
                           data-input-counter-increment="quantity-input"
                           className="bg-red-500  xl:hover:bg-red-300 p-3 rounded-sm h-9 w-9"
-                          onClick={() => setNumCarts(numCarts + 1)}
+                          onClick={() =>
+                            setNumCarts(numCarts < 30 ? numCarts + 1 : 30)
+                          }
                         >
                           <svg
                             className="w-3 h-3 text-center text-gray-800 dark:text-white"
@@ -524,15 +553,27 @@ export const DetailCart = ({ book }) => {
                   </div>
                   <div className="flex justify-between">
                     <div className="font-semibold">Tác giả:</div>
-                    <div>{product?.book_detail?.book_authors_name}</div>
+                    <div>
+                      {product?.book_detail?.book_authors_name === 'null'
+                        ? 'Chưa xác định'
+                        : product?.book_detail?.book_authors_name}
+                    </div>
                   </div>
                   <div className="flex justify-between">
                     <div className="font-semibold">Năm xuất bản:</div>
-                    <div>{product?.book_detail?.book_publish_year}</div>
+                    <div>
+                      {product?.book_detail?.book_publish_year === 'null'
+                        ? 'Chưa xác định'
+                        : product?.book_detail?.book_publish_year}
+                    </div>
                   </div>
                   <div className="flex justify-between">
                     <div className="font-semibold">Nhà xuất bản:</div>
-                    <div>{product?.book_detail?.book_pulisherName}</div>
+                    <div>
+                      {product?.book_detail?.book_pulisherName === 'null'
+                        ? 'Chưa xác định'
+                        : product?.book_detail?.book_pulisherName}
+                    </div>
                   </div>
                   <div className="flex justify-between">
                     <div className="font-semibold">Hình thức:</div>

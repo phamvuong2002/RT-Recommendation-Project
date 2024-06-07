@@ -12,6 +12,13 @@ const fs = require('fs')
 const handlebars = require('handlebars');
 const path = require('path');
 
+const formatData =
+    (input) => {
+        if (input > 9) {
+            return input;
+        } else return `0${input}`;
+    };
+
 class OTPService {
     static sendOTP = async ({ email, subject, message, duration = 1 }) => {
         try {
@@ -29,7 +36,7 @@ class OTPService {
 
             let objectDate = new Date();
             console.log(objectDate)
-            let date_ = objectDate.getDate() + '/' + (objectDate.getMonth() + 1) + '/' + objectDate.getFullYear();
+            let date_ = formatData(objectDate.getDate()) + '/' + formatData((objectDate.getMonth() + 1)) + '/' + formatData(objectDate.getFullYear());
 
             const src = fs.readFileSync(path.resolve(__dirname, '../templates/email_template.html')).toString();
             const template = handlebars.compile(src);
@@ -58,7 +65,7 @@ class OTPService {
                 email,
                 otp: hashedOTP,
                 createdAt: Date.now(),
-                expiresAt: Date.now() + 60000* duration,
+                expiresAt: Date.now() + 60000 * duration,
             });
             const createdOTPRecord = await newOTP.save();
             return createdOTPRecord;

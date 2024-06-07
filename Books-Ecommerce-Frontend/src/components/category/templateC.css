@@ -1,0 +1,4 @@
+.text-stroke {
+    -webkit-text-stroke-width: 8px; /* Độ dày viền */
+    -webkit-text-stroke-color: red; /* Màu viền */
+}

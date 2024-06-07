@@ -3,6 +3,7 @@ import { PaymentPage } from '../pages/PaymentPage';
 import { ShoppingCartsPage } from '../pages/ShoppingCartsPage';
 import { AccountPage } from '../pages/AccountPage';
 import { SearchPage } from '../pages/SearchPage';
+import { SearchPage_v2 } from '../pages/SearchPage_v2';
 import { Home } from '../pages/Home';
 import { OrderDetailPage } from '../pages/OrderDetailPage';
 
@@ -15,6 +16,7 @@ const publicRoutes = [
   { path: '/account', component: AccountPage },
   { path: '/account/:tab', component: AccountPage },
   { path: '/search', component: SearchPage },
+  { path: '/search_v2', component: SearchPage_v2 },
   { path: '/order-detail/:order?', component: OrderDetailPage },
 ];
 

@@ -11,7 +11,12 @@ import { useNavigate } from 'react-router-dom';
 import { fetchAPI } from '../helpers/fetch';
 import { login } from '../apis/access';
 
-import { checkEmailnPhone, getUserInfo } from '../apis/user';
+import {
+  checkEmailnPhone,
+  getUserInfo,
+  getID,
+  updateUserInfo,
+} from '../apis/user';
 import { signup_user, login_user, login_sms } from '../apis/access';
 import { TfiEmail } from 'react-icons/tfi';
 import { validateEmail } from '../utils/validateEmail';
@@ -20,7 +25,7 @@ import { validateEmail } from '../utils/validateEmail';
 export default function Login_SignUp({
   reload,
   setReload,
-  onlySignup=0,
+  onlySignup = 0,
   setOpen,
   open,
 }) {
@@ -58,8 +63,6 @@ export default function Login_SignUp({
 
   const [isSMSLogin, setSMSLogin] = useState(false);
 
-
-
   /************************CHECK AUTHENTICATION***********************************/
   //Router thủ công cho những trang yêu cầu Xác Thực Tài Khoản
   //Sử dung các biến token, userId, requestAuth (và một số biến liên quan)
@@ -75,17 +78,14 @@ export default function Login_SignUp({
   }, [requestAuth, userId, token, open]);
   /***********************************************************/
 
-   
-
-
   // -------LOGIN--------------------
   //Xử lý đăng nhập bằng account
   const handleLogin = async () => {
     // authenticate user here...
-    console.log('send account and pass to authen service', {
-      account: accountLogin,
-      pass: passwordLogin,
-    });
+    // console.log('send account and pass to authen service', {
+    //   account: accountLogin,
+    //   pass: passwordLogin,
+    // });
     // const data = await fetchAPI(login, 'POST', {
     //   password: 'pwd_admin_v2',
     //   email: 'adminv2@gmail.com',
@@ -102,10 +102,15 @@ export default function Login_SignUp({
     // } else {
     //   setMessage('Tài khoản hoặc mật khẩu không đúng!');
     // }
+    if (!accountLogin || !passwordLogin) {
+      setMessage('Email hoặc Số điện thoại không hợp lệ');
+      return;
+    }
     const isValidEmail = validateEmail(accountLogin);
     const isValidPhonenum = isValidPhoneNumber(accountLogin);
 
     let login_user_data = '';
+    setIsLoading(true);
     if (isValidEmail.status) {
       // console.log(isValidEmail)
       login_user_data = await fetchAPI(`../${login_user}`, 'POST', {
@@ -141,10 +146,10 @@ export default function Login_SignUp({
 
       // setSession();
       if (login_user_data.metadata.tokens) {
-        console.log('tokens ', login_user_data.metadata.user.tokens);
+        // console.log('tokens ', login_user_data.metadata.user.tokens);
         setToken(login_user_data.metadata.tokens.accessToken);
       }
-      console.log(login_user_data.metadata.user._id);
+      // console.log(login_user_data.metadata.user._id);
       setUserId(login_user_data.metadata.user._id);
       setAuthenStatus('success');
     } else {
@@ -212,14 +217,14 @@ export default function Login_SignUp({
     }
   };
 
-  const handleSignUpFB = async () => { };
+  const handleSignUpFB = async () => {};
 
-  const handleSignUpGG = async () => { };
+  const handleSignUpGG = async () => {};
 
   //Xử lý đăng ký bằng Email
   const handleSignUpEmail = async () => {
     const isValidEmail = validateEmail(emailInput);
-    console.log('in handle signup: ', emailInput);
+    // console.log('in handle signup: ', emailInput);
     //email hợp lệ
     if (isValidEmail.status) {
       const isRegistered = await fetchAPI(`../${checkEmailnPhone}`, 'POST', {
@@ -265,25 +270,8 @@ export default function Login_SignUp({
       return;
     }
 
-    // const check = validatePassword(againPass);
-    // if (check.length === 0) {
-    //   //xử lý tạo mật khẩu mới
-    //   const statusUpdate = 'ok';
-    //   if (statusUpdate === 'ok') {
-    //     //tạo thành công
-    //     setIsCreatedPassSuccess(true);
-    //   } else {
-    //     //tạo thất bại
-    //     setMessages([
-    //       { code: '400', message: 'Lỗi cập nhật! vui lòng thử lại sau.' },
-    //     ]);
-    //   }
-    // } else {
-    //   setMessages(check);
-    // }
-
     //Tạo mật khẩu thành công --> đăng ký
-    console.log('handle create pw')
+    // console.log('handle create pw')
     const check = validatePassword(againPass);
 
     if (check.length === 0) {
@@ -299,68 +287,77 @@ export default function Login_SignUp({
     // Tìm email và sđt của forgot account
     // const email = 'vuongdaquen@gmail.com';
     // const phone = '0919489084';
-    console.log('forgot account: ', accountForgot)
-    let email = ''
-    let phone = ''
+    console.log('forgot account: ', accountForgot);
+    let resetMethod = '';
+    let email = '';
+    let phone = '';
     const isValidEmail = validateEmail(accountForgot);
     const isValidPhonenum = isValidPhoneNumber(accountForgot);
-    let checkRegistered = ''
-
+    let checkRegistered = '';
+    console.log(isValidEmail, isValidPhonenum);
     if (isValidEmail.status) {
+      resetMethod = 'email';
       checkRegistered = await fetchAPI(`../${checkEmailnPhone}`, 'POST', {
         method: 'email',
         methodValue: accountForgot,
       });
-
-      email = accountForgot
-
+      email = accountForgot;
     } else if (isValidPhonenum) {
+      resetMethod = 'phone';
       checkRegistered = await fetchAPI(`../${checkEmailnPhone}`, 'POST', {
         method: 'phone',
         methodValue: accountForgot,
       });
-      phone = accountForgot
+      phone = accountForgot;
     } else {
       setMessage('Email hoặc Số điện thoại không hợp lệ');
+      return;
     }
 
-    console.log('phone',phone)
+    console.log('phone', phone);
     if (checkRegistered.status === 200) {
-      if (checkRegistered.metadata.isUsed && email) {
-        setEmailInput(email)
+      console.log(resetMethod);
+      const userID = await fetchAPI(`../${getID}`, 'POST', {
+        method: resetMethod,
+        methodValue: accountForgot,
+      });
+
+      if (
+        checkRegistered.metadata.isUsed &&
+        resetMethod == 'email' &&
+        userID.status == 200 &&
+        userID.metadata.user_id
+      ) {
+        // console.log(userID.metadata.user_id._id)
+        setUserId(userID.metadata.user_id._id);
+        setEmailInput(email);
         setIsShowAuthenPopup(true);
-      }
-      else if (checkRegistered.metadata.isUsed && phone) {
-        setPhoneInput(phone)
+      } else if (
+        checkRegistered.metadata.isUsed &&
+        resetMethod == 'phone' &&
+        userID.status == 200 &&
+        userID.metadata.user_id
+      ) {
+        setUserId(userID.metadata.user_id._id);
+        setPhoneInput(phone);
         setIsShowAuthenPopup(true);
-      }
-      else {
-        setMessage('Không tìm thấy tài khoản này')
+      } else {
+        setMessage('Không tìm thấy tài khoản này');
       }
     } else {
-      setMessage('Đã xảy ra lỗi. Vui lòng thử lại sau')
+      setMessage('Đã xảy ra lỗi. Vui lòng thử lại sau');
     }
-
-    // if (!email && !phone) {
-    //   setMessage('Không tìm thấy tài khoản này.');
-    //   return;
-    // }
-    // if (email) {
-    //   setEmailInput(email);
-    // } else {
-    //   setPhoneInput(phone);
-    // }
-
   };
 
   //xử lý sau khi đã xác thực
   useEffect(() => {
-    console.log('authentication::', authenStatus);
+    // console.log('authentication::', authenStatus);
     // Đăng nhập
     if (authenStatus === 'success' && !isSignUp && !isOpenForgetPass) {
       // nếu login = sms và Nhận mã otp thành công
       if (isSMSLogin) {
         const login_by_sms = async () => {
+          setIsLoading(true);
           const login_result = await fetchAPI(`../${login_sms}`, 'POST', {
             phone: phoneInput,
           });
@@ -371,7 +368,7 @@ export default function Login_SignUp({
               // console.log('tokens ', login_result.metadata.user.tokens)
               setToken(login_result.metadata.tokens.accessToken);
             }
-            console.log(login_result.metadata.user._id);
+            // console.log(login_result.metadata.user._id);
             setUserId(login_result.metadata.user._id);
             setAuthenStatus('success');
           } else {
@@ -380,19 +377,21 @@ export default function Login_SignUp({
             );
             return;
           }
+          setIsLoading(false);
           // setOpen(false);
           // console.log('set token, userid after Signup')
         };
         login_by_sms();
       }
-
-      console.log('login success');
+      setIsLoading(false);
+      // console.log('login success');
       setOpen(false);
     }
     // Đăng ký
     if (authenStatus === 'success' && isSignUp && isCreatedPassSuccess) {
       // console.log('register')
       const signup_for_user = async () => {
+        setIsLoading(true);
         //Đăng ký
         let method = '';
         let methodValue = '';
@@ -403,13 +402,13 @@ export default function Login_SignUp({
           method = 'phone';
           methodValue = phoneInput;
         }
-        console.log(method, methodValue);
+        // console.log(method, methodValue);
         const signup_ = await fetchAPI(`../${signup_user}`, 'POST', {
           signupMethod: method,
           signupMethodValue: methodValue,
           password: passwordSignUp,
         });
-        console.log('signp_up result: ', signup_);
+        // console.log('signp_up result: ', signup_);
         //TẠO THẤT BẠI
         if (signup_.status !== 201) {
           setMessages([
@@ -421,8 +420,9 @@ export default function Login_SignUp({
         // setSession(loginuser.metadata.sessionid);
         setToken(signup_.metadata.tokens.accessToken);
         setUserId(signup_.metadata.user._id);
+        setIsLoading(false);
         // setOpen(false);
-        console.log('set token, userid after Signup');
+        // console.log('set token, userid after Signup');
       };
 
       signup_for_user();
@@ -435,9 +435,28 @@ export default function Login_SignUp({
       isOpenForgetPass &&
       isCreatedPassSuccess
     ) {
-      // setUser(sampleUser)
-      setReload(true);
-      setOpen(false);
+      const reset_pw_user = async () => {
+        setIsLoading(true);
+        const updatePW = await fetchAPI(`../${updateUserInfo}`, 'POST', {
+          updatedField: 'pw',
+          updatedValue: passwordSignUp,
+          userId: userId,
+        });
+
+        if (updatePW.status === 200) {
+          setOpen(false);
+          setReload(true);
+        } else {
+          //update thất bại
+          setMessages([
+            { code: '400', message: 'Lỗi cập nhật! vui lòng thử lại sau.' },
+          ]);
+          setOpen(false);
+        }
+        setIsLoading(false);
+      };
+      console.log('change pw');
+      reset_pw_user();
     }
 
     setMessage('');
@@ -459,17 +478,17 @@ export default function Login_SignUp({
         phoneInput={phoneInput}
         emailInput={emailInput}
         nextStep={() => setIsShowAuthenPopup(false)}
-      // icon={icon}
+        // icon={icon}
       />
       <Tab.Group defaultIndex={onlySignup}>
         {/* Tab list: Danh sách Tab gồm (Đăng nhập, Đăng ký) */}
         <Tab.List className={`flex justify-around space-x-1 bg-white }`}>
-          <Tab as={Fragment} className={`${onlySignup?"hidden":""}`}>
+          <Tab as={Fragment} className={`${onlySignup ? 'hidden' : ''}`}>
             {({ selected }) => (
               <button
                 onClick={() => setMessage('')}
                 className={`w-1/2 py-1 sm:py-2.5 text-xs sm:text-sm font-medium leading-5 outline-none
-                                    ${selected? 'text-red-500 border-b-[1px] border-b-red-500' : ' text-black'}
+                                    ${selected ? 'text-red-500 border-b-[1px] border-b-red-500' : ' text-black'}
                                 `}
               >
                 ĐĂNG NHẬP
@@ -493,7 +512,9 @@ export default function Login_SignUp({
 
         <Tab.Panels className="bg-white">
           {/* Tab panels: gồm 2 panel lần lượt là Form Login/Signup */}
-          <Tab.Panel className={`flex outline-none h-full flex-1 flex-col justify-center px-3 py-5 sm:py-12 lg:px-8 ${onlySignup?"hidden":""}`}>
+          <Tab.Panel
+            className={`flex outline-none h-full flex-1 flex-col justify-center px-3 py-5 sm:py-12 lg:px-8 ${onlySignup ? 'hidden' : ''}`}
+          >
             {isOpenForgetPass ? (
               <div>
                 {authenStatus === 'success' ? (
@@ -519,7 +540,7 @@ export default function Login_SignUp({
                               onChange={(e) =>
                                 setPasswordSignUp(e.target.value)
                               }
-                            // readOnly
+                              // readOnly
                             />
                             <div
                               className="flex items-center text-gray-400"
@@ -559,7 +580,7 @@ export default function Login_SignUp({
                                 setAgainPass(e.target.value);
                                 setMessages([]);
                               }}
-                            // readOnly
+                              // readOnly
                             />
                             <div
                               className="flex items-center text-gray-400"
@@ -742,6 +763,7 @@ export default function Login_SignUp({
                             <input
                               id="password_login"
                               name="password_login"
+                              type="password"
                               value={passwordLogin}
                               onChange={(e) => setPasswordLogin(e.target.value)}
                               required
@@ -1030,7 +1052,7 @@ export default function Login_SignUp({
                             className="w-full h-8 outline-none forcus:outline-none"
                             value={passwordSignUp}
                             onChange={(e) => setPasswordSignUp(e.target.value)}
-                          // readOnly
+                            // readOnly
                           />
                           <div
                             className="flex items-center text-gray-400"
@@ -1070,7 +1092,7 @@ export default function Login_SignUp({
                               setAgainPass(e.target.value);
                               setMessages([]);
                             }}
-                          // readOnly
+                            // readOnly
                           />
                           <div
                             className="flex items-center text-gray-400"

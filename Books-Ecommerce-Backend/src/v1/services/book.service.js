@@ -4,6 +4,130 @@ const db = require("../models/sequelize/models");
 const { BadRequestError, NotFoundError } = require("../core/error.response");
 
 class BookService {
+  static searchBooks = async ({
+    page = 1,
+    limit = 24,
+    categories = "sach-tieng-viet",
+    query = "",
+    price = "",
+    sortBy,
+  }) => {
+    if (!categories) {
+      categories = "sach-tieng-viet";
+    }
+    // Chuyển đổi chuỗi categories thành mảng
+    const cateIds = [];
+    const categoryArray = categories ? categories.split(",") : [];
+
+    // Tìm cateId theo slug từ các bảng category_1, category_2, category_3, category_4
+    for (let i = 0; i < categoryArray.length; i++) {
+      const cateSlug = categoryArray[i];
+      if (cateSlug.length > 0) {
+        const cateId = await db[`category_${i + 1}`].findOne({
+          where: { [`cate${i + 1}_sid`]: cateSlug },
+          attributes: [`cate${i + 1}_id`],
+        });
+
+        if (cateId) {
+          cateIds.push(cateId.dataValues[`cate${i + 1}_id`]);
+        }
+      }
+    }
+
+    //Điều kiện thể loại
+    const categoryConditions = cateIds.map((cateId, index) =>
+      db.Sequelize.literal(
+        `JSON_EXTRACT(book_categories, '$[${index}]') = ${cateId}`
+      )
+    );
+
+    // Xây dựng điều kiện tìm kiếm cơ bản
+    const searchConditions = {
+      book_status: 1,
+      [db.Sequelize.Op.and]: categoryConditions,
+    };
+
+    // Thêm điều kiện tìm kiếm theo query nếu có
+    if (query) {
+      searchConditions.book_title = { [db.Sequelize.Op.like]: `%${query}%` };
+    }
+
+    // Thêm điều kiện tìm kiếm theo price nếu có
+    if (price) {
+      const [minPrice, maxPrice] = price.split(",").map(Number);
+      searchConditions.book_spe_price = {
+        [db.Sequelize.Op.between]: [minPrice, maxPrice],
+      };
+    }
+
+    // Sắp xếp theo sortBy nếu có
+    const order = [];
+    if (sortBy) {
+      switch (sortBy) {
+        case "name_asc":
+          order.push(["book_title", "ASC"]);
+          break;
+        case "name_desc":
+          order.push(["book_title", "DESC"]);
+          break;
+        case "price_asc":
+          order.push(["book_spe_price", "ASC"]);
+          break;
+        case "price_desc":
+          order.push(["book_spe_price", "DESC"]);
+          break;
+        default:
+          order.push(["create_time", "DESC"]);
+          break;
+      }
+    } else {
+      order.push(["create_time", "DESC"]);
+    }
+
+    // Tìm tổng số sách phù hợp
+    const totalBooks = await db.book.count({
+      where: searchConditions,
+      // where: {
+      //   book_status: 1,
+      //   [db.Sequelize.Op.and]: categoryConditions,
+      // },
+    });
+
+    // Tìm sách theo điều kiện và phân trang
+    const books = await db.book.findAll({
+      where: searchConditions,
+      // where: {
+      //   book_status: 1,
+      //   [db.Sequelize.Op.and]: categoryConditions,
+      // },
+      offset: (page - 1) * limit,
+      limit: limit,
+      // order: [["create_time", "DESC"]],
+      order: order,
+    });
+
+    //format lại theo form dữ liệu
+    const formattedBooks = books.map((book) => ({
+      book: {
+        book_id: book.book_id,
+        book_title: book.book_title,
+        book_categories: book.book_categories,
+        book_img: book.book_img,
+        book_spe_price: book.book_spe_price,
+        book_old_price: book.book_old_price,
+      },
+    }));
+
+    // Tính toán tổng số trang
+    const totalPages = Math.ceil(totalBooks / limit);
+
+    return {
+      books: formattedBooks,
+      totalBooks,
+      totalPages,
+    };
+  };
+
   static getOneBook = async ({ bookId }) => {
     const foundBook = await db.book.findOne({
       where: { book_id: bookId, book_status: 1 },
@@ -47,7 +171,7 @@ class BookService {
       where: {
         book_status: 1,
       },
-      limit: 5,
+      //limit: 5,
     });
   };
 

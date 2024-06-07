@@ -14,6 +14,7 @@ import {
   categorypersonalrec,
   categorypopularrec,
   getbestselling,
+  getconbasbook,
   searchbestselling,
   searchrecbook,
 } from '../apis/recommendation';
@@ -21,7 +22,7 @@ import { useNavigate } from 'react-router-dom';
 import { CircleLoader } from '../components/loaders/CircleLoader';
 import { ShoppingCartLoader } from '../components/loaders/ShoppingCartLoader';
 import { CartLoader } from '../components/loaders/CardLoader';
-import { SaleBanner } from '../components/banners/SaleBanner';
+// import { SaleBanner } from '../components/banners/SaleBanner';
 
 const CATE_TYPE = {
   BEST_SELLER: {
@@ -32,12 +33,12 @@ const CATE_TYPE = {
   POPULAR_RECOMMENDATION: {
     name: 'popular_recommendation',
     url: categorypopularrec,
-    search: 'popular_recommendation_suggest',
+    search: 'normal',
   },
   PERSONAL_RECOMMENDATION: {
     name: 'personal_recommendation',
     url: categorypersonalrec,
-    search: 'personal_recommendation_suggest',
+    search: 'normal',
   },
 };
 
@@ -54,11 +55,12 @@ export const Home = () => {
   const navigate = useNavigate();
   const [bestSellerData, setBestSellerData] = useState([]);
   const [bestSellerCates, setBestSellercates] = useState([]);
-  const [typeCate, setTypeCate] = useState(CATE_TYPE.BEST_SELLER);
+  const [typeCate, setTypeCate] = useState(CATE_TYPE.POPULAR_RECOMMENDATION);
   const [reloadBestSelling, setReloadBestSelling] = useState(true);
   const [personalRecBooks, setPersonalRecBooks] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [page, setPage] = useState(1);
+  const [loadPersonalBook, setLoadPersonalBooks] = useState(false);
 
   //set active page
   useEffect(() => {
@@ -144,6 +146,25 @@ export const Home = () => {
   useEffect(() => {
     const loadProductData = async () => {
       if (!userId) return;
+      if (!loadPersonalBook) {
+        console.log;
+        const dataConbas = await fetchAPI(`../${getconbasbook}`, 'POST', {
+          page: parseInt(page),
+          limit: 24,
+          userId,
+        });
+
+        if (dataConbas.status != 200 || dataConbas?.metadata == null) {
+          setPersonalRecBooks([]);
+          setTotalPages(0);
+          setLoadPersonalBooks(true);
+        } else {
+          setPersonalRecBooks(dataConbas?.metadata?.books);
+          setTotalPages(dataConbas.metadata?.totalPages);
+        }
+        return;
+      }
+
       const data = await fetchAPI(`../${searchrecbook}`, 'POST', {
         page: parseInt(page),
         limit: 24,
@@ -161,7 +182,7 @@ export const Home = () => {
     };
 
     loadProductData();
-  }, [page, userId]);
+  }, [page, userId, loadPersonalBook]);
 
   return (
     <div className="pb-10 sm:pb-0">

@@ -98,9 +98,10 @@ const acquireLockOnlineReTrain = async (model = "behavior") => {
   const setnxAsync = promisify(redisClient.setNX).bind(redisClient);
 
   const key = `lock_v2024_online_retrain_${model}`;
-  const expireTime = 1000 * 60 * 5;
+  const expireTime = 1000 * 60;
   //kiểm tra khoá đã có hay chưa nếu có rồi thì trả về 0 chưa thì tạo và trả về 1
   const result = await setnxAsync(key, expireTime);
+  await pexpire(key, expireTime); //Hết hạn sau 1 phút
   console.log("result online:::::::", result);
   if (result === 1) {
     //Nếu tạo khoá thành công thì tìm tất cả user hợp lệ

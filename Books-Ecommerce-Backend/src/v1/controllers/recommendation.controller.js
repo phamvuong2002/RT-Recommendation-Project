@@ -5,6 +5,14 @@ const RecommendationService = require("../services/recommendation.service");
 const { SuccessResponse } = require("../core/success.response");
 
 class RecommendationPopularController {
+  //get content based rec book
+  getConBasRecBooks = async (req, res, next) => {
+    const data = await RecommendationService.getConBasRecBooks(req.body);
+    new SuccessResponse({
+      metadata: data,
+    }).send(res);
+  };
+
   //search rec book
   searchRecBooks = async (req, res, next) => {
     const data = await RecommendationService.searchRecBooks(req.body);

@@ -82,10 +82,10 @@ export default function Login_SignUp({
   //Xử lý đăng nhập bằng account
   const handleLogin = async () => {
     // authenticate user here...
-    console.log('send account and pass to authen service', {
-      account: accountLogin,
-      pass: passwordLogin,
-    });
+    // console.log('send account and pass to authen service', {
+    //   account: accountLogin,
+    //   pass: passwordLogin,
+    // });
     // const data = await fetchAPI(login, 'POST', {
     //   password: 'pwd_admin_v2',
     //   email: 'adminv2@gmail.com',
@@ -102,6 +102,10 @@ export default function Login_SignUp({
     // } else {
     //   setMessage('Tài khoản hoặc mật khẩu không đúng!');
     // }
+    if (!accountLogin || !passwordLogin) {
+      setMessage('Email hoặc Số điện thoại không hợp lệ');
+      return;
+    }
     const isValidEmail = validateEmail(accountLogin);
     const isValidPhonenum = isValidPhoneNumber(accountLogin);
 
@@ -759,6 +763,7 @@ export default function Login_SignUp({
                             <input
                               id="password_login"
                               name="password_login"
+                              type="password"
                               value={passwordLogin}
                               onChange={(e) => setPasswordLogin(e.target.value)}
                               required

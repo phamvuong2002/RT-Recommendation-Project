@@ -70,6 +70,12 @@ router.post(
   asyncHandler(recRatingController.getRatingPopularBooks)
 );
 
+//Get rec books
+router.post(
+  "/get/content-based/books",
+  asyncHandler(recommendationController.getConBasRecBooks)
+);
+
 //Category
 // bestelling category
 router.post(

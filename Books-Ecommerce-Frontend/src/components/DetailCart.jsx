@@ -126,12 +126,26 @@ export const DetailCart = ({ book }) => {
     }
     const isLoved = result.metadata.favoriteBookStatus;
     setIsClicked(isLoved);
+
     if (isLoved) {
       setMessage('Đã thêm vào danh sách yêu thích');
     } else {
       setMessage('Đã loại bỏ sách khỏi danh sách yêu thích');
     }
     setOpenLovePopup(true);
+
+    if (isLoved) {
+      //collect behavior add to cart
+      const dataCollect = {
+        topic: 'love',
+        message: {
+          userId,
+          behaviour: 'love',
+          productId: product.book.book_id,
+        },
+      };
+      await fetchAPI(`../${collectBehaviour}`, 'POST', dataCollect);
+    }
   };
 
   //Xử lý nút chia sẻ

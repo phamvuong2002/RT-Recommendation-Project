@@ -4,6 +4,7 @@ const redis = require("redis");
 const db = require("../models/sequelize/models");
 const _ = require("lodash");
 const CategoryService = require("./category.service");
+const ContentBaseRecommendationService = require("./recommendation.contentbase.service");
 const redisClient = redis.createClient({
   password: "KYsW4siAdfAUVq6hfzrIojRT0uU9h0M1",
   socket: {
@@ -23,6 +24,63 @@ const redisRecResult = redis.createClient({
 });
 
 class RecommendationService {
+  //check is enough recommended books
+  static getRecBooks = async (userId) => {
+    if (!userId) return null;
+
+    if (!redisRecResult.isReady) {
+      await redisRecResult.connect();
+    }
+    const zRangeAsync = promisify(redisRecResult.ZRANGE).bind(redisRecResult);
+
+    const sortedSetName = `${userId}`;
+    const membersWithScores = await zRangeAsync(
+      sortedSetName,
+      0,
+      -1,
+      "WITHSCORES"
+    );
+    return membersWithScores;
+  };
+
+  //get contents based rec books
+  static getConBasRecBooks = async ({ userId, page, limit = 12 }) => {
+    const recbooks = await RecommendationService.getRecBooks(userId);
+    if (recbooks.length > 10) {
+      return null;
+    }
+    //get best seller product ID
+    if (!redisClient.isReady) {
+      await redisClient.connect();
+    }
+    const zrevrangeAsync = promisify(redisClient.zRange).bind(redisClient);
+    const zcardAsync = promisify(redisClient.zCard).bind(redisClient);
+
+    const keysInRange = await zrevrangeAsync(
+      "popular-products",
+      page - 1,
+      page - 1,
+      "WITHSCORES",
+      "REV"
+    );
+    // const productId = keysInRange[0].split(":")[1];
+    // return await ContentBaseRecommendationService.getRecommendByContentBaseID({
+    //   bookId: productId,
+    //   userId,
+    //   quantity: limit,
+    //   model_type: "online",
+    // });
+
+    const length = await zcardAsync("popular-products");
+    return {
+      books: await RecommendationService.getPopularBooks({
+        pageNumber: page,
+        pageSize: limit,
+      }),
+      totalPages: Math.ceil(length / limit),
+    };
+  };
+
   //search rec books
   static searchRecBooks = async ({
     page = 1,
@@ -249,6 +307,7 @@ class RecommendationService {
         result.push({
           book: {
             book_id: book.book_id,
+            book_title: book.book_title,
             book_img: book.book_img,
             book_spe_price: book.book_spe_price,
             book_old_price: book.book_old_price,
@@ -262,42 +321,67 @@ class RecommendationService {
 
   //get popular Rec_book category
   static async getPopularRecCategories({ top = 5 }) {
-    const topCategories = await db.rec_book.findAll({
-      attributes: [
-        "rec_book_categories",
-        [
-          db.Sequelize.fn("COUNT", db.Sequelize.col("rec_book_categories")),
-          "count",
-        ],
-      ],
-      group: "rec_book_categories",
-      order: [[db.Sequelize.literal("count"), "DESC"]],
-      limit: top,
-      raw: true,
-    });
-    if (!topCategories) return [];
+    // const topCategories = await db.rec_book.findAll({
+    //   attributes: [
+    //     "rec_book_categories",
+    //     [
+    //       db.Sequelize.fn("COUNT", db.Sequelize.col("rec_book_categories")),
+    //       "count",
+    //     ],
+    //   ],
+    //   group: "rec_book_categories",
+    //   order: [[db.Sequelize.literal("count"), "DESC"]],
+    //   limit: top,
+    //   raw: true,
+    // });
+    // if (!topCategories) return [];
 
-    // get books data for category
-    const results = [];
-    for (const category of topCategories) {
-      const images = await db.rec_book.findAll({
-        attributes: ["rec_book_img"],
-        where: db.Sequelize.literal(
-          `JSON_EXTRACT(rec_book_categories, '$[0]') = "${category.rec_book_categories}"`
-        ),
-        limit: 3,
-        raw: true,
-      });
-      results.push({
-        category: category.rec_book_categories,
-        rec_times: category.count,
-        images: images.map((image) => image.rec_book_img),
-      });
-    }
+    // // get books data for category
+    // const results = [];
+    // for (const category of topCategories) {
+    //   const images = await db.rec_book.findAll({
+    //     attributes: ["rec_book_img"],
+    //     where: db.Sequelize.literal(
+    //       `JSON_EXTRACT(rec_book_categories, '$[0]') = "${category.rec_book_categories}"`
+    //     ),
+    //     limit: 3,
+    //     raw: true,
+    //   });
+    //   results.push({
+    //     category: category.rec_book_categories,
+    //     rec_times: category.count,
+    //     images: images.map((image) => image.rec_book_img),
+    //   });
+    // }
+
+    // Ngày hôm nay
+    const today = new Date();
+    // Ngày 7 ngày trước
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(today.getDate() - 7);
+
+    const query = `
+        SELECT 
+        rec_book_categories AS category, 
+        COUNT(DISTINCT rec_book_id) AS totalrec,
+        SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT rec_book_img), ',', 3) AS images
+        FROM rec_book
+        WHERE create_time BETWEEN :sevenDaysAgo AND :today
+        GROUP BY rec_book_categories
+        ORDER BY totalrec DESC
+        LIMIT :top
+    `;
+
+    const results = await db.sequelize.query(query, {
+      replacements: { sevenDaysAgo, today, top },
+      type: db.Sequelize.QueryTypes.SELECT,
+    });
+
+    // return results;
 
     // get categories slug
-    for (let top = 0; top < results.length; top++) {
-      let cate_list = JSON.parse(results[top]?.category);
+    for (let index = 0; index < results.length; index++) {
+      let cate_list = results[index]?.category;
       const cate = [];
       for (let i = 0; i < cate_list.length; i++) {
         const sub_cate = await CategoryService.getCateById(cate_list[i], i + 1);
@@ -305,7 +389,8 @@ class RecommendationService {
           cate.push(sub_cate);
         }
       }
-      results[top].category = cate;
+      results[index].category = cate;
+      results[index].images = results[index]?.images?.split(",");
     }
     return results;
   }

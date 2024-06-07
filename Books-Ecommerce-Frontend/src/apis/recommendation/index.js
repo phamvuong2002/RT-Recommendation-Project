@@ -24,3 +24,5 @@ export const searchNormalResultsByContentBase =
 export const recLatestBook = 'api/v1/api/recommendation/recLatestBook';
 export const recRandomBook = 'api/v1/api/recommendation/recRandomBook';
 export const searchrecbook = 'api/v1/api/recommendation/search/rec-books';
+export const getconbasbook =
+  'api/v1/api/recommendation/get/content-based/books';

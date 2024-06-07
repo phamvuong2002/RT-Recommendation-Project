@@ -13,10 +13,11 @@ import { AppContext } from '../contexts/main';
 import { collectBehaviour } from '../apis/collectBehaviour';
 import { slugify } from '../utils/slugify';
 import { isMobileDevice } from '../utils/isMobileDevice';
-import {  recRandomBook } from '../apis/recommendation';
+import { recRandomBook } from '../apis/recommendation';
 
 export const ProductDetailPage = () => {
-  const { userId, setIsShowFooter, token, setIsLoading } = useContext(AppContext);
+  const { userId, setIsShowFooter, token, setIsLoading } =
+    useContext(AppContext);
   const { bookid } = useParams();
   const [id, setId] = useState('');
   const [paths, setPaths] = useState([]);
@@ -27,7 +28,6 @@ export const ProductDetailPage = () => {
   const [startTime, setStartTime] = useState(new Date());
   const [endTime, setEndTime] = useState(new Date());
   const [collabProducts, setCollabProducts] = useState([]);
-
 
   const navigate = useNavigate();
 
@@ -58,23 +58,21 @@ export const ProductDetailPage = () => {
 
   //Get bookid from url
   useEffect(() => {
-
     setId(bookid);
     const getBook = async () => {
-      setIsLoading(true)
+      setIsLoading(true);
       const book = await fetchAPI(`../${getonebook}`, 'POST', {
         bookId: bookid,
       });
       if (book.status !== 200) {
         navigate('/notfound');
-        setIsLoading(false)
+        setIsLoading(false);
       } else {
         setBook(book.metadata);
-        setIsLoading(false)
+        setIsLoading(false);
       }
     };
     getBook();
-
   }, [bookid]);
 
   //Xử ký sau khi lấy được bookid
@@ -110,7 +108,8 @@ export const ProductDetailPage = () => {
       }
       pathArr.push({
         path: `/books/${bookid}`,
-        label: `${shortenString(book?.book?.book_title || '', isMobileDevice() ? 15 : 14)}`,
+        label: `${shortenString(book?.book?.book_title || '', isMobileDevice() ? 15 : 80, true)}`,
+        // label: `${shortenString(book?.book?.book_title || '', 80, true)}`,
       });
       return pathArr;
     }
@@ -122,15 +121,14 @@ export const ProductDetailPage = () => {
     }
   }, [book]);
 
-
-  // CONTENT-BASED FILTERING 
+  // CONTENT-BASED FILTERING
   useEffect(() => {
     const loadData = async () => {
       const data = await fetchAPI(`../${getRecommendByContentBaseID}`, 'POST', {
         bookId: bookid,
         userId: userId.toString(),
         quantity: 24,
-        model_type: "online",
+        model_type: 'online',
       });
       if (data.status != 200) {
         setProducts([]);
@@ -138,28 +136,26 @@ export const ProductDetailPage = () => {
       }
       setProducts(data?.metadata);
     };
-    loadData()
+    loadData();
   }, [bookid, userId]);
 
-  // COLLABORATIVE FILTERING 
-  // Có thể bạn sẽ thích: Random 15 cuốn từ các đề xuất có trong ngày 
+  // COLLABORATIVE FILTERING
+  // Có thể bạn sẽ thích: Random 15 cuốn từ các đề xuất có trong ngày
   useEffect(() => {
     const collabBook = async () => {
       const rec_book = await fetchAPI(`../${recRandomBook}`, 'POST', {
         userId: userId,
         quantity: 15,
-        model_type: "online"
+        model_type: 'online',
       });
       if (rec_book.status == 200) {
         //console.log(rec_book.metadata)
-        setCollabProducts(rec_book.metadata)
+        setCollabProducts(rec_book.metadata);
       }
-    }
+    };
     // console.log('in rec svd')
     collabBook();
-  }, [userId, paths])
-
-
+  }, [userId, paths]);
 
   return (
     <div className="flex flex-col mb-14">
@@ -167,9 +163,11 @@ export const ProductDetailPage = () => {
       <div className="flex flex-col gap-[0.2rem]">
         <DetailCart book={book} />
         <DescriptionFeedback book={book} />
-        
+
         {/*Gợi ý Sản phẩm liên quan*/}
-        <div className={`flex flex-col mt-1 px-1 xl:px-28 ${products.length===0?'hidden':''}`}>
+        <div
+          className={`flex flex-col mt-1 px-1 xl:px-28 ${products.length === 0 ? 'hidden' : ''}`}
+        >
           <div className="flex items-center mb-[0.1rem] xl:mb-1 pl-2 h-14 bg-gradient-to-t from-red-50 to-gray-50 rounded-t-lg border border-red-100">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -197,8 +195,10 @@ export const ProductDetailPage = () => {
           </div>
         </div>
 
-         {/*Gợi ý Có thể bạn sẽ thích*/}
-         <div className={`flex flex-col mt-2 px-1 xl:px-28 ${collabProducts.length===0?'hidden':''}`}>
+        {/*Gợi ý Có thể bạn sẽ thích*/}
+        <div
+          className={`flex flex-col mt-2 px-1 xl:px-28 ${collabProducts.length === 0 ? 'hidden' : ''}`}
+        >
           <div className="flex items-center mb-[0.1rem] xl:mb-1 pl-2 h-14 bg-gradient-to-t from-red-50 to-gray-50 rounded-t-lg border border-red-100">
             <svg
               xmlns="http://www.w3.org/2000/svg"

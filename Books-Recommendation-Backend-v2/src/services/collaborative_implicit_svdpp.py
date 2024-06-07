@@ -8,6 +8,8 @@ from src.helpers.load_model import load_model
 from src.helpers.load_offline_model import get_latest_model_file
 
 k=2
+# Kiểm tra Trên redis có đủ dữ liệu? --> Nếu không đủ thì lấy thêm bên mysql
+
 def implicit_svdpp(user_id, n_similar):
     grouped_df=load_model("current/behaviour-svd/grouped_df")
     algo_pp=load_model("current/behaviour-svd/algo_pp")

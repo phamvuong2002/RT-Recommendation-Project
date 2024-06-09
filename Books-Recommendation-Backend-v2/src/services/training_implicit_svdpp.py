@@ -11,6 +11,43 @@ from surprise import SVDpp, accuracy
 from surprise.model_selection import GridSearchCV, train_test_split
 
 
+async def get_data_from_MySQL():
+    mysql_host = os.environ.get("BACKEND_MYSQL_HOST")
+    mysql_username = os.environ.get("BACKEND_MYSQL_USERNAME")
+    mysql_pass = os.environ.get("BACKEND_MYSQL_PASS")
+    mysql_dbname = os.environ.get("BACKEND_MYSQL_DBNAME")
+
+    # Kết nối đến cơ sở dữ liệu
+    # db_connection_str = 'mysql+pymysql://root:vuong@localhost/books_db_v1'
+    # db_connection_str = "mysql+pymysql://bookada:bookada2002@bookada-database-v1.crq4aco4chyf.ap-southeast-1.rds.amazonaws.com/books_db_v1"
+    db_connection_str = f"mysql+pymysql://{mysql_username}:{mysql_pass}@{mysql_host}/{mysql_dbname}"
+    db_connection = create_engine(db_connection_str)
+    
+    # Dữ liệu được lấy có Create_time trong 3 ngày gần nhất
+    books_query = """ SELECT DISTINCT ub_sid as behaviour_id, ub_user_id as personId, ub_behaviour_type as eventType, ub_product_id as contentId FROM user_behaviour  WHERE ub_sid IS NOT NULL AND ub_sid <> '' AND ub_user_id IS NOT NULL AND ub_user_id <> '' AND ub_behaviour_type IS NOT NULL AND ub_behaviour_type <> ''AND ub_product_id IS NOT NULL AND ub_product_id <> '' AND datediff(curtime(), create_time) < 3"""
+    with db_connection.connect() as conn:
+        books_df = pd.read_sql(
+            sql=books_query,
+            con=conn.connection
+        )
+
+
+    SCORE = {
+        "view": 2,
+        "click": 1,
+        "place-order": 5,
+        "cancel-order": 3,
+        "add-to-cart": 3,
+        "love": 3,
+    }
+    
+    books_df['eventStrength'] = books_df['eventType'].apply(lambda x: SCORE[x])
+    grouped_df = books_df.groupby(['personId', 'contentId'])['eventStrength'].sum().reset_index()  
+    # Trả về 3 cột cần thiết
+    final_grouped_df=grouped_df[['personId','contentId','eventStrength']]
+    return final_grouped_df
+    
+
 
 async def train_implicit_model_SVDpp():
     mysql_host = os.environ.get("BACKEND_MYSQL_HOST")
@@ -28,16 +65,13 @@ async def train_implicit_model_SVDpp():
     db_connection_str = f"mysql+pymysql://{mysql_username}:{mysql_pass}@{mysql_host}/{mysql_dbname}"
     db_connection = create_engine(db_connection_str)
 
-    # Kết nối đến Redis
-    # r = redis.Redis(host='redis-18188.c292.ap-southeast-1-1.ec2.redns.redis-cloud.com', port=18188, password="BPCJVK6TcHKjsliR97SBnFp3BtsZcGWB")
     r = redis.Redis(host=redis_vector_host, port=redis_vector_port, password=redis_vector_pass)
     # Key của sorted set trong Redis
     sorted_set_key = 'vector-score'
-
+  
+    # Train toàn bộ 
     # Lấy dữ liệu từ sorted set
     sorted_set_data = r.zrange(sorted_set_key, 0, -1, withscores=True)
-
-
     rows = []
     for item in sorted_set_data:
          # Decode byte string và phân tách person_id và content_id
@@ -48,33 +82,38 @@ async def train_implicit_model_SVDpp():
         # Thêm dòng mới vào danh sách
         rows.append((personId, contentId, float(eventStrength)))
 
-
     # Tạo DataFrame từ danh sách các dòng
     df = pd.DataFrame(rows, columns=['personId', 'contentId', 'eventStrength'])
     grouped_df = df.groupby(['personId', 'contentId']).sum().reset_index()
+    
+    final_grouped_df=grouped_df
+    #Nếu vector-score có len < 300 --> gọi thêm từ Mysql 
+    if(len(rows)<300):
+        mysql_grouped_df=await get_data_from_MySQL()
+        
+        #Gộp 2 data frame lại 
+        concate_df=pd.concat([grouped_df,mysql_grouped_df]).reset_index()
 
-    print(grouped_df.sort_values('contentId'))
-    #tạo từ điển
+        #Chuyển đổi kiểu dữ liệu về String
+        concate_df['personId']=concate_df['personId'].astype(str)
+        concate_df['contentId']=concate_df['contentId'].astype(str)
 
-    # matrix_val=grouped_df.pivot_table(index='person_id',values='eventStrength', columns='content_id')
-    # matrix=matrix_val.values
-    # u,s,vt=svd(matrix)
-    max_eventStrength=max(grouped_df['eventStrength'].values)
-    reader = Reader(rating_scale=(0, max_eventStrength))
+        # Group by [personId, contentId] --> Tính tổng điểm
+        final_grouped_df = concate_df.groupby(['personId', 'contentId'])['eventStrength'].sum().reset_index()
+
+    max_eventStrength=max(final_grouped_df['eventStrength'].values)
+    reader = Reader(rating_scale=(1, max_eventStrength))
     # data = Dataset.load_from_df(df_new[['person_id', 'content_id', 'eventStrength']], reader)
-    data = Dataset.load_from_df(grouped_df[['personId', 'contentId', 'eventStrength']], reader)
+    data = Dataset.load_from_df(final_grouped_df[['personId', 'contentId', 'eventStrength']], reader)
 
 
-    trainset, testset = train_test_split(data, test_size=0.2)  
+    trainset=data.build_full_trainset()
+
+    # Train 80% 
+    # trainset, testset = train_test_split(data, test_size=0.2)  
     algo_pp=SVDpp()
     algo_pp.fit(trainset)
-    # algo_pp_test=SVDpp()
-    # algo_pp_test.fit(trainset)
-    # predictions_pp = algo_pp.fit(trainset).test(testset)
-    # df_ = pd.DataFrame(predictions_pp, columns=['uid', 'iid', 'rui', 'est', 'details'])
-    # print(df_.loc[df_['uid']=='664efb0dc37d38effd9eb59b'])
 
-    # algo_pp.fit(trainset)
 
     # Lưu thông tin model
     model_id = f"model_{int(time.time())}"
@@ -95,7 +134,7 @@ async def train_implicit_model_SVDpp():
 
     # save model
     with open('src/models/current/behaviour-svd/grouped_df.pkl', 'wb') as f:
-        pickle.dump(grouped_df, f)
+        pickle.dump(final_grouped_df, f)
 
     with open('src/models/current/behaviour-svd/algo_pp.pkl', 'wb') as f:
         pickle.dump(algo_pp, f)
@@ -103,3 +142,4 @@ async def train_implicit_model_SVDpp():
 
     print("Implicit model trained successfully!!!")
     return str(model_id)
+

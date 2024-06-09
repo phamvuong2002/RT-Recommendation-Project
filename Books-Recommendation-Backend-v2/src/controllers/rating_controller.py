@@ -51,7 +51,7 @@ async def get_recommended_userbased(userId: str = "", quantity = 10):
     try:
         books =  rating_user(userId,quantity)
         print(books)
-        # results = await save_rec_books(books, user_id=userId, model_type="rating_user",key="book_id")
+        results = await save_rec_books(books, user_id=userId, model_type="rating_user",key="book_id")
         return SuccessResponse(metadata= {'recommendations': books})
     except Exception as e:
         raise BadRequestError(detail=str(e))
@@ -61,7 +61,7 @@ async def get_recommended_rating_svdpp(userId: str = "", quantity = 10):
     try:
         books =  rating_svdpp(userId,quantity)
         # print(books)
-        # results = await save_rec_books(books, user_id=userId,  model_type="rating_svd",key="book_id")
+        results = await save_rec_books(books, user_id=userId,  model_type="rating_svd",key="book_id")
         return SuccessResponse(metadata= {'recommendations': books})
     except Exception as e:
         raise BadRequestError(detail=str(e))

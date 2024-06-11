@@ -260,13 +260,13 @@ export const DetailCart = ({ book }) => {
                     {product?.book_detail?.book_authors_name}
                   </div>
                   {/* Rating */}
-                  <StarRating
+                  {/* <StarRating
                     averageRating={product?.book?.book_avg_rating}
                     numReviews={book?.book?.book_num_ratings}
                     className={
                       'flex flex-col px-1 xl:flex-row gap-2 text-sm text-zinc-400 font-medium'
                     }
-                  />
+                  /> */}
                 </div>
 
                 {/* Short Description */}

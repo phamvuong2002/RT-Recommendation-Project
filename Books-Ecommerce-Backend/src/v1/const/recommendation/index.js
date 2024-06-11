@@ -1,0 +1,5 @@
+const MAX_NUMBER_OF_ITEMS_CONTENT_BASED = 120;
+
+module.exports = {
+  MAX_NUMBER_OF_ITEMS_CONTENT_BASED,
+};

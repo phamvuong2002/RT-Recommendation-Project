@@ -22,7 +22,7 @@ import { useNavigate } from 'react-router-dom';
 import { CircleLoader } from '../components/loaders/CircleLoader';
 import { ShoppingCartLoader } from '../components/loaders/ShoppingCartLoader';
 import { CartLoader } from '../components/loaders/CardLoader';
-// import { SaleBanner } from '../components/banners/SaleBanner';
+import { SaleBanner } from '../components/banners/SaleBanner';
 
 const CATE_TYPE = {
   BEST_SELLER: {
@@ -61,6 +61,7 @@ export const Home = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [page, setPage] = useState(1);
   const [loadPersonalBook, setLoadPersonalBooks] = useState(false);
+  const [isLoadingCate, setIsLoadingCate] = useState(false);
 
   //set active page
   useEffect(() => {
@@ -95,14 +96,17 @@ export const Home = () => {
   useEffect(() => {
     const loadCateData = async (type) => {
       setBestSellercates([]);
+      setIsLoadingCate(true);
       const data = await fetchAPI(`../${type?.url}`, 'POST', {
         top: 5,
         userId,
       });
       if (data.status != 200) {
         setBestSellercates([]);
+        setIsLoadingCate(false);
         return;
       }
+      setIsLoadingCate(false);
       setBestSellercates(data?.metadata);
     };
     //Cate data
@@ -223,7 +227,7 @@ export const Home = () => {
                   className="flex gap-2 font-inter w-[12rem] xl:[w-8rem] items-center xl:px-4 pl-6 cursor-pointer hover:text-red-500"
                   onClick={() =>
                     navigate(
-                      `search_v2?search=&sort=create_time_desc&page=1&limit=24&search_type=${typeCate?.search}`,
+                      `search_v2?search=&sort=create_time_desc&page=1&limit=24&search_type=${CATE_TYPE.BEST_SELLER.search}`,
                     )
                   }
                 >
@@ -359,6 +363,8 @@ export const Home = () => {
             <Category
               categoryData={bestSellerCates}
               _cateType={typeCate?.search}
+              isloading={isLoadingCate}
+              setIsLoading={setIsLoadingCate}
             />
           </div>
         </div>

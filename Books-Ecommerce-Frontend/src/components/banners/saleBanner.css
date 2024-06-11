@@ -49,7 +49,7 @@
 	 align-items: center;
 	 flex-wrap: wrap;
 }
- .box {
+ .box-sale-banner {
 	 cursor: pointer;
 	 position: relative;
 	 display: inline-block;
@@ -69,11 +69,11 @@
 		 padding-bottom: 46vw;
 	}
 }
- .box:hover .box__btn {
+ .box-sale-banner:hover .box__btn {
 	 background-color: var(--color-yellow);
 	 color: var(--color-black);
 }
- .box:hover .box__background {
+ .box-sale-banner:hover .box__background {
 	 animation-play-state: paused;
 }
  .box__title {

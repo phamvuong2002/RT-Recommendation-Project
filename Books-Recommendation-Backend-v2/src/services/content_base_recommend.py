@@ -3,19 +3,29 @@ import numpy as np
 from src.helpers.load_model import load_model
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
+import faiss
 import unicodedata
 import os
 import redis
+import time
+import regex as re 
 
 def normalize_text(text):
+    # Thay thế dấu gạch ngang bằng khoảng trắng
+    text = text.replace('-', ' ')
+    # Loại bỏ các ký tự không mong muốn
+    text = re.sub(r'[^\w\s-]', '', text)
     # Loại bỏ dấu tiếng Việt và chuyển về chữ thường
     text = unicodedata.normalize('NFD', text).encode('ascii', 'ignore').decode('utf-8')
     return text.lower()
 
 def split_keywords(title):
+    title = title.replace(',', ' ')
+    title = title.replace('-', ' ')
     # Tách tiêu đề thành các từ khóa nhỏ hơn
     words = title.split()
-    normalized_words = [normalize_text(word) for word in words]
+    normalized_words = [normalize_text(word) if not word.isdigit() else r'\b' + re.escape(str(word)) + r'\b' for word in words]
+    # normalized_words = [normalize_text(word) if not word.isdigit() else str(word) for word in words]
     return normalized_words
 
 def create_redis_model():
@@ -43,14 +53,27 @@ def create_redis_model():
     track_book_user = pd.DataFrame(redis_model, columns=['userId', 'bookId'])
     return track_book_user
 
+###INIT MODEL ###
+data = load_model("current/content/books_df")
+
+tfidf = TfidfVectorizer(stop_words='english')
+tfidf_matrix = tfidf.fit_transform(data['book_title'].astype('U').values + ' ' + data['genres'].astype('U').values)
+
+tfidf_matrix_dense = tfidf_matrix.toarray().astype('float32')
+index = faiss.IndexFlatL2(tfidf_matrix_dense.shape[1])
+index.add(tfidf_matrix_dense)
+
+data['normalized_title'] = data['book_title'].apply(normalize_text)
+data['normalized_genres'] = data['genres'].apply(normalize_text)  # Thêm cột normalized_genres
+cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
+
 
 # Hàm để gợi ý sách, input là tiêu đề
 def get_content_recommendations_by_keyword(title, userId, quantity):
-    data = load_model("current/content/books_df")
-    tfidf = TfidfVectorizer(stop_words='english')
-    tfidf_matrix = tfidf.fit_transform(data['book_title'].astype('U').values + ' ' + data['genres'].astype('U').values)
-    cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
-
+    # data = load_model("current/content/books_df")
+    # tfidf = TfidfVectorizer(stop_words='english')
+    # tfidf_matrix = tfidf.fit_transform(data['book_title'].astype('U').values + ' ' + data['genres'].astype('U').values)
+    # cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
     keywords = split_keywords(title)
 
     # Chuẩn hóa tiêu đề sách trong dữ liệu
@@ -83,6 +106,64 @@ def get_content_recommendations_by_keyword(title, userId, quantity):
     selected_books = selected_books.to_dict(orient='records')
 
     return recommend_books_list, selected_books
+
+# Hàm để gợi ý sách, input là từ khoá chứa các từ nằm trong title hoặc cate
+def get_content_recommendations_by_keyword_faiss(key_words, genres, userId, quantity, page, page_size):
+    # genres = "sach-tieng-viet,manga-comic,manga,series-manga"
+    # genres = "all"
+    mask_title = pd.Series([True] * len(data))
+    mask_genres = pd.Series([True] * len(data))
+    keywords = split_keywords(key_words)
+     
+    for keyword in keywords:
+        mask_title = mask_title & data['normalized_title'].str.contains(keyword, case=False, na=False)
+        mask_genres = mask_genres & data['normalized_genres'].str.contains(keyword, case=False, na=False)
+    
+    if genres != "all":
+        genres_list = genres.split(",")
+        genre_main = genres_list[-1]
+        genre_keywords = split_keywords(genre_main)
+        mask_genres = pd.Series([True] * len(data))
+        for genre_keyword in genre_keywords:
+            mask_genres &= mask_genres & data['normalized_genres'].str.contains(genre_keyword, case=False, na=False)
+        selected_books = data[mask_genres | mask_title]
+    else:
+        selected_books = data[mask_title | mask_genres]
+
+    # if genres != "all":
+    #     genres_list = genres.split(",")
+    #     genre_main = genres_list[len(genres_list)-1]
+    #     genres = split_keywords(genre_main)
+    #     mask_genres = data['normalized_genres'].str.contains(genres, case=False, na=False)
+
+    
+    # # Lọc dữ liệu theo cả tiêu đề và thể loại
+    # if genres != "all":
+    #     selected_books = data[mask_title & mask_genres]
+    # else:
+    #     selected_books = data[mask_title | mask_genres]
+
+    if selected_books.empty:
+        return []
+
+    
+    idx = selected_books.index[0]
+    D, I = index.search(tfidf_matrix_dense[idx:idx+1], quantity)
+
+    recommend_books = data.iloc[I[0]]
+    recommend_books['score'] = D[0]
+    
+    recommend_books = recommend_books[['book_id', 'book_title', 'genres', 'score']]
+    
+    # Phân trang
+    start_idx = (page - 1) * page_size
+    end_idx = start_idx + page_size
+    recommend_books_paginated = recommend_books.iloc[start_idx:end_idx]
+    
+    recommend_books_list = recommend_books_paginated.to_dict(orient='records')
+    
+    return recommend_books_list
+
 
 def update_recommendations(cosine_sim, books_df, userId,quantity):
     track_book_user = create_redis_model()
@@ -150,12 +231,12 @@ def get_content_recommendations_by_id(book_id, quantity,data, cosine_sim):
     
     return recommend_books_list
 
+#Get recommendations by book_id
 def weighted_combination(book_id,userId,quantity,alpha=0.7):
-    data = load_model("current/content/books_df")
-    tfidf = TfidfVectorizer(stop_words='english')
-    tfidf_matrix = tfidf.fit_transform(data['book_title'].astype('U').values + ' ' + data['genres'].astype('U').values)
-    cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
-
+    # data = load_model("current/content/books_df")
+    # tfidf = TfidfVectorizer(stop_words='english')
+    # tfidf_matrix = tfidf.fit_transform(data['book_title'].astype('U').values + ' ' + data['genres'].astype('U').values)
+    # cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
     current_recommendations = get_content_recommendations_by_id(book_id,quantity,data,cosine_sim)
     history_recommendations = update_recommendations(cosine_sim,data,userId, quantity)
     current_recommendations = current_recommendations['book_id'].values.flatten()

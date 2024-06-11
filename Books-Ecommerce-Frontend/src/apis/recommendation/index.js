@@ -15,6 +15,9 @@ export const popularrating = 'api/v1/api/recommendation/rating/popular';
 export const getRecommendByContentBase =
   'api/v1/api/recommendation/related-book/related-search';
 
+export const getRecommendByContentBaseFaiss =
+  'api/v1/api/recommendation/related-book/faiss/related-search';
+
 export const getRecommendByContentBaseID =
   'api/v1/api/recommendation/related-book/related';
 

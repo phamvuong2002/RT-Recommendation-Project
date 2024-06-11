@@ -36,7 +36,6 @@ const Search = () => {
 
   useEffect(() => {
     if (input) {
-      setShowDropdown(true);
       const bookTitles = products.map((book) => ({
         book_id: book.book_id,
         book_title: book.book_title,
@@ -46,6 +45,7 @@ const Search = () => {
         item.book_title.toLowerCase().includes(input.toLowerCase()),
       );
       setSuggestions(filteredSuggestions);
+      setShowDropdown(true);
       //console.log("TỚI ĐÂY RA CHƯA", products);
     } else {
       setShowDropdown(false);
@@ -69,6 +69,7 @@ const Search = () => {
     // console.log(event.code)
     // alert(event.code)
     // alert(event.key)
+    setShowDropdown(false);
     event.preventDefault();
     let path = '';
     let page = 1;
@@ -112,7 +113,7 @@ const Search = () => {
     } else {
       setPopularSuggestions([]);
     }
-    setShowDropdown(true);
+    // setShowDropdown(true);
   };
 
   const handleLoadCollabRec = async () => {
@@ -127,7 +128,7 @@ const Search = () => {
     } else {
       setUserSuggestions([]);
     }
-    setShowDropdown(true);
+    // setShowDropdown(true);
   };
 
   useEffect(() => {
@@ -153,7 +154,7 @@ const Search = () => {
     <div id="search-bar" className="min-h-[2.5rem] sm:h-0.8 rounded-[5px] grid">
       <div
         className="relative flex items-stretch"
-        onClick={() => { handelLoadPopularRec(); handleLoadCollabRec(); }}
+        onClick={() => { setShowDropdown(true); handelLoadPopularRec(); handleLoadCollabRec(); }}
       >
         <input
           type="search"
@@ -186,7 +187,7 @@ const Search = () => {
                     suggestion.book_id,
                   )
                 }
-                className="dropdown-item p-1 hover:bg-slate-100 hover:rounded-md"
+                className="dropdown-item cursor-pointer p-1 hover:bg-slate-100 hover:rounded-md"
               >
                 <div className="relative flex items-center">
                   <img

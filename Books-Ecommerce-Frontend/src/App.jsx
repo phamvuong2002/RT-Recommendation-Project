@@ -101,7 +101,7 @@ function App() {
       } else {
         setUsername(data?.metadata?.user_data?.fullname || '');
       }
-      console.log('in call getUsername');
+      // console.log('in call getUsername');
     };
 
     getUsername();

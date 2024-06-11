@@ -99,6 +99,12 @@ router.post(
   asyncHandler(ContentBaseController.getRecommendByContentBase)
 );
 
+//ContentBase-Faiss
+router.post(
+  "/related-book/faiss/related-search",
+  asyncHandler(ContentBaseController.getRecommendByContentBaseFaiss)
+);
+
 router.post(
   "/related-book/related",
   asyncHandler(ContentBaseController.getRecommendByContentBaseID)

@@ -17,8 +17,9 @@ import { TemplateC_3 } from './category/TemplateC_3';
 import { TemplateC_2 } from './category/TemplateC_2';
 import { TemplateC_1 } from './category/TemplateC_1';
 import { CircleLoader } from './loaders/CircleLoader';
+import { ChooseCate } from './childComponents/ChooseCate';
 
-export const Category = ({ categoryData, _cateType }) => {
+export const Category = ({ categoryData, _cateType, isloading, setIsLoading}) => {
   const templates = [
     TemplateC_1,
     TemplateC_2,
@@ -41,10 +42,29 @@ export const Category = ({ categoryData, _cateType }) => {
     setCateType(_cateType);
   }, [categoryData, _cateType]);
 
-  if (category.length === 0) {
+  if (isloading) {
     return (
       <div className="flex justify-center items-center">
         <CircleLoader height={'h-20'} width={'w-20'} />
+      </div>
+    );
+  }
+
+  if (!isloading && categoryData.length === 0) {
+    return (
+      <div className="flex justify-center items-center">
+        <div className="flex flex-col gap-1 items-center justify-center xl:h-full ">
+          {/* <img src="/img/empty-box.png" /> */}
+          <ChooseCate/>
+          <div className="flex justify-center items-center text-red-600 font-popi font-medium">
+            <div>
+              Hãy Cho Chúng Tôi Biết Thêm Sở Thích Của Bạn
+            </div>
+            
+            {/* <img width="50" height="50" src="https://img.icons8.com/hands/100/choose.png" alt="choose"/> */}
+          </div>
+
+        </div>
       </div>
     );
   }

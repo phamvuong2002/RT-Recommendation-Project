@@ -65,7 +65,7 @@ index.add(tfidf_matrix_dense)
 
 data['normalized_title'] = data['book_title'].apply(normalize_text)
 data['normalized_genres'] = data['genres'].apply(normalize_text)  # Thêm cột normalized_genres
-cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
+# cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
 
 
 # Hàm để gợi ý sách, input là tiêu đề
@@ -130,19 +130,6 @@ def get_content_recommendations_by_keyword_faiss(key_words, genres, userId, quan
     else:
         selected_books = data[mask_title | mask_genres]
 
-    # if genres != "all":
-    #     genres_list = genres.split(",")
-    #     genre_main = genres_list[len(genres_list)-1]
-    #     genres = split_keywords(genre_main)
-    #     mask_genres = data['normalized_genres'].str.contains(genres, case=False, na=False)
-
-    
-    # # Lọc dữ liệu theo cả tiêu đề và thể loại
-    # if genres != "all":
-    #     selected_books = data[mask_title & mask_genres]
-    # else:
-    #     selected_books = data[mask_title | mask_genres]
-
     if selected_books.empty:
         return []
 
@@ -165,46 +152,112 @@ def get_content_recommendations_by_keyword_faiss(key_words, genres, userId, quan
     return recommend_books_list
 
 
-def update_recommendations(cosine_sim, books_df, userId,quantity):
-    track_book_user = create_redis_model()
+# def update_recommendations(cosine_sim, books_df, userId,quantity):
+#     track_book_user = create_redis_model()
 
-    if userId not in track_book_user['userId'].values:
-        print("User không tồn tại trong dataframe!")
-        return
+#     if userId not in track_book_user['userId'].values:
+#         print("User không tồn tại trong dataframe!")
+#         return
    
-    # Lấy danh sách tất cả các bookId mà user đã xem và chuyển thành mảng NumPy
-    user_books_array = track_book_user[track_book_user['userId'] == userId]['bookId'].values
+#     # Lấy danh sách tất cả các bookId mà user đã xem và chuyển thành mảng NumPy
+#     user_books_array = track_book_user[track_book_user['userId'] == userId]['bookId'].values
 
-    user_books_array = [int(book_id) for book_id in user_books_array]
+#     user_books_array = [int(book_id) for book_id in user_books_array]
     
-    # print("Book picked: ", user_books_array)
+#     # print("Book picked: ", user_books_array)
     
-    combined_sim_scores = np.zeros(cosine_sim.shape[0])
-    for book_id in user_books_array:
-        idx = books_df[books_df['book_id'] == book_id].index[0]
-        combined_sim_scores += cosine_sim[idx]
+#     combined_sim_scores = np.zeros(cosine_sim.shape[0])
+#     for book_id in user_books_array:
+#         idx = books_df[books_df['book_id'] == book_id].index[0]
+#         combined_sim_scores += cosine_sim[idx]
     
-    combined_sim_scores /= len(user_books_array)
+#     combined_sim_scores /= len(user_books_array)
     
-    sim_scores = list(enumerate(combined_sim_scores))
-    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+#     sim_scores = list(enumerate(combined_sim_scores))
+#     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
     
-    selected_indices = [books_df[books_df['book_id'] == book_id].index[0] for book_id in user_books_array]
-    sim_scores = [score for score in sim_scores if score[0] not in selected_indices]
+#     selected_indices = [books_df[books_df['book_id'] == book_id].index[0] for book_id in user_books_array]
+#     sim_scores = [score for score in sim_scores if score[0] not in selected_indices]
     
-    sim_scores = sim_scores[:quantity]
+#     sim_scores = sim_scores[:quantity]
     
-    book_indices = [i[0] for i in sim_scores]
-     # # Lấy thông tin về các cuốn sách được đề xuất
-    recommend_books = books_df.iloc[book_indices]
+#     book_indices = [i[0] for i in sim_scores]
+#      # # Lấy thông tin về các cuốn sách được đề xuất
+#     recommend_books = books_df.iloc[book_indices]
 
-    recommend_books = recommend_books[['book_id', 'book_title','genres']]
-    recommend_books_list = recommend_books
-    # .to_dict(orient='records')
+#     recommend_books = recommend_books[['book_id', 'book_title','genres']]
+#     recommend_books_list = recommend_books
+#     # .to_dict(orient='records')
     
-    return recommend_books_list
+#     return recommend_books_list
 
-def get_content_recommendations_by_id(book_id, quantity,data, cosine_sim):
+# def get_content_recommendations_by_id(book_id, quantity,data, cosine_sim):
+#     # Kiểm tra xem ID có tồn tại trong dataframe không
+#     if book_id not in data['book_id'].values:
+#         print("Sách không tồn tại trong dataframe!")
+#         return
+    
+#     # Tìm index của cuốn sách trong dataframe dựa trên ID
+#     idx = data[data['book_id'] == book_id].index[0]
+    
+#     sim_scores = list(enumerate(cosine_sim[idx]))
+
+#     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+    
+#     # # Lấy ra index của 'quantity' cuốn sách có độ tương tự cao nhất, loại bỏ chính cuốn sách đã chọn
+#     sim_scores = sim_scores[1:quantity]
+#     book_indices = [i[0] for i in sim_scores]
+
+    
+#     # # Lấy thông tin về các cuốn sách được đề xuất
+#     recommend_books = data.iloc[book_indices]
+
+#     recommend_books = recommend_books[['book_id', 'book_title','genres']]
+#     recommend_books_list = recommend_books
+#     # .to_dict(orient='records')
+    
+#     return recommend_books_list
+
+# #Get recommendations by book_id
+# def weighted_combination(book_id,userId,quantity,alpha=0.7):
+#     # data = load_model("current/content/books_df")
+#     # tfidf = TfidfVectorizer(stop_words='english')
+#     # tfidf_matrix = tfidf.fit_transform(data['book_title'].astype('U').values + ' ' + data['genres'].astype('U').values)
+#     # cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
+#     current_recommendations = get_content_recommendations_by_id(book_id,quantity,data,cosine_sim)
+#     history_recommendations = update_recommendations(cosine_sim,data,userId, quantity)
+#     current_recommendations = current_recommendations['book_id'].values.flatten()
+#     history_recommendations = history_recommendations['book_id'].values.flatten()
+    
+#     current_scores = {book_id: alpha for book_id in current_recommendations}
+#     print("FINAL: ")
+#     history_scores = {book_id: (1 - alpha) for book_id in history_recommendations}
+
+#     combined_scores = {}
+    
+#     # Cộng điểm của các đề xuất từ cả hai danh sách
+#     for book_id, score in current_scores.items():
+#         if book_id in combined_scores:
+#             combined_scores[book_id] += score
+#         else:
+#             combined_scores[book_id] = score
+
+#     for book_id, score in history_scores.items():
+#         if book_id in combined_scores:
+#             combined_scores[book_id] += score
+#         else:
+#             combined_scores[book_id] = score
+    
+#     # Sắp xếp các cuốn sách theo điểm số tổng hợp
+#     sorted_combined_scores = sorted(combined_scores.items(), key=lambda x: x[1], reverse=True)
+    
+#     # Lấy top 5 đề xuất
+#     top_book_ids = [book_id for book_id, score in sorted_combined_scores[:quantity]]
+    
+    
+#     return data[data['book_id'].isin(top_book_ids)].to_dict(orient='records')
+
+def get_content_recommendations_by_id(book_id, quantity, data, index, tfidf_matrix_dense):
     # Kiểm tra xem ID có tồn tại trong dataframe không
     if book_id not in data['book_id'].values:
         print("Sách không tồn tại trong dataframe!")
@@ -213,37 +266,93 @@ def get_content_recommendations_by_id(book_id, quantity,data, cosine_sim):
     # Tìm index của cuốn sách trong dataframe dựa trên ID
     idx = data[data['book_id'] == book_id].index[0]
     
-    sim_scores = list(enumerate(cosine_sim[idx]))
-
-    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+    _, I = index.search(tfidf_matrix_dense[idx].reshape(1, -1), quantity + 1)
+    book_indices = I[0][1:]  # Loại bỏ chính cuốn sách đã chọn
     
-    # # Lấy ra index của 'quantity' cuốn sách có độ tương tự cao nhất, loại bỏ chính cuốn sách đã chọn
-    sim_scores = sim_scores[1:quantity]
-    book_indices = [i[0] for i in sim_scores]
-
-    
-    # # Lấy thông tin về các cuốn sách được đề xuất
+    # Lấy thông tin về các cuốn sách được đề xuất
     recommend_books = data.iloc[book_indices]
 
     recommend_books = recommend_books[['book_id', 'book_title','genres']]
     recommend_books_list = recommend_books
-    # .to_dict(orient='records')
-    
     return recommend_books_list
 
-#Get recommendations by book_id
-def weighted_combination(book_id,userId,quantity,alpha=0.7):
-    # data = load_model("current/content/books_df")
-    # tfidf = TfidfVectorizer(stop_words='english')
-    # tfidf_matrix = tfidf.fit_transform(data['book_title'].astype('U').values + ' ' + data['genres'].astype('U').values)
-    # cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
-    current_recommendations = get_content_recommendations_by_id(book_id,quantity,data,cosine_sim)
-    history_recommendations = update_recommendations(cosine_sim,data,userId, quantity)
+def update_recommendations(index, data, userId, quantity, tfidf_matrix_dense):
+    track_book_user = create_redis_model()
+
+    if userId not in track_book_user['userId'].values:
+        print("User không tồn tại trong dataframe!")
+        return
+    
+    # Lấy danh sách tất cả các bookId mà user đã xem và chuyển thành mảng NumPy
+    user_books_array = track_book_user[track_book_user['userId'] == userId]['bookId'].values
+    user_books_array = [int(book_id) for book_id in user_books_array]
+    
+    combined_sim_scores = np.zeros(len(data))
+    for book_id in user_books_array:
+        idx = data[data['book_id'] == book_id].index[0]
+        D, I = index.search(tfidf_matrix_dense[idx].reshape(1, -1), len(data))
+        combined_sim_scores += D.flatten()
+    
+    combined_sim_scores /= len(user_books_array)
+    
+    sim_scores = list(enumerate(combined_sim_scores))
+    sim_scores = sorted(sim_scores, key=lambda x: x[1])
+    
+    selected_indices = [data[data['book_id'] == book_id].index[0] for book_id in user_books_array]
+    sim_scores = [score for score in sim_scores if score[0] not in selected_indices]
+    
+    sim_scores = sim_scores[:quantity]
+    
+    book_indices = [i[0] for i in sim_scores]
+    recommend_books = data.iloc[book_indices]
+
+    recommend_books = recommend_books[['book_id', 'book_title','genres']]
+    recommend_books_list = recommend_books
+    return recommend_books_list
+
+def update_recommendations(index, data, userId, quantity, tfidf_matrix_dense):
+    track_book_user = create_redis_model()
+
+    if userId not in track_book_user['userId'].values:
+        print("User không tồn tại trong dataframe!")
+        return
+    
+    # Lấy danh sách tất cả các bookId mà user đã xem và chuyển thành mảng NumPy
+    user_books_array = track_book_user[track_book_user['userId'] == userId]['bookId'].values
+    user_books_array = [int(book_id) for book_id in user_books_array]
+    
+    combined_sim_scores = np.zeros(len(data))
+    for book_id in user_books_array:
+        idx = data[data['book_id'] == book_id].index[0]
+        D, I = index.search(tfidf_matrix_dense[idx].reshape(1, -1), len(data))
+        combined_sim_scores += D.flatten()
+    
+    combined_sim_scores /= len(user_books_array)
+    
+    sim_scores = list(enumerate(combined_sim_scores))
+    sim_scores = sorted(sim_scores, key=lambda x: x[1])
+    
+    selected_indices = [data[data['book_id'] == book_id].index[0] for book_id in user_books_array]
+    sim_scores = [score for score in sim_scores if score[0] not in selected_indices]
+    
+    sim_scores = sim_scores[:quantity]
+    
+    book_indices = [i[0] for i in sim_scores]
+    recommend_books = data.iloc[book_indices]
+
+    recommend_books = recommend_books[['book_id', 'book_title','genres']]
+    recommend_books_list = recommend_books
+    return recommend_books_list
+
+
+def weighted_combination(book_id, userId, quantity, alpha=0.7):
+    current_recommendations = get_content_recommendations_by_id(book_id, quantity, data, index, tfidf_matrix_dense)
+    history_recommendations = update_recommendations(index, data, userId, quantity, tfidf_matrix_dense)
+    
     current_recommendations = current_recommendations['book_id'].values.flatten()
     history_recommendations = history_recommendations['book_id'].values.flatten()
     
     current_scores = {book_id: alpha for book_id in current_recommendations}
-    print("FINAL: ")
     history_scores = {book_id: (1 - alpha) for book_id in history_recommendations}
 
     combined_scores = {}
@@ -264,10 +373,7 @@ def weighted_combination(book_id,userId,quantity,alpha=0.7):
     # Sắp xếp các cuốn sách theo điểm số tổng hợp
     sorted_combined_scores = sorted(combined_scores.items(), key=lambda x: x[1], reverse=True)
     
-    # Lấy top 5 đề xuất
+    # Lấy top N đề xuất
     top_book_ids = [book_id for book_id, score in sorted_combined_scores[:quantity]]
     
-    
     return data[data['book_id'].isin(top_book_ids)].to_dict(orient='records')
-
-

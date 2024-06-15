@@ -41,11 +41,16 @@ def process_rating():
     min_book_ratings = 5
     min_user_ratings = 5
     # Đọc tất cả dữ liệu từ bảng user_behaviour vào DataFrame
+    # query_all_feedback = """
+    #     select  u.user_sid as `User-ID`,fb.feedback_bookid as `Book-ID`,avg(fb.feedback_rating-1) as `Book-Rating`
+    #     from books_db_v1.feedback fb join books_db_v1.user u 
+    #     on fb.feedback_userid=u.user_id
+    #     group by u.user_sid, fb.feedback_userid, fb.feedback_bookid
+    # """
     query_all_feedback = """
-        select  u.user_sid as `User-ID`,fb.feedback_bookid as `Book-ID`,avg(fb.feedback_rating-1) as `Book-Rating`
+        select  u.user_sid as `User-ID`,fb.feedback_bookid as `Book-ID`,fb.feedback_rating as `Book-Rating`
         from books_db_v1.feedback fb join books_db_v1.user u 
         on fb.feedback_userid=u.user_id
-        group by u.user_sid, fb.feedback_userid, fb.feedback_bookid
     """
 
     with db_connection.connect() as conn:
@@ -119,8 +124,8 @@ def training_model(ti):
     # print(gs.best_score['rmse'])
     # Combination of parameters that gave the best RMSE score
     # print(gs.best_params['rmse'])
-    # algo_knn = gs.best_estimator["rmse"]    
-    algo_knn = KNNBasic()  
+    algo_knn = gs.best_estimator["rmse"]    
+    # algo_knn = KNNBasic()  
     algo_knn.fit(data.build_full_trainset())
     trained_user=get_trained_user()
     # print('before')

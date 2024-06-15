@@ -7,15 +7,16 @@ from sklearn.metrics.pairwise import cosine_similarity
 from src.helpers.load_model import load_model
 from src.helpers.load_offline_model import get_latest_model_file
 
-k=2
-# Kiểm tra Trên redis có đủ dữ liệu? --> Nếu không đủ thì lấy thêm bên mysql
-
 def implicit_svdpp(user_id, n_similar):
     grouped_df=load_model("current/behaviour-svd/grouped_df")
     algo_pp=load_model("current/behaviour-svd/algo_pp")
+    min_book=5
     # data = Dataset.load_from_df(grouped_df[['personId', 'contentId', 'eventStrength']], reader)
     interacted_book = grouped_df.loc[grouped_df['personId']==user_id,'contentId'].unique()
 
+    # Nếu số lượng sách đã tương tác < min_books --> Chưa đề xuất được
+    if(len(interacted_book)<min_book):
+        return None
     list_of_unrated_book = grouped_df.loc[(grouped_df['personId']==user_id,['contentId']) and (~grouped_df['contentId'].isin(interacted_book)),'contentId']
 
     # set up user set with unrated books
@@ -51,7 +52,9 @@ def implicit_offline_svdpp(user_id, n_similar):
     # algo_pp=load_model("current/behaviour-svd/algo_pp")
     # data = Dataset.load_from_df(grouped_df[['personId', 'contentId', 'eventStrength']], reader)
     interacted_book = grouped_df.loc[grouped_df['personId']==user_id,'contentId'].unique()
-
+    min_book=5
+    if(len(interacted_book)<min_book):
+        return None
     list_of_unrated_book = grouped_df.loc[(grouped_df['personId']==user_id,['contentId']) and (~grouped_df['contentId'].isin(interacted_book)),'contentId']
 
     # set up user set with unrated books

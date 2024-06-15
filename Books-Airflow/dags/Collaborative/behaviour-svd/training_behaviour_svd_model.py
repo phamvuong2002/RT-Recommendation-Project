@@ -23,7 +23,7 @@ from airflow.providers.redis.hooks.redis import RedisHook
 import pandas as pd
 import redis
 import scipy.sparse as sparse
-
+import math
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
@@ -34,6 +34,10 @@ default_args = {
     'retries': 2,
     'retry_delay': timedelta(minutes=2)
 }
+
+
+def smooth_user_preference(x):
+    return math.log(1+x, 2)
 
 def get_trained_user():
     min_Score=10
@@ -83,20 +87,28 @@ def process_behaviors():
     }
 
     df['eventStrength'] = df['eventType'].apply(lambda x: SCORE[x])
-    grouped_df = df.groupby(['personId', 'contentId']).sum().reset_index()  
+    grouped_df = df.groupby(['personId', 'contentId'])['eventStrength'].sum().apply(smooth_user_preference).reset_index()
      
     return grouped_df
 
 def training_model(ti):
     grouped_df=ti.xcom_pull(task_ids='process_behaviors')
     print(grouped_df)
-    max_eventStrength=max(grouped_df['eventStrength'].values)
-    reader = Reader(rating_scale=(0, max_eventStrength))
-   
-    data = Dataset.load_from_df(grouped_df[['personId', 'contentId', 'eventStrength']], reader)
 
-    algo_pp=SVDpp()
-    algo_pp.fit(data.build_full_trainset())
+    min_r=grouped_df['eventStrength'].min()
+    max_r=grouped_df['eventStrength'].max()
+    # Scale điểm min_r, max_r sau khi đã biến đổi rating
+    reader=Reader(rating_scale=(min_r, max_r))
+    data_scale_max= Dataset.load_from_df(grouped_df[['personId', 'contentId', 'eventStrength']], reader)
+
+    trainset=data_scale_max.build_full_trainset()
+    
+    param_grid = {"n_epochs": [5, 10], "lr_all": [0.001, 0.008], "reg_all": [0.4, 0.6]}
+    gs = GridSearchCV(SVDpp, param_grid, measures=["rmse", "mae"], cv=3)
+    gs.fit(data_scale_max)
+    algo_pp=gs.best_estimator['rmse']
+    algo_pp.fit(trainset)
+
     n_similar=20
    
     trained_user=get_trained_user()

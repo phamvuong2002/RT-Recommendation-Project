@@ -9,9 +9,10 @@ k=2
 def rating_svdpp(user_id, n_similar): 
     grouped_df=load_model("current/rating-svd/grouped_df")
     algo_pp=load_model("current/rating-svd/algo_pp")
-
+    min_book=1
     rated_book = grouped_df.loc[grouped_df['User-ID']==user_id,'Book-ID'].unique()
-
+    if(len(rated_book)<min_book):
+        return None
     list_of_unrated_book = grouped_df.loc[(grouped_df['User-ID']==user_id,['Book-ID']) and (~grouped_df['Book-ID'].isin(rated_book)),'Book-ID']
 
     # set up user set with unrated books
@@ -44,10 +45,11 @@ def rating_offline_svdpp(user_id, n_similar):
 
     algo_pp = load_model(f"offline/rating_svd/{model_name}")
     grouped_df = load_model(f"offline/rating_svd/{grouped_df_name}")
-  
+    min_book=1
 
     rated_book = grouped_df.loc[grouped_df['User-ID']==user_id,'Book-ID'].unique()
-
+    if(len(rated_book)<min_book):
+        return None
     list_of_unrated_book = grouped_df.loc[(grouped_df['User-ID']==user_id,['Book-ID']) and (~grouped_df['Book-ID'].isin(rated_book)),'Book-ID']
 
     # set up user set with unrated books

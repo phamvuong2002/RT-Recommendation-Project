@@ -90,8 +90,16 @@ def training_model(ti):
     # Xem tính Avg của rating --> thêm cột đó vào để train
     data = Dataset.load_from_df(grouped_df[['User-ID', 'Book-ID','Book-Rating']], reader)
 
-    algo_pp=SVDpp()
-    algo_pp.fit(data.build_full_trainset())
+    trainset=data.build_full_trainset()
+    
+    param_grid = {"n_epochs": [5, 10], "lr_all": [0.001, 0.008], "reg_all": [0.4, 0.6]}
+    gs = GridSearchCV(SVDpp, param_grid, measures=["rmse", "mae"], cv=3)
+    gs.fit(data)
+    algo_pp=gs.best_estimator['rmse']
+    algo_pp.fit(trainset)
+
+    # algo_pp=SVDpp()
+    # algo_pp.fit(data.build_full_trainset())
 
     n_similar=20
    

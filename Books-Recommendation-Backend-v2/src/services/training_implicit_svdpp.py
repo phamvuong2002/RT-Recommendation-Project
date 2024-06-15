@@ -9,6 +9,11 @@ import os
 from surprise import Dataset, SVD, Reader
 from surprise import SVDpp, accuracy
 from surprise.model_selection import GridSearchCV, train_test_split
+from sklearn.preprocessing import MinMaxScaler
+import math
+
+def smooth_user_preference(x):
+    return math.log(1+x, 2)
 
 
 async def get_data_from_MySQL():
@@ -83,10 +88,11 @@ async def train_implicit_model_SVDpp():
         rows.append((personId, contentId, float(eventStrength)))
 
     # Tạo DataFrame từ danh sách các dòng
-    df = pd.DataFrame(rows, columns=['personId', 'contentId', 'eventStrength'])
-    grouped_df = df.groupby(['personId', 'contentId']).sum().reset_index()
+    grouped_df = pd.DataFrame(rows, columns=['personId', 'contentId', 'eventStrength'])
+    # grouped_df = df.groupby(['personId', 'contentId']).sum().reset_index()
     
     final_grouped_df=grouped_df
+   
     #Nếu vector-score có len < 300 --> gọi thêm từ Mysql 
     if(len(rows)<300):
         mysql_grouped_df=await get_data_from_MySQL()
@@ -99,20 +105,31 @@ async def train_implicit_model_SVDpp():
         concate_df['contentId']=concate_df['contentId'].astype(str)
 
         # Group by [personId, contentId] --> Tính tổng điểm
-        final_grouped_df = concate_df.groupby(['personId', 'contentId'])['eventStrength'].sum().reset_index()
+        # final_grouped_df = concate_df.groupby(['personId', 'contentId'])['eventStrength'].sum().reset_index()
 
-    max_eventStrength=max(final_grouped_df['eventStrength'].values)
-    reader = Reader(rating_scale=(1, max_eventStrength))
-    # data = Dataset.load_from_df(df_new[['person_id', 'content_id', 'eventStrength']], reader)
-    data = Dataset.load_from_df(final_grouped_df[['personId', 'contentId', 'eventStrength']], reader)
+        # Sum eventStrength and apply a log transformation to smooth the distribution.
+        final_grouped_df = concate_df.groupby(['personId', 'contentId'])['eventStrength'].sum().apply(smooth_user_preference).reset_index()
+    else:
+        final_grouped_df = grouped_df.groupby(['personId', 'contentId'])['eventStrength'].sum().apply(smooth_user_preference).reset_index()
 
+    min_r=final_grouped_df['eventStrength'].min()
+    max_r=final_grouped_df['eventStrength'].max()
+    # Scale điểm min_r, max_r sau khi đã biến đổi rating
+    reader=Reader(rating_scale=(min_r, max_r))
+    data_scale_max= Dataset.load_from_df(final_grouped_df[['personId', 'contentId', 'eventStrength']], reader)
 
-    trainset=data.build_full_trainset()
+    trainset=data_scale_max.build_full_trainset()
+    
+    param_grid = {"n_epochs": [5, 10], "lr_all": [0.001, 0.008], "reg_all": [0.4, 0.6]}
+    gs = GridSearchCV(SVDpp, param_grid, measures=["rmse", "mae"], cv=3)
+    gs.fit(data_scale_max)
+    algo_pp=gs.best_estimator['rmse']
+    algo_pp.fit(trainset)
 
     # Train 80% 
     # trainset, testset = train_test_split(data, test_size=0.2)  
-    algo_pp=SVDpp()
-    algo_pp.fit(trainset)
+    # algo_pp=SVDpp()
+    # algo_pp.fit(trainset)
 
 
     # Lưu thông tin model

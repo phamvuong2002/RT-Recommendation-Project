@@ -19,7 +19,7 @@ def rating_user(user_id, n_similar):
     # converted_user_id = books_df.loc[books_df['User-ID'] == user_id,["User-ID"]].drop_duplicates().values[0]
     converted_user_id = books_df.loc[books_df['User-ID'] == user_id,["User_ID"]].drop_duplicates().values[0]
 
-    print((mean_rating)) 
+    # print((mean_rating)) 
     # print(pivot_table)
     # print((type(converted_user_id)),converted_user_id[0])
     #find candidates book - get top 30
@@ -54,26 +54,25 @@ def rating_user(user_id, n_similar):
     user_mean_r=mean_rating.loc[mean_rating['User_ID']==converted_user_id[0],'Book-Rating'].values[0]
     
     min_book=5
-    rated_book = books_df.loc[(books_df['User-ID']==user_id) & (books_df['Book-Rating']>0),"Book_ID"].unique()
+    rated_book = books_df.loc[books_df['User-ID']==user_id,"Book_ID"].unique()
 
     if(len(rated_book) < min_book): 
         return None
 
-    list_of_unrated_book = books_df.loc[(books_df['User-ID']==user_id,['Book_ID']) and (~books_df['Book-ID'].isin(rated_book)),'Book_ID'].drop_duplicates()
+    list_of_unrated_book = books_df.loc[(~books_df['Book_ID'].isin(rated_book)),'Book_ID'].unique()
     
-    unrated_books=list_of_unrated_book.to_numpy()
-    # print(type(unrated_books))
-    # print((unrated_books))
-    for i in range(len(unrated_books)):
+
+    # Chưa rating 
+    for i in range(len(list_of_unrated_book)):
         item={}
-        users_rated_i=books_df.loc[(books_df['Book_ID'] == unrated_books[i]) & (books_df['Book-Rating']>0),"User_ID"].unique()
+        users_rated_i=books_df.loc[(books_df['Book_ID'] == list_of_unrated_book[i]) & (books_df['Book-Rating']>0),"User_ID"].unique()
         if(users_rated_i is None or len(users_rated_i)==0): 
             continue
         else:
-            rating = predict(users_rated_i,pivot_table,similarity_scores,converted_user_id[0], unrated_books[i],k_neighbors)
+            rating = predict(users_rated_i,pivot_table,similarity_scores,converted_user_id[0], list_of_unrated_book[i],k_neighbors)
             final_r=rating+user_mean_r
             if final_r > 3:  
-                raw_id=books_df.loc[books_df['Book_ID']==unrated_books[i],'Book-ID'].iloc[0]
+                raw_id=books_df.loc[books_df['Book_ID']==list_of_unrated_book[i],'Book-ID'].iloc[0]
                 item['book_id']=str(raw_id)
                 item['score']=final_r
                 recommended_items.append(item)
@@ -113,12 +112,12 @@ def rating_offline_user(user_id, n_similar):
     # # Sorting the predicted ratings in descending order
     # recommendations.sort(key = lambda x: x[1], reverse = True)
     min_book=5
-    rated_book = grouped_df.loc[(grouped_df['User-ID']==user_id) & (grouped_df['Book-Rating']>0),"Book_ID"].unique()
+    rated_book = grouped_df.loc[(grouped_df['User-ID']==user_id) ,"Book-ID"].unique()
 
     if(len(rated_book) < min_book): 
         return None
 
-    list_of_unrated_book = grouped_df.loc[(grouped_df['User-ID']==user_id,['Book-ID']) and (~grouped_df['Book-ID'].isin(rated_book)),'Book-ID']
+    list_of_unrated_book = grouped_df.loc[(~grouped_df['Book-ID'].isin(rated_book)),'Book-ID'].unique()
 
 
     # set up user set with unrated books

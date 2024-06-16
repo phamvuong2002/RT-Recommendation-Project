@@ -92,7 +92,6 @@ async def train_implicit_model_SVDpp():
     # grouped_df = df.groupby(['personId', 'contentId']).sum().reset_index()
     
     final_grouped_df=grouped_df
-   
     #Nếu vector-score có len < 300 --> gọi thêm từ Mysql 
     if(len(rows)<300):
         mysql_grouped_df=await get_data_from_MySQL()
@@ -110,6 +109,8 @@ async def train_implicit_model_SVDpp():
         # Sum eventStrength and apply a log transformation to smooth the distribution.
         final_grouped_df = concate_df.groupby(['personId', 'contentId'])['eventStrength'].sum().apply(smooth_user_preference).reset_index()
     else:
+        final_grouped_df['personId']=final_grouped_df['personId'].astype(str)
+        final_grouped_df['contentId']=final_grouped_df['contentId'].astype(str)
         final_grouped_df = grouped_df.groupby(['personId', 'contentId'])['eventStrength'].sum().apply(smooth_user_preference).reset_index()
 
     min_r=final_grouped_df['eventStrength'].min()

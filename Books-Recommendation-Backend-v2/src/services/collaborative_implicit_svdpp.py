@@ -17,7 +17,8 @@ def implicit_svdpp(user_id, n_similar):
     # Nếu số lượng sách đã tương tác < min_books --> Chưa đề xuất được
     if(len(interacted_book)<min_book):
         return None
-    list_of_unrated_book = grouped_df.loc[(grouped_df['personId']==user_id,['contentId']) and (~grouped_df['contentId'].isin(interacted_book)),'contentId']
+    # list_of_unrated_book = grouped_df.loc[(grouped_df['personId']==user_id,['contentId']) and (~grouped_df['contentId'].isin(interacted_book)),'contentId']
+    list_of_unrated_book = grouped_df.loc[(~grouped_df['contentId'].isin(interacted_book)),'contentId'].unique()
 
     # set up user set with unrated books
     # print('unrated ',list_of_unrated_book)
@@ -55,10 +56,10 @@ def implicit_offline_svdpp(user_id, n_similar):
     min_book=5
     if(len(interacted_book)<min_book):
         return None
-    list_of_unrated_book = grouped_df.loc[(grouped_df['personId']==user_id,['contentId']) and (~grouped_df['contentId'].isin(interacted_book)),'contentId']
+    # list_of_unrated_book = grouped_df.loc[(grouped_df['personId']==user_id,['contentId']) and (~grouped_df['contentId'].isin(interacted_book)),'contentId']
+    list_of_unrated_book = grouped_df.loc[(~grouped_df['contentId'].isin(interacted_book)),'contentId'].unique()
 
     # set up user set with unrated books
-    print('unrated ',list_of_unrated_book)
     user_set = [[user_id, item_id, 0] for item_id in list_of_unrated_book]
 
 

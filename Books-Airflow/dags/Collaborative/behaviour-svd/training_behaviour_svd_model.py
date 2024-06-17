@@ -109,7 +109,7 @@ def training_model(ti):
     algo_pp=gs.best_estimator['rmse']
     algo_pp.fit(trainset)
 
-    n_similar=20
+    n_similar=24
    
     trained_user=get_trained_user()
     # print('trained ',trained_user)
@@ -121,7 +121,7 @@ def training_model(ti):
         interacted_book = grouped_df.loc[grouped_df['personId']==user,'contentId'].unique()
         # print('INTERACTED BOOK', grouped_df.loc[grouped_df['personId']==user,'contentId'].unique())
         
-        list_of_unrated_book = grouped_df.loc[(grouped_df['personId']==user,['contentId']) and (~grouped_df['contentId'].isin(interacted_book)),'contentId']
+        list_of_unrated_book = grouped_df.loc[(~grouped_df['contentId'].isin(interacted_book)),'contentId'].unique()
        
         # set up user set with unrated books
         # print('unrated ',list_of_unrated_book)

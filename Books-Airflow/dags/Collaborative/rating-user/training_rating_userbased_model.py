@@ -38,8 +38,8 @@ def process_rating():
     db_connection_str = 'mysql+pymysql://bookada:bookada2002@bookada-database-v1.crq4aco4chyf.ap-southeast-1.rds.amazonaws.com/books_db_v1'
     db_connection = create_engine(db_connection_str)
     
-    min_book_ratings = 5
-    min_user_ratings = 5
+    min_book_ratings = 1    
+    min_user_ratings = 1
     # Đọc tất cả dữ liệu từ bảng user_behaviour vào DataFrame
     # query_all_feedback = """
     #     select  u.user_sid as `User-ID`,fb.feedback_bookid as `Book-ID`,avg(fb.feedback_rating-1) as `Book-Rating`
@@ -68,23 +68,24 @@ def process_rating():
     filter_users = df['User-ID'].value_counts() > min_user_ratings
     filter_users = filter_users[filter_users].index.tolist()
 
-    df_new = df[(df['Book-ID'].isin(filter_books)) & (df['User-ID'].isin(filter_users)) & (df['Book-Rating']>0)]
+    df_new = df[(df['Book-ID'].isin(filter_books)) & (df['User-ID'].isin(filter_users))]
     return df_new   
 
 
 
 def get_trained_user():
-    #Lấy các user: có mua hàng trong 1 tháng gần nhất + Có đánh giá trên 5 sản phẩm trong 1 tháng gần nhất
+    
     db_connection_str = 'mysql+pymysql://bookada:bookada2002@bookada-database-v1.crq4aco4chyf.ap-southeast-1.rds.amazonaws.com/books_db_v1'
     db_connection = create_engine(db_connection_str)
     
     # Đọc tất cả dữ liệu từ bảng user_behaviour vào DataFrame
+    # Lấy các user: có mua hàng trong 1 tháng gần nhất + Có đánh giá trên 5 sản phẩm trong 1 tháng gần nhất
     query_all_feedback = """
        select user_sid as `user_id` from books_db_v1.user where 
         user_id in(
         select distinct(feedback_userid) 
         from books_db_v1.feedback
-        where feedback_rating>1 and (datediff(curtime(), create_time) <30 or datediff(curtime(), update_time) <30)
+        where feedback_rating>1 and (datediff(curtime(), create_time) <30 or datediff(curtime(), update_time)<30)
         group by feedback_userid
         having  count(*)>5 
         UNION
@@ -106,8 +107,9 @@ def get_trained_user():
 def training_model(ti):
     grouped_df=ti.xcom_pull(task_ids='process_rating')
     # print(grouped_df)
-    reader = Reader(rating_scale=(0, 5))
-    data = Dataset.load_from_df(grouped_df[['User-ID','Book-ID', 'Book-Rating']], reader)
+    reader = Reader(rating_scale=(1, 5))
+    final_grouped=grouped_df.loc[grouped_df['Book-Rating']>0]
+    data = Dataset.load_from_df(final_grouped[['User-ID','Book-ID', 'Book-Rating']], reader)
     param_grid = {'k': [10, 20, 30], 'min_k': [3, 6, 9],
               'sim_options': {'name': ['msd', 'cosine','pearson','pearson_baseline'],
                               'user_based': [True], 'min_support':[2,4]}
@@ -116,7 +118,7 @@ def training_model(ti):
     # Performing 3-fold cross validation to tune the hyperparameters
     gs = GridSearchCV(KNNBasic, param_grid, measures=['rmse'], cv=3, n_jobs=-1)
     
-    n_similar=20
+    n_similar=24
     # Fitting the data
     gs.fit(data)
 
@@ -125,17 +127,18 @@ def training_model(ti):
     # Combination of parameters that gave the best RMSE score
     # print(gs.best_params['rmse'])
     algo_knn = gs.best_estimator["rmse"]    
-    # algo_knn = KNNBasic()  
-    algo_knn.fit(data.build_full_trainset())
+    trainset=data.build_full_trainset()
+    algo_knn.fit(trainset)
     trained_user=get_trained_user()
-    # print('before')
-    
+
+    # Lấy ra globalmean
+    global_mean=trainset.global_mean
     recommendation_lists=[]
     for i in range(len(trained_user)):
         user=trained_user[i]
         rated_book = grouped_df.loc[grouped_df['User-ID']==user,'Book-ID'].unique()
 
-        list_of_unrated_book = grouped_df.loc[(grouped_df['User-ID']==user,['Book-ID']) and (~grouped_df['Book-ID'].isin(rated_book)),'Book-ID']
+        list_of_unrated_book = grouped_df.loc[(~grouped_df['Book-ID'].isin(rated_book)),'Book-ID'].unique()
        
         # set up user set with unrated books
         # print('unrated ',list_of_unrated_book) 
@@ -143,14 +146,19 @@ def training_model(ti):
         # print('userset',user_set,0)
         # generate predictions based on user set
         predictions_pp= algo_knn.test(user_set)
-        
         df = pd.DataFrame(predictions_pp, columns=['uid', 'iid', 'rui', 'est', 'details'])
-        
-        df=df.rename(columns={'uid':'user_id','iid': 'book_id', 'est': 'score'})
-        top_n_recommendations = df[['user_id','book_id','score']].sort_values('score',ascending=False).drop_duplicates('book_id')[:n_similar]
        
-    
-        recommendation_lists.append(top_n_recommendations)
+        df=df.rename(columns={'uid':'user_id','iid': 'book_id', 'est': 'score'})
+        # Chỉ lấy những Score != global_mean (do khi kết quả dự đoán = global_mean --> Kết quả được cho là Impossible)
+        final_df_result=df.loc[df['score']!=global_mean]
+        top_n_recommendations = final_df_result[['user_id','book_id','score']].sort_values('score',ascending=False).drop_duplicates('book_id')[:n_similar]
+
+        print('Top n recommendation', len(top_n_recommendations),top_n_recommendations)
+
+        # Chỉ lưu kết quả gợi ý khi có ít nhất 5 gợi ý
+        if(len(top_n_recommendations)>5):
+            recommendation_lists.append(top_n_recommendations)
+        
 
     # Chuyển đổi mô hình thành pickle
     rating_user_model_pickle = pickle.dumps(algo_knn)
@@ -346,7 +354,6 @@ with DAG(
         python_callable=save_user_recommendations_to_mysql
     )
 
-  
     task_saving_model = PythonOperator(
         task_id='saving_model',
         python_callable=save_model
@@ -356,5 +363,7 @@ with DAG(
         task_id='send_message',
         python_callable=send_message
     )
+  
 
-    task_process_rating >> task_training_model >> task_saving_model >> task_save_recommendation_mysql >> task_send_message
+    task_process_rating >> task_training_model >>task_saving_model>> task_save_recommendation_mysql >>task_send_message
+   

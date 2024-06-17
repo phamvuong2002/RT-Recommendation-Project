@@ -101,7 +101,7 @@ def training_model(ti):
     # algo_pp=SVDpp()
     # algo_pp.fit(data.build_full_trainset())
 
-    n_similar=20
+    n_similar=24
    
     trained_user=get_trained_user()
     print('trained ',trained_user)
@@ -113,7 +113,7 @@ def training_model(ti):
         user=trained_user[i]
         rated_book = grouped_df.loc[grouped_df['User-ID']==user,'Book-ID'].unique()
 
-        list_of_unrated_book = grouped_df.loc[(grouped_df['User-ID']==user,['Book-ID']) and (~grouped_df['Book-ID'].isin(rated_book)),'Book-ID']
+        list_of_unrated_book = grouped_df.loc[(~grouped_df['Book-ID'].isin(rated_book)),'Book-ID'].unique()
 
         # set up user set with unrated books
         # print('unrated ',list_of_unrated_book) 

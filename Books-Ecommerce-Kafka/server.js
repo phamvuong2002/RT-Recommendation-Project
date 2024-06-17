@@ -62,7 +62,7 @@ async function handleMessage({ topic, partition, message }) {
       dataCollect.productId,
       SCORE[topic]
     );
-    if (result_vector?.message === "retrain") {
+    if (result_vector?.message === "retrain-behaviour") {
       ws.send(JSON.stringify(result_vector));
     }
 

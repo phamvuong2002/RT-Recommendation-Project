@@ -9,7 +9,7 @@ const redisClient = redis.createClient({
   },
   legacyMode: true,
 });
-const REQUEST_REC_SCORE = 50;
+const REQUEST_REC_SCORE = 20;
 
 const { promisify } = require("util");
 
@@ -68,7 +68,7 @@ const collectVector = async (userId, productId, score = 1) => {
   //Schedule
   //Gọi retrain khi user đủ kiền kiện
   if (newScore >= REQUEST_REC_SCORE) {
-    return { message: "retrain", userId: userId };
+    return { message: "retrain-behaviour", userId: userId, score: newScore };
   }
   // await pexpire(redis_key, expireTime);
 };

@@ -104,7 +104,7 @@ export const AccountPage = () => {
   return (
     <div className="mb-4 ">
       <NavigationPath components={paths} />
-      <div className="grid grid-cols-1 sm:flex sm:align-top h-lvh w-full justify-around overflow-hidden py-4">
+      <div className="xl:flex align-top xl:h-lvh w-full justify-around overflow-hidden py-4">
         <SideBarNav
           setSelectedPage={setSelectedPage}
           setSelectedPageId={setSelectedPageId}

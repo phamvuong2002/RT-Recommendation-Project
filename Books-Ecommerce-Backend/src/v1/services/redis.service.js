@@ -28,6 +28,7 @@ const redisVectorUserScore = redis.createClient({
 const { promisify } = require("util");
 const db = require("../models/sequelize/models");
 const { BadRequestError, NotFoundError } = require("../core/error.response");
+const KeyTokenService = require("./keyToken.service");
 
 //lock for purchase
 const acquireLock = async (productId, quantity) => {
@@ -88,7 +89,7 @@ const releaselock = async (keylock) => {
 };
 
 //Lock for online training
-const acquireLockOnlineReTrain = async (model = "behavior") => {
+const acquireLockOnlineReTrain = async (model = "behavior", min_score = 50) => {
   //1.Tạo và kiểm tra khoá trong cache ecommerce
   if (!redisClient.isReady) {
     await redisClient.connect();
@@ -106,7 +107,7 @@ const acquireLockOnlineReTrain = async (model = "behavior") => {
   if (result === 1) {
     //Nếu tạo khoá thành công thì tìm tất cả user hợp lệ
     const key_user_vector = "user-score";
-    const min_score = 50;
+    // const min_score = 50;
     //check user score
     //connect to redis vector
     if (!redisVectorUserScore.isReady) {
@@ -116,17 +117,29 @@ const acquireLockOnlineReTrain = async (model = "behavior") => {
     const zrangebyscoreAsync = promisify(
       redisVectorUserScore.zRangeByScore
     ).bind(redisVectorUserScore);
+    console.log("min score accquire lock:::", min_score);
     const listUsers = await zrangebyscoreAsync(
       key_user_vector,
       min_score,
       "+inf"
     );
-
     if (listUsers.length === 0) {
       //Nếu không có user nào hợp lệ thì trả về null
       return null;
     } else {
       // Nếu user đủ điều kiện tất cả user hợp lệ
+      //lọc những user hợp lệ đã đăng nhập
+      if (min_score < 50) {
+        const verifyUsers = [];
+
+        for (const user in listUsers) {
+          const userKey = await KeyTokenService.findByUserId(listUsers[user]);
+          if (userKey) {
+            verifyUsers.push(listUsers[user]);
+          }
+        }
+        return { listUsers: verifyUsers, key };
+      }
       return { listUsers, key };
     }
   } else {

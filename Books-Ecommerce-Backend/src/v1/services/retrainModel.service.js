@@ -73,11 +73,11 @@ class RetrainModelService {
   }
 
   //retrain implicit models
-  static async callBehaviourRecommend() {
+  static async callBehaviourRecommend(min_score) {
     const MIN_REQUIRED_USER = 0;
     const QUANTITY = 12;
 
-    const resultSVD = await acquireLockOnlineReTrain("svd");
+    const resultSVD = await acquireLockOnlineReTrain("svd", min_score);
     if (!resultSVD) return null;
 
     const { listUsers, key } = resultSVD;

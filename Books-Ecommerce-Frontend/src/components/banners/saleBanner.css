@@ -64,7 +64,7 @@
 	 overflow: hidden;
 }
  @media (max-width: 768px) {
-	 .box {
+	 .box-sale-banner {
 		 width: 46vw;
 		 padding-bottom: 46vw;
 	}

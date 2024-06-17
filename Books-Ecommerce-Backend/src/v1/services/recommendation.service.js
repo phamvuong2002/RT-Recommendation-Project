@@ -170,11 +170,13 @@ class RecommendationService {
 
     // Tìm tổng số sách phù hợp
     const totalBooks = await db.rec_book.count({
+      // distinct: true,
       where: searchConditions,
     });
 
     // Tìm sách theo điều kiện và phân trang
     const books = await db.rec_book.findAll({
+      // distinct: true,
       where: searchConditions,
       offset: (page - 1) * limit,
       limit: limit,

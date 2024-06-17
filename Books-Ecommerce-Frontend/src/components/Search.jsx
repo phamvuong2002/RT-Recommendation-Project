@@ -95,6 +95,7 @@ const Search = () => {
   };
 
   const handleSuggestionClick = (suggestion, e, id) => {
+    console.log("handleSuggestionClick:::", id)
 
     setInput(suggestion);
     setShowDropdown(false);
@@ -137,24 +138,45 @@ const Search = () => {
     }
   }, [location]);
 
+  // const handleClickOutside = (event) => {
+  //   if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+  //     setShowDropdown(false);
+  //   }
+  // };
   const handleClickOutside = (event) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      setShowDropdown(false);
-    }
-  };
+  if (
+    dropdownRef.current &&
+    !dropdownRef.current.contains(event.target) &&
+    !event.target.closest('.dropdown-item')
+  ) {
+    setShowDropdown(false);
+  }
+};
 
+  // useEffect(() => {
+  //   document.addEventListener('mousedown', handleClickOutside);
+  //   return () => {
+  //     document.removeEventListener('mousedown', handleClickOutside);
+  //   };
+  // }, []);
   useEffect(() => {
+  if (showDropdown) {
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+  } else {
+    document.removeEventListener('mousedown', handleClickOutside);
+  }
+
+  return () => {
+    document.removeEventListener('mousedown', handleClickOutside);
+  };
+}, [showDropdown]);
+
 
   return (
     <div id="search-bar" className="min-h-[2.5rem] sm:h-0.8 rounded-[5px] grid">
       <div
         className="relative flex items-stretch"
-        onClick={() => { setShowDropdown(true); handelLoadPopularRec(); handleLoadCollabRec(); }}
+        onClick={() => { handelLoadPopularRec(); handleLoadCollabRec();}}
       >
         <input
           type="search"
@@ -162,6 +184,7 @@ const Search = () => {
                         focus:outline-none search-cancel:w-4 search-cancel:h-4  search-cancel:grayscale `}
           placeholder="Tìm kiếm"
           value={input}
+          onClick={() => setShowDropdown(true)}
           onChange={(e) => handleChange(e.target.value)}
           onKeyDown={(e) => ((e.code == 'Enter') || (e.key == 'Enter') ? searchFunction(e, input) : '')}
 
@@ -169,7 +192,7 @@ const Search = () => {
         <button
           className="flex absolute right-0 h-full px-3 input-group-text items-center white space-nowrap rounded-r-md text-center text-sm lg:text-base font-normal text-white z-10 bg-red-500"
           id="basic-addon2"
-          onClick={(e) => searchFunction(e, input)}
+          onClick={(e) => {searchFunction(e, input)}}
         >
           <FaSearch className=" w-4 h-4 block cursor-pointer text-white" />
         </button>
@@ -221,7 +244,7 @@ const Search = () => {
                       suggestion.book.book_id,
                     )
                   }
-                  className="dropdown-item p-2 hover:bg-slate-100 hover:rounded-md text-center"
+                  className="dropdown-item p-2 cursor-pointer hover:bg-slate-100 hover:rounded-md text-center"
                 >
                   <div className="flex flex-col items-center">
                     <img
@@ -250,13 +273,14 @@ const Search = () => {
                 <div
                   key={suggestion.book.book_id}
                   onClick={(e) =>
+                    // navigate('/')
                     handleSuggestionClick(
                       suggestion.book.book_title,
                       e,
                       suggestion.book.book_id,
                     )
                   }
-                  className="dropdown-item p-2 hover:bg-slate-100 hover:rounded-md text-center"
+                  className="dropdown-item p-2 cursor-pointer hover:bg-slate-100 hover:rounded-md text-center"
                 >
                   <div className="flex flex-col items-center">
                     <img
@@ -272,15 +296,6 @@ const Search = () => {
               ))}
             </div>
           </div>
-
-          {/* <div className="">
-            <AllProducts
-              isShowHeader={false}
-              numOfProductsInRow={2}
-              // _limit={isMobileDevice() ? 2 : 10}
-              _limit={4}
-              _choose={'all'}></AllProducts>
-          </div> */}
         </div>
       )}
     </div>

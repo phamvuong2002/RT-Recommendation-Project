@@ -48,6 +48,7 @@ export const Home = () => {
     numCart,
     setNumCart,
     token,
+    activePage,
     setIsLoading,
     setActivePage,
     setIsShowFooter,
@@ -62,6 +63,7 @@ export const Home = () => {
   const [page, setPage] = useState(1);
   const [loadPersonalBook, setLoadPersonalBooks] = useState(false);
   const [isLoadingCate, setIsLoadingCate] = useState(false);
+
 
   //set active page
   useEffect(() => {

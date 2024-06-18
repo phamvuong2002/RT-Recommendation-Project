@@ -1,10 +1,63 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { formatNumberToText } from '../utils/formatNumberToText';
 import { formatDate } from '../utils/formatDate';
 import { Link } from 'react-router-dom';
 import { SingleOrder } from './SingleOrder';
+import { AppContext } from '../contexts/main';
+import { updateorderstatus } from '../apis/checkout';
+import { fetchAPI } from '../helpers/fetch';
+import { collectBehaviour } from '../apis/collectBehaviour';
 
-export const DetailOrder = ({ dataOrder, dataDetail, status }) => {
+export const DetailOrder = ({ dataOrder, dataDetail, status, setReload}) => {
+  const {
+    userId,
+    token,
+    setIsLoading
+  } = useContext(AppContext);
+
+  const collectBehaviourFunction = async () => {
+    // Collect behavior cancel-order
+    if (dataDetail.length > 0 && userId) {
+      dataDetail.map(async(order) => {
+        const dataCollect = {
+          topic: 'cancel-order',
+          message: {
+            userId,
+            behaviour: 'cancel-order',
+            productId: order?.bookId
+          },
+        }
+        await fetchAPI(`../${collectBehaviour}`, 'POST', dataCollect);
+      })
+    }
+  };
+
+  //update order status
+  const updateOrderStatus = async (status) => {
+    if (!dataOrder?.order_id || !userId || !token) {
+      return;
+    }
+    setIsLoading(true);
+    const result = await fetchAPI(`../${updateorderstatus}`, 'POST', {
+      orderId: parseInt(dataOrder?.order_id),
+      status,
+    });
+    if (result.status !== 200) {
+      // navigate('/notfound');
+      // console.log('ERROR UPDATE ORDER :::::', result);
+      setIsLoading(false);
+      setReload(false);
+
+    } else {
+      setIsLoading(false);
+      setReload(true);
+      //collect behavior
+      await collectBehaviourFunction()
+      return;
+    }
+  };
+
+
   return (
     <div className="bg-white border border-red-100 font-inter">
       <section className="py-16 relative">
@@ -28,7 +81,7 @@ export const DetailOrder = ({ dataOrder, dataDetail, status }) => {
               </div>
               <h2 className="font-manrope font-bold text-4xl leading-10 text-red-500 text-center">
                 {status === 'success' || status === 'pending'
-                  ? 'Đã Thanh toán Thành Công'
+                  ? `Đã ${dataOrder?.order_payment === 'cod'? 'Đặt hàng' : 'Thanh toán'} Thành Công`
                   : 'Thanh toán Thất bại. Vui lòng thử lại!'}
               </h2>
               <p className="mt-4 font-normal text-lg leading-8 text-gray-500 mb-11 text-center">
@@ -90,8 +143,8 @@ export const DetailOrder = ({ dataOrder, dataDetail, status }) => {
             </div>
 
             <div className="w-full border-t border-red-100 px-6 flex flex-col lg:flex-row items-center justify-between ">
-              <div className="flex flex-col sm:flex-row items-center max-lg:border-b border-red-100">
-                <button className="flex outline-0 py-6 sm:pr-6  sm:border-r border-red-100 whitespace-nowrap gap-2 items-center justify-center font-semibold group text-lg text-red-200 bg-white transition-all duration-500 hover:text-red-500">
+              <div className={`flex flex-col sm:flex-row items-center max-lg:border-b border-red-100`}>
+                <button onClick={() => updateOrderStatus('Cancelled')} className={`flex outline-0 py-6 sm:pr-6  sm:border-r border-red-100 whitespace-nowrap gap-2 items-center justify-center font-semibold group text-lg text-red-200 bg-white transition-all duration-500 hover:text-red-500 ${dataOrder?.order_status === 'Cancelled'? 'hidden': ''}`}>
                   <svg
                     className="stroke-red-200 transition-all duration-500 group-hover:stroke-red-500 hidden xl:block"
                     xmlns="http://www.w3.org/2000/svg"

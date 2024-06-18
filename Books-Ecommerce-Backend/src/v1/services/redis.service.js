@@ -160,9 +160,46 @@ const resetUserScore = async (userId, key_user_vector = "user-score") => {
   const result = await zAddAsync(key_user_vector, resetScore, userId);
 };
 
+//Lock for rating retraining
+const acquireLockOnlineReTrainRating = async () => {
+  //1.Tạo và kiểm tra khoá trong cache ecommerce
+  if (!redisClient.isReady) {
+    await redisClient.connect();
+  }
+  const pexpire = promisify(redisClient.pExpire).bind(redisClient);
+  const setnxAsync = promisify(redisClient.setNX).bind(redisClient);
+
+  const key = `lock_v2024_online_retrain_rating_svd`;
+  const expireTime = 1000 * 60;
+  //kiểm tra khoá đã có hay chưa nếu có rồi thì trả về 0 chưa thì tạo và trả về 1
+  const result = await setnxAsync(key, expireTime);
+  if (result === 1) {
+    await pexpire(key, expireTime); //Hết hạn sau 1 phút
+    return key;
+  } else {
+    return null;
+  }
+};
+
+const resetRatingVectors = async () => {
+  if (!redisVectorUserScore.isReady) {
+    await redisVectorUserScore.connect();
+  }
+  const key_rating_vector = "rating-score";
+  const zremrangebyrankAsync = promisify(
+    redisVectorUserScore.zRemRangeByRank
+  ).bind(redisVectorUserScore);
+
+  // Xóa tất cả các thành viên trong sorted set
+  const result = await zremrangebyrankAsync(key_rating_vector, 0, -1);
+  return result;
+};
+
 module.exports = {
   acquireLock,
   releaselock,
   acquireLockOnlineReTrain,
   resetUserScore,
+  acquireLockOnlineReTrainRating,
+  resetRatingVectors,
 };

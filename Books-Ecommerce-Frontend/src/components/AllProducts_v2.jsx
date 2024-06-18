@@ -25,18 +25,8 @@ export const AllProducts = ({
     if (isShowHeader) {
       return (
         <div className="flex items-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            className="text-[#ffbe98] w-[5%] md:w-[2%]"
-          >
-            <path
-              fillRule="evenodd"
-              d="M4.5 7.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9Z"
-              clipRule="evenodd"
-            />
-          </svg>
+          <img src="/img/best_seller.png" alt="best_seller" className="w-[3rem]"/>
+
           <div className="text-[90%] md:text-[150%] font-semibold font-['Inter'] tracking-wider">
             Sản phẩm bán chạy
           </div>

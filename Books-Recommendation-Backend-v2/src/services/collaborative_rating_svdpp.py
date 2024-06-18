@@ -16,7 +16,6 @@ def rating_svdpp(user_id, n_similar):
     # list_of_unrated_book = grouped_df.loc[(grouped_df['User-ID']==user_id,['Book-ID']) and (~grouped_df['Book-ID'].isin(rated_book)),'Book-ID']
     list_of_unrated_book = grouped_df.loc[(~grouped_df['Book-ID'].isin(rated_book)),'Book-ID'].unique()
     # set up user set with unrated books
-    print('unrated ',list_of_unrated_book) 
     user_set = [[user_id, item_id, 0] for item_id in list_of_unrated_book]
 
 

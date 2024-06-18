@@ -12,6 +12,9 @@ export const categorypersonalrec =
 
 export const popularrating = 'api/v1/api/recommendation/rating/popular';
 
+export const usersvdrating = 'api/v1/api/recommendation/rating/svd/user';
+
+
 export const getRecommendByContentBase =
   'api/v1/api/recommendation/related-book/related-search';
 

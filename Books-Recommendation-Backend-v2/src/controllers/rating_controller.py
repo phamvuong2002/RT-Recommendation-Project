@@ -64,8 +64,8 @@ async def get_recommended_rating_svdpp(userId: str = "", quantity = 10):
     try:
         books =  rating_svdpp(userId,quantity)
         # print(books)
-        if(books is not None):
-            results = await save_rec_books(books, user_id=userId,  model_type="rating_svd",key="book_id")
+        # if(books is not None):
+        #     results = await save_rec_books(books, user_id=userId,  model_type="rating_svd",key="book_id")
             # print(result)
         
         return SuccessResponse(metadata= {'recommendations': books})

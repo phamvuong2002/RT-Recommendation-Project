@@ -71,8 +71,11 @@ async def train_rating_item_model():
     # lưu thông tin vào db
     insert_query = f"INSERT INTO rec_model (rec_model_id, rec_model_type, create_time) VALUES ('{model_id}', '{model_type}', CURRENT_TIMESTAMP)"
     connection = db_connection.connect()  # Tạo đối tượng Connection từ Engine
-    result = connection.execute(text(insert_query))  # Thực hiện truy vấn
-    connection.commit()
+    with connection.begin() as transaction:
+        connection.execute(text(insert_query))
+        transaction.commit()
+    # result = connection.execute(text(insert_query))  # Thực hiện truy vấn
+    # connection.commit()
     connection.close()
 
 

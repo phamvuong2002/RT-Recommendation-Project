@@ -34,15 +34,15 @@ export const OrderDetailPage = () => {
     setRequestAuth,
     setIsLoading,
     setNumCart,
+    setIsProgressLoading
   } = useContext(AppContext);
   const { order } = useParams();
   const dataOrder = extractQueryString(order);
   const orderId = Object.keys(dataOrder)[0];
-  const [orderId_, setOrderId_] = useState(orderId);
   const [paymentStatus, setPaymentStatus] = useState('');
   const [paymentData, setPaymentData] = useState('');
-  const [products, setProducts] = useState([]);
   const [oneOrder, setOneOrder] = useState('');
+  const [reloadOrder, setReloadOrder] = useState(false);
 
   const [collabProducts, setCollabProducts] = useState([]);
   const [bestSellerData, setBestSellerData] = useState([]);
@@ -135,6 +135,7 @@ export const OrderDetailPage = () => {
     //cod
     else if (dataOrder.paymentType === 'cod') {
       setPaymentStatus('success');
+      setReloadOrder(true);
       const dataTran = {
         userId,
         sId: dataOrder.tranId,
@@ -161,6 +162,7 @@ export const OrderDetailPage = () => {
       if (!paymentData || paymentData.userId === '') {
         return;
       }
+      setIsProgressLoading(true);
       const result = await fetchAPI(
         `../${createtransaction}`,
         'POST',
@@ -168,8 +170,10 @@ export const OrderDetailPage = () => {
       );
       if (result.status !== 200) {
         setPaymentStatus('');
+        setIsProgressLoading(false);
         // console.log('ERROR:::::', result);
       } else {
+        setIsProgressLoading(false);
         return;
       }
     };
@@ -212,6 +216,7 @@ export const OrderDetailPage = () => {
       if (!orderId || !userId) {
         return;
       }
+      setIsLoading(true);
       const result = await fetchAPI(`../${updateorderstatus}`, 'POST', {
         orderId: parseInt(orderId),
         status,
@@ -219,7 +224,10 @@ export const OrderDetailPage = () => {
       if (result.status !== 200) {
         // navigate('/notfound');
         // console.log('ERROR UPDATE ORDER :::::', result);
+        setIsLoading(false);
       } else {
+        setIsLoading(false);
+        setReloadOrder(true);
         return;
       }
     };
@@ -236,6 +244,7 @@ export const OrderDetailPage = () => {
       createTran();
       if (dataOrder?.statusCode === '24' || dataOrder?.statusCode === '404') {
         updateOrderStatus('Cancelled');
+        console.log("Tạo Thất bại");
       }
       // if()
       //rollback order
@@ -247,7 +256,7 @@ export const OrderDetailPage = () => {
   useEffect(() => {
     //get one order
     const getOneOrder = async () => {
-      if (!userId) {
+      if (!userId || !reloadOrder) {
         return;
       }
       const data = await fetchAPI(`../${getoneorder}`, 'POST', {
@@ -256,20 +265,23 @@ export const OrderDetailPage = () => {
       if (data.status !== 200) {
         // navigate('/notfound');
         // console.log('ERROR:::::', data);
+        setReloadOrder(false);
         return;
       } else {
         setOneOrder(data.metadata);
+        setReloadOrder(false);
         return;
       }
     };
     getOneOrder();
-  }, [orderId, userId]);
+  }, [orderId, userId, reloadOrder]);
 
 
   //Collaborative filtering
   //15 cuốn random được train trong ngày
   useEffect(() => {
     const collabBook = async () => {
+      if(!userId) return;
       const rec_book = await fetchAPI(`../${recRandomBook}`, 'POST', {
         userId: userId,
         quantity: 15,
@@ -288,22 +300,27 @@ export const OrderDetailPage = () => {
   //load best seller books
   useEffect(() => {
     const loadBestSellerData = async () => {
-      setIsLoading(true);
+      setIsProgressLoading(true);
       const data = await fetchAPI(`../${getbestselling}`, 'POST', {
         pageNumber: 1,
         pageSize: 12,
       });
       if (data.status != 200) {
         setBestSellerData([]);
-        setIsLoading(false);
+        setIsProgressLoading(false);
         return;
       }
       setBestSellerData(data?.metadata?.books);
-      setIsLoading(false);
+      setIsProgressLoading(false);
     };
     //get best seller data
     loadBestSellerData();
   }, [userId]);
+
+  useEffect(() => {
+    console.log("one Order::::", oneOrder)
+    console.log("reloadOrder::::", reloadOrder)
+  },[oneOrder, reloadOrder])
 
   return (
     <div>
@@ -313,22 +330,12 @@ export const OrderDetailPage = () => {
           dataOrder={oneOrder?.order}
           dataDetail={oneOrder?.orderDetail}
           status={paymentStatus}
+          setReload = {setReloadOrder}
         />
         {/*Gợi ý cho bạn*/}
         <div className={`flex flex-col mt-1 px-1 xl:px-0 ${collabProducts.length===0?'hidden':''}`}>
           <div className="flex items-center mb-[0.1rem] xl:mb-1 pl-2 h-14 bg-white rounded-t-lg border border-red-100">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="text-[#ffbe98] w-[5%] md:w-[2%]"
-            >
-              <path
-                fillRule="evenodd"
-                d="M4.5 7.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9Z"
-                clipRule="evenodd"
-              />
-            </svg>
+            <img src="/img/for_you.png" alt="for_you" className="w-[3rem]"/>
             <div className="flex px-4 text-sm items-center">
               <div className="text-sm md:text-[150%] font-semibold font-['Inter'] tracking-wider">
                 Dành Cho Bạn
@@ -346,18 +353,7 @@ export const OrderDetailPage = () => {
         {/*Sản phẩm bán chạy*/}
         <div className="flex flex-col mt-1 px-1 xl:px-0">
           <div className="flex items-center mb-[0.1rem] xl:mb-1 pl-2 h-14 bg-white rounded-t-lg border border-red-100">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="text-[#ffbe98] w-[5%] md:w-[2%]"
-            >
-              <path
-                fillRule="evenodd"
-                d="M4.5 7.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9Z"
-                clipRule="evenodd"
-              />
-            </svg>
+            <img src="/img/best_seller.png" alt="best_seller" className="w-[3rem]"/>
             <div className="flex px-4 text-sm items-center">
               <div className="text-sm md:text-[150%] font-semibold font-['Inter'] tracking-wider">
                 Sản phẩm bán chạy

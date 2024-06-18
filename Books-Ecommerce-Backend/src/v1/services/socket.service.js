@@ -26,6 +26,11 @@ class SocketServices {
           return;
         } else if (data?.message === "hello") {
           console.log(data?.content);
+        } else if (data?.message === "retrain-rating") {
+          //Bắt sự kiện đào tạo lại rating models
+          console.log("retain-rating model........:::", data);
+          const retrainRating =
+            await RetrainModelService.callRetrainRatingModel();
         } else if (data.message === "retrain-behaviour") {
           //Bắt sự kiện yêu cầu đào tạo lại
           let min_score = 50; // for guest

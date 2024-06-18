@@ -143,6 +143,7 @@ export const ProductDetailPage = () => {
   // Có thể bạn sẽ thích: Random 15 cuốn từ các đề xuất có trong ngày
   useEffect(() => {
     const collabBook = async () => {
+      if(!userId) return;
       const rec_book = await fetchAPI(`../${recRandomBook}`, 'POST', {
         userId: userId,
         quantity: 15,
@@ -164,54 +165,12 @@ export const ProductDetailPage = () => {
         <DetailCart book={book} />
         <DescriptionFeedback book={book} />
 
-        {/*Gợi ý Sản phẩm liên quan*/}
-        <div
-          className={`flex flex-col mt-1 px-1 xl:px-28 ${products.length === 0 ? 'hidden' : ''}`}
-        >
-          <div className="flex items-center mb-[0.1rem] xl:mb-1 pl-2 h-14 bg-gradient-to-t from-red-50 to-gray-50 rounded-t-lg border border-red-100">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="text-[#ffbe98] w-[5%] md:w-[2%]"
-            >
-              <path
-                fillRule="evenodd"
-                d="M4.5 7.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9Z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <div className="flex px-4 text-sm items-center ">
-              <div className="text-sm md:text-[150%] font-bold text-red-500 font-['Inter'] tracking-wider">
-                Sản phẩm liên quan
-              </div>
-            </div>
-          </div>
-          <div className="bg-white border-x border-b xl:border border-red-50">
-            <SliderProducts
-              userId={userId.toString()}
-              productData={products}
-            ></SliderProducts>
-          </div>
-        </div>
-
         {/*Gợi ý Có thể bạn sẽ thích*/}
         <div
           className={`flex flex-col mt-2 px-1 xl:px-28 ${collabProducts.length === 0 ? 'hidden' : ''}`}
         >
           <div className="flex items-center mb-[0.1rem] xl:mb-1 pl-2 h-14 bg-gradient-to-t from-red-50 to-gray-50 rounded-t-lg border border-red-100">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="text-[#ffbe98] w-[5%] md:w-[2%]"
-            >
-              <path
-                fillRule="evenodd"
-                d="M4.5 7.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9Z"
-                clipRule="evenodd"
-              />
-            </svg>
+            <img src="/img/for_you.png" alt="for_you" className="w-[3rem]"/>
             <div className="flex px-4 text-sm items-center">
               <div className="text-sm md:text-[150%] font-bold text-red-500  font-['Inter'] tracking-wider">
                 Có thể bạn sẽ thích
@@ -222,6 +181,57 @@ export const ProductDetailPage = () => {
             <SliderProducts
               userId={userId?.toString()}
               productData={collabProducts}
+            ></SliderProducts>
+          </div>
+        </div>
+
+        {/*Gợi ý Sản phẩm liên quan*/}
+        <div
+          className={`flex flex-col mt-1 px-1 xl:px-28 ${products.length === 0 ? 'hidden' : ''}`}
+        > 
+
+        <div className="flex items-center mb-[0.1rem] xl:mb-1 pl-2 h-14 bg-gradient-to-t from-red-50 to-gray-50 rounded-t-lg border border-red-100">
+          <div className="flex w-full">
+            <img src="/img/same_products.png" alt="same_products" className="w-[3rem]"/>
+            <div className="flex px-4 text-sm items-center ">
+              <div className="text-sm md:text-[150%] font-bold text-red-500 font-['Inter'] tracking-wider">
+                Sản phẩm liên quan
+              </div>
+            </div>
+          </div>
+           <div
+              className="flex gap-2 font-inter w-[12rem] xl:[w-8rem] items-center xl:px-4 pl-6 cursor-pointer hover:text-red-500"
+              onClick={() =>
+                navigate(
+                  `../search_v2?search=${book?.book?.book_title}&sort=create_time_desc&page=1&limit=24&search_type=related_book`,
+                )
+              }
+            >
+              <div className="xl:ml-7 items-center text-sm xl:text-base font-normal ">
+                Xem Thêm
+              </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="size-4 xl:size-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m8.25 4.5 7.5 7.5-7.5 7.5"
+                />
+              </svg>
+            </div>
+        </div>
+
+
+          <div className="bg-white border-x border-b xl:border border-red-50">
+            <SliderProducts
+              userId={userId.toString()}
+              productData={products}
             ></SliderProducts>
           </div>
         </div>

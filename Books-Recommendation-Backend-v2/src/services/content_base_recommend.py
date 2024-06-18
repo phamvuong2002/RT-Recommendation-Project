@@ -257,7 +257,28 @@ def get_content_recommendations_by_keyword_faiss(key_words, genres, userId, quan
     
 #     return data[data['book_id'].isin(top_book_ids)].to_dict(orient='records')
 
-def get_content_recommendations_by_id(book_id, quantity, data, index, tfidf_matrix_dense):
+# get related book by id
+def get_content_recommendations_by_id(book_id, quantity):
+    # Kiểm tra xem ID có tồn tại trong dataframe không
+    if book_id not in data['book_id'].values:
+        print("Sách không tồn tại trong dataframe!")
+        return
+    
+    # Tìm index của cuốn sách trong dataframe dựa trên ID
+    idx = data[data['book_id'] == book_id].index[0]
+    
+    _, I = index.search(tfidf_matrix_dense[idx].reshape(1, -1), quantity + 1)
+    book_indices = I[0][1:]  # Loại bỏ chính cuốn sách đã chọn
+    
+    # Lấy thông tin về các cuốn sách được đề xuất
+    recommend_books = data.iloc[book_indices]
+
+    recommend_books = recommend_books[['book_id', 'book_title','genres']]
+    recommend_books_list = recommend_books.to_dict(orient='records')
+    return recommend_books_list
+
+
+def get_content_recommendations_by_id_v1(book_id, quantity, data, index, tfidf_matrix_dense):
     # Kiểm tra xem ID có tồn tại trong dataframe không
     if book_id not in data['book_id'].values:
         print("Sách không tồn tại trong dataframe!")

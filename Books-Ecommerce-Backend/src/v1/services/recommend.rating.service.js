@@ -65,7 +65,7 @@ class RecommendationRatingService {
     const convertedbooks = await recBooksHelper.convertRecBooksHelper(
       contentBooks.recommendations,
       "book_id",
-      "behavior-online"
+      "rating-svd-online"
     );
     return convertedbooks;
   }

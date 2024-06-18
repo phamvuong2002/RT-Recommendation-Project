@@ -5,6 +5,8 @@ import { fetchAPI } from '../helpers/fetch';
 import { checkstatus, submitfeedback } from '../apis/feedback';
 import { Link } from 'react-router-dom';
 import { PopupCenterPanel } from './popup/PopupCenterPanel';
+import { collectBehaviour } from '../apis/collectBehaviour';
+import { cleanString } from '../utils/cleanString';
 
 export const SingleOrder = ({ order, orderId, status }) => {
   const { userId, setIsLoading } = useContext(AppContext);
@@ -35,6 +37,16 @@ export const SingleOrder = ({ order, orderId, status }) => {
       setIsFeedback(true);
       setIsOpenRatingPopup(false);
     }
+    //collect feedback behavior
+    const dataCollect = {
+      topic: 'rating',
+      message: {
+        userId,
+        behaviour: 'rating',
+        productId: order?.bookId,
+      },
+    };
+    await fetchAPI(`../${collectBehaviour}`, 'POST', dataCollect);
   };
 
   //Get feedback status
@@ -174,12 +186,12 @@ export const SingleOrder = ({ order, orderId, status }) => {
                   {order?.bookTitle}
                 </Link>
                 <p className="font-normal text-md leading-8 text-gray-500 mb-3 ">
-                  Tác Giả: {order?.bookAuthor}
+                  Tác Giả: {cleanString(order?.bookAuthor) || 'Bookada'}
                 </p>
                 <div className="flex items-center ">
                   <p className="font-medium text-base leading-7 text-black pr-4 mr-4 border-r border-red-100">
                     Phiên bản{' '}
-                    <span className="text-gray-500">{order?.bookLayout}</span>
+                    <span className="text-gray-500">{cleanString(order?.bookLayout) }</span>
                   </p>
                   <p className="font-medium text-base leading-7 text-black ">
                     Số Lượng:{' '}
@@ -212,14 +224,14 @@ export const SingleOrder = ({ order, orderId, status }) => {
                 </div>
               </div>
               {/* button rating for desktop */}
-              <div className="xl:col-span-1 xl:flex hidden items-center xl:justify-end max-lg:mt-3">
+              <div className={`xl:col-span-1 xl:flex hidden items-center xl:justify-end max-lg:mt-3`}>
                 <div className="flex xl:flex-col xl:justify-end justify-between gap-[8rem] xl:gap-2">
                   <div
                     onClick={() => {
                       setChooseBill(order);
                       setIsOpenRatingPopup(isFeedback ? false : true);
                     }}
-                    className="flex items-end font-medium text-sm whitespace-nowrap leading-6 text-blue-500 hover:text-blue-800 cursor-pointer"
+                    className={`flex items-end font-medium text-sm whitespace-nowrap leading-6 text-blue-500 hover:text-blue-800 cursor-pointer ${order?.bookStatus === 'Cancelled'? 'xl:hidden': ''}`}
                   >
                     {status === 'failed'
                       ? ''
@@ -237,14 +249,14 @@ export const SingleOrder = ({ order, orderId, status }) => {
               </div>
             </div>
             {/* button rating for mobile */}
-            <div className="flex items-center justify-between mt-2 xl:hidden">
+            <div className={`flex items-center justify-between mt-2 xl:hidden ${order?.bookStatus === 'Cancelled'? 'hidden': ''}`}>
               <div className="flex xl:flex-col mt-4 justify-end xl:gap-2">
                 <div
                   onClick={() => {
                     setChooseBill(order);
                     setIsOpenRatingPopup(isFeedback ? false : true);
                   }}
-                  className="flex items-end font-medium text-sm whitespace-nowrap leading-6 text-blue-500 hover:text-blue-800 cursor-pointer"
+                  className={`flex items-end font-medium text-sm whitespace-nowrap leading-6 text-blue-500 hover:text-blue-800 cursor-pointer ${order?.bookStatus === 'Cancelled'? 'xl:hidden': ''}`}
                 >
                   {status === 'failed'
                     ? ''

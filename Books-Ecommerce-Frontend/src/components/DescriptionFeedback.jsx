@@ -9,6 +9,7 @@ import 'swiper/css/scrollbar';
 
 import { Keyboard, Scrollbar } from 'swiper/modules';
 import { shortenString } from '../utils/shortenString';
+import { cleanString } from '../utils/cleanString';
 
 export const DescriptionFeedback = ({ book }) => {
   const NUMBERLOADERS = 4;
@@ -98,16 +99,16 @@ export const DescriptionFeedback = ({ book }) => {
     if (book) {
       setProduct(book);
       setProductAttributes({
-        'Thương hiệu': book.book_detail.book_pulisherName,
+        'Thương hiệu': cleanString(book.book_detail.book_pulisherName),
         'Thông tin cảnh báo': 'Chất dễ cháy',
         'Xuất xứ': 'Việt Nam',
         'Ngôn Ngữ': 'Tiếng Việt',
-        'Thể Loại': book.book_detail.book_categories_name,
-        'Tác Giả': book.book_detail.book_authors_name,
-        'Nhà Cung Cấp': book.book_detail.book_supplier,
-        'Chất liệu': book.book_detail.book_layout,
-        'Thông số kỹ thuật': book.book_detail.book_size,
-        'Số Trang': book.book_detail.book_num_pages,
+        'Thể Loại': cleanString(book.book_detail.book_categories_name),
+        'Tác Giả': cleanString(book.book_detail.book_authors_name),
+        'Nhà Cung Cấp': cleanString(book.book_detail.book_supplier),
+        'Chất liệu': cleanString(book.book_detail.book_layout),
+        'Thông số kỹ thuật': cleanString(book.book_detail.book_size),
+        'Số Trang': cleanString(book.book_detail.book_num_pages),
         'Gói Bảo Hành': 'Bằng Hóa đơn mua hàng',
         'Thời gian bảo hành': '1 tháng',
       });

@@ -53,7 +53,10 @@ router.post(
 );
 
 //Rating
-router.post("/rating/svd", asyncHandler(recRatingController.getRatingSVDBooks));
+router.post(
+  "/rating/svd/user",
+  asyncHandler(recRatingController.getRatingSVDBooks)
+);
 
 router.post(
   "/rating/user",

@@ -70,8 +70,11 @@ async def train_rating_user_model():
 
 
     connection = db_connection.connect()  # Tạo đối tượng Connection từ Engine
-    result = connection.execute(text(insert_query))  # Thực hiện truy vấn
-    connection.commit()
+    with connection.begin() as transaction:
+        connection.execute(text(insert_query))
+        transaction.commit()
+    # result = connection.execute(text(insert_query))  # Thực hiện truy vấn
+    # connection.commit()
     connection.close()
 
 

@@ -72,9 +72,3 @@ export const SliderProducts = ({
     </div>
   );
 };
-
-// Xác định PropTypes cho Product
-SliderProducts.propTypes = {
-  userId: PropTypes.string.isRequired,
-  productData: PropTypes.arrayOf(PropTypes.object).isRequired,
-};

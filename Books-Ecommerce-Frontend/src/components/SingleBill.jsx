@@ -17,6 +17,7 @@ import { StarRating } from './StarRating';
 import { fetchAPI } from '../helpers/fetch';
 import { checkstatus, submitfeedback } from '../apis/feedback';
 import { AppContext } from '../contexts/main';
+import { collectBehaviour } from '../apis/collectBehaviour';
 
 export const SingleBill = ({ bill, billId, setReload }) => {
   const { userId, setIsLoading } = useContext(AppContext);
@@ -101,6 +102,16 @@ export const SingleBill = ({ bill, billId, setReload }) => {
       setIsFeedback(true);
       setIsOpenRatingPopup(false);
     }
+    //collect feedback behavior
+    const dataCollect = {
+      topic: 'rating',
+      message: {
+        userId,
+        behaviour: 'rating',
+        productId: bill?.bookId,
+      },
+    };
+    await fetchAPI(`../${collectBehaviour}`, 'POST', dataCollect);
   };
 
   //Get feedback status

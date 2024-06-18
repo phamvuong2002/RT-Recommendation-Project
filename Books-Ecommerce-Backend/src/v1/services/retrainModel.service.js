@@ -8,10 +8,33 @@ const {
   acquireLockOnlineReTrain,
   resetUserScore,
   releaselock,
+  acquireLockOnlineReTrainRating,
+  resetRatingVectors,
 } = require("./redis.service");
 
 class RetrainModelService {
-  //retrain model - items
+  //retrain rating model - user - svd
+  static async retrainRatingUserSVDModel() {
+    const url = `${process.env.RECOMMENDATION_SERVER_URL}/retrain/rating-svdpp`;
+    const result = await fetchData(url);
+    console.log("result training rating::", result);
+    if (result === null) {
+      return {
+        message: "Training rating-item failed",
+        model_id: null,
+        status: "failed",
+        type: "rating-item",
+      };
+    }
+    return {
+      message: "Training rating-item successfully",
+      model_id: result,
+      status: "success",
+      type: "rating-item",
+    };
+  }
+
+  //retrain rating model - items - knn
   static async retrainRatingItemsModel() {
     const url = `${process.env.RECOMMENDATION_SERVER_URL}/retrain/rating-item`;
     const result = await fetchData(url);
@@ -107,6 +130,29 @@ class RetrainModelService {
         //nhả khoá
         await releaselock(key);
       }
+    }
+  }
+
+  //retrain rating models
+  static async callRetrainRatingModel() {
+    //tạo khoá cho retrain rating models
+    const key_retrain_rating = await acquireLockOnlineReTrainRating();
+    //reset rating db
+    await resetRatingVectors();
+    //retrain rating models
+    const resultSVDRating =
+      await RetrainModelService.retrainRatingUserSVDModel();
+    if (resultSVDRating.status === "success") {
+      console.log("retrain rating SVD Model successfully");
+    } else {
+      console.log("retrain rating SVD Model failed");
+    }
+    //Nhả khoá
+    const releaselockResult = await releaselock(key_retrain_rating);
+    if (releaselockResult) {
+      return resultSVDRating;
+    } else {
+      return null;
     }
   }
 }

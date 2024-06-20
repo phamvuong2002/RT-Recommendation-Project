@@ -8,8 +8,8 @@ from src.helpers.save_rec_books import save_rec_books
 async def get_content_base_recommended_by_id(book: str = "", userId: str = "", quantity = 10):
     try:
         # recommendation_on = book
-        # books = weighted_combination(book, userId, quantity,0.7)
-        books = get_content_recommendations_by_id(book, quantity)
+        books = weighted_combination(book, userId, quantity,0.7)
+        # books = get_content_recommendations_by_id(book, quantity)
         # results = await save_rec_books(books, user_id=userId, model_type = "content", key="book_id")
         
         return SuccessResponse(metadata= {'recommendations': books})

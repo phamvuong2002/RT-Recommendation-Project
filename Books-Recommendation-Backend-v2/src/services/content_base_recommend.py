@@ -367,7 +367,7 @@ def update_recommendations(index, data, userId, quantity, tfidf_matrix_dense):
 
 
 def weighted_combination(book_id, userId, quantity, alpha=0.7):
-    current_recommendations = get_content_recommendations_by_id(book_id, quantity, data, index, tfidf_matrix_dense)
+    current_recommendations = get_content_recommendations_by_id_v1(book_id, quantity, data, index, tfidf_matrix_dense)
     history_recommendations = update_recommendations(index, data, userId, quantity, tfidf_matrix_dense)
     
     current_recommendations = current_recommendations['book_id'].values.flatten()
@@ -390,7 +390,13 @@ def weighted_combination(book_id, userId, quantity, alpha=0.7):
             combined_scores[book_id] += score
         else:
             combined_scores[book_id] = score
-    
+
+    print("current_scores: " , current_scores)
+    print("===========================")
+    print("history_scores: " , combined_scores)
+    print("===========================")
+    print("combined_scores: " , combined_scores)
+
     # Sắp xếp các cuốn sách theo điểm số tổng hợp
     sorted_combined_scores = sorted(combined_scores.items(), key=lambda x: x[1], reverse=True)
     

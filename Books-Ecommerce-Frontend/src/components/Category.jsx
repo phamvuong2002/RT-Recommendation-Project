@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchData } from '../helpers/fetch';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Link, useNavigate } from 'react-router-dom';
-import Category_dropdown from './Category_Dropdown';
-import { FadeInYDirection } from '../helpers/animationFramerMotion';
-import { motion } from 'framer-motion';
 import 'swiper/css';
 import 'swiper/css/pagination';
 
@@ -70,9 +65,9 @@ export const Category = ({ categoryData, _cateType, isloading, setIsLoading}) =>
   }
 
   return (
-    <div className="md:grid md:justify-items-stretch">
+    <div className="lg:grid lg:justify-items-stretch">
       {/* Desktop */}
-      <div className="hidden xl:flex gap-4">
+      <div className="hidden md:grid md:grid-cols-5 gap-4">
         {category.map((cate, index) => (
           <div key={index} className="relative w-full h-full">
             <TemplateC_1
@@ -88,8 +83,11 @@ export const Category = ({ categoryData, _cateType, isloading, setIsLoading}) =>
       <Swiper
         slidesPerView={2}
         spaceBetween={10}
+        pagination={{
+          clickable: true,
+        }}
         modules={[Pagination]}
-        className="mySwiper block md:hidden"
+        className="mySwiper block xl:hidden lg:hidden md:hidden pb-10"
       >
         {category.map((cate, index) => {
           const TemplateComponent = templates[index % templates.length];

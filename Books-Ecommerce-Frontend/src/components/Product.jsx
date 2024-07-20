@@ -12,6 +12,8 @@ import { formatNumberToText } from '../utils/formatNumberToText';
 
 const OPTION_TYPES = {
   BEST_SELLER: 'sold',
+  PERSONAL: 'personal',
+  RECENT: 'recent-book',
 };
 
 export const Product = ({
@@ -204,9 +206,40 @@ export const Product = ({
                     }}
                   ></div>
                 </div>
-              ) : (
-                ''
-              )}
+              ) :optionData && optionType === OPTION_TYPES.PERSONAL ?
+              (
+                <div className="w-full h-4 bg-gray-300 rounded-full dark:bg-gray-700 relative">
+                  <div className="absolute z-10 inset-0 flex justify-center items-center">
+                    <span className="text-xs font-medium text-white">
+                      Dành riêng cho bạn
+                    </span>
+                  </div>
+                  {/* Thanh tiến độ */}
+                  <div
+                    className="h-4 bg-red-500 text-xs font-medium text-white text-center p-0.5 leading-none rounded-full relative"
+                    style={{
+                      width: `100%`,
+                    }}
+                  ></div>
+                </div>
+              ): optionData && optionType === OPTION_TYPES.RECENT ?
+              (
+                <div className="w-full h-4 bg-gray-300 rounded-full dark:bg-gray-700 relative">
+                  <div className="absolute z-10 inset-0 flex justify-center items-center">
+                    <span className="text-xs font-medium text-white">
+                      Sách tương tự đã xem
+                    </span>
+                  </div>
+                  {/* Thanh tiến độ */}
+                  <div
+                    className="h-4 bg-red-500 text-xs font-medium text-white text-center p-0.5 leading-none rounded-full relative"
+                    style={{
+                      width: `100%`,
+                    }}
+                  ></div>
+                </div>
+              ): ''
+              }
             </div>
           </div>
         </div>

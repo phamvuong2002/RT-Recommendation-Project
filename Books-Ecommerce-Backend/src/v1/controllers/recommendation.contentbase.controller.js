@@ -5,6 +5,17 @@ const ContentBaseRecommendationService = require("../services/recommendation.con
 const { SuccessResponse } = require("../core/success.response");
 
 class ContentBaseRecommendationController {
+  getRecommendByRecentBooks = async (req, res, next) => {
+    const data =
+      await ContentBaseRecommendationService.getRecommendByRecentBooks(
+        req.body
+      );
+
+    new SuccessResponse({
+      metadata: data,
+    }).send(res);
+  };
+
   getRecommendByContentBaseFaiss = async (req, res, next) => {
     const data =
       await ContentBaseRecommendationService.getRecommendByContentBaseFaiss(

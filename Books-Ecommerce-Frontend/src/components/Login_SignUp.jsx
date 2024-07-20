@@ -199,9 +199,9 @@ export default function Login_SignUp({
     }
   };
 
-  const handleSignUpFB = async () => {};
+  const handleSignUpFB = async () => {setMessage("Dịch vụ xác thực với Facebook đang được bảo trì. Vui lòng thử đăng ký với SĐT hoặc Email")};
 
-  const handleSignUpGG = async () => {};
+  const handleSignUpGG = async () => {setMessage("Dịch vụ xác thực với Google đang được bảo trì. Vui lòng thử đăng ký với SĐT hoặc Email")};
 
   //Xử lý đăng ký bằng Email
   const handleSignUpEmail = async () => {
@@ -451,7 +451,7 @@ export default function Login_SignUp({
       if(isShowSMSLogin){
         document.getElementById('sms_login').focus();
       }else{
-        document.getElementById('email_login').focus();
+        document.getElementById('email_login')?.focus();
       }
       
     }else{
@@ -1002,7 +1002,7 @@ export default function Login_SignUp({
                       <button
                         type="submit"
                         className=" flex outline-none justify-center border border-red-200 rounded-md bg-white hover:bg-slate-50 px-3 py-1.5 text-sm font-semibold leading-6   text-black shadow-sm items-center h-fit mr-4"
-                        onClick={handleLogin}
+                        onClick={handleSignUpFB}
                       >
                         <FaFacebook className="w-5 h-5 mr:0 sm:mr-3 text-blue-600   " />
                         <span className="hidden sm:block sm:text-base font-normal ">
@@ -1014,7 +1014,7 @@ export default function Login_SignUp({
                       <button
                         type="submit"
                         className=" flex outline-none justify-center rounded-md border border-red-200 bg-white hover:bg-slate-50 px-3 py-1.5 text-sm font-semibold leading-6    text-black shadow-sm items-center h-fit"
-                        onClick={handleLogin}
+                        onClick={handleSignUpGG}
                       >
                         <FcGoogle className="w-5 h-5 mr-0 sm:mr-3" />
                         <span className="hidden sm:block sm:text-base font-normal">

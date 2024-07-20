@@ -1,6 +1,6 @@
 from src.core.error_responses import BadRequestError
 from src.core.success_responses import SuccessResponse
-from src.services.content_base_recommend import get_content_recommendations_by_id, weighted_combination, get_content_recommendations_by_keyword, get_content_recommendations_by_keyword_faiss
+from src.services.content_base_recommend import get_content_recommendations_by_id, weighted_combination, get_content_recommendations_by_keyword, get_content_recommendations_by_keyword_faiss, get_content_recommendations_by_recent_books
 from src.helpers.save_rec_books import save_rec_books
 
 
@@ -36,6 +36,17 @@ async def get_content_base_recommended_by_keyword_faiss(key_words: str = "", gen
         # recommendation_on = book
         books  = get_content_recommendations_by_keyword_faiss(key_words, genres, userId, quantity, page, page_size)
         # results = await save_rec_books(books, user_id=userId, model_type = "content", key="book_id")
+        result = {
+            'recommendations': books
+        }
+        return SuccessResponse(metadata= result)
+    except Exception as e:
+        raise BadRequestError(detail=str(e))
+
+#RECENT BOOKS CONTENT-BASED
+async def get_recommendations_for_recent_books(userId: str = "", days: int = 3, page: int = 1, page_size: int = 24):
+    try:
+        books = get_content_recommendations_by_recent_books(userId, days, page, page_size)
         result = {
             'recommendations': books
         }

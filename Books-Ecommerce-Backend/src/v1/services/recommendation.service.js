@@ -46,7 +46,9 @@ class RecommendationService {
   //get contents based rec books
   static getConBasRecBooks = async ({ userId, page, limit = 12 }) => {
     const recbooks = await RecommendationService.getRecBooks(userId);
-    if (recbooks.length > 10) {
+    //check user đã có đề xuất hay chưa
+    //1.0 nếu đã có đề xuất
+    if (recbooks.length > page * 12 - 1) {
       return null;
     }
     //get best seller product ID
@@ -82,7 +84,60 @@ class RecommendationService {
   };
 
   //search rec books
-  static searchRecBooks = async ({
+  static async searchRecBooks({
+    userId,
+    page = 1,
+    limit = 24,
+    model_type = "online",
+  }) {
+    // return empty if userId is null
+    if (!userId)
+      return {
+        books: [],
+        totalBooks: 0,
+        totalPages: 0,
+      };
+
+    //find rec books
+    const recBooks = await db.rec_book.findAll({
+      attributes: [
+        [
+          db.Sequelize.fn("DISTINCT", db.Sequelize.col("rec_book_id")),
+          "book_id",
+        ],
+        // ["rec_book_id", "book_id"],
+        ["rec_book_title", "book_title"],
+        ["rec_book_img", "book_img"],
+        ["rec_book_categories", "book_categories"],
+        ["rec_book_spe_price", "book_spe_price"],
+        ["rec_book_old_price", "book_old_price"],
+        ["rec_book_is_recommadation", "book_is_recommendation"],
+      ],
+      where: { rec_user_sid: userId },
+      limit: limit,
+      offset: (page - 1) * limit,
+    });
+
+    const formattedBooks = recBooks.map((recbook) => ({
+      book: {
+        book_id: recbook.dataValues.book_id,
+        book_title: recbook.dataValues.book_title,
+        book_categories: recbook.dataValues.book_categories,
+        book_img: recbook.dataValues.book_img,
+        book_spe_price: recbook.dataValues.book_spe_price,
+        book_old_price: recbook.dataValues.book_old_price,
+      },
+      isPersonal: recbook.dataValues.book_is_recommendation,
+    }));
+
+    return {
+      books: formattedBooks,
+      totalBooks: 1,
+      totalPages: 1,
+    };
+  }
+
+  static searchRecBooks_v1 = async ({
     page = 1,
     limit = 24,
     categories = "sach-tieng-viet",

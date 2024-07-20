@@ -69,6 +69,10 @@ async def popular(limit: int):
 async def search(book_name: str = ""):
     return await rating_controller.search_book_name(book_name)
 
+@router.get("/contentbase/recommend/recent/user={user_id}&days={days}&page={page}&page_size={page_size}")
+async def recommend(user_id: str = "", days: int = 3, page: int = 1, page_size: int = 10):
+    return await contentbase_controller.get_recommendations_for_recent_books(user_id, days, page, page_size)
+
 @router.get("/contentbase/recommend/book={book_id}&user={user_id}&quantity={quantity}")
 async def recommend(book_id: int = 0, user_id: str = "", quantity: int = 10):
     return await contentbase_controller.get_content_base_recommended_by_id(book_id, user_id, quantity)

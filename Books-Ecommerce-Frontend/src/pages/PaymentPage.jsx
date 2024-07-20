@@ -103,24 +103,28 @@ export const PaymentPage = () => {
         </div>
 
         {/*best recommend*/}
-        <div className="flex flex-col mt-1 px-1 xl:px-0 bg-">
-          <div className="flex items-center mb-[0.1rem] xl:mb-1 pl-2 h-14 bg-pink-200 rounded-t-lg border border-pink-200">
-            <div className="">
-              <img src="/img/love_product.png" alt="love_product" className="w-[3rem]"/>
-            </div>
-            <div className="flex px-4 text-sm items-center">
-              <div className="text-sm md:text-[150%] text-pink-500 font-semibold font-['Inter'] tracking-wider">
-                Có Thể Bạn Cũng Thích
+        {
+          highRatingData.length === 0 ? "":
+          <div className="flex flex-col mt-1 px-1 xl:px-0 bg-">
+            <div className="flex items-center mb-[0.1rem] xl:mb-1 pl-2 h-14 bg-pink-200 rounded-t-lg border border-pink-200">
+              <div className="">
+                <img src="/img/love_product.png" alt="love_product" className="w-[3rem]"/>
+              </div>
+              <div className="flex px-4 text-sm items-center">
+                <div className="text-sm md:text-[150%] text-pink-500 font-semibold font-['Inter'] tracking-wider">
+                  Có Thể Bạn Cũng Thích
+                </div>
               </div>
             </div>
+            <div className="bg-white border-x border-b xl:border border-pink-200">
+              <SliderProducts
+                userId={userId?.toString()}
+                productData={highRatingData}>
+              </SliderProducts>
+            </div>
           </div>
-          <div className="bg-white border-x border-b xl:border border-pink-200">
-            <SliderProducts
-              userId={userId?.toString()}
-              productData={highRatingData}>
-            </SliderProducts>
-          </div>
-        </div>
+        }
+        
 
         {/*Dành cho bạn*/}
         <div className={`flex flex-col mt-1 px-1 xl:px-0 ${collabProducts.length===0?'hidden':''}`}>

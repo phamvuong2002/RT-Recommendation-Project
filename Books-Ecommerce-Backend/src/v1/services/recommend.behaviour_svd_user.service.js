@@ -86,17 +86,6 @@ class RecommendationBehaviour_SVD_UserService {
       },
     }));
 
-    // Tính toán tổng số trang
-    // const totalPages = Math.ceil(totalBooks / limit);
-
-    // return {
-    //   books: formattedBooks,
-    //   totalBooks,
-    //   totalPages,
-    // };
-    // console.log(userId)
-    // console.log(recBooks)
-
     return formattedBooks;
   }
 

@@ -138,7 +138,7 @@ export const SearchPage_v2 = () => {
       setIsProgressLoading(false);
     };
 
-    //ví dụ tải các sản phẩm trong giỏ hàng của khách
+    //lựa chọn search engine
     if (search_type === QUERY_TYPE.BEST_SELLER_SUGGEST) {
       loadSearchBestSellerData();
     } else if (search_type === QUERY_TYPE.RELATED_BOOK && query) {

@@ -206,10 +206,11 @@ export const DescriptionFeedback = ({ book }) => {
                     className="mt-4 mb-4 px-4 overflow-y-auto max-h-full xl:scrollbar-thin xl:scrollbar-webkit  no-scrollbar"
                     dangerouslySetInnerHTML={{
                       __html: convertTextToHtml(
-                        product?.book_detail?.book_des || '',
+                        product?.book_detail?.book_des === 'null' ? 'Đang cập nhật  ...' : product?.book_detail?.book_des
                       ),
                     }}
                   />
+                  
                   {/* {product?.book_detail?.book_des} */}
                   <hr className="mb-4" />
 

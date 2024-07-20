@@ -7,6 +7,7 @@ import { PopupCenterPanel } from './popup/PopupCenterPanel';
 import { AppContext } from '../contexts/main';
 import { fetchAPI } from '../helpers/fetch';
 import { collectBehaviour } from '../apis/collectBehaviour';
+import { handleFavoriteBook, getStatusFavoriteBook } from '../apis/book';
 
 export const SingleShoppingCart = ({
   product,
@@ -19,6 +20,67 @@ export const SingleShoppingCart = ({
   const [openLovePopup, setOpenLovePopup] = useState(false);
   const [statusLovePopup, setStatusLovePopup] = useState('fail');
   const CLOSE_LOVE_POPUP = 1000;
+  const [isClicked, setIsClicked] = useState(null);
+  const [message, setMessage] = useState('');
+
+  //Xử lý khách hàng yêu thích sản phẩm
+  const handleAddToInterestList = async (e, bookId) => {
+    e.preventDefault();
+    if (!userId) return;
+
+    const result = await fetchAPI(`../${handleFavoriteBook}`, 'POST', {
+      userId: userId,
+      book: {
+        book_id: bookId,
+      },
+    });
+
+    if (result.status !== 200) {
+      setMessage('Có một số vấn đề. Vui lòng thử lại sau');
+      return;
+    }
+    const isLoved = result.metadata.favoriteBookStatus;
+    setIsClicked(isLoved);
+    setStatusLovePopup('success');
+
+    if (isLoved) {
+      setMessage('Đã thêm vào danh sách yêu thích');
+    } else {
+      setMessage('Đã loại bỏ sách khỏi danh sách yêu thích');
+    }
+    setOpenLovePopup(true);
+
+    if (isLoved) {
+      //collect behavior add to cart
+      const dataCollect = {
+        topic: 'love',
+        message: {
+          userId,
+          behaviour: 'love',
+          productId: product.book.book_id,
+        },
+      };
+      await fetchAPI(`../${collectBehaviour}`, 'POST', dataCollect);
+    }
+  };
+
+  //Set status favorite book (from db) at 1st render
+  useEffect(() => {
+    const getStatusFavBook = async () => {
+      if (!userId || !product) return;
+      const result = await fetchAPI(`../${getStatusFavoriteBook}`, 'POST', {
+        userId: userId,
+        book: {
+          book_id: product.book.book_id,
+        },
+      });
+      if (result.status !== 200) return;
+
+      setIsClicked(result.metadata.favoriteBookStatus);
+    };
+
+    getStatusFavBook();
+  }, [product, userId]);
 
   const handleClickAddLoveProduct = async (productID) => {
     const result = 'success';
@@ -143,8 +205,8 @@ export const SingleShoppingCart = ({
                     icon={
                       <button
                         className="xl:h-8 xl:w-8 xl:flex xl:items-end"
-                        onClick={() =>
-                          handleClickAddLoveProduct(product.cb_book_id)
+                        onClick={(e) =>
+                          handleAddToInterestList(e, product.cb_book_id)
                         }
                       >
                         <svg
@@ -186,7 +248,7 @@ export const SingleShoppingCart = ({
                               ></path>
                             </svg>
                             <div>
-                              Bạn đã thêm sản phẩm này vào danh sách yêu thích!
+                              {message}
                             </div>
                           </div>
                         ) : (

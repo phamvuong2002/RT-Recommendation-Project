@@ -274,8 +274,8 @@ export const DetailCart = ({ book }) => {
                   <div className="text-base font-bold text-[#393280]">
                     Nội dung chính
                   </div>
-                  <p className="mt-2 text-sm">
-                    {product?.book_detail?.book_des.substring(0, 255)} ...
+                  <p className={`mt-2 text-sm ${product?.book_detail?.book_des === 'null'? "text-gray-400 text-xs": ''}`}>
+                    {product?.book_detail?.book_des === 'null' ? 'Đang cập nhật' : product?.book_detail?.book_des.substring(0, 255)}  ... 
                   </p>
                 </div>
                 {/* Prices */}

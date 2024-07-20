@@ -2,7 +2,7 @@
  :root {
 	 --color-black: black;
 	 --color-white: white;
-	 --color-yellow: yellow;
+	 --color-yellow: rgb(254 202 202);
 	 /* --color-grey: #e8e8e8; */
 	 --time: 4s;
 	 --time-s: 0.3s;
@@ -29,6 +29,7 @@
 	}
 } */
  .body-sale-banner {
+	width: 100%;
 	 font-family: 'Montserrat', sans-serif;
 	 /* min-height: 100vh; */
 	 background-color: var(--color-grey);
@@ -40,10 +41,11 @@
 	 justify-content: center;
 	 align-items: center;
 	 margin: 0;
+	 margin-top: 0.9rem;
 }
  .container-sale-banner{
 	 width: 100%;
-	 margin: 0 auto;
+	 /* margin: 0 auto; */
 	 display: flex;
 	 justify-content: center;
 	 align-items: center;
@@ -55,7 +57,7 @@
 	 display: inline-block;
 	 box-sizing: border-box;
 	 width: 30vw;
-	 padding-bottom: 30vw;
+	 height: 30rem;
 	 margin: 1vw;
 	 background-color: #7f72d2;
 	 background-color: var(--color-yellow);
@@ -69,7 +71,7 @@
 		 padding-bottom: 46vw;
 	}
 }
- .box-sale-banner:hover .box__btn {
+ .box-sale-banner .box__btn:hover {
 	 background-color: var(--color-yellow);
 	 color: var(--color-black);
 }
@@ -93,6 +95,23 @@
 	 color: var(--color-white);
 	 border: 1px solid var(--color-black);
 }
+
+@media (max-width: 768px) {
+    .box__btn {
+    	line-height: 8vw;
+		text-align: center;
+		max-width: 80%;
+		padding: 0 2vw;
+		font-size: 1.5rem;
+		margin-top: 2vw;
+		transition: all var(--time-s);
+		transform: scale(1);
+		background-color: var(--color-black);
+		color: var(--color-white);
+		border: 1px solid var(--color-black);
+    }
+}
+
  .box__background {
 	 position: absolute;
 	 top: 0;
@@ -128,6 +147,15 @@
 	 text-align: center;
 	 left: 3vw;
 	 right: 50%;
+}
+@media (max-width: 768px) {
+    .box__text-line {
+        position: absolute;
+		font-size: 1.25rem;
+		text-align: center;
+        left: 3vw; /* Đảm bảo rằng phần tử vẫn cách trái 3vw */
+        right: auto; /* Bỏ giá trị right khi màn hình nhỏ hơn 768px */
+    }
 }
  .box__text-line--top {
 	 top: 0;
@@ -181,6 +209,14 @@
 	 text-align: center;
 	 font-size: 5rem;
 }
+
+@media (max-width: 768px) {
+    .box--1 .box__title {
+        text-align: center;
+	 	font-size: 4rem;
+    }
+}
+
  .box--1 .box__title span {
 	 display: block;
 	 font-size: 4rem;
@@ -273,6 +309,23 @@
 	 flex-direction: column;
 	 overflow: hidden;
 }
+
+@media (max-width: 768px) {
+    .card {
+	 position: relative;
+	 font-size: 1.2rem;
+	 color: var(--color-black);
+	 border: 1px solid var(--color-black);
+	 background-color: var(--color-grey);
+	 margin: 3%;
+	 height: 40%;
+	 width: 88%;
+	 display: flex;
+	 flex-direction: column;
+	 overflow: hidden;
+}
+}
+
  .card__top {
 	 background-color: var(--color-black);
 	 color: var(--color-white);
@@ -286,7 +339,24 @@
 	 justify-content: center;
 	 flex: 1;
 	 transition: all var(--time-s);
+	 padding-left: 1rem;
+	 padding-right: 1rem;
+
 }
+
+@media (max-width: 768px) {
+    .card__title {
+	 display: flex;
+	 flex-direction: column;
+	 align-items: center;
+	 justify-content: center;
+	 flex: 1;
+	 transition: all var(--time-s);
+	 padding-left: .5rem;
+	 padding-right: .5rem;
+	}
+}
+
  .card__title span {
 	 padding-right: 4%;
 	 font-size: 3rem;

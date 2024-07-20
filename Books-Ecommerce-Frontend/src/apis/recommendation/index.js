@@ -32,3 +32,5 @@ export const recRandomBook = 'api/v1/api/recommendation/recRandomBook';
 export const searchrecbook = 'api/v1/api/recommendation/search/rec-books';
 export const getconbasbook =
   'api/v1/api/recommendation/get/content-based/books';
+  export const getconbasedrecentbook =
+  'api/v1/api/recommendation/related-book/faiss/recent-books';

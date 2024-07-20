@@ -108,6 +108,13 @@ router.post(
   asyncHandler(ContentBaseController.getRecommendByContentBaseFaiss)
 );
 
+//ContentBase-recent books
+router.post(
+  "/related-book/faiss/recent-books",
+  asyncHandler(ContentBaseController.getRecommendByRecentBooks)
+);
+
+//ContentBase-byID
 router.post(
   "/related-book/related",
   asyncHandler(ContentBaseController.getRecommendByContentBaseID)

@@ -31,6 +31,28 @@ const collectVector = async (userId, productId, score = 1) => {
   const redis_user_key = "user-score";
   const redis_product_key = "product-score";
   const redis_rating_key = "rating-score";
+  const redis_timestamp_key = "user-product";
+
+  //collect timestamp behavior
+  const key_user_product = `${userId}:${productId}`;
+  const existing_timestamp = await zscoreAsync(
+    redis_timestamp_key,
+    key_user_product
+  );
+  const timestamp = Date.now();
+  const options = ["XX"];
+  if (existing_timestamp != null) {
+    await zaddAsync(
+      redis_timestamp_key,
+      ...options,
+      timestamp,
+      key_user_product
+    );
+  } else {
+    await zaddAsync(redis_timestamp_key, timestamp, key_user_product);
+  }
+
+  // await zaddAsync(redis_timestamp_key, timestamp, key_user_product);
 
   //Tính số lượng sản phẩm được ratings
   if (score === 0) {

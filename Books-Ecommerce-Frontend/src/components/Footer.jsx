@@ -129,22 +129,22 @@ export const Footer = () => {
 
                   <ul className="mt-6 space-y-4 text-sm">
                     <li>
-                      <a
-                        href="#"
-                        className="text-gray-200 transition hover:opacity-75"
+                      <div
+                        onClick={() => {window.open(`tel:${"0948908485"}`, '_self')}}
+                        className="text-gray-200 transition hover:opacity-75 cursor-pointer"
                       >
                         {' '}
                         Phone: +84 055 775 999
-                      </a>
+                      </div>
                     </li>
 
                     <li>
                       <a
-                        href="#"
+                        href="mailto:admin@bookada.io.vn"
                         className="text-gray-200 transition hover:opacity-75"
                       >
                         {' '}
-                        Email: Bookada@hotmail.com
+                        Email: admin@bookada.io.vn
                       </a>
                     </li>
 

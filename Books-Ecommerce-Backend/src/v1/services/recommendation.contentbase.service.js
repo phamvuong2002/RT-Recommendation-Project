@@ -9,6 +9,46 @@ const {
 } = require("../const/recommendation");
 
 class ContentBaseRecommendationService {
+  static async getRecommendByRecentBooks({
+    userId,
+    days,
+    page,
+    page_size,
+    num_rec,
+    model_type = "online",
+  }) {
+    let url = `${process.env.RECOMMENDATION_SERVER_URL}/contentbase/${
+      model_type === "online" ? "" : "offline/"
+    }recommend/recent/user=${userId}&days=${days}&page=${page}&page_size=${page_size}`;
+
+    const contentbaseBooks = await fetchData(url);
+    const data_rec = contentbaseBooks.recommendations;
+
+    if (data_rec.length === 0) {
+      return { books: [] };
+    }
+
+    const recommendationsMap = new Map();
+
+    data_rec.forEach((item) => {
+      item.recommendations.forEach((recommendation) => {
+        if (!recommendationsMap.has(recommendation.book_id)) {
+          recommendationsMap.set(recommendation.book_id, recommendation);
+        }
+      });
+    });
+
+    const mergedRecommendations = Array.from(recommendationsMap.values());
+
+    const convertedbooks = await recBooksHelper.convertRecBooksHelper(
+      mergedRecommendations,
+      "book_id",
+      `recent-book`
+    );
+
+    return { books: convertedbooks };
+  }
+
   static async getRecommendByContentBaseFaiss({
     key_words,
     userId,

@@ -170,7 +170,7 @@ export const DetailOrder = ({ dataOrder, dataDetail, status, setReload}) => {
                     </p>
                   ) : (
                     <p className="font-medium text-lg text-gray-900 pl-6 py-3 max-lg:text-center">
-                      Đã thanh toán trực tuyến tới ví{' '}
+                      Đã thanh toán trực tuyến với ví{' '}
                       <span className="text-red-500">
                         {dataOrder?.order_payment ? 'Paypal' : 'VNPay'}
                       </span>

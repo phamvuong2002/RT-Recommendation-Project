@@ -110,20 +110,20 @@ export default function FilterProduct({
       ],
     },
 
-    {
-      id: 'publisher',
-      name: 'Nhà xuất bản',
-      options: [
-        { value: 'nxb-van-hoc', label: 'NXB Văn Học', checked: false },
-        { value: 'nxb-dan-tri', label: 'NXB Dân Trí', checked: false },
-        {
-          value: 'nxb-dai-hoc-su-pham',
-          label: 'NXB Đại học sư phạm',
-          checked: false,
-        },
-        { value: 'NXB-phunuvn', label: 'NXB Phụ nữ Việt Nam', checked: false },
-      ],
-    },
+    // {
+    //   id: 'publisher',
+    //   name: 'Nhà xuất bản',
+    //   options: [
+    //     { value: 'nxb-van-hoc', label: 'NXB Văn Học', checked: false },
+    //     { value: 'nxb-dan-tri', label: 'NXB Dân Trí', checked: false },
+    //     {
+    //       value: 'nxb-dai-hoc-su-pham',
+    //       label: 'NXB Đại học sư phạm',
+    //       checked: false,
+    //     },
+    //     { value: 'NXB-phunuvn', label: 'NXB Phụ nữ Việt Nam', checked: false },
+    //   ],
+    // },
   ];
 
   const [sortOption, setSortOption] = useState(params.get('sort'));
@@ -214,6 +214,9 @@ export default function FilterProduct({
   }, [cate, sortOption]);
 
   useEffect(() => {
+    if(_totalPages === 0) {
+      setNumPage(1);
+    }
     setTotalPages(_totalPages);
     setTotalResults(_totalResults);
   }, [_totalPages, _totalResults]);
@@ -420,13 +423,14 @@ export default function FilterProduct({
                     <img src="/img/empty-box.png" />
                   </div>
                 ) : (
-                  <AllProducts
+                  < AllProducts
                     productsData={products}
                     numOfProductsInRow={4}
                     _totalPages={totalPages}
                     setPage={setNumPage}
                     page={numPage}
-                  ></AllProducts>
+                    _loadmore={false}
+                  />
                 )}
               </div>
             </div>
@@ -601,13 +605,14 @@ export default function FilterProduct({
             {/* Product grid */}
             <div className="lg:col-span-4 bg-white">
               {/* Your content */}
-              <AllProducts
+              < AllProducts
                 productsData={products}
                 numOfProductsInRow={2}
                 _totalPages={totalPages}
                 setPage={setNumPage}
                 page={numPage}
-              ></AllProducts>
+                // _loadmore={false}
+              />
             </div>
           </div>
         </section>

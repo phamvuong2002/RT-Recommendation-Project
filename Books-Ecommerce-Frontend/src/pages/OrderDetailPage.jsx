@@ -244,7 +244,7 @@ export const OrderDetailPage = () => {
       createTran();
       if (dataOrder?.statusCode === '24' || dataOrder?.statusCode === '404') {
         updateOrderStatus('Cancelled');
-        console.log("Tạo Thất bại");
+        // console.log("Tạo Thất bại");
       }
       // if()
       //rollback order
@@ -256,7 +256,7 @@ export const OrderDetailPage = () => {
   useEffect(() => {
     //get one order
     const getOneOrder = async () => {
-      if (!userId || !reloadOrder) {
+      if (!userId && !reloadOrder) {
         return;
       }
       const data = await fetchAPI(`../${getoneorder}`, 'POST', {
@@ -316,11 +316,6 @@ export const OrderDetailPage = () => {
     //get best seller data
     loadBestSellerData();
   }, [userId]);
-
-  useEffect(() => {
-    console.log("one Order::::", oneOrder)
-    console.log("reloadOrder::::", reloadOrder)
-  },[oneOrder, reloadOrder])
 
   return (
     <div>

@@ -257,7 +257,7 @@ export const DetailCart = ({ book }) => {
                 <div className="flex items-center justify-between">
                   {/* Author name */}
                   <div className="text-zinc-600">
-                    {product?.book_detail?.book_authors_name}
+                    {product?.book_detail?.book_authors_name === 'null' ? 'Đang cập nhật' : product?.book_detail?.book_authors_name}
                   </div>
                   {/* Rating */}
                   {/* <StarRating

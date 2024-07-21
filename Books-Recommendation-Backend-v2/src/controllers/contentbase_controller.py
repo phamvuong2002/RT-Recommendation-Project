@@ -47,6 +47,7 @@ async def get_content_base_recommended_by_keyword_faiss(key_words: str = "", gen
 async def get_recommendations_for_recent_books(userId: str = "", days: int = 3, page: int = 1, page_size: int = 24):
     try:
         books = get_content_recommendations_by_recent_books(userId, days, page, page_size)
+        # return SuccessResponse(metadata= books)
         result = {
             'recommendations': books
         }

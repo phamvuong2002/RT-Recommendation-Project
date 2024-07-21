@@ -9,6 +9,7 @@ import { fetchAPI } from './helpers/fetch';
 import { getnumcart } from './apis/cart';
 import { getsession, loginGuest } from './apis/access';
 import { getUserInfo } from './apis/user';
+import FloatingButton from './components/childComponents/FloatingButton';
 
 function App() {
   const {
@@ -89,7 +90,6 @@ function App() {
     getNumCart();
   }, [userId]);
 
-  //
   useEffect(() => {
     const getUsername = async () => {
       if (!userId || userId?.length <= 0) return;
@@ -107,9 +107,12 @@ function App() {
     getUsername();
   }, [userId]);
 
+
   return (
     <>
       <ScrollToTop />
+      <FloatingButton/>
+
       <Routes>
         {publicRoutes.map((route, index) => {
           const Layout = route.layout || DefaultLayout;

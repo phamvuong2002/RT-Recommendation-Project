@@ -411,6 +411,7 @@ def weighted_combination(book_id, userId, quantity, alpha=0.7):
 def create_redis_model_by_recent_days(userId, days, page, page_size):
     # Key của sorted set trong Redis
     sorted_set_key = 'user-product'
+    
 
     # Lấy thời gian hiện tại và tính toán thời gian `days` trước
     now = datetime.now()
@@ -423,7 +424,7 @@ def create_redis_model_by_recent_days(userId, days, page, page_size):
 
     # Lấy các phần tử trong khoảng thời gian yêu cầu
     elements = r.zrangebyscore(sorted_set_key, timestamp_days_ago, float('inf'), withscores=True)
-    
+
     redis_model = []
     for vecto, timestamp in elements:
         vecto = vecto.decode('utf-8')
@@ -499,7 +500,6 @@ def create_redis_model_by_recent_days_v1(userId, days, page, page_size):
 def get_content_recommendations_by_recent_books(userId, days, page, page_size, num_rec=5):
     # Tạo mô hình Redis với các cuốn sách gần đây
     recent_books = create_redis_model_by_recent_days(userId, days, page, page_size)
-    # return recent_books.to_dict(orient='records')
 
     if recent_books is None or recent_books.empty:
         return []
@@ -509,6 +509,8 @@ def get_content_recommendations_by_recent_books(userId, days, page, page_size, n
 
     # Lấy danh sách bookIds
     book_ids = recent_books['bookId'].tolist()
+    
+    
     
     # Lặp qua từng bookId để lấy khuyến nghị
     for book_id in book_ids:

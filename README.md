@@ -14,6 +14,7 @@ Before you begin, ensure you have the following installed on your system:
 - **Virtualenv** (recommended for Python environment management)
 - **MySQL** (version 8.x or higher)
 - **MySQL Workbench** (for database management)
+- **Apache Kafka** (version 2.7.x or higher)
 
 ## MySQL Database Setup
 
@@ -69,6 +70,37 @@ Before you begin, ensure you have the following installed on your system:
 6. In the **Default Schema to be Imported To** drop-down, select the `books_db_v1`.
 
 7. Click **Start Import**.
+
+## Apache Kafka Setup
+
+### Installation
+
+1. Download the latest version of Apache Kafka from the [official website](https://kafka.apache.org/downloads).
+
+2. Extract the downloaded file:
+    ```bash
+    tar -xzf kafka_2.13-2.7.0.tgz
+    cd kafka_2.13-2.7.0
+    ```
+
+### Start Zookeeper
+
+Kafka uses Zookeeper to manage distributed brokers. Start the Zookeeper server:
+
+1. Start Zookeeper:
+    ```bash
+    bin/zookeeper-server-start.sh config/zookeeper.properties
+    ```
+
+### Start Kafka Server
+
+1. Open a new terminal and navigate to the Kafka directory.
+
+2. Start the Kafka server:
+    ```bash
+    bin/kafka-server-start.sh config/server.properties
+    ```
+
 
 
 ## Node.js Servers Setup

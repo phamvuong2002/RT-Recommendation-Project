@@ -73,25 +73,6 @@ Before you begin, ensure you have the following installed on your system:
 
 ## Node.js Servers Setup
 
-### Server 1: `server1`
-
-1. Navigate to the `server1` directory:
-    ```bash
-    cd path/to/server1
-    ```
-
-2. Install the required Node.js packages:
-    ```bash
-    npm install
-    ```
-
-3. Start the server:
-    ```bash
-    npm start
-    ```
-
-## Node.js Servers Setup
-
 ### Server 1: `NODE.JS Ecommerce server`
 
 1. Navigate to the `server1` directory:

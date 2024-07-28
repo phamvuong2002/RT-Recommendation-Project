@@ -22,7 +22,7 @@ async def train_implicit_model():
 
     # Kết nối mysql
     # db_connection_str = 'mysql+pymysql://root:vuong@localhost/books_db_v1'
-    # db_connection_str = "mysql+pymysql://bookada:bookada2002@bookada-database-v1.crq4aco4chyf.ap-southeast-1.rds.amazonaws.com/books_db_v1"
+    # db_connection_str = "mysql+pymysql://bookada:bookada2002@bookada.cfmwusg6itst.ap-southeast-1.rds.amazonaws.com/books_db_v1"
     db_connection_str = f"mysql+pymysql://{mysql_username}:{mysql_pass}@{mysql_host}/{mysql_dbname}"
     db_connection = create_engine(db_connection_str)
 

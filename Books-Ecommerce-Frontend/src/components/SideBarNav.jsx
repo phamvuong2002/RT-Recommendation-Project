@@ -40,7 +40,7 @@ export default function SideBarNav({ setSelectedPage, setSelectedPageId }) {
 
     const handleClick = (value, e) => {
         e.stopPropagation()
-        console.log('click ', value)
+        // console.log('click ', value)
         setCurrentPage(value)
         setSelectedPage(TAB[value])
         setSelectedPageId(value)
@@ -60,7 +60,7 @@ export default function SideBarNav({ setSelectedPage, setSelectedPageId }) {
     }, [tab])
     // LOGOUT
     const handleLogout = async () => {
-        console.log(token.accessToken);
+        // console.log(token.accessToken);
         let access_token = '';
         if (token.accessToken) {
             access_token = token.accessToken;
@@ -68,7 +68,7 @@ export default function SideBarNav({ setSelectedPage, setSelectedPageId }) {
             access_token = token;
         }
 
-        console.log(userId);
+        // console.log(userId);
         const logout_result = await fetchAPI(
             `../${logout}`,
             'POST',
@@ -79,15 +79,15 @@ export default function SideBarNav({ setSelectedPage, setSelectedPageId }) {
             },
         );
 
-        console.log(logout_result);
+        // console.log(logout_result);
         if (logout_result.status === 200) {
             setUserId('');
             setToken('');
             // setSession('')
             window.location.assign('/')
-            console.log('in logout success');
+            // console.log('in logout success');
         }
-        console.log('in logout');
+        // console.log('in logout');
 
         //nhận lại kết quả, xem Logout có thành công
     };

@@ -95,7 +95,7 @@ const Search = () => {
   };
 
   const handleSuggestionClick = (suggestion, e, id) => {
-    console.log("handleSuggestionClick:::", id)
+    // console.log("handleSuggestionClick:::", id)
 
     setInput(suggestion);
     setShowDropdown(false);

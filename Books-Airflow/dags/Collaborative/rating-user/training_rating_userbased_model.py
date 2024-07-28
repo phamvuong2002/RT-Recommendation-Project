@@ -35,7 +35,7 @@ default_args = {
 }
 
 def process_rating():
-    db_connection_str = 'mysql+pymysql://bookada:bookada2002@bookada-database-v1.crq4aco4chyf.ap-southeast-1.rds.amazonaws.com/books_db_v1'
+    db_connection_str = 'mysql+pymysql://bookada:bookada2002@bookada.cfmwusg6itst.ap-southeast-1.rds.amazonaws.com/books_db_v1'
     db_connection = create_engine(db_connection_str)
     
     min_book_ratings = 1    
@@ -75,7 +75,7 @@ def process_rating():
 
 def get_trained_user():
     
-    db_connection_str = 'mysql+pymysql://bookada:bookada2002@bookada-database-v1.crq4aco4chyf.ap-southeast-1.rds.amazonaws.com/books_db_v1'
+    db_connection_str = 'mysql+pymysql://bookada:bookada2002@bookada.cfmwusg6itst.ap-southeast-1.rds.amazonaws.com/books_db_v1'
     db_connection = create_engine(db_connection_str)
     
     # Đọc tất cả dữ liệu từ bảng user_behaviour vào DataFrame
@@ -177,7 +177,7 @@ def save_user_recommendations_to_mysql(ti) :
     recommendation_lists=ti.xcom_pull(key='rec_resul_rating_user')
     # print('rec_pickle',rec_pickle)
     db_connection_str = f"mysql+pymysql://root:vuong@127.0.0.1/books_db_v1"
-    db_connection_str = 'mysql+pymysql://bookada:bookada2002@bookada-database-v1.crq4aco4chyf.ap-southeast-1.rds.amazonaws.com/books_db_v1'
+    db_connection_str = 'mysql+pymysql://bookada:bookada2002@bookada.cfmwusg6itst.ap-southeast-1.rds.amazonaws.com/books_db_v1'
     db_connection = create_engine(db_connection_str)
     # Khởi tạo metadata
     metadata = MetaData()
@@ -286,7 +286,7 @@ def save_model(ti):
     s3.put_object(Bucket=bucket_name, Key=grouped_df_file_name, Body=rating_user_grouped_df_pickle)
 
     #Lưu Thông tin vào DB
-    db_connection_str = 'mysql+pymysql://bookada:bookada2002@bookada-database-v1.crq4aco4chyf.ap-southeast-1.rds.amazonaws.com/books_db_v1'
+    db_connection_str = 'mysql+pymysql://bookada:bookada2002@bookada.cfmwusg6itst.ap-southeast-1.rds.amazonaws.com/books_db_v1'
     db_connection = create_engine(db_connection_str)
     insert_query = f"INSERT INTO rec_model (rec_model_id, rec_model_type, create_time) VALUES ('{model_id}', '{model_type}', CURRENT_TIMESTAMP)"
     connection = db_connection.connect()  # Tạo đối tượng Connection từ Engine

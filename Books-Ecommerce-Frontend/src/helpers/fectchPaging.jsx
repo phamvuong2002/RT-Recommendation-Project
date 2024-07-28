@@ -13,12 +13,12 @@ export const FectchPaging = ({ url }) => {
     useEffect(() => {
         const fetchData = async () => {
             const page = Math.min(currentPage + 1, totalPages);
-            console.log('url1', `${url}page=${page}.json`)
+            // console.log('url1', `${url}page=${page}.json`)
             //const result = await axios.get(`${API_URL}&page=${page}`);api for test
             const result = await axios.get(`${url}page=${page}.json`);
             setPages(result.data);
             setLoading(false);
-            console.log('url2', `${url}page=${page}.json`)
+            // console.log('url2', `${url}page=${page}.json`)
         };
         fetchData();
     }, [url, currentPage]);

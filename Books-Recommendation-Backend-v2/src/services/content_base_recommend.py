@@ -10,6 +10,7 @@ import redis
 import time
 import regex as re 
 from datetime import datetime, timedelta
+from pyvi import ViTokenizer, ViUtils
 
 def normalize_text(text):
     # Thay thế dấu gạch ngang bằng khoảng trắng
@@ -126,16 +127,37 @@ def create_redis_model(userId, n):
 ###INIT MODEL ###
 data = load_model("current/content/books_df")
 
-tfidf = TfidfVectorizer(stop_words='english')
-tfidf_matrix = tfidf.fit_transform(data['book_title'].astype('U').values + ' ' + data['genres'].astype('U').values)
+# tfidf = TfidfVectorizer(stop_words='english')
+# tfidf_matrix = tfidf.fit_transform(data['book_title'].astype('U').values + ' ' + data['genres'].astype('U').values)
+
+# tfidf_matrix_dense = tfidf_matrix.toarray().astype('float32')
+# index = faiss.IndexFlatL2(tfidf_matrix_dense.shape[1])
+# index.add(tfidf_matrix_dense)
+
+# data['normalized_title'] = data['book_title'].apply(normalize_text)
+# data['normalized_genres'] = data['genres'].apply(normalize_text)  # Thêm cột normalized_genres
+# cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
+
+# ######## V2 ########
+# Load model
+data = load_model("current/content/books_df")
+
+# Hàm tách từ và loại bỏ các từ dừng tiếng Việt
+def vietnamese_tokenizer(text):
+    tokens = ViTokenizer.tokenize(text)
+    return tokens
+
+# Chuẩn hóa văn bản
+data['normalized_title'] = data['book_title'].apply(vietnamese_tokenizer)
+data['normalized_genres'] = data['genres'].apply(vietnamese_tokenizer)
+
+# Tạo TF-IDF vectorizer sử dụng tokenizer tiếng Việt
+tfidf = TfidfVectorizer(tokenizer=vietnamese_tokenizer)
+tfidf_matrix = tfidf.fit_transform(data['normalized_title'].astype('U').values + ' ' + data['normalized_genres'].astype('U').values)
 
 tfidf_matrix_dense = tfidf_matrix.toarray().astype('float32')
 index = faiss.IndexFlatL2(tfidf_matrix_dense.shape[1])
 index.add(tfidf_matrix_dense)
-
-data['normalized_title'] = data['book_title'].apply(normalize_text)
-data['normalized_genres'] = data['genres'].apply(normalize_text)  # Thêm cột normalized_genres
-# cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
 
 
 # Hàm để gợi ý sách, input là tiêu đề
@@ -178,7 +200,7 @@ def get_content_recommendations_by_keyword(title, userId, quantity):
     return recommend_books_list, selected_books
 
 
-def get_content_recommendations_by_keyword_faiss(key_words, genres, userId, quantity, page, page_size):
+def get_content_recommendations_by_keyword_faiss_en(key_words, genres, userId, quantity, page, page_size):
     mask_title = pd.Series([True] * len(data))
     mask_genres = pd.Series([True] * len(data))
     keywords = split_keywords(key_words)
@@ -223,13 +245,12 @@ def get_content_recommendations_by_keyword_faiss(key_words, genres, userId, quan
     
     return recommend_books_list
 
-def get_content_recommendations_by_keyword_faiss_temp(key_words, genres, userId, quantity, page, page_size):
-    # genres = "sach-tieng-viet,manga-comic,manga,series-manga"
-    # genres = "all"
+def get_content_recommendations_by_keyword_faiss(key_words, genres, userId, quantity, page, page_size):
     mask_title = pd.Series([True] * len(data))
     mask_genres = pd.Series([True] * len(data))
-    keywords = split_keywords(key_words)
-     
+    
+    keywords = ViTokenizer.tokenize(key_words).split()
+    
     for keyword in keywords:
         mask_title = mask_title & data['normalized_title'].str.contains(keyword, case=False, na=False)
         mask_genres = mask_genres & data['normalized_genres'].str.contains(keyword, case=False, na=False)
@@ -237,23 +258,27 @@ def get_content_recommendations_by_keyword_faiss_temp(key_words, genres, userId,
     if genres != "all":
         genres_list = genres.split(",")
         genre_main = genres_list[-1]
-        genre_keywords = split_keywords(genre_main)
+        genre_keywords = ViTokenizer.tokenize(genre_main).split()
         mask_genres = pd.Series([True] * len(data))
         for genre_keyword in genre_keywords:
             mask_genres &= mask_genres & data['normalized_genres'].str.contains(genre_keyword, case=False, na=False)
         selected_books = data[mask_genres | mask_title]
     else:
         selected_books = data[mask_title | mask_genres]
-
+    
+    if selected_books.empty and keywords:
+        # Lấy từ khóa bỏ từ phải qua trái
+        new_keywords = keywords[:-1]
+        return get_content_recommendations_by_keyword_faiss(' '.join(new_keywords), genres, userId, quantity, page, page_size)
+    
     if selected_books.empty:
         return []
     
     idx = selected_books.index[0]
     D, I = index.search(tfidf_matrix_dense[idx:idx+1], quantity)
-
+    
     recommend_books = data.iloc[I[0]]
     recommend_books['score'] = D[0]
-    
     recommend_books = recommend_books[['book_id', 'book_title', 'genres', 'score']]
     
     # Phân trang

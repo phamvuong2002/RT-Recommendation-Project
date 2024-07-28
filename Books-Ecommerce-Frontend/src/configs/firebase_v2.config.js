@@ -59,7 +59,7 @@ export async function initializeFirebaseAuth() {
     return null;
   }
 
-  console.log('firebaseAcc::', firebaseAcc);
+  // console.log('firebaseAcc::', firebaseAcc);
   const firebaseConfig = {
     apiKey: firebaseAcc?.apiKey,
     authDomain: firebaseAcc?.authDomain,

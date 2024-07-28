@@ -15,7 +15,7 @@ export const ChangeBirthdayPopup = ({ open, setOpen, icon = '', birthday = '', s
 
     const handleUpdateBirthday = async () => {
         //xử lý update Ngày sinh
-        console.log(value)
+        // console.log(value)s
         setIsLoading(true);
         const update = await fetchAPI(`../${updateUserInfo}`, 'POST', {
             updatedField: 'dob',

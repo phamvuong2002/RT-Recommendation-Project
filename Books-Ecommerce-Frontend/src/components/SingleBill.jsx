@@ -123,11 +123,11 @@ export const SingleBill = ({ bill, billId, setReload }) => {
         orderId: parseInt(billId),
       });
 
-      console.log("statusFeedback::", {
-        userId,
-        bookId: bill.bookId,
-        orderId: parseInt(billId),
-      })
+      // console.log("statusFeedback::", {
+      //   userId,
+      //   bookId: bill.bookId,
+      //   orderId: parseInt(billId),
+      // })
 
       if (statusFeedback.status !== 200) {
         return;

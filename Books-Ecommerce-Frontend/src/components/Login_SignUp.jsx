@@ -269,14 +269,14 @@ export default function Login_SignUp({
     // Tìm email và sđt của forgot account
     // const email = 'vuongdaquen@gmail.com';
     // const phone = '0919489084';
-    console.log('forgot account: ', accountForgot);
+    // console.log('forgot account: ', accountForgot);
     let resetMethod = '';
     let email = '';
     let phone = '';
     const isValidEmail = validateEmail(accountForgot);
     const isValidPhonenum = isValidPhoneNumber(accountForgot);
     let checkRegistered = '';
-    console.log(isValidEmail, isValidPhonenum);
+    // console.log(isValidEmail, isValidPhonenum);
     if (isValidEmail.status) {
       resetMethod = 'email';
       checkRegistered = await fetchAPI(`../${checkEmailnPhone}`, 'POST', {
@@ -296,9 +296,9 @@ export default function Login_SignUp({
       return;
     }
 
-    console.log('phone', phone);
+    // console.log('phone', phone);
     if (checkRegistered.status === 200) {
-      console.log(resetMethod);
+      // console.log(resetMethod);
       const userID = await fetchAPI(`../${getID}`, 'POST', {
         method: resetMethod,
         methodValue: accountForgot,
@@ -437,7 +437,7 @@ export default function Login_SignUp({
         }
         setIsLoading(false);
       };
-      console.log('change pw');
+      // console.log('change pw');
       reset_pw_user();
     }
 

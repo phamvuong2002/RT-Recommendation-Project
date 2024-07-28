@@ -53,12 +53,12 @@ export const ChangePassword = ({
   useEffect(() => {
     if (authenStatus === 'failed') {
       setOpen(false);
-      console.log('Failed rồi');
+      // console.log('Failed rồi');
     }
     if (authenStatus === 'success') {
       setOpen(false);
       setIsOpenChange(true);
-      console.log('OKOK');
+      // console.log('OKOK');
     }
   }, [open]);
 
@@ -147,7 +147,6 @@ export const ChangePassword = ({
 
               <div className="flex flex-col gap-1 mt-1 text-xs text-red-500">
                 <div className={`${messages.length === 0 ? 'hidden' : ''}`}>
-                  {console.log(messages.length)}
                   Mật khẩu phải bao gồm:
                 </div>
                 {messages.map((message) => (

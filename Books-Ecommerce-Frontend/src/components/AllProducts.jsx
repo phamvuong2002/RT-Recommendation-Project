@@ -120,7 +120,7 @@ export const AllProducts = ({ isShowHeader, numOfProductsInRow, _sort, _cate, _l
             if (userId) {
                 loadFavBook(userId);
             } else {
-                console.log("User ID null!!!")
+                // console.log("User ID null!!!")
             }
 
 

@@ -189,7 +189,7 @@ export const Payment = () => {
 
   // Xử lý sự kiện khi nhấn nút "Xoá"
   const handleDeleteProduct = async (productId) => {
-    console.log('productId::', productId);
+    // console.log('productId::', productId);
     //ví dụ gửi yêu cầu xoá sản phẩm xuống backend
     setIsLoading(true);
     const update = await fetchAPI(`../${addtocart}`, 'POST', {

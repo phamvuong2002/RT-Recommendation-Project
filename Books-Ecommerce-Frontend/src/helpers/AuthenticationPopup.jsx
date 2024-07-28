@@ -137,7 +137,7 @@ export const AuthenticationPopup = ({
       });
 
       if (emailOTP.status === 200) {
-        console.log('sucess');
+        // console.log('sucess');
         setAuthenStatus('success');
         setVaildOtpMessage('');
       } else {
@@ -233,7 +233,7 @@ export const AuthenticationPopup = ({
         //     handleReturn();
         //   }, 3000);
         // }
-        console.log('Firebase Error::', error);
+        // console.log('Firebase Error::', error);
       });
   };
 

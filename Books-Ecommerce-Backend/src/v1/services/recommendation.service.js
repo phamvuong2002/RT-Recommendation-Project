@@ -116,6 +116,7 @@ class RecommendationService {
       where: { rec_user_sid: userId },
       limit: limit,
       offset: (page - 1) * limit,
+      order: [["create_time", "DESC"]],
     });
 
     const formattedBooks = recBooks.map((recbook) => ({

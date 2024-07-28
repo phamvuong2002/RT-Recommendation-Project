@@ -145,7 +145,6 @@ export const ProductDetailPage = () => {
   useEffect(() => {
     const collabBook = async () => {
       if(!userId || !book) return;
-      console.log("chạy dô đây 1");
 
       setIsLoadingRecBooks(true);
       const rec_book = await fetchAPI(`../${searchrecbook}`, 'POST', {
@@ -178,7 +177,6 @@ export const ProductDetailPage = () => {
   useEffect(() => {
     //load content based recent books
     const loadRecRecentBooks = async() => {
-      console.log("chạy dô đây 2");
       if(!userId || !book) return
       setIsLoadingRecBooks(true);
       const dataRec = await fetchAPI(`../${getconbasedrecentbook}`, 'POST', {

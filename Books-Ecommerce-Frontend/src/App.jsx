@@ -56,7 +56,7 @@ function App() {
             setUserId(userData.metadata?.user?._id);
           }
 
-          console.log('data session::', userData);
+          // console.log('data session::', userData);
           if (userData.metadata.token) {
             setToken(userData.metadata?.token);
           } else {

@@ -4,7 +4,7 @@ from airflow.operators.python import PythonOperator
 from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from datetime import timedelta, datetime
 import pandas as pd
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine, text, select, MetaData, desc 
 import scipy.sparse as sparse
 import implicit
 import pickle
@@ -34,14 +34,23 @@ default_args = {
     'retry_delay': timedelta(minutes=2)
 }
 
-
 def process_rating():
-    db_connection_str = 'mysql+pymysql://bookada:bookada2002@bookada-database-v1.crq4aco4chyf.ap-southeast-1.rds.amazonaws.com/books_db_v1'
+    db_connection_str = 'mysql+pymysql://bookada:bookada2002@bookada.cfmwusg6itst.ap-southeast-1.rds.amazonaws.com/books_db_v1'
     db_connection = create_engine(db_connection_str)
     
+    min_book_ratings = 1    
+    min_user_ratings = 1
     # Đọc tất cả dữ liệu từ bảng user_behaviour vào DataFrame
+    # query_all_feedback = """
+    #     select  u.user_sid as `User-ID`,fb.feedback_bookid as `Book-ID`,avg(fb.feedback_rating-1) as `Book-Rating`
+    #     from books_db_v1.feedback fb join books_db_v1.user u 
+    #     on fb.feedback_userid=u.user_id
+    #     group by u.user_sid, fb.feedback_userid, fb.feedback_bookid
+    # """
     query_all_feedback = """
-        SELECT u.user_sid AS `User-ID`, b.book_id AS `Book-ID`, fb.feedback_rating AS `Book-Rating`FROM book b join feedback fb on b.book_id = fb.feedback_bookid join user u on u.user_id=fb.feedback_userid;
+        select  u.user_sid as `User-ID`,fb.feedback_bookid as `Book-ID`,fb.feedback_rating as `Book-Rating`
+        from books_db_v1.feedback fb join books_db_v1.user u 
+        on fb.feedback_userid=u.user_id
     """
 
     with db_connection.connect() as conn:
@@ -50,25 +59,57 @@ def process_rating():
             con=conn.connection
         )
 
-    df['Book-Rating'] = df['Book-Rating'].astype(int)
-    min_book_ratings = 1
+    df['Book-Rating'] = df['Book-Rating'].astype(float)
+
     filter_books = df['Book-ID'].value_counts() > min_book_ratings
     filter_books = filter_books[filter_books].index.tolist()
 
-    min_user_ratings = 1
+
     filter_users = df['User-ID'].value_counts() > min_user_ratings
     filter_users = filter_users[filter_users].index.tolist()
 
-    df_new = df[(df['Book-ID'].isin(filter_books)) & (df['User-ID'].isin(filter_users)) & (df['Book-Rating']>0)]
-
-
+    df_new = df[(df['Book-ID'].isin(filter_books)) & (df['User-ID'].isin(filter_users))]
     return df_new   
+
+
+
+def get_trained_user():
+    
+    db_connection_str = 'mysql+pymysql://bookada:bookada2002@bookada.cfmwusg6itst.ap-southeast-1.rds.amazonaws.com/books_db_v1'
+    db_connection = create_engine(db_connection_str)
+    
+    # Đọc tất cả dữ liệu từ bảng user_behaviour vào DataFrame
+    # Lấy các user: có mua hàng trong 1 tháng gần nhất + Có đánh giá trên 5 sản phẩm trong 1 tháng gần nhất
+    query_all_feedback = """
+       select user_sid as `user_id` from books_db_v1.user where 
+        user_id in(
+        select distinct(feedback_userid) 
+        from books_db_v1.feedback
+        where feedback_rating>1 and (datediff(curtime(), create_time) <30 or datediff(curtime(), update_time)<30)
+        group by feedback_userid
+        having  count(*)>5 
+        UNION
+        select distinct(order_user_id)
+        from books_db_v1.order
+        where (datediff(curtime(), create_time) <30 or datediff(curtime(), update_time) <30))
+
+    """
+    
+    with db_connection.connect() as conn:
+        df = pd.read_sql(
+            sql=query_all_feedback,
+            con=conn.connection
+        )
+    user_list=df['user_id'].tolist()
+    print(user_list)
+    return user_list
 
 def training_model(ti):
     grouped_df=ti.xcom_pull(task_ids='process_rating')
-    print(grouped_df)
-    reader = Reader(rating_scale=(0, 5))
-    data = Dataset.load_from_df(grouped_df[['Book-ID', 'User-ID', 'Book-Rating']], reader)
+    # print(grouped_df)
+    reader = Reader(rating_scale=(1, 5))
+    final_grouped=grouped_df.loc[grouped_df['Book-Rating']>0]
+    data = Dataset.load_from_df(final_grouped[['User-ID','Book-ID', 'Book-Rating']], reader)
     param_grid = {'k': [10, 20, 30], 'min_k': [3, 6, 9],
               'sim_options': {'name': ['msd', 'cosine','pearson','pearson_baseline'],
                               'user_based': [True], 'min_support':[2,4]}
@@ -76,7 +117,8 @@ def training_model(ti):
 
     # Performing 3-fold cross validation to tune the hyperparameters
     gs = GridSearchCV(KNNBasic, param_grid, measures=['rmse'], cv=3, n_jobs=-1)
-
+    
+    n_similar=24
     # Fitting the data
     gs.fit(data)
 
@@ -85,18 +127,138 @@ def training_model(ti):
     # Combination of parameters that gave the best RMSE score
     # print(gs.best_params['rmse'])
     algo_knn = gs.best_estimator["rmse"]    
-    algo_knn.fit(data.build_full_trainset())
+    trainset=data.build_full_trainset()
+    algo_knn.fit(trainset)
+    trained_user=get_trained_user()
+
+    # Lấy ra globalmean
+    global_mean=trainset.global_mean
+    recommendation_lists=[]
+    for i in range(len(trained_user)):
+        user=trained_user[i]
+        rated_book = grouped_df.loc[grouped_df['User-ID']==user,'Book-ID'].unique()
+
+        list_of_unrated_book = grouped_df.loc[(~grouped_df['Book-ID'].isin(rated_book)),'Book-ID'].unique()
+       
+        # set up user set with unrated books
+        # print('unrated ',list_of_unrated_book) 
+        user_set = [[user, item_id,0] for item_id in list_of_unrated_book]
+        # print('userset',user_set,0)
+        # generate predictions based on user set
+        predictions_pp= algo_knn.test(user_set)
+        df = pd.DataFrame(predictions_pp, columns=['uid', 'iid', 'rui', 'est', 'details'])
+       
+        df=df.rename(columns={'uid':'user_id','iid': 'book_id', 'est': 'score'})
+        # Chỉ lấy những Score != global_mean (do khi kết quả dự đoán = global_mean --> Kết quả được cho là Impossible)
+        final_df_result=df.loc[df['score']!=global_mean]
+        top_n_recommendations = final_df_result[['user_id','book_id','score']].sort_values('score',ascending=False).drop_duplicates('book_id')[:n_similar]
+
+        print('Top n recommendation', len(top_n_recommendations),top_n_recommendations)
+
+        # Chỉ lưu kết quả gợi ý khi có ít nhất 5 gợi ý
+        if(len(top_n_recommendations)>5):
+            recommendation_lists.append(top_n_recommendations)
+        
 
     # Chuyển đổi mô hình thành pickle
     rating_user_model_pickle = pickle.dumps(algo_knn)
     rating_user_grouped_df_pickle = pickle.dumps(grouped_df)
     # testset_pickle = pickle.dumps(testset)
-   
+
 
     ti.xcom_push(key='rating_user_model_pickle', value=rating_user_model_pickle)
     ti.xcom_push(key='rating_user_grouped_df_pickle', value=rating_user_grouped_df_pickle)
-  
+    ti.xcom_push(key='rec_resul_rating_user', value=recommendation_lists)
+    # return grouped_df
 
+
+
+def save_user_recommendations_to_mysql(ti) :
+    recommendation_lists=ti.xcom_pull(key='rec_resul_rating_user')
+    # print('rec_pickle',rec_pickle)
+    db_connection_str = f"mysql+pymysql://root:vuong@127.0.0.1/books_db_v1"
+    db_connection_str = 'mysql+pymysql://bookada:bookada2002@bookada.cfmwusg6itst.ap-southeast-1.rds.amazonaws.com/books_db_v1'
+    db_connection = create_engine(db_connection_str)
+    # Khởi tạo metadata
+    metadata = MetaData()
+    metadata.reflect(bind=db_connection)
+      # Object để truy vấn
+    book_table = metadata.tables['book']
+    rec_model = metadata.tables['rec_model']
+    rec_session = metadata.tables['rec_session']
+    rec_book = metadata.tables['rec_book']
+    model_type='rating_user'
+    rec_books = []
+    try:
+        with db_connection.connect() as conn:
+            #Tìm model mới nhất
+            query = select(text('rec_model_id')).where(rec_model.c.rec_model_type == model_type).order_by(desc(rec_model.c.create_time)).limit(1)
+            result = conn.execute(query)
+            result = result.fetchone()
+            rec_model_id = result[0]
+            #Tạo session
+            result = conn.execute(rec_session.insert().values(
+                rec_model_id = rec_model_id
+            ))
+            last_inserted_id = result.lastrowid
+
+            for i in range(len(recommendation_lists)):
+                # print('IIIIII,',i)
+                # rec_user_i=recommendation_lists[i]
+                user_i=recommendation_lists[i]
+                books=user_i['book_id']
+                user=user_i['user_id'].unique()
+                user_id=user[0]
+            #Lưu thông tin sách
+                for book in books:
+                    #tìm thông tin sách
+                    bookId = int(book)
+                    query = select(text('book_id'), text('book_title'), text('book_spe_price'), text('book_old_price'), text('book_img'), text('book_status'), text('book_categories')).where(book_table.c.book_id == bookId)
+                    result = conn.execute(query)
+                    book_info = result.fetchone()
+                    if book_info:
+                        book_data = {
+                            "bookId": book_info[0],
+                            "bookTitle": book_info[1],
+                            "bookSpePrice": book_info[2],
+                            "bookOldPrice": book_info[3],
+                            "bookImg": book_info[4],
+                            "bookStatus": book_info[5],
+                            "bookCategory": book_info[6]
+                        }
+                        #return recommended book data
+                        rec_books.append(book_data)
+                    
+                        #xử lý thể loai
+                        book_category_str = book_data['bookCategory']
+                        book_category_str = book_category_str.strip('[]')
+                        book_category_list = book_category_str.split(',')
+                        book_category_list = [int(x) for x in book_category_list]
+
+                        #lưu thông tin vừa tìm được vào bảng rec_book
+                        if(book_data["bookStatus"] == 1):
+                            #lưu vào mysql 
+                            conn.execute(rec_book.insert().values(
+                                rec_session_id = last_inserted_id,
+                                rec_user_sid = user_id,
+                                rec_book_id = book_data['bookId'],
+                                rec_book_title = book_data['bookTitle'],
+                                rec_book_img = book_data['bookImg'],
+                                rec_book_spe_price = book_data['bookSpePrice'],
+                                rec_book_old_price = book_data['bookOldPrice'],
+                                rec_book_categories = book_category_list #book_data['bookCategory'] #book_data['bookCategory']
+                            ))
+
+                            #lưu vào redis
+                            # insert_books_to_sorted_set(user_id=user_id, rec_session_id=last_inserted_id, book_info=book_data)
+                    else:
+                        print("Không tìm thấy thông tin cho sách với bookID", str(bookId))
+                                    
+            conn.commit()
+    except Exception as e:
+        return f'ETL Failed: {e}'
+   
+    return 'ETL successfully'
 
 def save_model(ti):
     rating_user_model_pickle = ti.xcom_pull(key='rating_user_model_pickle')
@@ -124,7 +286,7 @@ def save_model(ti):
     s3.put_object(Bucket=bucket_name, Key=grouped_df_file_name, Body=rating_user_grouped_df_pickle)
 
     #Lưu Thông tin vào DB
-    db_connection_str = 'mysql+pymysql://bookada:bookada2002@bookada-database-v1.crq4aco4chyf.ap-southeast-1.rds.amazonaws.com/books_db_v1'
+    db_connection_str = 'mysql+pymysql://bookada:bookada2002@bookada.cfmwusg6itst.ap-southeast-1.rds.amazonaws.com/books_db_v1'
     db_connection = create_engine(db_connection_str)
     insert_query = f"INSERT INTO rec_model (rec_model_id, rec_model_type, create_time) VALUES ('{model_id}', '{model_type}', CURRENT_TIMESTAMP)"
     connection = db_connection.connect()  # Tạo đối tượng Connection từ Engine
@@ -138,7 +300,6 @@ def save_model(ti):
     #Gọi gửi thông báo đến server python
     return "Training Successfully"
 
-
 def send_message(ti):
     rating_user_model_pickle = ti.xcom_pull(key='rating_user_model_pickle_name')
     rating_user_grouped_df_pickle = ti.xcom_pull(key='rating_user_grouped_df_pickle_name')
@@ -150,7 +311,7 @@ def send_message(ti):
     model_type = "rating_user"
 
      # Địa chỉ URL của API
-    url = "http://192.168.2.10:4123/offline/get-models"
+    url = "http://192.168.1.34:4123/offline/get-models"
     
     try:
         for file_name in file_names:
@@ -173,7 +334,7 @@ def send_message(ti):
 
 
 with DAG(
-    dag_id='training_rating_userbased_model',
+    dag_id='training_rating_userbased_model_02',
     default_args=default_args,
     schedule_interval=None,  # Không lên lịch tự động, chỉ kích hoạt thủ công
     catchup=False
@@ -188,6 +349,11 @@ with DAG(
         python_callable=training_model
     )
 
+    task_save_recommendation_mysql = PythonOperator(
+        task_id='save_rec_to_mysql',
+        python_callable=save_user_recommendations_to_mysql
+    )
+
     task_saving_model = PythonOperator(
         task_id='saving_model',
         python_callable=save_model
@@ -197,6 +363,7 @@ with DAG(
         task_id='send_message',
         python_callable=send_message
     )
-   
+  
 
-    task_process_rating >> task_training_model >> task_saving_model >> task_send_message
+    task_process_rating >> task_training_model >>task_saving_model>> task_save_recommendation_mysql >>task_send_message
+   

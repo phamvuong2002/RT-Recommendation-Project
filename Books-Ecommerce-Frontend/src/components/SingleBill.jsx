@@ -17,6 +17,7 @@ import { StarRating } from './StarRating';
 import { fetchAPI } from '../helpers/fetch';
 import { checkstatus, submitfeedback } from '../apis/feedback';
 import { AppContext } from '../contexts/main';
+import { collectBehaviour } from '../apis/collectBehaviour';
 
 export const SingleBill = ({ bill, billId, setReload }) => {
   const { userId, setIsLoading } = useContext(AppContext);
@@ -77,8 +78,7 @@ export const SingleBill = ({ bill, billId, setReload }) => {
 
   const handleDeleteBill = () => {
     //Xử lý xoá
-    setReload(true);
-    return 'success';
+    return 'falied';
   };
 
   const handleSubmitFeedback = async () => {
@@ -101,6 +101,16 @@ export const SingleBill = ({ bill, billId, setReload }) => {
       setIsFeedback(true);
       setIsOpenRatingPopup(false);
     }
+    //collect feedback behavior
+    const dataCollect = {
+      topic: 'rating',
+      message: {
+        userId,
+        behaviour: 'rating',
+        productId: bill?.bookId,
+      },
+    };
+    await fetchAPI(`../${collectBehaviour}`, 'POST', dataCollect);
   };
 
   //Get feedback status
@@ -112,6 +122,12 @@ export const SingleBill = ({ bill, billId, setReload }) => {
         bookId: bill.bookId,
         orderId: parseInt(billId),
       });
+
+      // console.log("statusFeedback::", {
+      //   userId,
+      //   bookId: bill.bookId,
+      //   orderId: parseInt(billId),
+      // })
 
       if (statusFeedback.status !== 200) {
         return;
@@ -258,7 +274,7 @@ export const SingleBill = ({ bill, billId, setReload }) => {
               </div>
               <div className="flex flex-col md:justify-between md:py-2 xl:w-[20%] xl:justify-between xl:py-2">
                 <div className="flex flex-col gap-1 xl:gap-4 text-[0.6rem] xl:text-xs capitalize font-bold">
-                  <div className="w-fit px-1 bg-blue-200 text-blue-600">
+                  <div className="w-fit px-1 text-red-600">
                     Ngày đặt {formatDate(bill.date)}
                   </div>
                   <div
@@ -268,34 +284,50 @@ export const SingleBill = ({ bill, billId, setReload }) => {
                   </div>
                 </div>
               </div>
-              <div className="flex font-semibold justify-between xl:flex-col xl:w-[20%] md:flex-col md:ml-4">
-                <div className="flex items-center text-red-500 text-base xl:w-[8rem] xl:justify-end">
-                  <div>{formatNumberToText(bill.price)}</div>
+              <div className="flex font-semibold justify-between xl:flex-col xl:w-[20%] md:flex-col md:ml-4 ">
+                <div className="flex text-red-500 text-base xl:w-[8rem] xl:justify-end mt-2 xl:mt-0">
+                  <div className="text-end ">{formatNumberToText(bill.price)}</div>
                   <div className="underline">đ</div>
                 </div>
                 <div
-                  className="flex xl:justify-end items-center"
+                  className="flex xl:justify-end items-end"
                   onClick={() =>
                     navigator(
                       `/payment?type=book&data=${bill.bookId}&quantity=${bill.quantity}`,
                     )
                   }
                 >
-                  <button className="w-20 h-10 bg-red-500 text-sm text-white">
+                  <button className="w-20 h-10 bg-red-500 text-sm text-white ">
                     Mua Lại
                   </button>
                 </div>
               </div>
-              <div
-                className="flex justify-between xl:flex-col xl:justify-center xl:w-[20%] md:flex-col md:ml-4 cursor-pointer"
-                onClick={() => setIsOpenRatingPopup(isFeedback ? false : true)}
-              >
-                <button
-                  className={` ${isFeedback ? 'text-red-500' : 'text-blue-500'}  text-sm font-semibold xl:text-base xl:font-normal`}
+              {
+                bill.status === 'Cancelled' ?
+                <Link 
+                  to={`../search_v2?search=${bill.name}&search_type=related_book&sort=create_time_desc&page=1&limit=24`}
+                  className="flex flex-col w-[42%] xl:w-[20%] gap-1 rounded-lg items-center xl:justify-center transition-all hover:bg-red-200">
+                  <img src="/img/books-6611_256.gif" alt="another-books" className="w-10"/>
+                  <div className="text-xs md:text-sm font-popi text-center">Tìm kiếm sản phẩm tương tự</div>
+                </Link> :
+                <div
+                  className="flex justify-between xl:flex-col xl:justify-center xl:w-[20%] md:flex-col md:ml-4 cursor-pointer"
+                  onClick={() => setIsOpenRatingPopup(isFeedback ? false : true)}
                 >
-                  {isFeedback ? 'Đã Đánh giá' : 'Đánh giá'}
-                </button>
-              </div>
+                  <button
+                    className={`${ bill.status === 'Cancelled' ? 'hidden' : isFeedback ? 'text-blue-400' : 'text-yellow-600'}  text-sm font-semibold xl:text-base xl:font-normal `}
+                    disabled={bill.status === 'Cancelled'}
+                    title={bill.status === 'Cancelled'? 'Không thể đánh giá đơn hàng đã huỷ': isFeedback ? 'Đơn hàng đã được đánh giá': 'Đánh giá đơn hàng' }
+                  >
+                    {isFeedback ? 'Đã Đánh giá' :
+                      <div className="flex flex-col gap-1 justify-center items-center rounded-xl transition hover:bg-yellow-200 xl:py-2">
+                        <img src="/img/require_rating.png" alt="require-rating" className='w-8'/>
+                        <div>Đánh giá</div>
+                      </div>
+                    }
+                  </button>
+                </div>
+              }
             </div>
           </div>
         </SwiperSlide>
@@ -312,8 +344,8 @@ export const SingleBill = ({ bill, billId, setReload }) => {
                 'Bạn có đồng ý loại bỏ đơn hàng này?',
               )}
               ErrorHandling={{
-                title: 'Lỗi xoá Hoá Đơn',
-                message: 'Không thể xoá hoá đơn này. Vui lòng thử lại sau!',
+                title: 'Thông báo xoá đơn hàng',
+                message: 'Yêu cầu của bạn sẽ được xem xét và xử lý sớm nhất, chúng tôi sẽ phản hồi nhanh nhất có thể. Vui lòng trải nghiệm các dịch vụ khác của chúng tôi!',
               }}
             />
           </div>

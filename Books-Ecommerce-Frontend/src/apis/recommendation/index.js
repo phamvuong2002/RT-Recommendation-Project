@@ -12,8 +12,14 @@ export const categorypersonalrec =
 
 export const popularrating = 'api/v1/api/recommendation/rating/popular';
 
+export const usersvdrating = 'api/v1/api/recommendation/rating/svd/user';
+
+
 export const getRecommendByContentBase =
   'api/v1/api/recommendation/related-book/related-search';
+
+export const getRecommendByContentBaseFaiss =
+  'api/v1/api/recommendation/related-book/faiss/related-search';
 
 export const getRecommendByContentBaseID =
   'api/v1/api/recommendation/related-book/related';
@@ -26,3 +32,5 @@ export const recRandomBook = 'api/v1/api/recommendation/recRandomBook';
 export const searchrecbook = 'api/v1/api/recommendation/search/rec-books';
 export const getconbasbook =
   'api/v1/api/recommendation/get/content-based/books';
+  export const getconbasedrecentbook =
+  'api/v1/api/recommendation/related-book/faiss/recent-books';

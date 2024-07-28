@@ -42,7 +42,7 @@ export const fetchAPI = async (
     const data = await res.json();
     return data;
   } catch (error) {
-    console.log('There was an error fetch', error);
+    // console.log('There was an error fetch', error);
     return;
   }
 };

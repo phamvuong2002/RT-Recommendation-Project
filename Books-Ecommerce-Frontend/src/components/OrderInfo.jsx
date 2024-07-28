@@ -6,6 +6,7 @@ import { SingleBill } from './SingleBill';
 import { fetchAPI } from '../helpers/fetch';
 import { getorders } from '../apis/order';
 import { AppContext } from '../contexts/main';
+import { Link } from 'react-router-dom';
 
 export const OrderInfo = () => {
     const { userId } = useContext(AppContext);
@@ -54,14 +55,14 @@ export const OrderInfo = () => {
             return (
                 <div key={billId}>
                     <div className="flex items-center text-xs justify-between xl:text-base gap-3 xl:py-2 xl:h-8 xl:rounded-full h-7 w-full text-white px-1 font-semibold bg-red-500">
-                        <div className="flex gap-1">
-                            <div className="xl:pl-1"> Số hoá đơn #{billId}</div>
+                        <Link className="flex gap-1" to={`../order-detail/${billId}`}>
+                            <div className="xl:pl-1" > Số hoá đơn #{billId}</div>
                             <div className="xl:pr-1">({groupBillByStatusAndID[billId].length} đơn hàng)</div>
-                        </div>
+                        </Link>
                     </div>
                     {/* Render Swiper here for each group of bills */}
                     {groupBillByStatusAndID[billId].map(bill => (
-                        <SingleBill key={bill.billId} bill={bill} setReload={setReloadBill} />
+                        <SingleBill key={bill.billId} bill={bill} billId={billId} setReload={setReloadBill} />
                     ))}
                 </div>
             );
@@ -111,9 +112,9 @@ export const OrderInfo = () => {
         const activeClassName = "flex flex-[1] justify-center items-center py-2 md:py-4 text-[#fc4848] font-semibold border-b-2 border-b-red-400 text-center";
 
         if (isActive) {
-            return `${activeClassName}`;
+            return `${activeClassName} + cursor-pointer`;
         } else {
-            return `${notActiveClassName}`;
+            return `${notActiveClassName} + hover:bg-red-200 hover:text-red-500 cursor-pointer`;
         }
     };
 

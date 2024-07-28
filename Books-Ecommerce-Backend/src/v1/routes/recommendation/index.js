@@ -53,7 +53,10 @@ router.post(
 );
 
 //Rating
-router.post("/rating/svd", asyncHandler(recRatingController.getRatingSVDBooks));
+router.post(
+  "/rating/svd/user",
+  asyncHandler(recRatingController.getRatingSVDBooks)
+);
 
 router.post(
   "/rating/user",
@@ -99,6 +102,19 @@ router.post(
   asyncHandler(ContentBaseController.getRecommendByContentBase)
 );
 
+//ContentBase-Faiss
+router.post(
+  "/related-book/faiss/related-search",
+  asyncHandler(ContentBaseController.getRecommendByContentBaseFaiss)
+);
+
+//ContentBase-recent books
+router.post(
+  "/related-book/faiss/recent-books",
+  asyncHandler(ContentBaseController.getRecommendByRecentBooks)
+);
+
+//ContentBase-byID
 router.post(
   "/related-book/related",
   asyncHandler(ContentBaseController.getRecommendByContentBaseID)

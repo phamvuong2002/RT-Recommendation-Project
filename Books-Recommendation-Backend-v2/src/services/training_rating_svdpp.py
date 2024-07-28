@@ -30,12 +30,17 @@ async def train_rating_model_SVDpp():
 
     books_df = pd.read_sql(books_query, con=connection_)
 
-    reader = Reader(rating_scale=(0, 5))
+    reader = Reader(rating_scale=(1, 5))
     # data = Dataset.load_from_df(df_new[['person_id', 'content_id', 'eventStrength']], reader)
     data = Dataset.load_from_df(books_df[['User-ID', 'Book-ID', 'Book-Rating']], reader)
-
-    algo_pp=SVDpp()
-    algo_pp.fit(data.build_full_trainset())
+    trainset=data.build_full_trainset()
+    param_grid = {"n_epochs": [5, 10], "lr_all": [0.001, 0.008], "reg_all": [0.4, 0.6]}
+    gs = GridSearchCV(SVDpp, param_grid, measures=["rmse", "mae"], cv=3)
+    gs.fit(data)
+    algo_pp=gs.best_estimator['rmse']
+    algo_pp.fit(trainset)
+    # algo_pp=SVDpp()
+    # algo_pp.fit(data.build_full_trainset())
 
     # Lưu thông tin model
     model_id = f"model_{int(time.time())}"
@@ -46,9 +51,12 @@ async def train_rating_model_SVDpp():
     insert_query = f"INSERT INTO rec_model (rec_model_id, rec_model_type, create_time) VALUES ('{model_id}', '{model_type}', CURRENT_TIMESTAMP)"
 
     connection = db_connection.connect()  # Tạo đối tượng Connection từ Engine
-    result = connection.execute(text(insert_query))  # Thực hiện truy vấn
-
-    connection.commit()
+    
+    with connection.begin() as transaction:
+        connection.execute(text(insert_query))
+        transaction.commit()
+    # result = connection.execute(text(insert_query))  # Thực hiện truy vấn
+    # connection.commit()
     connection.close()
 
     #backup model hiện tại

@@ -10,7 +10,7 @@ export const FlashSale = () => {
       <div className="text-base font-semibold xl:block hidden xl:w-full">
         Kết thúc trong:{' '}
       </div>
-      <div className="relative w-[80%] xl-">
+      <div className="relative w-[80%]">
         <CountDownTimer flashSaleDay={flashSaleDay} />
       </div>
     </div>

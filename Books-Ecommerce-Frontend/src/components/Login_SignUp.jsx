@@ -1,4 +1,4 @@
-import { useState, Fragment, useEffect, useContext } from 'react';
+import { useState, Fragment, useEffect, useContext, useRef } from 'react';
 import { Tab, Transition } from '@headlessui/react';
 import { FaFacebook } from 'react-icons/fa6';
 import { FcGoogle } from 'react-icons/fc';
@@ -63,6 +63,8 @@ export default function Login_SignUp({
 
   const [isSMSLogin, setSMSLogin] = useState(false);
 
+  const [selectedTab, setSelectedTab] = useState('login');
+
   /************************CHECK AUTHENTICATION***********************************/
   //Router thủ công cho những trang yêu cầu Xác Thực Tài Khoản
   //Sử dung các biến token, userId, requestAuth (và một số biến liên quan)
@@ -81,27 +83,6 @@ export default function Login_SignUp({
   // -------LOGIN--------------------
   //Xử lý đăng nhập bằng account
   const handleLogin = async () => {
-    // authenticate user here...
-    // console.log('send account and pass to authen service', {
-    //   account: accountLogin,
-    //   pass: passwordLogin,
-    // });
-    // const data = await fetchAPI(login, 'POST', {
-    //   password: 'pwd_admin_v2',
-    //   email: 'adminv2@gmail.com',
-    // });
-    // if (data.status === 200) {
-    //   console.log('login successful:::', data);
-    //   setSession(data.metadata.sessionid);
-    //   setUserId(1); //data.metadata.user._id
-    //   setToken(data.metadata.token);
-    // }
-    // const auth = '!ok';
-    // if (auth === 'ok') {
-    //   setAuthenStatus('success');
-    // } else {
-    //   setMessage('Tài khoản hoặc mật khẩu không đúng!');
-    // }
     if (!accountLogin || !passwordLogin) {
       setMessage('Email hoặc Số điện thoại không hợp lệ');
       return;
@@ -130,6 +111,7 @@ export default function Login_SignUp({
       // console.log('login user ', login_user_data);
     } else {
       setMessage('Email hoặc Số điện thoại không hợp lệ');
+      setIsLoading(false);
       return;
     }
 
@@ -217,9 +199,9 @@ export default function Login_SignUp({
     }
   };
 
-  const handleSignUpFB = async () => {};
+  const handleSignUpFB = async () => {setMessage("Dịch vụ xác thực với Facebook đang được bảo trì. Vui lòng thử đăng ký với SĐT hoặc Email")};
 
-  const handleSignUpGG = async () => {};
+  const handleSignUpGG = async () => {setMessage("Dịch vụ xác thực với Google đang được bảo trì. Vui lòng thử đăng ký với SĐT hoặc Email")};
 
   //Xử lý đăng ký bằng Email
   const handleSignUpEmail = async () => {
@@ -287,14 +269,14 @@ export default function Login_SignUp({
     // Tìm email và sđt của forgot account
     // const email = 'vuongdaquen@gmail.com';
     // const phone = '0919489084';
-    console.log('forgot account: ', accountForgot);
+    // console.log('forgot account: ', accountForgot);
     let resetMethod = '';
     let email = '';
     let phone = '';
     const isValidEmail = validateEmail(accountForgot);
     const isValidPhonenum = isValidPhoneNumber(accountForgot);
     let checkRegistered = '';
-    console.log(isValidEmail, isValidPhonenum);
+    // console.log(isValidEmail, isValidPhonenum);
     if (isValidEmail.status) {
       resetMethod = 'email';
       checkRegistered = await fetchAPI(`../${checkEmailnPhone}`, 'POST', {
@@ -314,9 +296,9 @@ export default function Login_SignUp({
       return;
     }
 
-    console.log('phone', phone);
+    // console.log('phone', phone);
     if (checkRegistered.status === 200) {
-      console.log(resetMethod);
+      // console.log(resetMethod);
       const userID = await fetchAPI(`../${getID}`, 'POST', {
         method: resetMethod,
         methodValue: accountForgot,
@@ -455,7 +437,7 @@ export default function Login_SignUp({
         }
         setIsLoading(false);
       };
-      console.log('change pw');
+      // console.log('change pw');
       reset_pw_user();
     }
 
@@ -463,9 +445,25 @@ export default function Login_SignUp({
     setMessages([]);
   }, [authenStatus, isSignUp, isCreatedPassSuccess, isOpenForgetPass]);
 
-  // useEffect(() => {
-  //   console.log('token::::', token);
-  // }, [token]);
+  //set auto focus input
+  useEffect(() => {
+    if(selectedTab === 'login'){
+      if(isShowSMSLogin){
+        document.getElementById('sms_login').focus();
+      }else{
+        document.getElementById('email_login')?.focus();
+      }
+      
+    }else{
+       if(isEmailSignup){
+        document.getElementById('email_signup').focus();
+      }else{
+        document.getElementById('sms_signup').focus();
+      }
+    }
+  }, [isShowSMSLogin, selectedTab, isEmailSignup]);
+
+  
 
   return (
     <div className="w-full max-w-md mx-auto py-auto sm:px-0 ">
@@ -486,7 +484,7 @@ export default function Login_SignUp({
           <Tab as={Fragment} className={`${onlySignup ? 'hidden' : ''}`}>
             {({ selected }) => (
               <button
-                onClick={() => setMessage('')}
+                onClick={() => {setMessage(''); setSelectedTab("login")}}
                 className={`w-1/2 py-1 sm:py-2.5 text-xs sm:text-sm font-medium leading-5 outline-none
                                     ${selected ? 'text-red-500 border-b-[1px] border-b-red-500' : ' text-black'}
                                 `}
@@ -499,7 +497,7 @@ export default function Login_SignUp({
           <Tab as={Fragment}>
             {({ selected }) => (
               <button
-                onClick={() => setMessage('')}
+                onClick={() => {setMessage(''); setSelectedTab("signup")}}
                 className={`w-1/2 py-1 sm:py-2.5  text-xs sm:text-sm font-medium leading-5 bg-white outline-none
                                     ${selected ? 'text-red-500 border-b-[1px] border-b-red-500' : ' text-black'}
                                 `}
@@ -741,6 +739,7 @@ export default function Login_SignUp({
                             name="email_login"
                             value={accountLogin}
                             onChange={(e) => setAccountLogin(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' && (document.getElementById('password_login').focus())}
                             required
                             placeholder="Vui lòng nhập Email hoặc Số điện thoại của bạn"
                             className="block px-2 xl:px-1 h-10 w-full rounded-sm border-[1px] py-1.5 text-gray-900 placeholder:text-gray-400 placeholder:italic text-xs sm:text-sm sm:leading-6  focus:outline-none "
@@ -766,6 +765,7 @@ export default function Login_SignUp({
                               type="password"
                               value={passwordLogin}
                               onChange={(e) => setPasswordLogin(e.target.value)}
+                              onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
                               required
                               placeholder="Vui lòng nhập mật khẩu của bạn"
                               className="block px-2 xl:px-1 h-10 bg-white  w-full rounded-sm border-[1px]  py-1.5 text-gray-900 shadow-sm r placeholder:text-gray-400 placeholder:italic focus:outline-none text-xs sm:text-sm sm:leading-6"
@@ -1002,7 +1002,7 @@ export default function Login_SignUp({
                       <button
                         type="submit"
                         className=" flex outline-none justify-center border border-red-200 rounded-md bg-white hover:bg-slate-50 px-3 py-1.5 text-sm font-semibold leading-6   text-black shadow-sm items-center h-fit mr-4"
-                        onClick={handleLogin}
+                        onClick={handleSignUpFB}
                       >
                         <FaFacebook className="w-5 h-5 mr:0 sm:mr-3 text-blue-600   " />
                         <span className="hidden sm:block sm:text-base font-normal ">
@@ -1014,7 +1014,7 @@ export default function Login_SignUp({
                       <button
                         type="submit"
                         className=" flex outline-none justify-center rounded-md border border-red-200 bg-white hover:bg-slate-50 px-3 py-1.5 text-sm font-semibold leading-6    text-black shadow-sm items-center h-fit"
-                        onClick={handleLogin}
+                        onClick={handleSignUpGG}
                       >
                         <FcGoogle className="w-5 h-5 mr-0 sm:mr-3" />
                         <span className="hidden sm:block sm:text-base font-normal">
@@ -1188,8 +1188,8 @@ export default function Login_SignUp({
                                   +84
                                 </div>
                                 <input
-                                  id="sms_login"
-                                  name="sms_login"
+                                  id="sms_signup"
+                                  name="sms_signup"
                                   type="number"
                                   value={phoneInput}
                                   onChange={(e) => {

@@ -246,8 +246,10 @@ export const Navbar = () => {
                 icon={
                   <div className=" flex items-center text-lg font-medium text-black ">
                     <FaUser className="h-4 w-4 ml-4 sm:h-5 sm:w-5 text-red-500 text-xs " />
-                    <p className="hidden font-inter text-balance lg:block ml-3">
+                    <p className="hidden font-inter text-balance ml-3 xl:block">
                       Đăng nhập/ Đăng ký{' '}
+                    </p><p className="hidden xl:hidden lg:block font-inter text-balance ml-3">
+                      Tài Khoản{' '}
                     </p>
                   </div>
                 }

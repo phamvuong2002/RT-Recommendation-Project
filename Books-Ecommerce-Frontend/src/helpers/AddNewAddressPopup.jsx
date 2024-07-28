@@ -105,7 +105,7 @@ export const AddNewAddressPopup = ({
       isHome: type === 'home',
     };
 
-    console.log('newAddress::', newAddress);
+    // console.log('newAddress::', newAddress);
 
     const updateAddresses = await fetchAPI(
       `../${createaddress}`,

@@ -10,7 +10,7 @@ import { popupContent } from '../helpers/popupContent';
 import { AppContext } from '../contexts/main';
 import { formatNumberToText } from '../utils/formatNumberToText';
 
-export const ProductForSlider = ({ userId, productData }) => {
+export const ProductForSlider = ({ userId, productData, options}) => {
   const { setNumCart } = useContext(AppContext);
   const navigate = useNavigate();
   const [openAddToCartsPopup, setOpenAddToCartsPopup] = useState(false);
@@ -63,14 +63,15 @@ export const ProductForSlider = ({ userId, productData }) => {
   };
 
   return (
-    <div className="block p-2 sm:p-0 bg-white min-h-full md:hover:shadow-2xl md:rounded-md md:shadow-md overflow-hidden">
+    <div title={productData?.book_title} className="block p-2 sm:p-0 bg-white min-h-full md:hover:shadow-2xl md:rounded-md md:shadow-md overflow-hidden">
+      {/* main data */}
       <div className="h-full block cursor-pointer">
         <div className="">
           {/**Product Image */}
           <div className="relative group object-cover flex justify-center items-center ">
             <div className="">
               <img
-                className=" max-h-48 "
+                className="max-h-32 xl:max-h-48"
                 src={productData.book_img}
                 alt="Product Image"
               />
@@ -102,7 +103,7 @@ export const ProductForSlider = ({ userId, productData }) => {
                         d="M34.602,14.602L21,28.199l-5.602-5.598l-2.797,2.797L21,33.801l16.398-16.402L34.602,14.602z"
                       ></path>
                     </svg>
-                    <div>{`Bạn đã thêm sản phẩm vào Giỏ Hàng!`}</div>
+                    <div>{`Đã thêm thành công!`}</div>
                   </div>,
                 )}
                 onNoClick={() => setOpenAddToCartsPopup(false)}
@@ -143,17 +144,36 @@ export const ProductForSlider = ({ userId, productData }) => {
           </div>
         </div>
       </div>
+      {/* option data - Best selling*/}
+          {options.isShowProgress ? (
+              <div className="h-4 bg-gray-300 rounded-full dark:bg-gray-700 relative mx-1 mb-1">
+                <div className="absolute z-10 inset-0 flex justify-center items-center">
+                  <span className="text-xs font-medium text-white">
+                    {options.data.sold} sản phẩm đã bán
+                  </span>
+                </div>
+                {/* Thanh tiến độ */}
+                <div
+                  className="h-4 bg-red-500 text-xs font-medium text-white text-center p-0.5 leading-none rounded-full relative"
+                  style={{
+                    width: `${options.data.sold < 10 ? 5 : Math.min(options.data.sold, 100)}%`,
+                  }}
+                ></div>
+              </div>
+            ) : (
+              ''
+            )}
     </div>
   );
 };
 
-// Xác định PropTypes cho Product
-ProductForSlider.propTypes = {
-  userId: PropTypes.string.isRequired,
-  productData: PropTypes.shape({
-    book_img: PropTypes.string.isRequired,
-    book_title: PropTypes.string.isRequired,
-    book_old_price: PropTypes.string.isRequired,
-    book_spe_price: PropTypes.string.isRequired,
-  }).isRequired,
-};
+// // Xác định PropTypes cho Product
+// ProductForSlider.propTypes = {
+//   userId: PropTypes.string.isRequired,
+//   productData: PropTypes.shape({
+//     book_img: PropTypes.string.isRequired,
+//     book_title: PropTypes.string.isRequired,
+//     book_old_price: PropTypes.string.isRequired,
+//     book_spe_price: PropTypes.string.isRequired,
+//   }).isRequired,
+// };

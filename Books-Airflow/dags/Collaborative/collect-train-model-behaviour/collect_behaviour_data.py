@@ -44,7 +44,7 @@ def get_behaviours_from_redis() :
 def save_behaviours_to_mysql(ti) :
     data_behaviours=ti.xcom_pull(task_ids='get_behavior_data')
     # db_connection_str = f"mysql+pymysql://root:vuong@127.0.0.1/books_db_v1"
-    db_connection_str = 'mysql+pymysql://bookada:bookada2002@bookada-database-v1.crq4aco4chyf.ap-southeast-1.rds.amazonaws.com/books_db_v1'
+    db_connection_str = 'mysql+pymysql://bookada:bookada2002@bookada.cfmwusg6itst.ap-southeast-1.rds.amazonaws.com/books_db_v1'
     db_connection = create_engine(db_connection_str)
     # Khởi tạo metadata
     metadata = MetaData()

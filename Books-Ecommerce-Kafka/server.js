@@ -11,6 +11,7 @@ const TOPICS = {
   CANCLEORDER: "cancel-order",
   ADDTOCART: "add-to-cart",
   LOVE: "love",
+  RATING: "rating",
 };
 
 const SCORE = {
@@ -20,6 +21,7 @@ const SCORE = {
   "cancel-order": 3,
   "add-to-cart": 3,
   love: 3,
+  rating: 0,
 };
 
 //Create socket connect to Ecommerce server
@@ -52,17 +54,22 @@ async function handleMessage({ topic, partition, message }) {
   const timestamp = new Date().getTime();
   try {
     //collect behavior
-    const result = await saveBehaviour(
-      `behavior:${timestamp}`,
-      message.value.toString()
-    );
+    let result = TOPICS.RATING;
+    if (topic !== TOPICS.RATING) {
+      result = await saveBehaviour(
+        `behavior:${timestamp}`,
+        message.value.toString()
+      );
+    }
     //collect vector behavior
     const result_vector = await collectVector(
       dataCollect.userId,
       dataCollect.productId,
       SCORE[topic]
     );
-    if (result_vector?.message === "retrain") {
+    if (result_vector?.message === "retrain-behaviour") {
+      ws.send(JSON.stringify(result_vector));
+    } else if (result_vector?.message === "retrain-rating") {
       ws.send(JSON.stringify(result_vector));
     }
 

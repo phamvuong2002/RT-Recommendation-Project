@@ -17,7 +17,7 @@ async def save_rec_books(books: list = [], user_id: str = "", model_type: str = 
     books = remove_duplicate_items(books, key)
 
     # Kết nối mysql
-    # db_connection_str = 'mysql+pymysql://bookada:bookada2002@bookada-database-v1.crq4aco4chyf.ap-southeast-1.rds.amazonaws.com/books_db_v1'
+    # db_connection_str = 'mysql+pymysql://bookada:bookada2002@bookada.cfmwusg6itst.ap-southeast-1.rds.amazonaws.com/books_db_v1'
     # db_connection_str = 'mysql+pymysql://root:vuong@localhost/books_db_v1'
     db_connection_str = f"mysql+pymysql://{mysql_username}:{mysql_pass}@{mysql_host}/{mysql_dbname}"
     db_connection = create_engine(db_connection_str)
@@ -33,14 +33,15 @@ async def save_rec_books(books: list = [], user_id: str = "", model_type: str = 
     rec_book = metadata.tables['rec_book']
 
     rec_books = []
-    with db_connection.connect() as conn:
+    connection = db_connection.connect()
+    with connection.begin() as transaction:
         #Tìm model mới nhất
         query = select(text('rec_model_id')).where(rec_model.c.rec_model_type == model_type).order_by(desc(rec_model.c.create_time)).limit(1)
-        result = conn.execute(query)
+        result = connection.execute(query)
         result = result.fetchone()
         rec_model_id = result[0]
         #Tạo session
-        result = conn.execute(rec_session.insert().values(
+        result = connection.execute(rec_session.insert().values(
             rec_model_id = rec_model_id
         ))
         last_inserted_id = result.lastrowid
@@ -50,7 +51,7 @@ async def save_rec_books(books: list = [], user_id: str = "", model_type: str = 
             #tìm thông tin sách
             bookId = int(book[key])
             query = select(text('book_id'), text('book_title'), text('book_spe_price'), text('book_old_price'), text('book_img'), text('book_status'), text('book_categories')).where(book_table.c.book_id == bookId)
-            result = conn.execute(query)
+            result = connection.execute(query)
             book_info = result.fetchone()
             if book_info:
                 book_data = {
@@ -74,7 +75,7 @@ async def save_rec_books(books: list = [], user_id: str = "", model_type: str = 
                 #lưu thông tin vừa tìm được vào bảng rec_book
                 if(book_data["bookStatus"] == 1):
                     #lưu vào mysql 
-                    conn.execute(rec_book.insert().values(
+                    connection.execute(rec_book.insert().values(
                         rec_session_id = last_inserted_id,
                         rec_user_sid = user_id,
                         rec_book_id = book_data['bookId'],
@@ -90,7 +91,8 @@ async def save_rec_books(books: list = [], user_id: str = "", model_type: str = 
             else:
                 print("Không tìm thấy thông tin cho sách với bookID", str(bookId))
     
-        conn.commit()
+        transaction.commit()
+    connection.close()
 
     return rec_books
 

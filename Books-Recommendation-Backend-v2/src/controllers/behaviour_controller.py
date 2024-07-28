@@ -9,7 +9,7 @@ from src.services.collaborative_implicit_svdpp import implicit_svdpp, implicit_o
 async def get_implicit_content(book_id: int, user_id: str, quantity = 10):
     try:
         books = implicit_content(book_id, quantity)
-        # result = await save_rec_books(books= books, user_id= user_id, model_type="behaviour")
+        result = await save_rec_books(books= books, user_id= user_id, model_type="behaviour")
         return SuccessResponse(metadata= {'recommendations': books})
     except Exception as e:
         raise BadRequestError(detail=str(e))
@@ -18,8 +18,9 @@ async def get_implicit_content(book_id: int, user_id: str, quantity = 10):
 async def get_implicit_svdpp(user_id: str, quantity = 10):
     try:
         books = implicit_svdpp(user_id, quantity)
-        result = await save_rec_books(books= books, user_id= user_id, model_type="behaviour_svd", key='book_id')
-        # print(books)
+        if(books is not None):
+            result = await save_rec_books(books= books, user_id= user_id, model_type="behaviour_svd", key='book_id')
+            # print(result)
         return SuccessResponse(metadata= {'recommendations': books})
     except Exception as e:
         raise BadRequestError(detail=str(e))

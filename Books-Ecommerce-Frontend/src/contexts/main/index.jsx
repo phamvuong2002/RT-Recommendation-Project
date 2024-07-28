@@ -8,6 +8,7 @@ export const AppProvider = ({ children }) => {
   const [refreshToken, setRefreshToken] = useState('unknown');
   const [session, setSession] = useState('');
   const [isloading, setIsLoading] = useState(false);
+  const [isProgressLoading, setIsProgressLoading] = useState(false);
   const [activePage, setActivePage] = useState('');
   const [numCart, setNumCart] = useState(-1);
   const [addressDefault, setAddressDefault] = useState('');
@@ -28,6 +29,7 @@ export const AppProvider = ({ children }) => {
         isShowFooter,
         refreshToken,
         addressDefault,
+        isProgressLoading,
         username,
         setToken,
         setUserId,
@@ -39,6 +41,7 @@ export const AppProvider = ({ children }) => {
         setIsShowFooter,
         setRefreshToken,
         setAddressDefault,
+        setIsProgressLoading,
         setUsername
       }}
     >

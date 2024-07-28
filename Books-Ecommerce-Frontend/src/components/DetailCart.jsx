@@ -257,16 +257,16 @@ export const DetailCart = ({ book }) => {
                 <div className="flex items-center justify-between">
                   {/* Author name */}
                   <div className="text-zinc-600">
-                    {product?.book_detail?.book_authors_name}
+                    {product?.book_detail?.book_authors_name === 'null' ? 'Đang cập nhật' : product?.book_detail?.book_authors_name}
                   </div>
                   {/* Rating */}
-                  <StarRating
+                  {/* <StarRating
                     averageRating={product?.book?.book_avg_rating}
                     numReviews={book?.book?.book_num_ratings}
                     className={
                       'flex flex-col px-1 xl:flex-row gap-2 text-sm text-zinc-400 font-medium'
                     }
-                  />
+                  /> */}
                 </div>
 
                 {/* Short Description */}
@@ -274,8 +274,8 @@ export const DetailCart = ({ book }) => {
                   <div className="text-base font-bold text-[#393280]">
                     Nội dung chính
                   </div>
-                  <p className="mt-2 text-sm">
-                    {product?.book_detail?.book_des.substring(0, 255)} ...
+                  <p className={`mt-2 text-sm ${product?.book_detail?.book_des === 'null'? "text-gray-400 text-xs": ''}`}>
+                    {product?.book_detail?.book_des === 'null' ? 'Đang cập nhật' : product?.book_detail?.book_des.substring(0, 255)}  ... 
                   </p>
                 </div>
                 {/* Prices */}

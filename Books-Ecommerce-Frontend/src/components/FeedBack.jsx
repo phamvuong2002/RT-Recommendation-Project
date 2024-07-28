@@ -451,146 +451,162 @@ export const FeedBack = ({ bookId }) => {
             <ShoppingCartLoader items={4} />
           </div>
         ) : (
-          comments?.map((comment) => (
-            <div
-              key={comment.feedback_id}
-              className="flex gap-2 border-b border-b-gray-300 pb-8"
-            >
-              {/* avartar */}
-              <img
-                className="w-10 h-10 me-4 rounded-full"
-                src={comment.user.user_avatar || '/logo/logo_home.png'}
-                alt="avatar"
-              ></img>
-
-              {/* user review */}
-              <div className="flex flex-col gap-4 pr-2 w-full">
-                <div className="flex flex-col gap-1">
-                  {/* rating-date */}
-                  <div className="flex justify-between">
-                    <StarRating
-                      averageRating={parseInt(comment.feedback_rating)}
-                      numReviews={5}
-                      shownumReviews={false}
-                      className="flex justify-start gap-2"
-                    />
-                    <span className="text-sm font-light ">
-                      {formatDate(comment.create_time, true)}
-                    </span>
-                  </div>
-                  {/* username-certifiedPurchase */}
-                  <div className="flex flex-col xl:flex-row xl:items-center xl:gap-2">
-                    <div>
-                      <span className="text-sm">
-                        {comment.user.user_username}
-                      </span>
-                    </div>
-                    <div className="flex items-center text-xs text-green-600">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        x="0px"
-                        y="0px"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 48 48"
-                      >
-                        <linearGradient
-                          id="IMoH7gpu5un5Dx2vID39Ra_pIPl8tqh3igN_gr1"
-                          x1="9.858"
-                          x2="38.142"
-                          y1="9.858"
-                          y2="38.142"
-                          gradientUnits="userSpaceOnUse"
-                        >
-                          <stop offset="0" stopColor="#9dffce"></stop>
-                          <stop offset="1" stopColor="#50d18d"></stop>
-                        </linearGradient>
-                        <path
-                          fill="url(#IMoH7gpu5un5Dx2vID39Ra_pIPl8tqh3igN_gr1)"
-                          d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z"
-                        ></path>
-                        <linearGradient
-                          id="IMoH7gpu5un5Dx2vID39Rb_pIPl8tqh3igN_gr2"
-                          x1="13"
-                          x2="36"
-                          y1="24.793"
-                          y2="24.793"
-                          gradientUnits="userSpaceOnUse"
-                        >
-                          <stop offset=".824" stopColor="#135d36"></stop>
-                          <stop offset=".931" stopColor="#125933"></stop>
-                          <stop offset="1" stopColor="#11522f"></stop>
-                        </linearGradient>
-                        <path
-                          fill="url(#IMoH7gpu5un5Dx2vID39Rb_pIPl8tqh3igN_gr2)"
-                          d="M21.293,32.707l-8-8c-0.391-0.391-0.391-1.024,0-1.414l1.414-1.414	c0.391-0.391,1.024-0.391,1.414,0L22,27.758l10.879-10.879c0.391-0.391,1.024-0.391,1.414,0l1.414,1.414	c0.391,0.391,0.391,1.024,0,1.414l-13,13C22.317,33.098,21.683,33.098,21.293,32.707z"
-                        ></path>
-                      </svg>
-                      {'Chứng nhận đã mua hàng'}
-                    </div>
-                  </div>
+          comments.length === 0 ?
+            <div className="flex justify-center items-center text-slate-500 xl:p-40 p-10">
+              <div className="flex-col items-center justify-center">
+                <div className="w-full flex items-center justify-center">
+                  <img src="/img/reviews.png" alt="reviews-image" className="xl:w-[8rem] w-20"/>
                 </div>
-                <div className="text-sm font-inter">
-                  {comment.feedback_content}
-                </div>
+               <div className="xl:text xl:mt-8 text-center">
+                  Sản phẩm này chưa có đánh giá.
+                  Hãy cho người khác biết suy nghĩ của bạn và là người đầu tiên viết đánh giá.
+               </div>
               </div>
             </div>
+            :
+            comments?.map((comment) => (
+              <div
+                key={comment.feedback_id}
+                className="flex gap-2 border-b border-b-gray-300 pb-8"
+              >
+                {/* avartar */}
+                <img
+                  className="w-10 h-10 me-4 rounded-full"
+                  src={comment.user.user_avatar || '/logo/logo_home.png'}
+                  alt="avatar"
+                ></img>
+
+                {/* user review */}
+                <div className="flex flex-col gap-4 pr-2 w-full">
+                  <div className="flex flex-col gap-1">
+                    {/* rating-date */}
+                    <div className="flex justify-between">
+                      <StarRating
+                        averageRating={parseInt(comment.feedback_rating)}
+                        numReviews={5}
+                        shownumReviews={false}
+                        className="flex justify-start gap-2"
+                      />
+                      <span className="text-sm font-light ">
+                        {formatDate(comment.create_time, true)}
+                      </span>
+                    </div>
+                    {/* username-certifiedPurchase */}
+                    <div className="flex flex-col xl:flex-row xl:items-center xl:gap-2">
+                      <div>
+                        <span className="text-sm">
+                          {comment.user.user_username}
+                        </span>
+                      </div>
+                      <div className="flex items-center text-xs text-green-600">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          x="0px"
+                          y="0px"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 48 48"
+                        >
+                          <linearGradient
+                            id="IMoH7gpu5un5Dx2vID39Ra_pIPl8tqh3igN_gr1"
+                            x1="9.858"
+                            x2="38.142"
+                            y1="9.858"
+                            y2="38.142"
+                            gradientUnits="userSpaceOnUse"
+                          >
+                            <stop offset="0" stopColor="#9dffce"></stop>
+                            <stop offset="1" stopColor="#50d18d"></stop>
+                          </linearGradient>
+                          <path
+                            fill="url(#IMoH7gpu5un5Dx2vID39Ra_pIPl8tqh3igN_gr1)"
+                            d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z"
+                          ></path>
+                          <linearGradient
+                            id="IMoH7gpu5un5Dx2vID39Rb_pIPl8tqh3igN_gr2"
+                            x1="13"
+                            x2="36"
+                            y1="24.793"
+                            y2="24.793"
+                            gradientUnits="userSpaceOnUse"
+                          >
+                            <stop offset=".824" stopColor="#135d36"></stop>
+                            <stop offset=".931" stopColor="#125933"></stop>
+                            <stop offset="1" stopColor="#11522f"></stop>
+                          </linearGradient>
+                          <path
+                            fill="url(#IMoH7gpu5un5Dx2vID39Rb_pIPl8tqh3igN_gr2)"
+                            d="M21.293,32.707l-8-8c-0.391-0.391-0.391-1.024,0-1.414l1.414-1.414	c0.391-0.391,1.024-0.391,1.414,0L22,27.758l10.879-10.879c0.391-0.391,1.024-0.391,1.414,0l1.414,1.414	c0.391,0.391,0.391,1.024,0,1.414l-13,13C22.317,33.098,21.683,33.098,21.293,32.707z"
+                          ></path>
+                        </svg>
+                        {'Chứng nhận đã mua hàng'}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-sm font-inter">
+                    {comment.feedback_content}
+                  </div>
+                </div>
+              </div>
           ))
         )}
       </div>
 
       {/* pagination */}
-      <div className="h-[10rem] w-full mb-10 xl:mb-5 py-4 xl:py-0">
-        <ReactPaginate
-          breakLabel={<span className="mr-4">...</span>}
-          nextLabel={
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="w-10 h-10 text-[#ff4e4e]"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-              />
-            </svg>
-          }
-          onPageChange={(event) =>
-            setPage(
-              event.selected === 0
-                ? 1
-                : event.selected === totalPages
-                  ? totalPages
-                  : event.selected + 1,
-            )
-          }
-          pageRangeDisplayed={2}
-          pageCount={totalPages}
-          previousLabel={
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="w-10 h-10 text-[#ff4e4e]"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-              />
-            </svg>
-          }
-          containerClassName="flex items-center justify-center gap-4 mt-2 pb-9"
-          pageClassName="w-10 h-10 flex items-center justify-center ml-4 sm:mr-4 xl:hover:bg-red-200 hover:rounded-full hover:p-4 transition-all"
-          activeClassName="rounded-full w-10 h-10 leading-8 text-center font-bold cursor-pointer bg-red-500 text-white"
-        />
-      </div>
+      {
+        totalPages === 0 ? null :
+        <div className="h-[10rem] w-full mb-10 xl:mb-5 py-4 xl:py-0">
+          <ReactPaginate
+            breakLabel={<span className="mr-4">...</span>}
+            nextLabel={
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="w-10 h-10 text-[#ff4e4e]"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                />
+              </svg>
+            }
+            onPageChange={(event) =>
+              setPage(
+                event.selected === 0
+                  ? 1
+                  : event.selected === totalPages
+                    ? totalPages
+                    : event.selected + 1,
+              )
+            }
+            pageRangeDisplayed={2}
+            pageCount={totalPages}
+            previousLabel={
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="w-10 h-10 text-[#ff4e4e]"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                />
+              </svg>
+            }
+            containerClassName="flex items-center justify-center gap-4 mt-2 pb-9"
+            pageClassName="w-10 h-10 flex items-center justify-center ml-4 sm:mr-4 xl:hover:bg-red-200 hover:rounded-full hover:p-4 transition-all"
+            activeClassName="rounded-full w-10 h-10 leading-8 text-center font-bold cursor-pointer bg-red-500 text-white"
+          />
+        </div>
+      }
     </div>
   );
 };

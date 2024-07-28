@@ -9,10 +9,12 @@ import 'swiper/css/scrollbar';
 
 import { Keyboard, Scrollbar } from 'swiper/modules';
 import { shortenString } from '../utils/shortenString';
+import { cleanString } from '../utils/cleanString';
 
 export const DescriptionFeedback = ({ book }) => {
   const NUMBERLOADERS = 4;
   const swiperRef = useRef();
+  const scrollRef = useRef(null);
 
   const [product, setProduct] = useState('');
   const [activeTab, setActiveTab] = useState('description');
@@ -24,23 +26,31 @@ export const DescriptionFeedback = ({ book }) => {
     setActiveTab((prevTab) =>
       prevTab === 'description' ? 'comment' : 'description',
     );
+    scrollToTop();
   };
 
   //Hàm Chuyển Slide Mô tả
   const handleDescriptionClick = () => {
     swiperRef.current.slidePrev();
     setActiveTab('description');
+    scrollToTop();
   };
 
   //Hàm Chuyển Slide Feedback
   const handleCommentClick = () => {
     swiperRef.current.slideNext();
     setActiveTab('comment');
+    scrollToTop();
   };
 
   // Hàm xử lý sự kiện khi nhấn nút "Xem thêm"
   const handleExpand = () => {
     setExpanded(!expanded);
+  };
+
+  //scroll về đầu
+  const scrollToTop = () => {
+    scrollRef.current.scrollIntoView({ behavior: 'smooth' });
   };
 
   //Render Mô Tả Chi Tiết Sản Phẩm
@@ -89,16 +99,16 @@ export const DescriptionFeedback = ({ book }) => {
     if (book) {
       setProduct(book);
       setProductAttributes({
-        'Thương hiệu': book.book_detail.book_pulisherName,
+        'Thương hiệu': cleanString(book.book_detail.book_pulisherName),
         'Thông tin cảnh báo': 'Chất dễ cháy',
         'Xuất xứ': 'Việt Nam',
         'Ngôn Ngữ': 'Tiếng Việt',
-        'Thể Loại': book.book_detail.book_categories_name,
-        'Tác Giả': book.book_detail.book_authors_name,
-        'Nhà Cung Cấp': book.book_detail.book_supplier,
-        'Chất liệu': book.book_detail.book_layout,
-        'Thông số kỹ thuật': book.book_detail.book_size,
-        'Số Trang': book.book_detail.book_num_pages,
+        'Thể Loại': cleanString(book.book_detail.book_categories_name),
+        'Tác Giả': cleanString(book.book_detail.book_authors_name),
+        'Nhà Cung Cấp': cleanString(book.book_detail.book_supplier),
+        'Chất liệu': cleanString(book.book_detail.book_layout),
+        'Thông số kỹ thuật': cleanString(book.book_detail.book_size),
+        'Số Trang': cleanString(book.book_detail.book_num_pages),
         'Gói Bảo Hành': 'Bằng Hóa đơn mua hàng',
         'Thời gian bảo hành': '1 tháng',
       });
@@ -106,7 +116,7 @@ export const DescriptionFeedback = ({ book }) => {
   }, [book]);
 
   return (
-    <div className="scroll-smooth">
+    <div className="scroll-smooth" ref={scrollRef}>
       <div
         className={`w-full xl:px-28 ${expanded ? 'h-auto' : 'h-[22rem] xl:h-[36rem] overflow-hidden'} scroll-smooth`}
       >
@@ -165,7 +175,7 @@ export const DescriptionFeedback = ({ book }) => {
             >
               <SwiperSlide className="xl:p-6 overflow-y-auto scrollbar-thin p-6 scroll-smooth">
                 <div className="flex flex-col">
-                  <div className="h-12 text-lg font-semibold mb-4">{`Mô Tả Sách ${shortenString(product?.book?.book_title, 55)}`}</div>
+                  <div className="text-lg font-semibold mb-4">{`Mô Tả Sách ${shortenString(product?.book?.book_title, 55)}`}</div>
                   <div className="flex gap-2 xl:mt-4 items-start text-xs xl:text-sm font-normal text-gray-400 p-2 border border-gray-200">
                     <div className="w-16 xl:w-6">
                       <svg
@@ -196,10 +206,11 @@ export const DescriptionFeedback = ({ book }) => {
                     className="mt-4 mb-4 px-4 overflow-y-auto max-h-full xl:scrollbar-thin xl:scrollbar-webkit  no-scrollbar"
                     dangerouslySetInnerHTML={{
                       __html: convertTextToHtml(
-                        product?.book_detail?.book_des || '',
+                        product?.book_detail?.book_des === 'null' ? 'Đang cập nhật  ...' : product?.book_detail?.book_des
                       ),
                     }}
                   />
+                  
                   {/* {product?.book_detail?.book_des} */}
                   <hr className="mb-4" />
 
@@ -218,7 +229,7 @@ export const DescriptionFeedback = ({ book }) => {
               </SwiperSlide>
               <SwiperSlide className="">
                 <div className="xl:p-6">
-                  <div className="h-12 text-lg font-semibold m-4 mb-6 xl:mb-12">{`Đánh Giá Và Nhận Xét Của Sách ${shortenString(product?.book?.book_title, 55)}`}</div>
+                  <div className="text-lg font-semibold m-4 mb-6 xl:mb-12">{`Đánh Giá Và Nhận Xét Của Sách ${shortenString(product?.book?.book_title, 55)}`}</div>
                   <FeedBack bookId={book?.book?.book_id} />
                 </div>
               </SwiperSlide>
@@ -237,7 +248,7 @@ export const DescriptionFeedback = ({ book }) => {
             </Swiper>
             {expanded && (
               <button
-                onClick={handleExpand}
+                onClick={() => {handleExpand(); scrollToTop()}}
                 className="text-red-500 font-semibold bg-gradient-to-t from-red-100 to-white w-full shadow-lg bg-opacity-50 h-8 xl:hover:text-red-700"
               >
                 Thu gọn

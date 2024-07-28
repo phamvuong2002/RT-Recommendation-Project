@@ -57,6 +57,7 @@ if __name__ == "__main__":
             "server:app",
             host=host,
             port=port,
+            reload=True,
             env_file="./config/.env.prod",
             workers=workers,
         )

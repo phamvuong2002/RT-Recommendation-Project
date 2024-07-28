@@ -20,7 +20,7 @@ async def train_rating_item_model():
 
     # Kết nối đến cơ sở dữ liệu
     # db_connection_str = 'mysql+pymysql://root:vuong@localhost/books_db_v1'
-    # db_connection_str = "mysql+pymysql://bookada:bookada2002@bookada-database-v1.crq4aco4chyf.ap-southeast-1.rds.amazonaws.com/books_db_v1"
+    # db_connection_str = "mysql+pymysql://bookada:bookada2002@bookada.cfmwusg6itst.ap-southeast-1.rds.amazonaws.com/books_db_v1"
     db_connection_str = f"mysql+pymysql://{mysql_username}:{mysql_pass}@{mysql_host}/{mysql_dbname}"
     db_connection = create_engine(db_connection_str)
 
@@ -71,8 +71,11 @@ async def train_rating_item_model():
     # lưu thông tin vào db
     insert_query = f"INSERT INTO rec_model (rec_model_id, rec_model_type, create_time) VALUES ('{model_id}', '{model_type}', CURRENT_TIMESTAMP)"
     connection = db_connection.connect()  # Tạo đối tượng Connection từ Engine
-    result = connection.execute(text(insert_query))  # Thực hiện truy vấn
-    connection.commit()
+    with connection.begin() as transaction:
+        connection.execute(text(insert_query))
+        transaction.commit()
+    # result = connection.execute(text(insert_query))  # Thực hiện truy vấn
+    # connection.commit()
     connection.close()
 
 

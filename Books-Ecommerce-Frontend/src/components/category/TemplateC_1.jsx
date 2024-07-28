@@ -33,47 +33,56 @@ export const TemplateC_1 = ({
 
   return (
     <div
-      className="relative font-inter text-[#8967AC] font-semibold bg-gradient-to-r from-red-50 via-purple-50 to-pink-50  hover:from-pink-200 hover:via-purple-100 hover:to-red-100 hover:text-red-400 hover:shadow-2xl rounded-md shadow-lg cursor-pointer w-full "
+      className=" relative font-inter text-[#8967AC] font-semibold bg-gradient-to-r from-red-50 via-purple-50 to-pink-50  hover:from-pink-200 hover:via-purple-100 hover:to-red-100 hover:text-red-400 hover:shadow-2xl rounded-md shadow-lg cursor-pointer"
       onClick={handleNavigate}
     >
       {/* Desktop */}
-      <div className="xl:flex justify-between hidden">
-        <div className="hidden md:block text-[16px] font-bold p-2 whitespace-nowrap overflow-x-auto no-scrollbar">
-          {shortenString(
-            category?.category?.[category?.category.length - 1]?.cateName,
-            25,
-            true,
-          )}
-        </div>
-        <div className="flex gap-2 font-inter items-center pr-1 cursor-pointer">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="1.5"
-            stroke="currentColor"
-            className="size-4 xl:size-5 hidden xl:block"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="m8.25 4.5 7.5 7.5-7.5 7.5"
-            />
-          </svg>
+      <div className="md:grid hidden">
+        <div className="flex justify-between">
+          <div className="hidden lg:block xl:text-[16px] lg:text-[13px] font-bold p-2 whitespace-nowrap overflow-x-auto no-scrollbar">
+            {shortenString(
+              category?.category?.[category?.category.length - 1]?.cateName,
+              25,
+              true,
+            )}
+          </div>
+          <div className="hidden lg:hidden md:block text-[12px] font-bold px-2 py-1 whitespace-nowrap overflow-x-auto no-scrollbar">
+            {shortenString(
+              category?.category?.[category?.category.length - 1]?.cateName,
+              18,
+              true,
+            )}
+          </div>
+          <div className="hidden xl:flex gap-2 font-inter items-center pr-1 cursor-pointer">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="currentColor"
+              className="size-4 xl:size-5 hidden xl:block"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m8.25 4.5 7.5 7.5-7.5 7.5"
+              />
+            </svg>
+          </div>
         </div>
       </div>
 
       {/* background */}
-      <div className="relative xl:inline-block w-full h-full hidden p-1">
+      <div className="relative xl:inline-block lg:inline-block md:flex md:flex-col w-full h-full hidden p-1">
         <div className="flex flex-col">
           <div className="h-[60%]">
             <img
               src={`./img/category_template/template_1_${template_img}_mb.png`}
               alt={`template_cate_${template_img}`}
-              className="w-full max-h-[10rem] object-cover border border-white"
+              className="xl:max-h-[10rem] ld:max-h-[5rem] object-cover border border-white"
             />
           </div>
-          <div className="flex gap-[0.2rem] py-1 h-[40%] bg-white items-center justify-center">
+          <div className="flex gap-[0.2rem] py-1 xl:h-[40%] bg-white items-center justify-center">
             {category?.images?.length === 0
               ? ''
               : category?.images
@@ -83,7 +92,7 @@ export const TemplateC_1 = ({
                       <img
                         src={book_img}
                         alt={`image${index + 1}`}
-                        className="max-w-20 max-h-20"
+                        className="xl:max-h-20 lg:max-h-10"
                       />
                     </div>
                   ))}
@@ -92,7 +101,7 @@ export const TemplateC_1 = ({
       </div>
 
       {/* Mobile */}
-      <div className="xl:hidden flex flex-col ">
+      <div className="xl:hidden md:hidden flex flex-col ">
         <div>
           <img
             className="w-full h-full"

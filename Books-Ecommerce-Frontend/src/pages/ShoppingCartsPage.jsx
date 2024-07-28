@@ -1,20 +1,24 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import NavigationPath from '../components/NavigationPath';
 import { ShoppingCarts } from '../components/ShoppingCarts';
-import { AllProducts } from '../components/AllProducts';
+import { AllProducts } from '../components/AllProducts_v2';
 import { Slider } from '../components/Slider';
 import { SliderProducts } from '../components/SliderProducts';
 import { fetchAPI, fetchData } from '../helpers/fetch';
 import { FectchPaging } from '../helpers/fectchPaging';
 import { AppContext } from '../contexts/main';
-import {  recRandomBook, getbestselling } from '../apis/recommendation';
+import {  recRandomBook, getbestselling, recLatestBook, searchrecbook, getconbasedrecentbook } from '../apis/recommendation';
+import { useNavigate } from 'react-router-dom';
+import { compareBookIds } from '../utils/arraysEqual';
 
 export const ShoppingCartsPage = () => {
-  const [products, setProducts] = useState([]);
-  const { userId, setActivePage, setIsShowFooter, setIsLoading } = useContext(AppContext);
-
+  const { userId, setActivePage, setIsShowFooter, setIsProgressLoading } = useContext(AppContext);
   const [collabProducts, setCollabProducts] = useState([]);
   const [bestSellerData, setBestSellerData] = useState([]);
+  const [page, setPage] = useState(1);
+  const [isLoadingRecBooks, setIsLoadingRecBooks] = useState(false);
+  const [loadRecentBook, setLoadRecentBook] = useState(false);
+  const prevBooksRef = useRef([]);
 
   //set active page
   useEffect(() => {
@@ -27,57 +31,99 @@ export const ShoppingCartsPage = () => {
     { path: `/${'shoppingcarts'}`, label: `${'Giỏ hàng'}` },
   ];
 
-  //Fetch Product Data
-  // useEffect(() => {
-  //   const url = 'api/v1/api/book/all';
-
-  //   const loadProductData = async () => {
-  //     const dataFetch = await fetchAPI(url, 'POST');
-  //     console.log('dataFetch::', dataFetch);
-  //     setProducts(dataFetch.metadata);
-  //   };
-
-  //   loadProductData();
-  // }, []);
-
-  // COLLABORATIVE FILTERING 
-  // Có thể bạn sẽ thích: Random 15 cuốn từ các đề xuất có trong ngày 
+  // COLLABORATIVE FILTERING
   useEffect(() => {
     const collabBook = async () => {
-      const rec_book = await fetchAPI(`../${recRandomBook}`, 'POST', {
-        userId: userId,
-        quantity: 15,
-        model_type: "online"
+      if(!userId) return;
+      setIsLoadingRecBooks(true);
+      const rec_book = await fetchAPI(`../${searchrecbook}`, 'POST', {
+        page: parseInt(page),
+        limit: 24,
+        categories: 'sach-tieng-viet',
+        userId,
       });
       if (rec_book.status == 200) {
-        //console.log(rec_book.metadata)
-        setCollabProducts(rec_book.metadata)
+        // console.log(rec_book.metadata)
+        if(rec_book?.metadata?.books.length > 0) {
+          const currentBooks = rec_book?.metadata?.books;
+          if (!compareBookIds(currentBooks, prevBooksRef.current)) {
+            setCollabProducts(currentBooks);
+            prevBooksRef.current = currentBooks;
+          }
+          // setCollabProducts(rec_book?.metadata?.books);
+        }
+        else{
+          setLoadRecentBook(true);
+          setPage(1);
+        }
+        setIsLoadingRecBooks(false);
       }
-    }
+    };
     // console.log('in rec svd')
-    collabBook();
-  }, [userId])
+    if(!loadRecentBook){
+      collabBook();
+    }
+  }, [userId, page]);
+
+  //Recent Books
+  useEffect(() => {
+    //load content based recent books
+    const loadRecRecentBooks = async() => {
+      if(!userId) return
+      setIsLoadingRecBooks(true);
+      const dataRec = await fetchAPI(`../${getconbasedrecentbook}`, 'POST', {
+        userId,
+        days: 3,
+        page,
+        page_size: 2,
+        num_rec: 6,
+        model_type: "online"
+      });
+
+      if (dataRec.status != 200) {
+        setIsLoadingRecBooks(false);
+        return;
+      } else {
+        if(dataRec?.metadata?.books.length === 0){
+          setIsLoadingRecBooks(false);
+          setLoadRecentBook(false);
+        }else{
+          const currentBooks = dataRec?.metadata?.books;
+          if (!compareBookIds(currentBooks, prevBooksRef.current)) {
+            setCollabProducts(currentBooks);
+            prevBooksRef.current = currentBooks;
+          }
+          // setCollabProducts(dataRec?.metadata?.books);
+        }
+      }
+      setIsLoadingRecBooks(false);
+      return;
+    };
+    if(loadRecentBook) {
+      loadRecRecentBooks();
+    }
+  }, [loadRecentBook, page, userId])
 
   //BEST SELLER
   //load best seller books
   useEffect(() => {
     const loadBestSellerData = async () => {
-      setIsLoading(true);
+      setIsProgressLoading(true);
       const data = await fetchAPI(`../${getbestselling}`, 'POST', {
         pageNumber: 1,
         pageSize: 12,
       });
       if (data.status != 200) {
         setBestSellerData([]);
-        setIsLoading(false);
+        setIsProgressLoading(false);
         return;
       }
       setBestSellerData(data?.metadata?.books);
-      setIsLoading(false);
+      setIsProgressLoading(false);
     };
     //get best seller data
     loadBestSellerData();
-  }, [userId]);
+  }, []);
 
   return (
     <div className="">
@@ -86,47 +132,11 @@ export const ShoppingCartsPage = () => {
         <div className="w-full">
           <ShoppingCarts />
         </div>
-        {/*Gợi ý cho bạn*/}
-        <div className={`flex flex-col mt-1 px-1 xl:px-0 ${collabProducts.length===0?'hidden':''}`}>
-          <div className="flex items-center mb-[0.1rem] xl:mb-1 pl-2 h-14 bg-white rounded-t-lg border border-red-50">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="text-[#ffbe98] w-[5%] md:w-[2%]"
-            >
-              <path
-                fillRule="evenodd"
-                d="M4.5 7.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9Z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <div className="flex px-4 text-sm items-center">
-              <div className="text-lg md:text-[150%] font-semibold font-['Inter'] tracking-wider">
-                Dành Cho Bạn
-              </div>
-            </div>
-          </div>
-          <div className="py-8 bg-white border-x border-b xl:border border-red-50">
-            <SliderProducts productData={collabProducts} />
-          </div>
-        </div>
 
         {/* Sản phẩm bán chạy*/}
         <div className="flex flex-col mt-1 px-1 xl:px-0">
           <div className="flex items-center mb-[0.1rem] xl:mb-1 pl-2 h-14 bg-white rounded-t-lg border border-red-50">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="text-[#ffbe98] w-[5%] md:w-[2%]"
-            >
-              <path
-                fillRule="evenodd"
-                d="M4.5 7.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9Z"
-                clipRule="evenodd"
-              />
-            </svg>
+            <img src="/img/best_seller.png" alt="best_seller" className="w-[3rem]"/>
             <div className="flex px-4 text-sm items-center">
               <div className="text-lg md:text-[150%] font-semibold font-['Inter'] tracking-wider">
                 Sản phẩm bán chạy
@@ -140,6 +150,32 @@ export const ShoppingCartsPage = () => {
             </SliderProducts>
           </div>
         </div>
+
+
+        {/*Gợi ý cho bạn*/}
+        <div className={`flex flex-col mt-1 px-1 xl:px-0 ${collabProducts.length===0?'hidden':''}`}>
+          <div className="flex items-center mb-[0.1rem] xl:mb-1 pl-2 h-14 bg-white rounded-t-lg border border-red-50">
+            <img src="/img/for_you.png" alt="for_you" className="w-[3rem]"/>
+            <div className="flex px-4 text-sm items-center">
+              <div className="text-lg md:text-[150%] font-semibold font-['Inter'] tracking-wider">
+                Dành Cho Bạn
+              </div>
+            </div>
+          </div>
+          <div className="py-8 bg-white border-x border-b xl:border border-red-50">
+            {/* <SliderProducts userId={userId} productData={collabProducts} /> */}
+            <AllProducts
+              productsData={collabProducts}
+              numOfProductsInRow={5}
+              // _totalPages={totalPages}
+              setPage={setPage}
+              page={page}
+              isLoading={isLoadingRecBooks}
+            ></AllProducts>
+          </div>
+        </div>
+
+        
       </div>
     </div>
   );

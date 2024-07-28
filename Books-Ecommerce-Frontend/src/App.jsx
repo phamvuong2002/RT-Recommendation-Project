@@ -9,6 +9,7 @@ import { fetchAPI } from './helpers/fetch';
 import { getnumcart } from './apis/cart';
 import { getsession, loginGuest } from './apis/access';
 import { getUserInfo } from './apis/user';
+import FloatingButton from './components/childComponents/FloatingButton';
 
 function App() {
   const {
@@ -55,7 +56,7 @@ function App() {
             setUserId(userData.metadata?.user?._id);
           }
 
-          console.log('data session::', userData);
+          // console.log('data session::', userData);
           if (userData.metadata.token) {
             setToken(userData.metadata?.token);
           } else {
@@ -89,7 +90,6 @@ function App() {
     getNumCart();
   }, [userId]);
 
-  //
   useEffect(() => {
     const getUsername = async () => {
       if (!userId || userId?.length <= 0) return;
@@ -101,15 +101,18 @@ function App() {
       } else {
         setUsername(data?.metadata?.user_data?.fullname || '');
       }
-      console.log('in call getUsername');
+      // console.log('in call getUsername');
     };
 
     getUsername();
   }, [userId]);
 
+
   return (
     <>
       <ScrollToTop />
+      <FloatingButton/>
+
       <Routes>
         {publicRoutes.map((route, index) => {
           const Layout = route.layout || DefaultLayout;

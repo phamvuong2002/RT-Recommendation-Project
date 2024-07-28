@@ -69,7 +69,7 @@ export const Payment = () => {
   const data = queryParams.get('data');
   const quantity = queryParams.get('quantity');
 
-  const { userId, session, token, setIsLoading, numCart, setNumCart } =
+  const { userId, session, token, setIsLoading, numCart, setNumCart, setIsProgressLoading} =
     useContext(AppContext);
 
   // Vailables for checkout
@@ -189,7 +189,7 @@ export const Payment = () => {
 
   // Xử lý sự kiện khi nhấn nút "Xoá"
   const handleDeleteProduct = async (productId) => {
-    console.log('productId::', productId);
+    // console.log('productId::', productId);
     //ví dụ gửi yêu cầu xoá sản phẩm xuống backend
     setIsLoading(true);
     const update = await fetchAPI(`../${addtocart}`, 'POST', {
@@ -408,7 +408,7 @@ export const Payment = () => {
       if (!userId) {
         return;
       }
-      setIsLoading(true);
+      setIsProgressLoading(true);
       const result = await fetchAPI(
         `../${data && quantity ? checkoutproductreview : checkoutcartreview}`,
         'POST',
@@ -422,7 +422,7 @@ export const Payment = () => {
           setCouponCodeStatus(result.message);
           setDiscountReview(null);
         }
-        setIsLoading(false);
+        setIsProgressLoading(false);
         return;
       } else {
         setOldPrice(result.metadata.data_review.oldTotal);
@@ -430,7 +430,7 @@ export const Payment = () => {
         setDiscountReview(result.metadata.data_amount);
         setCouponCodeStatus('');
       }
-      setIsLoading(false);
+      setIsProgressLoading(false);
     };
 
     reviewCheckout();

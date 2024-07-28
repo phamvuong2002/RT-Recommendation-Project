@@ -16,6 +16,7 @@ import { sendEmailOTP, verifyEmailOTP } from '../apis/emailOTP';
 import { fetchAPI } from './fetch';
 import { initializeFirebaseAuth } from '../configs/firebase_v2.config';
 import { AppContext } from '../contexts/main';
+import { SendingEmail } from '../components/loaders/SendingEmail';
 
 export const AuthenticationPopup = ({
   open,
@@ -37,7 +38,7 @@ export const AuthenticationPopup = ({
   const [phonenumber, setPhonenumber] = useState(phoneInput);
   const [otp, setOtp] = useState('');
   const [vaildOtpMessage, setVaildOtpMessage] = useState('');
-  const [timeLeft, setTimeLeft] = useState(60);
+  const [timeLeft, setTimeLeft] = useState(0);
   const [sendOTPMessage, setSendOTPMessage] = useState('');
   const [isPending, setIsPending] = useState(false);
   const [recaptchaVerifier, setRecaptchaVerifier] = useState(null);
@@ -47,8 +48,8 @@ export const AuthenticationPopup = ({
   const RESENDOTPTIME = 60;
 
   const handleReturn = () => {
-    setEmail('');
-    setPhonenumber('');
+    // setEmail('');
+    // setPhonenumber('');
     setSendOTPMessage('');
     setIsPending(false);
     setReload(!reload);
@@ -66,16 +67,20 @@ export const AuthenticationPopup = ({
       // setEmail('girfler@gmail.com');
     } else {
       setEmail(emailInput);
-      setSendOtpStatus(true);
+      setLoading(true);
+      // setSendOtpStatus(true);
       const sendOTP = await fetchAPI(`../${sendEmailOTP}`, 'POST', {
         email: email,
       });
-
+      
       if (sendOTP.status === 200) {
+        setLoading(false);
         // console.log('in send otp success')
+        setSendOtpStatus(true);
         setTimeLeft(RESENDOTPTIME);
         setLoading(false);
       } else {
+        setLoading(false);
         setSendOtpStatus(false);
         setSendOTPMessage(
           'OTP đã không được gửi, vui lòng kiểm tra lại Email và thử lại!',
@@ -132,7 +137,7 @@ export const AuthenticationPopup = ({
       });
 
       if (emailOTP.status === 200) {
-        console.log('sucess');
+        // console.log('sucess');
         setAuthenStatus('success');
         setVaildOtpMessage('');
       } else {
@@ -228,7 +233,7 @@ export const AuthenticationPopup = ({
         //     handleReturn();
         //   }, 3000);
         // }
-        console.log('Firebase Error::', error);
+        // console.log('Firebase Error::', error);
       });
   };
 
@@ -279,6 +284,7 @@ export const AuthenticationPopup = ({
 
   return (
     <div>
+      
       <PopupCenterPanel
         open={open}
         setOpen={setOpen}
@@ -572,7 +578,8 @@ export const AuthenticationPopup = ({
                 </div>
               )
             ) : (
-              <TextLoader items={NUMLOADERS} />
+              // <TextLoader items={NUMLOADERS} />
+              <SendingEmail/>
             )}
             <div
               className="flex items-center justify-center text-[0.8rem] gap-1 font-semibold text-red-500 mt-4 pr-2 cursor-pointer"

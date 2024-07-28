@@ -17,7 +17,7 @@ export const SliderProducts = ({
   isShowProgress = false,
 }) => {
   return (
-    <div className="">
+    <div>
       <Swiper
         slidesPerView={2}
         breakpoints={{
@@ -26,14 +26,22 @@ export const SliderProducts = ({
             spaceBetween: 30,
           },
           1024: {
+            slidesPerView: 4,
+            spaceBetween: 25
+          },
+          1440: {
             slidesPerView: 5,
-            spaceBetween: 20,
+            spaceBetween: 20
+          },
+          2560: {
+            slidesPerView: 8,
+            spaceBetween: 12
           },
         }}
         spaceBetween={20}
         autoplay={{
           delay: 2000,
-          disableOnInteraction: false,
+          disableOnInteraction: true,
         }}
         // pagination={{
         //     dynamicBullets: true,
@@ -47,34 +55,11 @@ export const SliderProducts = ({
             key={index}
             className="w-1/5 h-full flex flex-col rounded-lg gap-[0.1rem]"
           >
-            <ProductForSlider userId={userId} productData={product.book} />
-            {isShowProgress ? (
-              <div className="w-full h-4 bg-gray-300 rounded-full dark:bg-gray-700 relative">
-                <div className="absolute z-10 inset-0 flex justify-center items-center">
-                  <span className="text-xs font-medium text-white">
-                    {product.sold} sản phẩm đã bán
-                  </span>
-                </div>
-                {/* Thanh tiến độ */}
-                <div
-                  className="h-4 bg-red-500 text-xs font-medium text-white text-center p-0.5 leading-none rounded-full relative"
-                  style={{
-                    width: `${product.sold < 10 ? 5 : Math.min(product.sold, 100)}%`,
-                  }}
-                ></div>
-              </div>
-            ) : (
-              ''
-            )}
+            <ProductForSlider userId={userId} productData={product.book} options={{isShowProgress, data: {sold: product.sold}}}/>
+            
           </SwiperSlide>
         ))}
       </Swiper>
     </div>
   );
-};
-
-// Xác định PropTypes cho Product
-SliderProducts.propTypes = {
-  userId: PropTypes.string.isRequired,
-  productData: PropTypes.arrayOf(PropTypes.object).isRequired,
 };

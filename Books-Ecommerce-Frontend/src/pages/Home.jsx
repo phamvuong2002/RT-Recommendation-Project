@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import { Slider } from '../components/Slider';
 import { FlashSale } from '../components/FlashSale';
@@ -15,14 +15,12 @@ import {
   categorypopularrec,
   getbestselling,
   getconbasbook,
-  searchbestselling,
+  getconbasedrecentbook,
   searchrecbook,
 } from '../apis/recommendation';
 import { useNavigate } from 'react-router-dom';
-import { CircleLoader } from '../components/loaders/CircleLoader';
-import { ShoppingCartLoader } from '../components/loaders/ShoppingCartLoader';
 import { CartLoader } from '../components/loaders/CardLoader';
-// import { SaleBanner } from '../components/banners/SaleBanner';
+import { arraysEqual, compareBookIds } from '../utils/arraysEqual';
 
 const CATE_TYPE = {
   BEST_SELLER: {
@@ -48,6 +46,7 @@ export const Home = () => {
     numCart,
     setNumCart,
     token,
+    activePage,
     setIsLoading,
     setActivePage,
     setIsShowFooter,
@@ -61,6 +60,10 @@ export const Home = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [page, setPage] = useState(1);
   const [loadPersonalBook, setLoadPersonalBooks] = useState(false);
+  const [loadRecentBook, setLoadRecentBook] = useState(false);
+  const [isLoadingCate, setIsLoadingCate] = useState(false);
+  const [isLoadingRecBooks, setIsLoadingRecBooks] = useState(false);
+  const prevBooksRef = useRef([]);
 
   //set active page
   useEffect(() => {
@@ -95,14 +98,17 @@ export const Home = () => {
   useEffect(() => {
     const loadCateData = async (type) => {
       setBestSellercates([]);
+      setIsLoadingCate(true);
       const data = await fetchAPI(`../${type?.url}`, 'POST', {
         top: 5,
         userId,
       });
       if (data.status != 200) {
         setBestSellercates([]);
+        setIsLoadingCate(false);
         return;
       }
+      setIsLoadingCate(false);
       setBestSellercates(data?.metadata);
     };
     //Cate data
@@ -146,8 +152,10 @@ export const Home = () => {
   useEffect(() => {
     const loadProductData = async () => {
       if (!userId) return;
+      // loading
+      setIsLoadingRecBooks(true);
       if (!loadPersonalBook) {
-        console.log;
+        //best-seller
         const dataConbas = await fetchAPI(`../${getconbasbook}`, 'POST', {
           page: parseInt(page),
           limit: 24,
@@ -159,38 +167,92 @@ export const Home = () => {
           setTotalPages(0);
           setLoadPersonalBooks(true);
         } else {
-          setPersonalRecBooks(dataConbas?.metadata?.books);
-          setTotalPages(dataConbas.metadata?.totalPages);
+          if(dataConbas?.metadata?.books.length === 0) {
+            setLoadRecentBook(true);
+            setPage(1);
+            return;
+          }
+          else {
+            const currentBooks = dataConbas?.metadata?.books;
+            if (!compareBookIds(currentBooks, prevBooksRef.current)) {
+              setPersonalRecBooks(currentBooks);
+              setTotalPages(dataConbas.metadata?.totalPages);
+              prevBooksRef.current = currentBooks;
+            }
+            // setPersonalRecBooks(dataConbas?.metadata?.books);
+            // setTotalPages(dataConbas.metadata?.totalPages);
+          }
         }
+        setIsLoadingRecBooks(false);
         return;
       }
-
+      //Personal
       const data = await fetchAPI(`../${searchrecbook}`, 'POST', {
         page: parseInt(page),
         limit: 24,
         categories: 'sach-tieng-viet',
         userId,
       });
-      if (data.status != 200) {
+      if (data.status != 200 ) {
         setPersonalRecBooks([]);
         setTotalPages(0);
+        setIsLoadingRecBooks(false);
         return;
       }
       // console.log('metadata:::', data?.metadata);
+      if(data?.metadata?.books.length === 0) {
+        setLoadRecentBook(true);
+        setPage(1);
+        return;
+      }
       setPersonalRecBooks(data?.metadata?.books);
       setTotalPages(data.metadata?.totalPages);
+      setIsLoadingRecBooks(false);
     };
 
-    loadProductData();
-  }, [page, userId, loadPersonalBook]);
+    if(!loadRecentBook){
+      loadProductData();
+    }    
+  }, [page, userId, loadPersonalBook, loadRecentBook]);
+
+  //Recent Books
+  useEffect(() => {
+    //load content based recent books
+    const loadRecRecentBooks = async() => {
+      if(!userId) return
+      setIsLoadingRecBooks(true);
+      const dataRec = await fetchAPI(`../${getconbasedrecentbook}`, 'POST', {
+        userId,
+        days: 3,
+        page,
+        page_size: 2,
+        num_rec: 6,
+        model_type: "online"
+      });
+
+      if (dataRec.status != 200) {
+        setPersonalRecBooks([]);
+        setTotalPages(0);
+      } else {
+        if(dataRec?.metadata?.books.length === 0){
+          setIsLoadingRecBooks(false);
+          // setLoadRecentBook(false);
+        }else{
+          setPersonalRecBooks(dataRec?.metadata?.books);
+          setTotalPages(dataRec.metadata?.totalPages);
+        }
+      }
+      setIsLoadingRecBooks(false);
+      return;
+    };
+    if(loadRecentBook) {
+      loadRecRecentBooks();
+    }
+  }, [loadRecentBook, page, userId])
+
 
   return (
     <div className="pb-10 sm:pb-0">
-      {/* TEst */}
-      {/* <div className="">
-        <SaleBanner />
-      </div> */}
-
       <div className="">
         {/* Main banner */}
         <div className="flex flex-col py-2 xl:gap-4 rounded-lg md:mx-16">
@@ -223,7 +285,7 @@ export const Home = () => {
                   className="flex gap-2 font-inter w-[12rem] xl:[w-8rem] items-center xl:px-4 pl-6 cursor-pointer hover:text-red-500"
                   onClick={() =>
                     navigate(
-                      `search_v2?search=&sort=create_time_desc&page=1&limit=24&search_type=${typeCate?.search}`,
+                      `search_v2?search=&sort=create_time_desc&page=1&limit=24&search_type=${CATE_TYPE.BEST_SELLER.search}`,
                     )
                   }
                 >
@@ -270,7 +332,7 @@ export const Home = () => {
 
         {/* Thể loại ưa chuộng */}
         <div className="md:px-16">
-          <div className="bg-gradient-to-r from-red-200 via-purple-100 to-pink-100 flex flex-col gap-4 xl:my-5 my-1 py-4 px-2 rounded-lg">
+          <div className="bg-gradient-to-r from-red-200 via-purple-100 to-pink-100 flex flex-col gap-4 xl:my-5 my-1 xl:py-4 px-2 rounded-lg">
             <div className="flex justify-between">
               <div className="flex items-center gap-2 w-full">
                 <img
@@ -359,6 +421,8 @@ export const Home = () => {
             <Category
               categoryData={bestSellerCates}
               _cateType={typeCate?.search}
+              isloading={isLoadingCate}
+              setIsLoading={setIsLoadingCate}
             />
           </div>
         </div>
@@ -395,6 +459,7 @@ export const Home = () => {
               _totalPages={totalPages}
               setPage={setPage}
               page={page}
+              isLoading={isLoadingRecBooks}
             ></AllProducts>
           </div>
         </div>

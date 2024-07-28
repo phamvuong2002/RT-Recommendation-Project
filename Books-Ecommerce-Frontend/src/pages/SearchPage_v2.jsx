@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import FilterProduct from '../components/FilterProduct_v2';
 import { AppContext } from '../contexts/main';
-import { searchbestselling, getRecommendByContentBase } from '../apis/recommendation';
+import { searchbestselling, getRecommendByContentBase, getRecommendByContentBaseFaiss } from '../apis/recommendation';
 import { fetchAPI } from '../helpers/fetch';
 import NavigationPath from '../components/NavigationPath';
 import { searchBooks } from '../apis/book';
@@ -21,7 +21,7 @@ const QUERY_TYPE_NAME = {
 };
 
 export const SearchPage_v2 = () => {
-  const { userId, setIsLoading, setIsShowFooter, setActivePage } =
+  const { userId, setIsProgressLoading, setIsShowFooter, setActivePage } =
     useContext(AppContext);
   const [productsSearch, setProductsSearch] = useState([]);
   const location = useLocation();
@@ -66,7 +66,8 @@ export const SearchPage_v2 = () => {
   useEffect(() => {
     //best selling
     const loadSearchBestSellerData = async () => {
-      setIsLoading(true);
+      if(!userId) return;
+      setIsProgressLoading(true);
       const data = await fetchAPI(`../${searchbestselling}`, 'POST', {
         pageNumber: parseInt(page),
         pageSize: parseInt(limit),
@@ -77,42 +78,45 @@ export const SearchPage_v2 = () => {
       });
       if (data.status != 200) {
         setProductsSearch([]);
-        setIsLoading(false);
+        setIsProgressLoading(false);
         return;
       }
       // console.log('metadata:::', data?.metadata);
       setProductsSearch(data?.metadata?.books);
       setTotalPages(data.metadata?.totalPages);
       setTotalResults(data.metadata?.totalBooks);
-      setIsLoading(false);
+      setIsProgressLoading(false);
     };
 
+    //content based
     const loadSearchContentBase = async () => {
-      setIsLoading(true);
-      console.log("query: ", query)
-      const data = await fetchAPI(`../${getRecommendByContentBase}`, 'POST', {
-        bookTitle: query,
+      if(!userId) return
+      setIsProgressLoading(true);
+      const data = await fetchAPI(`../${getRecommendByContentBaseFaiss}`, 'POST', {
+        key_words: query,
         userId: userId.toString(),
         pageSize: parseInt(limit),
         pageNumber: parseInt(page),
         model_type: "online",
+        categories: categories || "all"
       });
       // console.log("data: ", data)
       // if (data.status != 200) {
       //   setProductsSearch([]);
-      //   setIsLoading(false);
+      //   setIsProgressLoading(false);
       //   return;
       // }
       // console.log('metadata:::', data?.metadata);
       setProductsSearch(data?.metadata?.books);
       setTotalPages(data.metadata?.totalPages);
       setTotalResults(data.metadata?.totalBooks);
-      setIsLoading(false);
+      setIsProgressLoading(false);
     };
 
     //normal
     const loadSearchNormalData = async () => {
-      setIsLoading(true);
+      if(!userId) return;
+      setIsProgressLoading(true);
       const data = await fetchAPI(`../${searchBooks}`, 'POST', {
         page: parseInt(page),
         limit: parseInt(limit),
@@ -124,17 +128,17 @@ export const SearchPage_v2 = () => {
 
       if (data.status != 200) {
         setProductsSearch([]);
-        setIsLoading(false);
+        setIsProgressLoading(false);
         return;
       }
       // console.log('metadata:::', data?.metadata);
       setProductsSearch(data?.metadata?.books);
       setTotalPages(data.metadata?.totalPages);
       setTotalResults(data.metadata?.totalBooks);
-      setIsLoading(false);
+      setIsProgressLoading(false);
     };
 
-    //ví dụ tải các sản phẩm trong giỏ hàng của khách
+    //lựa chọn search engine
     if (search_type === QUERY_TYPE.BEST_SELLER_SUGGEST) {
       loadSearchBestSellerData();
     } else if (search_type === QUERY_TYPE.RELATED_BOOK && query) {

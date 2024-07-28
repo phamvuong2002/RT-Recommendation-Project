@@ -3,6 +3,7 @@ import { Product } from './Product';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ReactPaginate from 'react-paginate';
 import { AppContext } from '../contexts/main';
+import { DotLoader } from './loaders/DotLoader';
 
 export const AllProducts = ({
   isShowHeader,
@@ -11,32 +12,29 @@ export const AllProducts = ({
   page = 1,
   setPage,
   _totalPages = 0,
+  _loadmore = true,
+  isLoading = false
   //   totalPages = 0,
 }) => {
   const { userId } = useContext(AppContext);
 
   const topRef = useRef(null);
-  // const [page, setPage] = useState(1);
+  // const [numPage, setNumPage] = useState(page);
   const [totalPages, setTotalPages] = useState(_totalPages);
 
   const [products, setProducts] = useState(productsData);
+
+  // Reset personal book
+  useEffect(() => {
+    setProducts([]);
+  }, [userId])
 
   const showHeader = useMemo(() => {
     if (isShowHeader) {
       return (
         <div className="flex items-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            className="text-[#ffbe98] w-[5%] md:w-[2%]"
-          >
-            <path
-              fillRule="evenodd"
-              d="M4.5 7.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9Z"
-              clipRule="evenodd"
-            />
-          </svg>
+          <img src="/img/best_seller.png" alt="best_seller" className="w-[3rem]"/>
+
           <div className="text-[90%] md:text-[150%] font-semibold font-['Inter'] tracking-wider">
             Sản phẩm bán chạy
           </div>
@@ -45,10 +43,17 @@ export const AllProducts = ({
     }
   }, [isShowHeader]);
 
+
   useEffect(() => {
-    setProducts(productsData);
+    // console.log(_loadmore);
+    if (_loadmore) {
+      setProducts(prevProducts => [...prevProducts, ...productsData]);
+    } else {
+      setProducts(productsData);
+    }
+    // setProducts(productsData);
     setTotalPages(_totalPages);
-  }, [productsData]);
+  }, [productsData, _totalPages, _loadmore]);
 
   return (
     <div ref={topRef} className="w-full bg-white">
@@ -56,16 +61,29 @@ export const AllProducts = ({
       <div className={`grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-${numOfProductsInRow} lg:gap-x-6 lg:gap-y-4`}>
         {/* Hiển thị các sản phẩm của trang hiện tại*/}
         {products.map((product, index) => (
-          <div key={index} className="">
+          <div key={index} title={product?.book?.book_title}>
             <Product
               userId={userId}
               productData={product?.book}
-              optionData={product?.sold}
+              optionData={product?.sold || product?.isPersonal || product?.rec_type}
+              optionType={product?.sold? 'sold': product?.isPersonal? 'personal': product?.rec_type? product?.rec_type : 'unknown'}
             />
           </div>
         ))}
       </div>
 
+        {
+          _loadmore? 
+          <div className="w-full flex items-center justify-center my-10">
+            {
+              isLoading? <DotLoader/> :
+              <button className="h-12 w-[25rem] border text-[1.1rem] font-semibold capitalize text-red-500 border-red-500"
+                onClick={() => setPage(page + 1)}
+              >
+                Load more
+              </button>
+            }
+          </div> : 
       <div className="bg-white">
         <ReactPaginate
           breakLabel={<span className="mr-4">...</span>}
@@ -87,7 +105,7 @@ export const AllProducts = ({
             </svg>
             //   )
           }
-          // forcePage={currentPage - 1}
+          forcePage={page - 1}
           // onPageChange={handlePageChange}
           onPageChange={(event) => {
             setPage(
@@ -127,6 +145,7 @@ export const AllProducts = ({
           activeClassName="rounded-[50%] w-8 h-8 leading-8 text-center font-bold cursor-pointer bg-red-500 text-white"
         />
       </div>
+        }
     </div>
   );
 };

@@ -9,7 +9,8 @@ const redisClient = redis.createClient({
   },
   legacyMode: true,
 });
-const REQUEST_REC_SCORE = 50;
+const REQUEST_REC_SCORE = 20;
+const REQUEST_RATING_SCORE = 20;
 
 const { promisify } = require("util");
 
@@ -24,10 +25,57 @@ const collectVector = async (userId, productId, score = 1) => {
   const zscoreAsync = promisify(redisClient.zScore).bind(redisClient);
   const zincrbyAsync = promisify(redisClient.zIncrBy).bind(redisClient);
   const zaddAsync = promisify(redisClient.zAdd).bind(redisClient);
+  const zcardAsync = promisify(redisClient.zCard).bind(redisClient);
   const expireTime = 1000 * 60 * 60;
   const redis_key = "vector-score";
   const redis_user_key = "user-score";
   const redis_product_key = "product-score";
+  const redis_rating_key = "rating-score";
+  const redis_timestamp_key = "user-product";
+
+  //collect timestamp behavior
+  const key_user_product = `${userId}:${productId}`;
+  const existing_timestamp = await zscoreAsync(
+    redis_timestamp_key,
+    key_user_product
+  );
+  const timestamp = Date.now();
+  const options = ["XX"];
+  if (existing_timestamp != null) {
+    await zaddAsync(
+      redis_timestamp_key,
+      ...options,
+      timestamp,
+      key_user_product
+    );
+  } else {
+    await zaddAsync(redis_timestamp_key, timestamp, key_user_product);
+  }
+
+  // await zaddAsync(redis_timestamp_key, timestamp, key_user_product);
+
+  //Tính số lượng sản phẩm được ratings
+  if (score === 0) {
+    const key_rating = `${userId}:${productId}`;
+    const existingRtingScore = await zscoreAsync(redis_rating_key, key_rating);
+    if (existingRtingScore !== null) {
+      await zincrbyAsync(redis_rating_key, 1, key_rating);
+    } else {
+      //thêm sản sản phẩm được rating
+      const add_rating = await zaddAsync(redis_rating_key, 1, key_rating);
+      //đếm chiều dài của sorte-set
+      const memberCount = await zcardAsync(redis_rating_key);
+      if (memberCount >= REQUEST_RATING_SCORE) {
+        return {
+          message: "retrain-rating",
+          sorted_set: redis_rating_key,
+          count_member: memberCount,
+        };
+      }
+
+      return null;
+    }
+  }
 
   //Tính điểm vector
   const key_member = `${userId}:${productId}`;
@@ -68,7 +116,7 @@ const collectVector = async (userId, productId, score = 1) => {
   //Schedule
   //Gọi retrain khi user đủ kiền kiện
   if (newScore >= REQUEST_REC_SCORE) {
-    return { message: "retrain", userId: userId };
+    return { message: "retrain-behaviour", userId: userId, score: newScore };
   }
   // await pexpire(redis_key, expireTime);
 };

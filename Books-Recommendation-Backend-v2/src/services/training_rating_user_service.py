@@ -27,7 +27,7 @@ async def train_rating_user_model():
  
     # Kết nối đến cơ sở dữ liệu 
     # db_connection_str = 'mysql+pymysql://root:vuong@localhost/books_db_v1'
-    # db_connection_str = "mysql+pymysql://bookada:bookada2002@bookada-database-v1.crq4aco4chyf.ap-southeast-1.rds.amazonaws.com/books_db_v1"
+    # db_connection_str = "mysql+pymysql://bookada:bookada2002@bookada.cfmwusg6itst.ap-southeast-1.rds.amazonaws.com/books_db_v1"
     db_connection_str = f"mysql+pymysql://{mysql_username}:{mysql_pass}@{mysql_host}/{mysql_dbname}"
     db_connection = create_engine(db_connection_str)
     # db_connection.connect()
@@ -53,7 +53,7 @@ async def train_rating_user_model():
     normalize_data=pivot_table.subtract(pivot_table.mean(axis=1),axis='rows')
     # # print(normalize_data)
     similarity_scores = cosine_similarity(normalize_data.fillna(0))
- 
+    mean = books_df.groupby(by='User_ID', as_index=False)['Book-Rating'].mean()
     # ## 3.SAVE MODEL INFO
     # Lưu thông tin model
     model_id = f"model_{int(time.time())}" 
@@ -70,8 +70,11 @@ async def train_rating_user_model():
 
 
     connection = db_connection.connect()  # Tạo đối tượng Connection từ Engine
-    result = connection.execute(text(insert_query))  # Thực hiện truy vấn
-    connection.commit()
+    with connection.begin() as transaction:
+        connection.execute(text(insert_query))
+        transaction.commit()
+    # result = connection.execute(text(insert_query))  # Thực hiện truy vấn
+    # connection.commit()
     connection.close()
 
 
@@ -83,5 +86,6 @@ async def train_rating_user_model():
     pickle.dump(normalize_data,open('src/models/current/rating-user/pivot_table.pkl','wb'))
     pickle.dump(similarity_scores,open('src/models/current/rating-user/similarity_scores.pkl','wb'))
     pickle.dump(books_df,open('src/models/current/rating-user/books_df.pkl','wb'))
+    pickle.dump(mean,open('src/models/current/rating-user/mean_rating.pkl','wb'))
     print("Rating model trained successfully!!!")
     return str(model_id)

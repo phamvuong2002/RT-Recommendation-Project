@@ -3,10 +3,12 @@ import { Header } from '../../Header';
 import { Navbar } from '../../Navbar';
 import { Footer } from '../../Footer';
 import { Spinner } from '../../loaders/Spinner';
+import { ProgressLoading } from '../../loaders/ProgressLoading';
 
 const DefaultLayout = ({ children }) => {
   return (
     <div>
+      <ProgressLoading/>
       <Spinner />
       <Header />
       <Navbar />

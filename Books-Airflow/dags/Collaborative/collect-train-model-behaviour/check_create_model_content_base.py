@@ -23,7 +23,7 @@ default_args = {
 
 def check_db_is_changed():
     # Kết nối đến cơ sở dữ liệu
-    db_connection_str = 'mysql+pymysql://bookada:bookada2002@bookada-database-v1.crq4aco4chyf.ap-southeast-1.rds.amazonaws.com/books_db_v1'
+    db_connection_str = 'mysql+pymysql://bookada:bookada2002@bookada.cfmwusg6itst.ap-southeast-1.rds.amazonaws.com/books_db_v1'
     db_connection = create_engine(db_connection_str, future = True)
 
     # Đọc dữ liệu từ MySQL và lưu vào DataFrame
@@ -113,7 +113,7 @@ def check_db_is_changed():
 
 def create_model(ti):
     # Kết nối đến cơ sở dữ liệu
-    db_connection_str = 'mysql+pymysql://bookada:bookada2002@bookada-database-v1.crq4aco4chyf.ap-southeast-1.rds.amazonaws.com/books_db_v1'
+    db_connection_str = 'mysql+pymysql://bookada:bookada2002@bookada.cfmwusg6itst.ap-southeast-1.rds.amazonaws.com/books_db_v1'
     db_connection = create_engine(db_connection_str, future = True)
 
     # Đọc dữ liệu từ MySQL và lưu vào DataFrame
@@ -166,7 +166,7 @@ def save_model(ti):
 
     
     #Lưu Thông tin vào DB
-    db_connection_str = 'mysql+pymysql://bookada:bookada2002@bookada-database-v1.crq4aco4chyf.ap-southeast-1.rds.amazonaws.com/books_db_v1'
+    db_connection_str = 'mysql+pymysql://bookada:bookada2002@bookada.cfmwusg6itst.ap-southeast-1.rds.amazonaws.com/books_db_v1'
     db_connection = create_engine(db_connection_str)
     insert_query = f"INSERT INTO rec_model (rec_model_id, rec_model_type, create_time) VALUES ('{model_id}', '{model_type}', CURRENT_TIMESTAMP)"
     connection = db_connection.connect()  # Tạo đối tượng Connection từ Engine

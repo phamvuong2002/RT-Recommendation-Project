@@ -120,7 +120,7 @@ export const AllProducts = ({ isShowHeader, numOfProductsInRow, _sort, _cate, _l
             if (userId) {
                 loadFavBook(userId);
             } else {
-                console.log("User ID null!!!")
+                // console.log("User ID null!!!")
             }
 
 
@@ -146,6 +146,20 @@ export const AllProducts = ({ isShowHeader, numOfProductsInRow, _sort, _cate, _l
     return (
         <div ref={topRef} className="w-full">
             {showHeader}
+            {
+                products.length === 0 ?
+                <div className="flex justify-center items-center text-slate-500 p-10">
+                    <div className="flex-col items-center justify-center">
+                        <div className="w-full flex items-center justify-center">
+                            <img src="/img/empty-box.png" alt="reviews-image" className="xl:w-[8rem] w-20"/>
+                        </div>
+                        <div className="xl:text xl:mt-8 text-center">
+                            Chưa tìm thấy sản phẩm nào.
+                            Hãy tìm kiếm và tương tác với những sản phẩm khác của chúng tôi.
+                        </div>
+                    </div>
+                </div>
+            :
             <div className={`grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-${numOfProductsInRow} lg:gap-x-6 lg:gap-y-4`}>
                 {/* Hiển thị các sản phẩm của trang hiện tại*/}
                 {products.map((product, index) => (
@@ -157,6 +171,7 @@ export const AllProducts = ({ isShowHeader, numOfProductsInRow, _sort, _cate, _l
                     </div>
                 ))}
             </div>
+            }
 
             {/**
             <PaginationButtons
@@ -165,15 +180,18 @@ export const AllProducts = ({ isShowHeader, numOfProductsInRow, _sort, _cate, _l
                 totalPages={totalPages}
                 handlePageChange={handlePageChange}
             /> */}
-            <PaginationButtons
-                pagination={pagination}
-                onPageChange={handlePageChange}
-                query={_query}
-                sort={_sort}
-                cate={_cate}
-                price={_price}
-                publisher={_publisher}
-            />
+            {
+                products.length === 0 ? "":
+                <PaginationButtons
+                    pagination={pagination}
+                    onPageChange={handlePageChange}
+                    query={_query}
+                    sort={_sort}
+                    cate={_cate}
+                    price={_price}
+                    publisher={_publisher}
+                />
+            }
 
         </div>
     );

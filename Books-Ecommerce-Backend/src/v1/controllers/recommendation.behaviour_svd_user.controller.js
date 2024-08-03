@@ -7,7 +7,7 @@ const { SuccessResponse } = require("../core/success.response");
 class RecommendationBehaviour_SVD_UserController {
   //IMPLICIT RECOMMENDER
   getBehaviourImplicitRecommenderBooks = async (req, res, next) => {
-    const data = await RecommendationBehaviourSVDUserService.getBehaviourImplicitRecommenderBooks(
+    const data = await RecommendationBehaviourSVDUserService.callBehaviourImplicitRecommenderBooks(
       req.body
     );
     new SuccessResponse({

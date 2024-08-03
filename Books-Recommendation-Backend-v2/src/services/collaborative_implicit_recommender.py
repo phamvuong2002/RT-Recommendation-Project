@@ -14,17 +14,20 @@ def implicit_rec(user_id, n_similar):
     model = load_model("current/behaviour/implicit_model")
     grouped_df = load_model("current/behaviour/grouped_df")
     # print('innnnn')
+    print(grouped_df,user_id)
 
     # print(grouped_df)
     # data = Dataset.load_from_df(grouped_df[['personId', 'contentId', 'eventStrength']], reader)
     interacted_book = grouped_df.loc[grouped_df['personId']==user_id,'contentId'].unique()
     min_book=5
     if(len(interacted_book)<min_book):
+        print('NOT ENOUGH BOOKS')
         return None
     sparse_person_content = sparse.csr_matrix((grouped_df['eventStrength'].astype(float), (grouped_df['person_id'], grouped_df['content_id'])))
 
     userid = grouped_df.loc[grouped_df['personId']==user_id,'person_id'].values[0]
     # print(userid)
+    # filter_already_liked_items: lọc ra các sản phẩm người dùng đã xem có trong tập train
     ids, scores = model.recommend(userid, sparse_person_content[userid], N=n_similar, filter_already_liked_items=True)
     # top_n_recommendations = df[['book_id','score']].sort_values('score',ascending=False).drop_duplicates()[:n_similar]
     
@@ -40,5 +43,5 @@ def implicit_rec(user_id, n_similar):
 
 
     final = top_n_recommendations.to_dict('records')
-    # print("final:::", final)
+    print("final:::", final)
     return final

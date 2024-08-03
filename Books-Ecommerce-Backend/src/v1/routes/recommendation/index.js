@@ -27,6 +27,13 @@ router.post(
   asyncHandler(recBehaviourController.getBehaviourContentBooks)
 );
 
+//implicit recommender 
+router.post(
+  "/behaviour/implicitRecommender",
+  asyncHandler(recBehaviourSVDUserController.getBehaviourImplicitRecommenderBooks)
+);
+
+//svd
 router.post(
   "/behaviour/svd",
   asyncHandler(recBehaviourSVDUserController.getBehaviourSVDBooks)

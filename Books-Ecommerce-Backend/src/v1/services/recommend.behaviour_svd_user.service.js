@@ -4,6 +4,22 @@ const { fetchData } = require("../helpers/fetchData");
 const recBooksHelper = require("../helpers/recommendationBooks.helper");
 const db = require("../models/sequelize/models");
 class RecommendationBehaviour_SVD_UserService {
+
+  // IMPLICIT RECOMMENDER 
+  static async getBehaviourImplicitRecommenderBooks({
+    userId,
+    quantity,
+    model_type = "online",
+  }) {
+    const url = `${process.env.RECOMMENDATION_SERVER_URL}/implicit/${
+      model_type === "online" ? "" : "offline/"
+    }recommender/user=${userId}&quantity=${quantity}`;
+    const result = await fetchData(url);
+
+    // console.log(result)
+    return result;
+  }
+ 
   //call SVD model generate Books
   static async callBehaviourSVDBooks({
     userId,
@@ -186,6 +202,7 @@ class RecommendationBehaviour_SVD_UserService {
   //   // console.log(result)
   //   return 'result'
   // }
+
 }
 
 module.exports = RecommendationBehaviour_SVD_UserService;

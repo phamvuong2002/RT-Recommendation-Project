@@ -103,6 +103,12 @@ async def recommend(user_id: str = "", quantity: int = 10):
 async def recommend(user_id: str = "", quantity: int = 10):
     return await behaviour_controller.get_implicit_userbased(user_id,quantity)
 
+# Implicit recommender
+@router.get("/implicit/recommender/user={user_id}&quantity={quantity}")
+async def recommend(user_id: str = "", quantity: int = 10):
+    return await behaviour_controller.get_implicit_rec(user_id,quantity)
+
+
 
 # SVDpp
 @router.get("/implicit/svdpp/user={user_id}&quantity={quantity}")

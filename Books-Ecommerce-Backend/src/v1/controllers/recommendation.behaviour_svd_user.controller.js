@@ -5,6 +5,17 @@ const RecommendationBehaviourSVDUserService = require("../services/recommend.beh
 const { SuccessResponse } = require("../core/success.response");
 
 class RecommendationBehaviour_SVD_UserController {
+  //IMPLICIT RECOMMENDER
+  getBehaviourImplicitRecommenderBooks = async (req, res, next) => {
+    const data = await RecommendationBehaviourSVDUserService.getBehaviourImplicitRecommenderBooks(
+      req.body
+    );
+    new SuccessResponse({
+      metadata: data,
+    }).send(res);
+  };
+
+  //SVD
   getBehaviourSVDBooks = async (req, res, next) => {
     const data = await RecommendationBehaviourSVDUserService.getBehaviourSVDBooks(
       req.body

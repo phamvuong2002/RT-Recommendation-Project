@@ -6,7 +6,7 @@ const db = require("../models/sequelize/models");
 class RecommendationBehaviour_SVD_UserService {
 
   // IMPLICIT RECOMMENDER 
-  static async getBehaviourImplicitRecommenderBooks({
+  static async callBehaviourImplicitRecommenderBooks({
     userId,
     quantity,
     model_type = "online",

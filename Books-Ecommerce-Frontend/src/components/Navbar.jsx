@@ -108,7 +108,7 @@ export const Navbar = () => {
       path: '../account/general-infomation',
     },
     {
-      name: 'Đơn hàng của tôi',
+      name: 'Đơn của tôi',
       icon: <LuClipboardList className="mr-2" />,
       path: '../account/orders-infomation',
     },

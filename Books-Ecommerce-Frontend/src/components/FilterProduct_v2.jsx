@@ -624,7 +624,7 @@ export default function FilterProduct({
                     _totalPages={totalPages}
                     setPage={setNumPage}
                     page={numPage}
-                    _loadmore={false}
+                    // _loadmore={false}
                   />
                 )}
             </div>

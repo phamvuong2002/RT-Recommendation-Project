@@ -10,7 +10,7 @@ from src.helpers.move_files import move_files
 import os
 
 POPULAR_RANGE = 5
-COLLAB_RANGE = 2
+COLLAB_RANGE = 5
 
 async def train_rating_item_model():
     mysql_host = os.environ.get("BACKEND_MYSQL_HOST")
@@ -28,6 +28,8 @@ async def train_rating_item_model():
     books_query = "SELECT feedback_userid AS `User-ID`, book_id AS `Book-ID`, feedback_rating AS `Book-Rating`, book_title AS `Book-Title`, book_authors AS `Book-Author`, book_publisherId as Publisher FROM book join feedback on book_id = feedback_bookid"
     # Thực thi query và lấy dữ liệu vào DataFrame
     books_df = pd.read_sql(books_query, con=db_connection)
+
+    print("books_df", books_df.head(5))
 
     ### ## 0. DATA CLEANING ###############################
     # Chuyển đổi kiểu dữ liệu của cột "Book-Rating" sang số

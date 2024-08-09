@@ -147,22 +147,12 @@ export const AllProducts = ({ isShowHeader, numOfProductsInRow, _sort, _cate, _l
         <div ref={topRef} className="w-full">
             {showHeader}
             {
-                products.length === 0 ?
-                <div className="flex justify-center items-center text-slate-500 p-10">
-                    <div className="flex-col items-center justify-center">
-                        <div className="w-full flex items-center justify-center">
-                            <img src="/img/empty-box.png" alt="reviews-image" className="xl:w-[8rem] w-20"/>
-                        </div>
-                        <div className="xl:text xl:mt-8 text-center">
-                            Chưa tìm thấy sản phẩm nào.
-                            Hãy tìm kiếm và tương tác với những sản phẩm khác của chúng tôi.
-                        </div>
-                    </div>
-                </div>
+                products?.length === 0 ?
+                ""
             :
             <div className={`grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-${numOfProductsInRow} lg:gap-x-6 lg:gap-y-4`}>
                 {/* Hiển thị các sản phẩm của trang hiện tại*/}
-                {products.map((product, index) => (
+                {products?.map((product, index) => (
                     <div key={index} className="">
                         <Product
                             userId={userId}
@@ -181,7 +171,17 @@ export const AllProducts = ({ isShowHeader, numOfProductsInRow, _sort, _cate, _l
                 handlePageChange={handlePageChange}
             /> */}
             {
-                products.length === 0 ? "":
+                (products?.length === 0 || !products) ? <div className="flex justify-center items-center text-slate-500 p-10">
+                    <div className="flex-col items-center justify-center">
+                        <div className="w-full flex items-center justify-center">
+                            <img src="/img/empty-box.png" alt="reviews-image" className="xl:w-[8rem] w-20"/>
+                        </div>
+                        <div className="xl:text xl:mt-8 text-center">
+                            Chưa tìm thấy sản phẩm nào.
+                            Hãy tìm kiếm và tương tác với những sản phẩm khác của chúng tôi.
+                        </div>
+                    </div>
+                </div>:
                 <PaginationButtons
                     pagination={pagination}
                     onPageChange={handlePageChange}

@@ -96,6 +96,44 @@ class RetrainModelService {
   }
 
   //retrain implicit models
+  // static async callBehaviourRecommend(min_score) {
+  //   const MIN_REQUIRED_USER = 0;
+  //   const QUANTITY = 12;
+
+  //   const resultSVD = await acquireLockOnlineReTrain("svd", min_score);
+  //   if (!resultSVD) return null;
+
+  //   const { listUsers, key } = resultSVD;
+
+  //   if (listUsers !== null && listUsers.length > MIN_REQUIRED_USER) {
+  //     //retrain model
+  //     // const alsResults = await RetrainModelService.retrainBehaviourALSModel();
+  //     const svdResults = await RetrainModelService.retrainBehaviourSVDModel();
+  //     //Create recommendation
+  //     if (svdResults.status === "success") {
+  //       for (const user in listUsers) {
+  //         //tạo để xuất
+  //         const result =
+  //           await RecommendationBehaviour_SVD_UserService.callBehaviourSVDBooks(
+  //             {
+  //               userId: listUsers[user],
+  //               quantity: QUANTITY,
+  //               model_type: "online",
+  //             }
+  //           );
+
+  //         // reset điểm khi để xuất thành công
+  //         if (result.recommendations.length > 0) {
+  //           await resetUserScore(listUsers[user]);
+  //         }
+  //       }
+  //       //nhả khoá
+  //       await releaselock(key);
+  //     }
+  //   }
+  // }
+
+  //RETRAIN IMPLICIT RECOMMENDER - UPDATE - bỏ cmt để chạy thử
   static async callBehaviourRecommend(min_score) {
     const MIN_REQUIRED_USER = 0;
     const QUANTITY = 12;
@@ -104,17 +142,19 @@ class RetrainModelService {
     if (!resultSVD) return null;
 
     const { listUsers, key } = resultSVD;
+    // console.log("result callBehaviourRecommend::", listUsers);
 
     if (listUsers !== null && listUsers.length > MIN_REQUIRED_USER) {
       //retrain model
       // const alsResults = await RetrainModelService.retrainBehaviourALSModel();
-      const svdResults = await RetrainModelService.retrainBehaviourSVDModel();
+      const alsResults = await RetrainModelService.retrainBehaviourALSModel();
       //Create recommendation
-      if (svdResults.status === "success") {
+
+      if (alsResults.status === "success") {
         for (const user in listUsers) {
           //tạo để xuất
           const result =
-            await RecommendationBehaviour_SVD_UserService.callBehaviourSVDBooks(
+            await RecommendationBehaviour_SVD_UserService.callBehaviourImplicitRecommenderBooks(
               {
                 userId: listUsers[user],
                 quantity: QUANTITY,
@@ -133,46 +173,6 @@ class RetrainModelService {
     }
   }
 
-  //RETRAIN IMPLICIT RECOMMENDER - UPDATE - bỏ cmt để chạy thử
-  // static async callBehaviourRecommend(min_score) {
-  //   const MIN_REQUIRED_USER = 0;
-  //   const QUANTITY = 12;
-
-  //   const resultSVD = await acquireLockOnlineReTrain("svd", min_score);
-  //   if (!resultSVD) return null;
-
-  //   const { listUsers, key } = resultSVD;
-  //   // console.log("result callBehaviourRecommend::", listUsers);
-
-  //   if (listUsers !== null && listUsers.length > MIN_REQUIRED_USER) {
-  //     //retrain model
-  //     // const alsResults = await RetrainModelService.retrainBehaviourALSModel();
-  //     const alsResults = await RetrainModelService.retrainBehaviourALSModel();
-  //     //Create recommendation
-     
-  //     if (alsResults.status === "success") {
-  //       for (const user in listUsers) {
-  //         //tạo để xuất 
-  //         const result =
-  //           await RecommendationBehaviour_SVD_UserService.callBehaviourImplicitRecommenderBooks(
-  //             {
-  //               userId: listUsers[user],
-  //               quantity: QUANTITY,
-  //               model_type: "online",
-  //             }
-  //           ); 
-
-  //         // reset điểm khi để xuất thành công
-  //         if (result.recommendations.length > 0) {
-  //           await resetUserScore(listUsers[user]);
-  //         }
-  //       }
-  //       //nhả khoá
-  //       await releaselock(key);
-  //     }
-  //   }
-  // }
-
   //retrain rating models
   static async callRetrainRatingModel() {
     //tạo khoá cho retrain rating models
@@ -182,6 +182,7 @@ class RetrainModelService {
     //retrain rating models
     const resultSVDRating =
       await RetrainModelService.retrainRatingUserSVDModel();
+    const resultALSRating = await RetrainModelService.retrainRatingItemsModel();
     if (resultSVDRating.status === "success") {
       console.log("retrain rating SVD Model successfully");
     } else {

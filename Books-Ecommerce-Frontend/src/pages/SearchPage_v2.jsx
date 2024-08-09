@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import FilterProduct from '../components/FilterProduct_v2';
 import { AppContext } from '../contexts/main';
@@ -32,6 +32,7 @@ export const SearchPage_v2 = () => {
   const [source, setSource] = useState('search_v2');
   const [totalPages, setTotalPages] = useState(0);
   const [totalResults, setTotalResults] = useState(0);
+  const previousQuery = useRef(query);
 
   // lấy Param: Page & Limit
   const page = searchParams.get('page');
@@ -156,6 +157,10 @@ export const SearchPage_v2 = () => {
   }, [limit, categories, query, price, publisher, page, sortBy]);
 
   useEffect(() => {
+    if (previousQuery.current !== query) {
+      setProductsSearch([]);
+      previousQuery.current = query;
+    }
     setTotalPages(0);
     searchParams.set('page', 1);
     navigate(location.pathname + '?' + searchParams);

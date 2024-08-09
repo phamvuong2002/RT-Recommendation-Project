@@ -45,7 +45,8 @@ export const AllProducts = ({
 
 
   useEffect(() => {
-    // console.log(_loadmore);
+    // console.log("productsData::", productsData);
+    // console.log("_loadmore::", _loadmore);
     if (_loadmore) {
       setProducts(prevProducts => [...prevProducts, ...productsData]);
     } else {

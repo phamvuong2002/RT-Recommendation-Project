@@ -38,14 +38,14 @@ const SAMPLEPAYMENTMETHODS = [
     paymentMethodId: 'vnpay',
     paymentMethodName: 'VNPay',
     paymentMethodImage:
-      'https://i.gyazo.com/cd4ad37ac9f9ae75473542526f69e79e.png',
+      '/img/vnpay_method.jpg',
     paymentMethodDescription: 'Ví VNpay',
     paymentAccount: 'Thanh toán trực tuyến với',
   },
   {
     paymentMethodId: 'paypal',
     paymentMethodName: 'Paypal',
-    paymentMethodImage: 'https://i.ibb.co/r68ZFGK/Paypal-2014-logo.png',
+    paymentMethodImage: '/img/paypal.png',
     paymentMethodDescription: 'Liên kết tài khoản Paypal',
     paymentAccount: 'Thanh toán trực tuyến với',
   },

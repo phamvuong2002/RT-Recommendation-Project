@@ -112,6 +112,7 @@ class RecommendationService {
         ["rec_book_spe_price", "book_spe_price"],
         ["rec_book_old_price", "book_old_price"],
         ["rec_book_is_recommadation", "book_is_recommendation"],
+        ["create_time", "create_time"],
       ],
       where: { rec_user_sid: userId },
       limit: limit,
